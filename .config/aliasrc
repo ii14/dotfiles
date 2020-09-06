@@ -1,0 +1,168 @@
+#!/bin/zsh
+
+mkcd() {
+  mkdir -pv "$1" && cd "$1"
+}
+
+rm() {
+  printf 'Continue?: rm'
+  for i in "$@"; do printf " $i"; done
+  read -rsk r; echo
+  if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
+    echo 'Operation cancelled.'
+    return
+  fi
+  command rm -v $@
+}
+
+makecommand() {
+  [ -z "$1" ] && echo 'Command name required' >&2 && return 1
+  mkdir -p ~/.local/bin
+  local cmd=~/.local/bin/$1
+  if [ -e $cmd ]; then
+    echo "Command $1 already exists" >&2
+  else
+    [ -z "$2" ] \
+      && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > $cmd \
+      || echo -e "#!/usr/bin/env $2\n" > $cmd
+    chmod +x $cmd
+  fi
+  $EDITOR $cmd
+}
+
+ex() {
+  if [ -f "$1" ]; then
+    case $1 in
+      *.tar.bz2)  tar xjf "$1"   ;;
+      *.tar.gz)   tar xzf "$1"   ;;
+      *.bz2)      bunzip2 "$1"   ;;
+      *.rar)      unrar x "$1"   ;;
+      *.gz)       gunzip "$1"    ;;
+      *.tar)      tar xf "$1"    ;;
+      *.tbz2)     tar xjf "$1"   ;;
+      *.tgz)      tar xzf "$1"   ;;
+      *.zip)      unzip "$1"     ;;
+      *.Z)        uncompress "$1";;
+      *.7z)       7z x "$1"      ;;
+      *)          echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+codi() {
+  local syntax="${1:-python}"
+  shift
+  vim -c \
+    "set bt=nofile ls=0 noru nonu nornu |\
+    hi ColorColumn ctermbg=NONE |\
+    hi VertSplit ctermbg=NONE |\
+    hi NonText ctermfg=0 |\
+    Codi $syntax" "$@"
+}
+
+
+alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
+alias path='echo -e ${PATH//:/\\n}'
+
+hash -d Trash="$HOME/.local/share/Trash"
+
+alias :q='exit'
+
+# flags ----------------------------------------------------
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias mkd='mkdir -p'
+alias df='df -h'
+alias du='du -h'
+alias dmesg='dmesg -T'
+
+# cd -------------------------------------------------------
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+# ls -------------------------------------------------------
+alias ls='ls -hN --color=auto --group-directories-first'
+alias l='ls -Av --color=auto --group-directories-first'
+alias ll='ls -l --color=auto --group-directories-first'
+alias la='ls -lAv --color=auto --group-directories-first'
+
+# colors ---------------------------------------------------
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+
+# shortcuts ------------------------------------------------
+alias ka='killall'
+alias c='clear'
+alias h='history'
+alias j='jobs'
+alias m='make'
+alias rr='ranger'
+
+# xclip ----------------------------------------------------
+alias setclip='xclip -sel clipboard -i'
+alias getclip='xclip -sel clipboard -o'
+
+# tmux -----------------------------------------------------
+alias tm='tmux'
+alias ts='tmux new-session -A -s'
+alias ta='tmux attach -t'
+alias tA='tmux attach'
+alias tl='tmux ls'
+
+# dev:cpp --------------------------------------------------
+alias g++='g++ -Wall -Wextra -Wshadow'
+alias gcc='gcc -Wall -Wextra -Wshadow -pedantic'
+alias clang++='clang++ -Wall -Wextra -Wpedantic'
+alias clang='clang -Wall -Wextra -Wpedantic'
+alias gdb='gdb -quiet'
+alias qmake='/opt/Qt/5.12.5/gcc_64/bin/qmake'
+alias demangle='c++filt -t'
+
+# dev:other ------------------------------------------------
+alias py='python3.8'
+alias sass='sassc'
+
+# a/v ------------------------------------------------------
+alias ffmpeg='ffmpeg -hide_banner'
+alias ffplay='ffplay -hide_banner'
+alias ffprobe='ffprobe -hide_banner'
+alias ytdl='youtube-dl'
+alias ytdlu='sudo pip install --upgrade youtube-dl'
+alias ytmp3='youtube-dl -x -f bestaudio/best'
+
+# git ------------------------------------------------------
+alias vimgit='vim "+Gedit :"'
+alias g='git'
+alias ga='git add'
+alias gA='git add --all :/'
+alias gc='git commit'
+alias gcm='git commit -m'
+alias gd='git diff'
+alias gh='git stash'
+alias ghl='git stash list'
+alias gl='git l'
+alias gl1='git --no-pager log -n 1'
+alias gs='git status'
+alias gP='git push'
+alias gp='git pull'
+
+# apt ------------------------------------------------------
+alias ag='sudo apt-get'
+alias ai='sudo apt-get install'
+alias ar='sudo apt-get remove'
+alias au='sudo apt-get update'
+alias as='apt-cache search'
+alias ad='apt-cache depends'
+alias adr='apt-cache rdepends'
+
+alias cal='ncal -b3'
+alias bc='bc -q'
+alias ipinfo='curl ipinfo.io'

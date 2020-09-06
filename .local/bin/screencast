@@ -1,0 +1,5 @@
+#!/bin/bash
+display=$(xdpyinfo | grep 'name of display' | awk '{print $NF}')
+size=$(xdpyinfo | grep 'dimensions' | awk '{print $2}')
+output="$HOME/videos/screencast-$(date '+%y%m%d-%H%M%S').mp4"
+ffmpeg -hide_banner -y -f x11grab -r 30 -s "${size}" -i "${display}.0" "${output}"

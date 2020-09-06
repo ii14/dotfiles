@@ -1,0 +1,7 @@
+profile     ~/.profile
+zsh         ~/.config/zsh/.zshrc
+alias       ~/.config/aliasrc
+vim         ~/.config/nvim/init.vim
+tmux        ~/.tmux.conf
+ssh         ~/.ssh/config
+git         ~/.gitconfig

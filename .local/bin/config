@@ -1,0 +1,18 @@
+#!/bin/bash
+optfile="$HOME/.config/shortcuts/config"
+
+if [ -z "$1" ]; then
+    opts=$(dictionary keys "$optfile")
+    echo "$opts" | awk '{ print NR ") " $0 }'
+    read -rp "select: " x
+    opt=$(echo "$opts" | awk "NR == $x { print \$0; exit }")
+elif [ "$1" = 'edit' ]; then
+    exec $EDITOR "$optfile"
+else
+    opt="$1"
+fi
+
+file=$(dictionary "$optfile" $opt 2>/dev/null | sed "s|^~/|$HOME/|")
+[ -z "$file" ] && echo "option not found" >&2 && exit 1
+
+exec $EDITOR "$file"

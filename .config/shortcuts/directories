@@ -1,0 +1,8 @@
+cfg $HOME/.config
+lcb $HOME/.local/bin
+doc $HOME/documents
+dl  $HOME/Downloads
+pic $HOME/pictures
+vid $HOME/videos
+rep $HOME/repos
+dev $HOME/dev

@@ -1,0 +1,53 @@
+#!/usr/bin/awk -f
+
+# todo:
+# return entire line instead of $2 field
+# remove expand option, shouldn't be in scope of this script
+
+BEGIN {
+    expand = 0
+    list = 1
+
+    if (ARGV[1] == "keys") {
+        list = 0
+        for (i = 1; i < ARGC; i++)
+            ARGV[i-1] = ARGV[i]
+    } else if (ARGV[1] == "expand") {
+        expand = 1
+        for (i = 1; i < ARGC; i++)
+            ARGV[i-1] = ARGV[i]
+    }
+
+    if (ARGC < 2) {
+        print "Usage:" > "/dev/stderr"
+        print "\tdictionary [expand] <file> <key>" > "/dev/stderr"
+        print "\tdictionary keys <file>" > "/dev/stderr"
+        exit 1
+    }
+
+    key = ARGV[2]
+    for (i = 2; i < ARGC; i++)
+        ARGV[i] = ""
+    err = 1
+}
+
+list == 0 && NF > 1 {
+    print $1
+}
+
+list == 1 && NF > 1 && $1 == key {
+    if (expand) {
+        sub("^~/", ENVIRON["HOME"] "/", $2)
+    }
+    print $2
+    err = 0
+    exit
+}
+
+END {
+    if (list == 1 && err) {
+        print "Unknown alias" > "/dev/stderr"
+        exit 1
+    }
+}
+
