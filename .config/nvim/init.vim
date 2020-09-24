@@ -4,13 +4,12 @@ filetype plugin on
 syntax on
 set textwidth=100
 
-if !executable('fzf')
-  let s:disable_fzf = 1
-endif
+if !has('nvim') | let s:disable_lsp = 1 | endif
 
-if !has('nvim')
-  let s:disable_lsp = 1
-endif
+let s:disable_deoplete = 1
+let s:deoplete_lazy_load = 1
+
+aug Vimrc | au! | aug end
 
 " PLUGINS //////////////////////////////////////////////////////////////////////////////////////////
 call plug#begin('~/.config/nvim/plugged')
@@ -20,31 +19,38 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tommcdo/vim-exchange'
+    Plug 'haya14busa/vim-asterisk'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     " Plug 'bkad/CamelCaseMotion'
 
   " Visual -----------------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
+    Plug 'edersonferreira/dalton-vim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'Yggdroot/indentLine'
     Plug 'unblevable/quick-scope'
 
   " Search and Autocompletion ----------------------------------------------------------------------
-    if !exists('s:disable_fzf')
-      Plug 'junegunn/fzf'
-      Plug 'junegunn/fzf.vim'
-    endif
-    Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
-    Plug 'Shougo/neco-syntax'
+    Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
+    Plug 'junegunn/fzf.vim'
     if !exists('s:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
-      Plug 'Shougo/deoplete-lsp'
-    else
-      Plug 'deoplete-plugins/deoplete-clang'
+      Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
-    " Plug 'jackguo380/vim-lsp-cxx-highlight'
+    if !exists('s:disable_deoplete')
+      Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
+      Plug 'Shougo/neco-syntax'
+      if !exists('s:disable_lsp')
+        Plug 'Shougo/deoplete-lsp'
+      else
+        Plug 'deoplete-plugins/deoplete-clang'
+      endif
+    else
+      Plug 'nvim-lua/completion-nvim'
+      Plug 'steelsojka/completion-buffers'
+    endif
 
   " Development ------------------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
@@ -59,18 +65,22 @@ call plug#begin('~/.config/nvim/plugged')
   " Misc -------------------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'christoomey/vim-tmux-navigator'
+    Plug 'lambdalisue/fern.vim'
+    Plug 'antoinemadec/FixCursorHold.nvim'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
 
 call plug#end()
 
 source ~/.config/nvim/init/strip.vim
 source ~/.config/nvim/init/quickfix.vim
+source ~/.config/nvim/init/qmake.vim
 
 " PLUGIN SETTINGS //////////////////////////////////////////////////////////////////////////////////
   " Theme ------------------------------------------------------------------------------------------
     set termguicolors
     set background=dark
     colorscheme onedark
+    " colorscheme dalton
 
   " Lightline --------------------------------------------------------------------------------------
     let g:lightline = {}
@@ -97,7 +107,7 @@ source ~/.config/nvim/init/quickfix.vim
     set showtabline=2
     let g:lightline#bufferline#unnamed          = '[No Name]'
     let g:lightline#bufferline#clickable        = 1
-    let g:lightline#bufferline#min_buffer_count = 2
+    " let g:lightline#bufferline#min_buffer_count = 2
 
     fun! LightlineMode()
       return winwidth(0) < 60 ? '' : lightline#mode()
@@ -121,43 +131,78 @@ source ~/.config/nvim/init/quickfix.vim
       return winwidth(0) > 70 && &ft != 'qf' && exists('*FugitiveHead') ? FugitiveHead() : ''
     endfun
 
-    aug au_lightline | au!
+    aug Vimrc
       au BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
     aug end
 
   " fzf --------------------------------------------------------------------------------------------
-    if !exists('s:disable_fzf')
-      let $FZF_DEFAULT_OPTS =
-        \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
-      let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
-    endif
+    let $FZF_DEFAULT_OPTS =
+      \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
+    let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
+    let g:fzf_layout = {'down': '40%'}
 
   " Deoplete ---------------------------------------------------------------------------------------
-    let g:deoplete#enable_at_startup = 1
-    if !exists('s:disable_lsp')
-      call deoplete#custom#option('ignore_sources', {
-        \   'c'       : ['around', 'buffer', 'syntax'],
-        \   'cpp'     : ['around', 'buffer', 'syntax'],
-        \   'python'  : ['around', 'buffer', 'syntax'],
-        \ })
-    else
-      let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so.1'
-      let g:deoplete#sources#clang#clang_header  = '/usr/lib/clang/10/include'
+    if !exists('s:disable_deoplete')
+      if !exists('s:deoplete_lazy_load ')
+        let g:deoplete#enable_at_startup = 1
+      else
+        let g:deoplete#enable_at_startup = 0
+        aug Vimrc
+          au InsertEnter * call deoplete#enable()
+        aug end
+      endif
+      if exists('s:disable_lsp')
+        let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so.1'
+        let g:deoplete#sources#clang#clang_header  = '/usr/lib/clang/10/include'
+      endif
+    endif
+
+  " completion-nvim --------------------------------------------------------------------------------
+    if exists('s:disable_deoplete')
+      let g:completion_enable_auto_signature = 0
+      let g:completion_trigger_on_delete = 1
+      let g:completion_auto_change_source = 1
+      let g:completion_matching_ignore_case = 1
+      let g:completion_matching_strategy_list = ['exact', 'fuzzy', 'substring']
+      " let g:completion_chain_complete_list = {'default': [{'complete_items': ['buffers', 'path']}]}
+      let g:completion_chain_complete_list = {'default': [{'complete_items': ['lsp']}]}
+
+      imap <C-J> <Plug>(completion_next_source)
+      imap <C-K> <Plug>(completion_prev_source)
+
+      aug Vimrc
+        au BufEnter * lua require'completion'.on_attach()
+      aug end
     endif
 
   " nvim-lsp ---------------------------------------------------------------------------------------
     if !exists('s:disable_lsp')
+      fun! VimrcLspOnAttach() " called when lsp is attached to the current buffer
+        setl signcolumn=yes
+        call s:vimrc_lsp_maps()
+        if !exists('s:disable_deoplete')
+          call deoplete#custom#buffer_option('sources', ['lsp'])
+        else
+          setl omnifunc=v:lua.vim.lsp.omnifunc
+          lua require'completion'.on_attach({
+            \   chain_complete_list = {
+            \     default = {{complete_items = {'lsp'}}}
+            \   }
+            \ })
+        endif
+      endfun
+
       " ~/.config/nvim/lua/vimrc_lsp.lua
       lua require 'vimrc_lsp'
-
-      sign define LspDiagnosticsErrorSign text=\ E
-      sign define LspDiagnosticsWarningSign text=\ W
-      sign define LspDiagnosticsInformationSign text=\ i
-
-      hi! link LspDiagnosticsError ErrorMsg
-      hi! link LspDiagnosticsWarning WarningMsg
-      hi! link LspDiagnosticsUnderline Underlined
     endif
+
+  " Fern -------------------------------------------------------------------------------------------
+    let g:loaded_netrw       = 1 " disable netrw
+    let g:loaded_netrwPlugin = 1
+    let g:fern#disable_default_mappings = 1
+    aug Vimrc
+      au FileType fern call s:vimrc_fern_maps()
+    aug end
 
   " Dispatch ---------------------------------------------------------------------------------------
     let g:dispatch_no_maps = 1
@@ -166,7 +211,9 @@ source ~/.config/nvim/init/quickfix.vim
   " IndentLine -------------------------------------------------------------------------------------
     let g:vim_json_syntax_conceal = 0
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
-    aug au_indentline | au! | au FileType json IndentLinesDisable | aug end
+    aug Vimrc
+      au FileType json IndentLinesDisable
+    aug end
 
   " quick-scope ------------------------------------------------------------------------------------
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
@@ -175,10 +222,6 @@ source ~/.config/nvim/init/quickfix.vim
 
   " vimwiki ----------------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
-
-  " netrw ------------------------------------------------------------------------------------------
-    let g:loaded_netrw       = 1
-    let g:loaded_netrwPlugin = 1
 
 " SETTINGS /////////////////////////////////////////////////////////////////////////////////////////
   " Visual -----------------------------------------------------------------------------------------
@@ -192,7 +235,7 @@ source ~/.config/nvim/init/quickfix.vim
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
-    hi! link QuickFixLine PMenuSel
+    set synmaxcol=500                         " highlight only the first 500 columns
 
   " Editing ----------------------------------------------------------------------------------------
     set encoding=utf-8
@@ -253,10 +296,12 @@ source ~/.config/nvim/init/quickfix.vim
   " Go to the current buffer directory -------------------------------------------------------------
     com! D exe 'cd '.expand('%:h')
 
+  " Shortcuts --------------------------------------------------------------------------------------
+    com! Wiki VimwikiIndex
+    com! Vimrc edit $MYVIMRC
+
   " fzf helptags -----------------------------------------------------------------------------------
-    if !exists('s:disable_fzf')
-      com! H Helptags
-    endif
+    com! H Helptags
 
   " Rename file ------------------------------------------------------------------------------------
     com! RenameFile call <SID>RenameFile()
@@ -276,23 +321,19 @@ source ~/.config/nvim/init/quickfix.vim
       com! MakeTags !ctags -R .
     endif
 
-  " Enable Build EAR -------------------------------------------------------------------------------
-    if executable('bear')
-      com! Bear set makeprg=bear\ make
+  " compilation_database.json ----------------------------------------------------------------------
+    if executable('compiledb')
+      com! Compiledb Dispatch compiledb -n make
+    elseif executable('bear')
+      com! Compiledb Dispatch bear -a make
     endif
 
-  " Codi python scratchpad -------------------------------------------------------------------------
-    com! Py call <SID>Py()
-    fun! <SID>Py()
-      enew
-      Codi python
-      setl nonumber norelativenumber
-      nnoremap <buffer><nowait> q :bd!<CR>:redraw!<CR>
-      startinsert
-    endfun
+  " Redir ------------------------------------------------------------------------------------------
+    com! -nargs=1 -complete=command Redir
+      \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
 " AUTOCOMMANDS /////////////////////////////////////////////////////////////////////////////////////
-aug au_vimrc | au!
+aug Vimrc
 
   " Return to last edit position -------------------------------------------------------------------
     au BufReadPost *
@@ -308,8 +349,7 @@ aug au_vimrc | au!
     au WinLeave * setl nocursorline
 
   " Terminal ---------------------------------------------------------------------------------------
-    au TermOpen * setl nonumber norelativenumber | startinsert
-    au BufWinEnter,WinEnter term://* startinsert
+    au TermOpen * setl nonumber norelativenumber
     au BufLeave term://* stopinsert
 
   " Tab widths -------------------------------------------------------------------------------------
@@ -326,7 +366,10 @@ aug au_vimrc | au!
     au BufWritePost *.ts,*.scss silent make
 
   " Abbreviations ----------------------------------------------------------------------------------
-    au FileType cpp ia <buffer> <silent> #i #include
+    au FileType c,cpp ia <buffer> <silent> #i #include
+
+  " C/C++ single line comments ---------------------------------------------------------------------
+    au FileType c,cpp set commentstring=//%s
 
   " Quickfix ---------------------------------------------------------------------------------------
     au WinEnter * if winnr('$') == 1 && &buftype ==? "quickfix" | q | endif
@@ -334,7 +377,7 @@ aug au_vimrc | au!
 aug end
 
 " KEY MAPPINGS /////////////////////////////////////////////////////////////////////////////////////
-  " Defaults ---------------------------------------------------------------------------------------
+  " Override defaults ------------------------------------------------------------------------------
     nnoremap 0 ^
     nnoremap ^ 0
     nnoremap Y y$
@@ -342,10 +385,6 @@ aug end
     vnoremap j gj
     nnoremap k gk
     vnoremap k gk
-    vnoremap < <gv
-    vnoremap > >gv
-    nnoremap x "_x
-    noremap + "+
     noremap Q q
     noremap q <Nop>
     nnoremap <C-E> 3<C-E>
@@ -365,55 +404,53 @@ aug end
     nnoremap <C-P> :bp<CR>
     nnoremap <leader>d :Bdelete<CR>
     nnoremap <leader>D :Bdelete!<CR>
-    if !exists('s:disable_fzf')
-      nnoremap <leader>b :Buffers<CR>
-      nnoremap <leader>f :Files<CR>
-      nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
-    else
-      nnoremap <leader>b :ls<CR>:b
-    endif
+    nnoremap <leader>b :Buffers<CR>
+    " nnoremap <leader>f :Files<CR>
+    nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
+    nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
 
   " Search and Replace -----------------------------------------------------------------------------
-    if !exists('s:disable_fzf')
-      nnoremap <leader>/ :Lines<CR>
-      nnoremap <leader>? :BLines<CR>
-    else
-      nnoremap <leader>/ :vimgrep // ##<Left><Left><Left><Left>
-      nnoremap <leader>? :vimgrep // %<Left><Left><Left>
-    endif
+    nnoremap <leader>/ :Lines<CR>
+    nnoremap <leader>? :BLines<CR>
     nnoremap <leader>s :%s//g<Left><Left>
     vnoremap <leader>s :s//g<Left><Left>
-    nnoremap <leader>h :set hls<CR>:let @/="<C-R><C-W>"<CR>
-    nnoremap <leader>c :set hls<CR>:let @/="<C-R><C-W>"<CR>cgn
-    vnoremap <leader>h "hy:set hls<CR>:let @/="<C-R>h"<CR>
-    vnoremap <leader>c "hy:set hls<CR>:let @/="<C-R>h"<CR>cgn
+    nmap <leader>h <Plug>(asterisk-z*)
+    vmap <leader>h <Plug>(asterisk-z*)
+    nmap <leader>c <Plug>(asterisk-z*)cgn
+    vmap <leader>c <Plug>(asterisk-z*)cgn
     nnoremap <silent> <CR> :Noh<CR>
+
+  " Misc -------------------------------------------------------------------------------------------
+    vnoremap <leader>t :Tabularize /
+    vnoremap <leader>n :norm!<Space>
+    nnoremap <leader>a :A<CR>
+    nnoremap <leader>H :Helptags<CR>
+    nnoremap <leader>A ggVG
+    nnoremap <leader>ow :set wrap!<CR>
+    nnoremap <leader>oi :IndentLinesToggle<CR>
+
+  " Clipboard --------------------------------------------------------------------------------------
+    nnoremap <leader>p "+p
+    vnoremap <leader>p "+p
+    nnoremap <leader>P "+P
+    vnoremap <leader>P "+P
+    nnoremap <leader>y "+y
+    vnoremap <leader>y "+y
+    nnoremap <leader>Y "+y$
 
   " Make -------------------------------------------------------------------------------------------
     nnoremap m<CR> :up<CR>:Make<CR>
     nnoremap m<Space> :up<CR>:Make<Space>
     nnoremap m! :up<CR>:Make!<CR>
-
-  " LSP --------------------------------------------------------------------------------------------
-    if !exists('s:disable_lsp')
-      nnoremap <silent> ,d <cmd>lua vim.lsp.buf.definition()<CR>
-      nnoremap <silent> ,f <cmd>lua vim.lsp.buf.references()<CR>
-      nnoremap <silent> ,s <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-      nnoremap <silent> ,r <cmd>lua vim.lsp.buf.rename()<CR>
-      nnoremap <silent> ,h <cmd>lua vim.lsp.buf.hover()<CR>
-      nnoremap <silent> ,e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-    endif
-    nnoremap <silent> ,a :A<CR>
+    nnoremap m? :set makeprg?<CR>
+    nnoremap `<CR> :Dispatch<CR>
+    nnoremap `<Space> :Dispatch<Space>
+    nnoremap `! :Dispatch!<CR>
+    nnoremap `? :FocusDispatch<CR>
 
   " Git --------------------------------------------------------------------------------------------
     nnoremap <leader>gs :G<CR>
     nnoremap <leader>gl :Flog<CR>
-
-  " Misc -------------------------------------------------------------------------------------------
-    nnoremap <leader>a ggVG
-    vnoremap <leader>t :Tabularize<Space>
-    nnoremap <leader>ew :VimwikiIndex<CR>
-    nnoremap <leader>ev :edit $MYVIMRC<CR>
 
   " Command ----------------------------------------------------------------------------------------
     cnoremap <C-J> <Down>
@@ -425,3 +462,95 @@ aug end
     tnoremap <C-N> <C-\><C-N>:bn<CR>
     tnoremap <C-P> <C-\><C-N>:bp<CR>
     tnoremap <C-\> <C-\><C-N>
+    tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+
+  " LSP --------------------------------------------------------------------------------------------
+    fun! s:vimrc_lsp_maps()
+      nnoremap <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
+      nnoremap <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+      nnoremap <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+      nnoremap <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+      inoremap <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
+      nnoremap <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+      nnoremap <buffer><silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+      nnoremap <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
+      nnoremap <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+      nnoremap <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+      nnoremap <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+
+      " old
+      nnoremap <buffer><silent> ,d <cmd>lua vim.lsp.buf.definition()<CR>
+      nnoremap <buffer><silent> ,f <cmd>lua vim.lsp.buf.references()<CR>
+      nnoremap <buffer><silent> ,r <cmd>lua vim.lsp.buf.rename()<CR>
+      nnoremap <buffer><silent> ,e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+    endfun
+
+  " Fern -------------------------------------------------------------------------------------------
+    nnoremap - :Fern %:h<CR>
+    fun! s:vimrc_fern_maps() abort
+      nmap <buffer><nowait> - <Plug>(fern-action-leave)
+      nmap <buffer><nowait> <BS> <Plug>(fern-action-leave)
+      nmap <buffer><nowait> <CR> <Plug>(fern-open-or-enter)
+      nmap <buffer><nowait> h <Plug>(fern-action-collapse)
+      nmap <buffer><nowait> l <Plug>(fern-open-or-expand)
+      nmap <buffer><nowait> e <Plug>(fern-action-open)
+      nmap <buffer><nowait> E <Plug>(fern-action-open:side)
+
+      nmap <buffer><nowait> m <Plug>(fern-action-mark:toggle)j
+      vmap <buffer><nowait> m <Plug>(fern-action-mark:toggle)
+      nmap <buffer><nowait> N <Plug>(fern-action-new-path)
+      nmap <buffer><nowait> R <Plug>(fern-action-rename)
+      nmap <buffer><nowait> C <Plug>(fern-action-clipboard-copy)
+      nmap <buffer><nowait> M <Plug>(fern-action-clipboard-move)
+      nmap <buffer><nowait> P <Plug>(fern-action-clipboard-paste)
+      nmap <buffer><nowait> D <Plug>(fern-action-trash)
+
+      nmap <buffer><nowait> ! <Plug>(fern-action-hidden-toggle)
+      nmap <buffer><nowait> fi <Plug>(fern-action-include)
+      nmap <buffer><nowait> fe <Plug>(fern-action-exclude)
+
+      nmap <buffer><nowait> <F5> <Plug>(fern-action-reload)
+      nmap <buffer><nowait> <C-C> <Plug>(fern-action-cancel)
+
+      nnoremap <buffer><nowait> q :Bdelete!<CR>
+
+      nnoremap <buffer> <C-H> <C-W>h
+      nnoremap <buffer> <C-L> <C-W>l
+      nnoremap <buffer> <C-K> <C-W>k
+      nnoremap <buffer> <C-J> <C-W>j
+    endfun
+
+" HIGHLIGHT ////////////////////////////////////////////////////////////////////////////////////////
+  " quickfix ---------------------------------------------------------------------------------------
+    hi! link QuickFixLine PMenuSel
+
+  " LSP --------------------------------------------------------------------------------------------
+    if !exists('s:disable_lsp')
+      sign define LspDiagnosticsErrorSign text=\ E
+      sign define LspDiagnosticsWarningSign text=\ W
+      sign define LspDiagnosticsInformationSign text=\ i
+
+      hi! link LspDiagnosticsError ErrorMsg
+      hi! link LspDiagnosticsWarning WarningMsg
+      hi! link LspDiagnosticsInformation Function
+      hi! link LspDiagnosticsUnderline Underlined
+
+      " vim-lsp-cxx-highlight
+      hi! link LspCxxHlSymUnknown          Normal
+      hi! link LspCxxHlSymTypeParameter    Structure
+      hi! link LspCxxHlSymFunction         Function
+      hi! link LspCxxHlSymMethod           Function
+      hi! link LspCxxHlSymStaticMethod     Function
+      hi! link LspCxxHlSymConstructor      Function
+      hi! link LspCxxHlSymEnumMember       Constant
+      hi! link LspCxxHlSymMacro            Macro
+      hi! link LspCxxHlSymNamespace        Keyword
+      hi! link LspCxxHlSymVariable         Normal
+      hi! link LspCxxHlSymParameter        Normal
+      hi! link LspCxxHlSymField            Normal
+      hi! LspCxxHlSymField     ctermfg=145 guifg=#ABB2BF cterm=bold gui=bold
+      hi! LspCxxHlSymClass     ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
+      hi! LspCxxHlSymStruct    ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
+      hi! LspCxxHlSymEnum      ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
+      hi! LspCxxHlSymTypeAlias ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
+    endif
