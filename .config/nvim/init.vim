@@ -20,6 +20,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-repeat'
     Plug 'tommcdo/vim-exchange'
     Plug 'haya14busa/vim-asterisk'
+    Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     " Plug 'bkad/CamelCaseMotion'
@@ -37,7 +38,6 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf.vim'
     if !exists('s:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
-      Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
     if !exists('s:disable_deoplete')
       Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
@@ -58,13 +58,17 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'ii14/vim-dispatch'
     Plug 'cdelledonne/vim-cmake'
     Plug 'nacitar/a.vim'
+
+  " Syntax -----------------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
+    if !exists('s:disable_lsp')
+      Plug 'jackguo380/vim-lsp-cxx-highlight'
+    endif
 
   " Misc -------------------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'christoomey/vim-tmux-navigator'
     Plug 'lambdalisue/fern.vim'
     Plug 'antoinemadec/FixCursorHold.nvim'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
@@ -105,8 +109,8 @@ source ~/.config/nvim/init/qmake.vim
     let g:lightline.component_raw    = {'buffers': 1}
 
     set showtabline=2
-    let g:lightline#bufferline#unnamed          = '[No Name]'
-    let g:lightline#bufferline#clickable        = 1
+    let g:lightline#bufferline#unnamed   = '[No Name]'
+    let g:lightline#bufferline#clickable = 1
     " let g:lightline#bufferline#min_buffer_count = 2
 
     fun! LightlineMode()
@@ -164,14 +168,13 @@ source ~/.config/nvim/init/qmake.vim
       let g:completion_auto_change_source = 1
       let g:completion_matching_ignore_case = 1
       let g:completion_matching_strategy_list = ['exact', 'fuzzy', 'substring']
-      " let g:completion_chain_complete_list = {'default': [{'complete_items': ['buffers', 'path']}]}
-      let g:completion_chain_complete_list = {'default': [{'complete_items': ['lsp']}]}
+      let g:completion_chain_complete_list = {'default': [{'complete_items': ['buffers', 'path']}]}
 
       imap <C-J> <Plug>(completion_next_source)
       imap <C-K> <Plug>(completion_prev_source)
 
       aug Vimrc
-        au BufEnter * lua require'completion'.on_attach()
+        au BufEnter * lua require'vimrc_buf'.on_attach()
       aug end
     endif
 
@@ -184,11 +187,7 @@ source ~/.config/nvim/init/qmake.vim
           call deoplete#custom#buffer_option('sources', ['lsp'])
         else
           setl omnifunc=v:lua.vim.lsp.omnifunc
-          lua require'completion'.on_attach({
-            \   chain_complete_list = {
-            \     default = {{complete_items = {'lsp'}}}
-            \   }
-            \ })
+          lua require'vimrc_buf'.attach_completion_lsp()
         endif
       endfun
 
@@ -219,6 +218,9 @@ source ~/.config/nvim/init/qmake.vim
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
     let g:qs_max_chars=150
     let g:qs_buftype_blacklist = ['terminal', 'nofile']
+
+  " incsearch --------------------------------------------------------------------------------------
+    let g:incsearch#auto_nohlsearch = 1
 
   " vimwiki ----------------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
@@ -321,11 +323,16 @@ source ~/.config/nvim/init/qmake.vim
       com! MakeTags !ctags -R .
     endif
 
-  " compilation_database.json ----------------------------------------------------------------------
+  " Compiledb --------------------------------------------------------------------------------------
     if executable('compiledb')
-      com! Compiledb Dispatch compiledb -n make
-    elseif executable('bear')
-      com! Compiledb Dispatch bear -a make
+      com! -nargs=? -complete=dir Compiledb call s:compiledb(<q-args>)
+      fun! s:compiledb(path)
+        if a:path != ''
+          exe 'Dispatch cd '.a:path.' && compiledb -o '.getcwd().'/compile_commands.json -n make'
+        else
+          Dispatch compiledb -n make
+        endif
+      endfun
     endif
 
   " Redir ------------------------------------------------------------------------------------------
@@ -418,7 +425,16 @@ aug end
     vmap <leader>h <Plug>(asterisk-z*)
     nmap <leader>c <Plug>(asterisk-z*)cgn
     vmap <leader>c <Plug>(asterisk-z*)cgn
-    nnoremap <silent> <CR> :Noh<CR>
+    map /  <Plug>(incsearch-forward)
+    map ?  <Plug>(incsearch-backward)
+    map g/ <Plug>(incsearch-stay)
+    map n  <Plug>(incsearch-nohl-n)
+    map N  <Plug>(incsearch-nohl-N)
+    map *  <Plug>(incsearch-nohl-*)
+    map #  <Plug>(incsearch-nohl-#)
+    map g* <Plug>(incsearch-nohl-g*)
+    map g# <Plug>(incsearch-nohl-g#)
+    " nnoremap <silent> <CR> :Noh<CR>
 
   " Misc -------------------------------------------------------------------------------------------
     vnoremap <leader>t :Tabularize /
@@ -439,14 +455,14 @@ aug end
     nnoremap <leader>Y "+y$
 
   " Make -------------------------------------------------------------------------------------------
-    nnoremap m<CR> :up<CR>:Make<CR>
+    nnoremap m<CR>    :up<CR>:Make<CR>
     nnoremap m<Space> :up<CR>:Make<Space>
-    nnoremap m! :up<CR>:Make!<CR>
-    nnoremap m? :set makeprg?<CR>
-    nnoremap `<CR> :Dispatch<CR>
+    nnoremap m!       :up<CR>:Make!<CR>
+    nnoremap m?       :set makeprg?<CR>
+    nnoremap `<CR>    :Dispatch<CR>
     nnoremap `<Space> :Dispatch<Space>
-    nnoremap `! :Dispatch!<CR>
-    nnoremap `? :FocusDispatch<CR>
+    nnoremap `!       :Dispatch!<CR>
+    nnoremap `?       :FocusDispatch<CR>
 
   " Git --------------------------------------------------------------------------------------------
     nnoremap <leader>gs :G<CR>
@@ -477,39 +493,33 @@ aug end
       nnoremap <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nnoremap <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
       nnoremap <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-
-      " old
-      nnoremap <buffer><silent> ,d <cmd>lua vim.lsp.buf.definition()<CR>
-      nnoremap <buffer><silent> ,f <cmd>lua vim.lsp.buf.references()<CR>
-      nnoremap <buffer><silent> ,r <cmd>lua vim.lsp.buf.rename()<CR>
-      nnoremap <buffer><silent> ,e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
     endfun
 
   " Fern -------------------------------------------------------------------------------------------
     nnoremap - :Fern %:h<CR>
     fun! s:vimrc_fern_maps() abort
-      nmap <buffer><nowait> - <Plug>(fern-action-leave)
-      nmap <buffer><nowait> <BS> <Plug>(fern-action-leave)
-      nmap <buffer><nowait> <CR> <Plug>(fern-open-or-enter)
-      nmap <buffer><nowait> h <Plug>(fern-action-collapse)
-      nmap <buffer><nowait> l <Plug>(fern-open-or-expand)
-      nmap <buffer><nowait> e <Plug>(fern-action-open)
-      nmap <buffer><nowait> E <Plug>(fern-action-open:side)
+      nmap <buffer><nowait> -     <Plug>(fern-action-leave)
+      nmap <buffer><nowait> <BS>  <Plug>(fern-action-leave)
+      nmap <buffer><nowait> <CR>  <Plug>(fern-open-or-enter)
+      nmap <buffer><nowait> h     <Plug>(fern-action-collapse)
+      nmap <buffer><nowait> l     <Plug>(fern-open-or-expand)
+      nmap <buffer><nowait> e     <Plug>(fern-action-open)
+      nmap <buffer><nowait> E     <Plug>(fern-action-open:side)
 
-      nmap <buffer><nowait> m <Plug>(fern-action-mark:toggle)j
-      vmap <buffer><nowait> m <Plug>(fern-action-mark:toggle)
-      nmap <buffer><nowait> N <Plug>(fern-action-new-path)
-      nmap <buffer><nowait> R <Plug>(fern-action-rename)
-      nmap <buffer><nowait> C <Plug>(fern-action-clipboard-copy)
-      nmap <buffer><nowait> M <Plug>(fern-action-clipboard-move)
-      nmap <buffer><nowait> P <Plug>(fern-action-clipboard-paste)
-      nmap <buffer><nowait> D <Plug>(fern-action-trash)
+      nmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)j
+      vmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)
+      nmap <buffer><nowait> N     <Plug>(fern-action-new-path)
+      nmap <buffer><nowait> R     <Plug>(fern-action-rename)
+      nmap <buffer><nowait> C     <Plug>(fern-action-clipboard-copy)
+      nmap <buffer><nowait> M     <Plug>(fern-action-clipboard-move)
+      nmap <buffer><nowait> P     <Plug>(fern-action-clipboard-paste)
+      nmap <buffer><nowait> D     <Plug>(fern-action-trash)
 
-      nmap <buffer><nowait> ! <Plug>(fern-action-hidden-toggle)
-      nmap <buffer><nowait> fi <Plug>(fern-action-include)
-      nmap <buffer><nowait> fe <Plug>(fern-action-exclude)
+      nmap <buffer><nowait> !     <Plug>(fern-action-hidden-toggle)
+      nmap <buffer><nowait> fi    <Plug>(fern-action-include)
+      nmap <buffer><nowait> fe    <Plug>(fern-action-exclude)
 
-      nmap <buffer><nowait> <F5> <Plug>(fern-action-reload)
+      nmap <buffer><nowait> <F5>  <Plug>(fern-action-reload)
       nmap <buffer><nowait> <C-C> <Plug>(fern-action-cancel)
 
       nnoremap <buffer><nowait> q :Bdelete!<CR>
@@ -520,34 +530,34 @@ aug end
       nnoremap <buffer> <C-J> <C-W>j
     endfun
 
-" HIGHLIGHT ////////////////////////////////////////////////////////////////////////////////////////
+" SYNTAX ///////////////////////////////////////////////////////////////////////////////////////////
   " quickfix ---------------------------------------------------------------------------------------
     hi! link QuickFixLine PMenuSel
 
   " LSP --------------------------------------------------------------------------------------------
     if !exists('s:disable_lsp')
-      sign define LspDiagnosticsErrorSign text=\ E
-      sign define LspDiagnosticsWarningSign text=\ W
+      sign define LspDiagnosticsErrorSign       text=\ E
+      sign define LspDiagnosticsWarningSign     text=\ W
       sign define LspDiagnosticsInformationSign text=\ i
 
-      hi! link LspDiagnosticsError ErrorMsg
-      hi! link LspDiagnosticsWarning WarningMsg
+      hi! link LspDiagnosticsError       ErrorMsg
+      hi! link LspDiagnosticsWarning     WarningMsg
       hi! link LspDiagnosticsInformation Function
-      hi! link LspDiagnosticsUnderline Underlined
+      hi! link LspDiagnosticsUnderline   Underlined
 
       " vim-lsp-cxx-highlight
-      hi! link LspCxxHlSymUnknown          Normal
-      hi! link LspCxxHlSymTypeParameter    Structure
-      hi! link LspCxxHlSymFunction         Function
-      hi! link LspCxxHlSymMethod           Function
-      hi! link LspCxxHlSymStaticMethod     Function
-      hi! link LspCxxHlSymConstructor      Function
-      hi! link LspCxxHlSymEnumMember       Constant
-      hi! link LspCxxHlSymMacro            Macro
-      hi! link LspCxxHlSymNamespace        Keyword
-      hi! link LspCxxHlSymVariable         Normal
-      hi! link LspCxxHlSymParameter        Normal
-      hi! link LspCxxHlSymField            Normal
+      hi! link LspCxxHlSymUnknown        Normal
+      hi! link LspCxxHlSymTypeParameter  Structure
+      hi! link LspCxxHlSymFunction       Function
+      hi! link LspCxxHlSymMethod         Function
+      hi! link LspCxxHlSymStaticMethod   Function
+      hi! link LspCxxHlSymConstructor    Function
+      hi! link LspCxxHlSymEnumMember     Constant
+      hi! link LspCxxHlSymMacro          Macro
+      hi! link LspCxxHlSymNamespace      Keyword
+      hi! link LspCxxHlSymVariable       Normal
+      hi! link LspCxxHlSymParameter      Normal
+      hi! link LspCxxHlSymField          Normal
       hi! LspCxxHlSymField     ctermfg=145 guifg=#ABB2BF cterm=bold gui=bold
       hi! LspCxxHlSymClass     ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
       hi! LspCxxHlSymStruct    ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
