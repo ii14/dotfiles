@@ -1,4 +1,5 @@
 setl nonumber norelativenumber
+setl colorcolumn=
 
 nmap <buffer><nowait> -     <Plug>(fern-action-leave)
 nmap <buffer><nowait> <BS>  <Plug>(fern-action-leave)
@@ -24,7 +25,14 @@ nmap <buffer><nowait> fe    <Plug>(fern-action-exclude)
 nmap <buffer><nowait> <F5>  <Plug>(fern-action-reload)
 nmap <buffer><nowait> <C-C> <Plug>(fern-action-cancel)
 
-nnoremap <buffer><nowait> q :Bdelete!<CR>
+nnoremap <buffer><nowait><silent> q :call <SID>fern_close()<CR>
+fun! <SID>fern_close()
+  if fern#internal#drawer#is_drawer()
+    q
+  else
+    Bdelete!
+  endif
+endfun
 
 nnoremap <buffer> <C-H> <C-W>h
 nnoremap <buffer> <C-L> <C-W>l

@@ -3,7 +3,9 @@ if exists('g:loaded_strip')
 endif
 let g:loaded_strip = 1
 
-let g:strip_blacklist = ['gitcommit', 'diff']
+if !exists('g:strip_blacklist')
+  let g:strip_blacklist = ['gitcommit', 'diff']
+endif
 
 let s:strip_enabled = 2
 

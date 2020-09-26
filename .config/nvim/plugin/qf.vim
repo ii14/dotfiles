@@ -23,6 +23,10 @@ fun! <SID>QFSetupBuffer()
   nnoremap <buffer><nowait><silent> c :call <SID>QFExec('cc')<CR>
   nnoremap <buffer><nowait><silent> ] :call <SID>QFExec('cnext')<CR>
   nnoremap <buffer><nowait><silent> [ :call <SID>QFExec('cprevious')<CR>
+
+  let b:last_win = winnr('#')
+  au WinEnter  <buffer> if &ft ==? 'qf' | let b:last_win = winnr('#') | endif
+  au WinClosed <buffer> if &ft ==? 'qf' | exe b:last_win.'wincmd w' | endif
 endfun
 
 fun! <SID>QFExec(arg)
@@ -31,14 +35,14 @@ fun! <SID>QFExec(arg)
     silent exe a:arg
     norm! zz
     exe w . 'wincmd w'
-    norm! zt
+    norm! zz
   catch
   endtry
 endfun
 
 fun! <SID>QFSelect()
   let w = winnr()
-  norm! <CR>
+  .cc
   exe w . 'wincmd q'
   norm! zz
 endfun

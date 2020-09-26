@@ -10,6 +10,7 @@ local on_attach = function(_, bufnr)
 end
 
 -- C/C++
+-- TODO: semantic highlighting in clangd. works fine on ccls.
 nvim_lsp.clangd.setup{
   on_attach = on_attach;
   cmd = { "clangd-10", "--background-index" };
@@ -38,5 +39,10 @@ nvim_lsp.pyls.setup{
 
 -- Golang
 nvim_lsp.gopls.setup{
+  on_attach = on_attach;
+}
+
+-- Lua
+nvim_lsp.sumneko_lua.setup{
   on_attach = on_attach;
 }

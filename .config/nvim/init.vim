@@ -2,7 +2,7 @@ let mapleader      = ' '
 let maplocalleader = ' '
 filetype plugin on
 syntax on
-set textwidth=100
+set textwidth=90
 
 if !has('nvim') | let s:disable_lsp = 1 | endif
 
@@ -11,10 +11,10 @@ let s:deoplete_lazy_load = 1
 
 aug Vimrc | au! | aug end
 
-" PLUGINS //////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS ////////////////////////////////////////////////////////////////////////////////
 call plug#begin('~/.config/nvim/plugged')
 
-  " Editing ----------------------------------------------------------------------------------------
+  " Editing ------------------------------------------------------------------------------
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
@@ -26,7 +26,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'moll/vim-bbye'
     " Plug 'bkad/CamelCaseMotion'
 
-  " Visual -----------------------------------------------------------------------------------------
+  " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
     Plug 'edersonferreira/dalton-vim'
     Plug 'itchyny/lightline.vim'
@@ -34,7 +34,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'Yggdroot/indentLine'
     Plug 'unblevable/quick-scope'
 
-  " Search and Autocompletion ----------------------------------------------------------------------
+  " Search and Autocompletion ------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
     if !exists('s:disable_lsp')
@@ -51,14 +51,14 @@ call plug#begin('~/.config/nvim/plugged')
       Plug 'steelsojka/completion-buffers'
     endif
 
-  " Development ------------------------------------------------------------------------------------
+  " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
     Plug 'ii14/vim-dispatch'
     Plug 'cdelledonne/vim-cmake'
     Plug 'nacitar/a.vim'
 
-  " Syntax -----------------------------------------------------------------------------------------
+  " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
@@ -66,7 +66,7 @@ call plug#begin('~/.config/nvim/plugged')
       Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
 
-  " Misc -------------------------------------------------------------------------------------------
+  " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'lambdalisue/fern.vim'
     Plug 'antoinemadec/FixCursorHold.nvim'
@@ -74,72 +74,11 @@ call plug#begin('~/.config/nvim/plugged')
 
 call plug#end()
 
-" PLUGIN SETTINGS //////////////////////////////////////////////////////////////////////////////////
-  " Theme ------------------------------------------------------------------------------------------
-    set termguicolors
-    set background=dark
-    colorscheme onedark
-    " colorscheme dalton
+" PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
+  " Theme --------------------------------------------------------------------------------
+    " ~/.config/nvim/plugin/theme.vim
 
-  " Lightline --------------------------------------------------------------------------------------
-    let g:lightline = {}
-    let g:lightline.colorscheme = 'onedark'
-    let g:lightline.active = {
-      \   'left'  : [['mode', 'paste'], ['fugitive', 'readonly', 'filename']],
-      \   'right' : [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']],
-      \ }
-    let g:lightline.tabline = {
-      \   'left'  : [['buffers']],
-      \   'right' : [[]],
-      \ }
-    let g:lightline.component_function = {
-      \   'mode'         : 'LightlineMode',
-      \   'filename'     : 'LightlineFilename',
-      \   'fileformat'   : 'LightlineFileformat',
-      \   'fileencoding' : 'LightlineFileencoding',
-      \   'filetype'     : 'LightlineFiletype',
-      \   'fugitive'     : 'LightlineFugitive',
-      \ }
-    let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
-    let g:lightline.component_type   = {'buffers': 'tabsel'}
-    let g:lightline.component_raw    = {'buffers': 1}
-
-    set showtabline=2
-    let g:lightline#bufferline#unnamed   = '[No Name]'
-    let g:lightline#bufferline#clickable = 1
-    " let g:lightline#bufferline#min_buffer_count = 2
-
-    fun! LightlineMode()
-      return winwidth(0) < 50 ? '' : lightline#mode()
-    endfun
-
-    fun! LightlineFilename()
-      if &ft == 'qf' | return '[QuickFix]' | endif
-      let fname = expand('%:t')
-      return fname ==# '' ? '[No Name]' : &mod ? fname.' +' : fname
-    endfun
-
-    fun! LightlineFileformat()
-      return winwidth(0) > 70 && &ff !=? 'unix' ? &ff : ''
-    endfun
-
-    fun! LightlineFileencoding()
-      return winwidth(0) > 70 && &fenc !=? 'utf-8' ? &fenc : ''
-    endfun
-
-    fun! LightlineFiletype()
-      return winwidth(0) > 49 ? (&ft !=# '' ? &ft : 'no ft') : ''
-    endfun
-
-    fun! LightlineFugitive()
-      return winwidth(0) > 70 && &ft != 'qf' && exists('*FugitiveHead') ? FugitiveHead() : ''
-    endfun
-
-    aug Vimrc
-      au BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
-    aug end
-
-  " fzf --------------------------------------------------------------------------------------------
+  " fzf ----------------------------------------------------------------------------------
     let $FZF_DEFAULT_OPTS =
       \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
     let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
@@ -153,14 +92,14 @@ call plug#end()
       \ 'hl+'     : ['fg', 'Statement'],
       \ 'info'    : ['fg', 'PreProc'],
       \ 'border'  : ['fg', 'Ignore'],
-      \ 'prompt'  : ['fg', 'Conditional'],
+      \ 'prompt'  : ['fg', 'Function'],
       \ 'pointer' : ['fg', 'Exception'],
       \ 'marker'  : ['fg', 'Keyword'],
       \ 'spinner' : ['fg', 'Label'],
       \ 'header'  : ['fg', 'Comment']
       \ }
 
-  " Deoplete ---------------------------------------------------------------------------------------
+  " Deoplete -----------------------------------------------------------------------------
     if !exists('s:disable_deoplete')
       if !exists('s:deoplete_lazy_load ')
         let g:deoplete#enable_at_startup = 1
@@ -172,7 +111,7 @@ call plug#end()
       endif
     endif
 
-  " completion-nvim --------------------------------------------------------------------------------
+  " completion-nvim ----------------------------------------------------------------------
     if exists('s:disable_deoplete')
       let g:completion_enable_auto_signature = 0
       let g:completion_trigger_on_delete = 1
@@ -192,7 +131,7 @@ call plug#end()
       aug end
     endif
 
-  " nvim-lsp ---------------------------------------------------------------------------------------
+  " nvim-lsp -----------------------------------------------------------------------------
     if !exists('s:disable_lsp')
       " called when lsp is attached to the current buffer
       if exists('s:disable_deoplete')
@@ -211,34 +150,34 @@ call plug#end()
       lua require 'lsp/init'
     endif
 
-  " Fern -------------------------------------------------------------------------------------------
+  " Fern ---------------------------------------------------------------------------------
     let g:loaded_netrw             = 1 " disable netrw
     let g:loaded_netrwPlugin       = 1
     let g:loaded_netrwSettings     = 1
     let g:loaded_netrwFileHandlers = 1
     let g:fern#disable_default_mappings = 1
 
-  " Dispatch ---------------------------------------------------------------------------------------
-    let g:dispatch_no_maps = 1
-    let g:dispatch_keep_focus = 1
+  " Dispatch -----------------------------------------------------------------------------
+    let g:dispatch_no_maps    = 1
+    let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
 
-  " IndentLine -------------------------------------------------------------------------------------
-    let g:vim_json_syntax_conceal = 1
+  " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
+    let g:vim_json_syntax_conceal = 0
+    let g:vim_markdown_conceal = 0
+    let g:vim_markdown_conceal_code_blocks = 0
 
-  " quick-scope ------------------------------------------------------------------------------------
+  " quick-scope --------------------------------------------------------------------------
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-    let g:qs_max_chars=150
+    let g:qs_max_chars = 150
     let g:qs_buftype_blacklist = ['terminal', 'nofile']
 
-  " incsearch --------------------------------------------------------------------------------------
-    let g:incsearch#auto_nohlsearch = 1
-
-  " vimwiki ----------------------------------------------------------------------------------------
+  " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
 
-" SETTINGS /////////////////////////////////////////////////////////////////////////////////////////
-  " Visual -----------------------------------------------------------------------------------------
+" SETTINGS ///////////////////////////////////////////////////////////////////////////////
+  " Visual -------------------------------------------------------------------------------
+    set termguicolors
     set laststatus=2                          " show status line
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
@@ -251,7 +190,7 @@ call plug#end()
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=500                         " highlight only the first 500 columns
 
-  " Editing ----------------------------------------------------------------------------------------
+  " Editing ------------------------------------------------------------------------------
     set encoding=utf-8
     set history=1000                          " command history size
     set backspace=indent,eol,start            " allow backspace over...
@@ -263,14 +202,14 @@ call plug#end()
     set wrap linebreak breakindent            " visual wrap, on whitespace, follow indentation
     set diffopt+=iwhite,vertical
 
-  " Indentation and Folding ------------------------------------------------------------------------
+  " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces
     set shiftwidth=4 tabstop=4 softtabstop=4  " tab width
     set smarttab shiftround                   " follow tab grid
     set autoindent smartindent                " follow previous indentation, auto indent blocks
     set foldmethod=indent foldlevel=999       " folding based on indentation
 
-  " Search and Autocompletion ----------------------------------------------------------------------
+  " Search and Autocompletion ------------------------------------------------------------
     set path+=**
     set hlsearch incsearch                    " search highlighting, incremental
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
@@ -281,7 +220,7 @@ call plug#end()
     set completeopt+=noselect,menuone
     set completeopt-=preview
 
-  " Buffers ----------------------------------------------------------------------------------------
+  " Buffers ------------------------------------------------------------------------------
     set hidden                                " don't close buffers
     set autoread                              " update buffer if changed outside of vim
     set noswapfile                            " disable swap files
@@ -291,7 +230,7 @@ call plug#end()
     set undodir=~/.cache/nvim/undo            " undo files
     "set autochdir                             " change cwd to the current buffer
 
-  " Grep -------------------------------------------------------------------------------------------
+  " Grep ---------------------------------------------------------------------------------
     if executable('rg')
       set grepformat=%f:%l:%m
       let &grepprg = 'rg --vimgrep' . (&smartcase ? ' --smart-case' : '')
@@ -300,59 +239,69 @@ call plug#end()
       let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
     endif
 
-" COMMANDS /////////////////////////////////////////////////////////////////////////////////////////
-  " Set tab width ----------------------------------------------------------------------------------
+" COMMANDS ///////////////////////////////////////////////////////////////////////////////
+  " Set tab width ------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
 
-  " Go to the current buffer directory -------------------------------------------------------------
+  " Go to the current buffer directory ---------------------------------------------------
     com! D exe 'cd '.expand('%:h')
 
-  " Shortcuts --------------------------------------------------------------------------------------
+  " Shortcuts ----------------------------------------------------------------------------
     com! Wiki VimwikiIndex
     com! Vimrc edit $MYVIMRC
 
-  " Help -------------------------------------------------------------------------------------------
+  " Help ---------------------------------------------------------------------------------
     com! -nargs=? -complete=help H if <q-args> == '' | Helptags | else | h <args> | endif
 
-  " Update ctags -----------------------------------------------------------------------------------
+  " Update ctags -------------------------------------------------------------------------
     if executable('ctags')
       com! MakeTags !ctags -R .
     endif
 
-  " Redir ------------------------------------------------------------------------------------------
+  " Redir --------------------------------------------------------------------------------
     com! -nargs=1 -complete=command Redir
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
-" AUTOCOMMANDS /////////////////////////////////////////////////////////////////////////////////////
+  " nvim-lsp -----------------------------------------------------------------------------
+    if !exists('s:disable_lsp')
+      com! LspStop setl signcolumn=auto | lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+    endif
+
+" AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
-  " Return to last edit position -------------------------------------------------------------------
+  " Return to last edit position ---------------------------------------------------------
     au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal! g`\"" |
       \ endif
 
-  " make autowrite ---------------------------------------------------------------------------------
-    au QuickFixCmdPre make update
-
-  " Cursor line highlighting -----------------------------------------------------------------------
+  " Cursor line highlighting -------------------------------------------------------------
     au VimEnter,WinEnter,BufWinEnter * setl cursorline
     au WinLeave * setl nocursorline
 
-  " Terminal ---------------------------------------------------------------------------------------
+  " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber
     au BufLeave term://* stopinsert
 
-  " Tab widths -------------------------------------------------------------------------------------
+  " Tab widths ---------------------------------------------------------------------------
     au FileType yaml,ruby setl ts=2 sts=2 sw=2
 
-  " Autocompile ------------------------------------------------------------------------------------
+  " make autowrite -----------------------------------------------------------------------
+    au QuickFixCmdPre make update
+
+  " Autocompile --------------------------------------------------------------------------
     au BufWritePost *.ts,*.scss silent make
 
-  " Quickfix ---------------------------------------------------------------------------------------
-    au WinEnter * if winnr('$') == 1 && &buftype ==? "quickfix" | q | endif
+  " Auto close quickfix, if it's the last buffer -----------------------------------------
+    au WinEnter * if winnr('$') == 1 && &bt ==? "quickfix" | q | endif
 
-  " Open directory ---------------------------------------------------------------------------------
-    autocmd BufEnter * ++nested call s:fern_hijack_directory()
+  " Open help in vertical split, if there is enough space --------------------------------
+    au WinNew * au BufEnter * ++once
+      \ if (&bt ==? 'help' || &ft ==? 'man' || &ft ==? 'fugitive')
+      \ && winwidth(0) >= 180 | wincmd L | endif
+
+  " Open directories in fern -------------------------------------------------------------
+    au BufEnter * ++nested call s:fern_hijack_directory()
     fun! s:fern_hijack_directory() abort
       let path = expand('%:p')
       if !isdirectory(path) | return | endif
@@ -362,8 +311,8 @@ aug Vimrc
 
 aug end
 
-" KEY MAPPINGS /////////////////////////////////////////////////////////////////////////////////////
-  " Override defaults ------------------------------------------------------------------------------
+" KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
+  " Override defaults --------------------------------------------------------------------
     nnoremap 0 ^
     nnoremap ^ 0
     nnoremap Y y$
@@ -371,36 +320,45 @@ aug end
     vnoremap j gj
     nnoremap k gk
     vnoremap k gk
-    nnoremap <C-E> 3<C-E>
-    nnoremap <C-Y> 3<C-Y>
     vnoremap . :norm .<CR>
-    noremap q: :q
     nnoremap gV `[v`]
     nnoremap S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
+    nnoremap <C-E> 3<C-E>
+    nnoremap <C-Y> 3<C-Y>
 
-  " Windows ----------------------------------------------------------------------------------------
+    noremap q <Nop>
+    noremap Q q
+    noremap q: :q
+
+  " Windows ------------------------------------------------------------------------------
     nnoremap <C-H> <C-W>h
     nnoremap <C-J> <C-W>j
     nnoremap <C-K> <C-W>k
     nnoremap <C-L> <C-W>l
     nnoremap <leader>w <C-W>
 
-  " Buffers ----------------------------------------------------------------------------------------
+  " Buffers ------------------------------------------------------------------------------
     nnoremap <C-N> :bn<CR>
     nnoremap <C-P> :bp<CR>
     nnoremap <leader>d :Bdelete<CR>
     nnoremap <leader>D :Bdelete!<CR>
     nnoremap <leader>b :Buffers<CR>
-    " nnoremap <leader>f :Files<CR>
+
+  " Files --------------------------------------------------------------------------------
     nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
-    nnoremap - :Fern %:h -reveal=%<CR>
+    nnoremap <silent> - :Fern %:h -reveal=%<CR>
+    nnoremap <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
 
-  " Search and Replace -----------------------------------------------------------------------------
+  " Search and Replace -------------------------------------------------------------------
     nnoremap <leader>/ :Lines<CR>
     nnoremap <leader>? :BLines<CR>
     nnoremap <leader>s :%s//g<Left><Left>
     vnoremap <leader>s :s//g<Left><Left>
+    nmap <leader>h z*
+    vmap <leader>h z*
+    nmap <leader>c z*cgn
+    vmap <leader>c z*cgn
     map *   <Plug>(asterisk-*)<Plug>(is-nohl-1)
     map #   <Plug>(asterisk-#)<Plug>(is-nohl-1)
     map g*  <Plug>(asterisk-g*)<Plug>(is-nohl-1)
@@ -409,22 +367,15 @@ aug end
     map gz* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
     map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
     map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
-    nmap <leader>h z*
-    vmap <leader>h z*
-    nmap <leader>c z*cgn
-    vmap <leader>c z*cgn
 
-  " Misc -------------------------------------------------------------------------------------------
+  " Misc ---------------------------------------------------------------------------------
     vnoremap <leader>t :Tabularize /
     vnoremap <leader>n :norm!<Space>
     nnoremap <leader>a :A<CR>
     nnoremap <leader>H :Helptags<CR>
     nnoremap <leader>v ggVG
-    nnoremap <leader>ow :set wrap!<CR>
-    nnoremap <leader>oi :IndentLinesToggle<CR>
-    nnoremap <leader>on :ToggleLineNumber<CR>
 
-  " Clipboard --------------------------------------------------------------------------------------
+  " Clipboard ----------------------------------------------------------------------------
     nnoremap <leader>p "+p
     vnoremap <leader>p "+p
     nnoremap <leader>P "+P
@@ -433,7 +384,7 @@ aug end
     vnoremap <leader>y "+y
     nnoremap <leader>Y "+y$
 
-  " Make -------------------------------------------------------------------------------------------
+  " Make ---------------------------------------------------------------------------------
     nnoremap m<CR>    :up<CR>:Make<CR>
     nnoremap m<Space> :up<CR>:Make<Space>
     nnoremap m!       :up<CR>:Make!<CR>
@@ -443,26 +394,31 @@ aug end
     nnoremap `!       :Dispatch!<CR>
     nnoremap `?       :FocusDispatch<CR>
 
-  " Git --------------------------------------------------------------------------------------------
+  " Git ----------------------------------------------------------------------------------
     nnoremap <leader>gs :G<CR>
     nnoremap <leader>gl :Flog<CR>
-    nnoremap <silent> <leader>gd :Gvdiffsplit!<CR>
-    nnoremap <silent> <leader>gh :diffget //2<CR>
-    nnoremap <silent> <leader>gl :diffget //3<CR>
+    " nnoremap <silent> <leader>gd :Gvdiffsplit!<CR>
+    " nnoremap <silent> <leader>gh :diffget //2<CR>
+    " nnoremap <silent> <leader>gl :diffget //3<CR>
 
-  " Command ----------------------------------------------------------------------------------------
+  " Options ------------------------------------------------------------------------------
+    nnoremap <leader>ow :set wrap!<CR>
+    nnoremap <leader>oi :IndentLinesToggle<CR>
+    nnoremap <leader>on :LineNumbersToggle<CR>
+
+  " Command ------------------------------------------------------------------------------
     cnoremap <C-J> <Down>
     cnoremap <C-K> <Up>
     cnoremap %% <C-R>=expand('%:h').'/'<CR>
 
-  " Terminal ---------------------------------------------------------------------------------------
+  " Terminal -----------------------------------------------------------------------------
     tnoremap <C-W> <C-\><C-N><C-W>
     tnoremap <C-N> <C-\><C-N>:bn<CR>
     tnoremap <C-P> <C-\><C-N>:bp<CR>
     tnoremap <C-\> <C-\><C-N>
     tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
-  " LSP --------------------------------------------------------------------------------------------
+  " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
       nnoremap <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
       nnoremap <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
@@ -476,38 +432,3 @@ aug end
       nnoremap <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
       nnoremap <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
     endfun
-
-" SYNTAX ///////////////////////////////////////////////////////////////////////////////////////////
-  " quickfix ---------------------------------------------------------------------------------------
-    hi! link QuickFixLine PMenuSel
-
-  " LSP --------------------------------------------------------------------------------------------
-    if !exists('s:disable_lsp')
-      sign define LspDiagnosticsErrorSign       text=\ E
-      sign define LspDiagnosticsWarningSign     text=\ W
-      sign define LspDiagnosticsInformationSign text=\ i
-
-      hi! link LspDiagnosticsError       ErrorMsg
-      hi! link LspDiagnosticsWarning     WarningMsg
-      hi! link LspDiagnosticsInformation Function
-      hi! link LspDiagnosticsUnderline   Underlined
-
-      " vim-lsp-cxx-highlight
-      hi! link LspCxxHlSymUnknown        Normal
-      hi! link LspCxxHlSymTypeParameter  Structure
-      hi! link LspCxxHlSymFunction       Function
-      hi! link LspCxxHlSymMethod         Function
-      hi! link LspCxxHlSymStaticMethod   Function
-      hi! link LspCxxHlSymConstructor    Function
-      hi! link LspCxxHlSymEnumMember     Constant
-      hi! link LspCxxHlSymMacro          Macro
-      hi! link LspCxxHlSymNamespace      Keyword
-      hi! link LspCxxHlSymVariable       Normal
-      hi! link LspCxxHlSymParameter      Normal
-      hi! link LspCxxHlSymField          Normal
-      hi! LspCxxHlSymField     ctermfg=145 guifg=#ABB2BF cterm=bold gui=bold
-      hi! LspCxxHlSymClass     ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
-      hi! LspCxxHlSymStruct    ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
-      hi! LspCxxHlSymEnum      ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
-      hi! LspCxxHlSymTypeAlias ctermfg=180 guifg=#E5C07B
-    endif

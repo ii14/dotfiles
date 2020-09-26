@@ -1,3 +1,4 @@
+" TODO: detect dispatch.vim
 if executable('compiledb')
   com! -nargs=? -complete=dir Compiledb call s:compiledb(<q-args>)
   fun! s:compiledb(path)
