@@ -19,8 +19,9 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tommcdo/vim-exchange'
+    Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
-    Plug 'haya14busa/incsearch.vim'
+    Plug 'haya14busa/is.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     " Plug 'bkad/CamelCaseMotion'
@@ -44,8 +45,6 @@ call plug#begin('~/.config/nvim/plugged')
       Plug 'Shougo/neco-syntax'
       if !exists('s:disable_lsp')
         Plug 'Shougo/deoplete-lsp'
-      else
-        Plug 'deoplete-plugins/deoplete-clang'
       endif
     else
       Plug 'nvim-lua/completion-nvim'
@@ -75,10 +74,6 @@ call plug#begin('~/.config/nvim/plugged')
 
 call plug#end()
 
-source ~/.config/nvim/init/strip.vim
-source ~/.config/nvim/init/quickfix.vim
-source ~/.config/nvim/init/qmake.vim
-
 " PLUGIN SETTINGS //////////////////////////////////////////////////////////////////////////////////
   " Theme ------------------------------------------------------------------------------------------
     set termguicolors
@@ -98,11 +93,12 @@ source ~/.config/nvim/init/qmake.vim
       \   'right' : [[]],
       \ }
     let g:lightline.component_function = {
-      \   'mode'       : 'LightlineMode',
-      \   'filename'   : 'LightlineFilename',
-      \   'fileformat' : 'LightlineFileformat',
-      \   'filetype'   : 'LightlineFiletype',
-      \   'fugitive'   : 'LightlineFugitive',
+      \   'mode'         : 'LightlineMode',
+      \   'filename'     : 'LightlineFilename',
+      \   'fileformat'   : 'LightlineFileformat',
+      \   'fileencoding' : 'LightlineFileencoding',
+      \   'filetype'     : 'LightlineFiletype',
+      \   'fugitive'     : 'LightlineFugitive',
       \ }
     let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
     let g:lightline.component_type   = {'buffers': 'tabsel'}
@@ -114,7 +110,7 @@ source ~/.config/nvim/init/qmake.vim
     " let g:lightline#bufferline#min_buffer_count = 2
 
     fun! LightlineMode()
-      return winwidth(0) < 60 ? '' : lightline#mode()
+      return winwidth(0) < 50 ? '' : lightline#mode()
     endfun
 
     fun! LightlineFilename()
@@ -124,11 +120,15 @@ source ~/.config/nvim/init/qmake.vim
     endfun
 
     fun! LightlineFileformat()
-      return winwidth(0) > 70 ? &ff : ''
+      return winwidth(0) > 70 && &ff !=? 'unix' ? &ff : ''
+    endfun
+
+    fun! LightlineFileencoding()
+      return winwidth(0) > 70 && &fenc !=? 'utf-8' ? &fenc : ''
     endfun
 
     fun! LightlineFiletype()
-      return winwidth(0) > 70 ? (&ft !=# '' ? &ft : 'no ft') : ''
+      return winwidth(0) > 49 ? (&ft !=# '' ? &ft : 'no ft') : ''
     endfun
 
     fun! LightlineFugitive()
@@ -144,6 +144,21 @@ source ~/.config/nvim/init/qmake.vim
       \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
     let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
     let g:fzf_layout = {'down': '40%'}
+    let g:fzf_colors = {
+      \ 'fg'      : ['fg', 'Normal'],
+      \ 'bg'      : ['bg', 'Normal'],
+      \ 'hl'      : ['fg', 'Comment'],
+      \ 'fg+'     : ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+'     : ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+'     : ['fg', 'Statement'],
+      \ 'info'    : ['fg', 'PreProc'],
+      \ 'border'  : ['fg', 'Ignore'],
+      \ 'prompt'  : ['fg', 'Conditional'],
+      \ 'pointer' : ['fg', 'Exception'],
+      \ 'marker'  : ['fg', 'Keyword'],
+      \ 'spinner' : ['fg', 'Label'],
+      \ 'header'  : ['fg', 'Comment']
+      \ }
 
   " Deoplete ---------------------------------------------------------------------------------------
     if !exists('s:disable_deoplete')
@@ -155,10 +170,6 @@ source ~/.config/nvim/init/qmake.vim
           au InsertEnter * call deoplete#enable()
         aug end
       endif
-      if exists('s:disable_lsp')
-        let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-10/lib/libclang.so.1'
-        let g:deoplete#sources#clang#clang_header  = '/usr/lib/clang/10/include'
-      endif
     endif
 
   " completion-nvim --------------------------------------------------------------------------------
@@ -168,51 +179,52 @@ source ~/.config/nvim/init/qmake.vim
       let g:completion_auto_change_source = 1
       let g:completion_matching_ignore_case = 1
       let g:completion_matching_strategy_list = ['exact', 'fuzzy', 'substring']
-      let g:completion_chain_complete_list = {'default': [{'complete_items': ['buffers', 'path']}]}
+      let g:completion_chain_complete_list = {'default': [
+        \   {'complete_items': ['path'], 'triggered_only': ['/']},
+        \   {'complete_items': ['path', 'buffers']},
+        \ ]}
 
       imap <C-J> <Plug>(completion_next_source)
       imap <C-K> <Plug>(completion_prev_source)
 
       aug Vimrc
-        au BufEnter * lua require'vimrc_buf'.on_attach()
+        au BufEnter * lua require 'lsp/buf'.on_attach()
       aug end
     endif
 
   " nvim-lsp ---------------------------------------------------------------------------------------
     if !exists('s:disable_lsp')
-      fun! VimrcLspOnAttach() " called when lsp is attached to the current buffer
-        setl signcolumn=yes
-        call s:vimrc_lsp_maps()
-        if !exists('s:disable_deoplete')
+      " called when lsp is attached to the current buffer
+      if exists('s:disable_deoplete')
+        fun! VimrcLspOnAttach()
+          call s:init_maps_lsp()
+          lua require 'lsp/buf'.attach_completion_lsp()
+        endfun
+      else
+        fun! VimrcLspOnAttach()
+          call s:init_maps_lsp()
           call deoplete#custom#buffer_option('sources', ['lsp'])
-        else
-          setl omnifunc=v:lua.vim.lsp.omnifunc
-          lua require'vimrc_buf'.attach_completion_lsp()
-        endif
-      endfun
+        endfun
+      endif
 
-      " ~/.config/nvim/lua/vimrc_lsp.lua
-      lua require 'vimrc_lsp'
+      " ~/.config/nvim/lua/lsp/init.lua
+      lua require 'lsp/init'
     endif
 
   " Fern -------------------------------------------------------------------------------------------
-    let g:loaded_netrw       = 1 " disable netrw
-    let g:loaded_netrwPlugin = 1
+    let g:loaded_netrw             = 1 " disable netrw
+    let g:loaded_netrwPlugin       = 1
+    let g:loaded_netrwSettings     = 1
+    let g:loaded_netrwFileHandlers = 1
     let g:fern#disable_default_mappings = 1
-    aug Vimrc
-      au FileType fern call s:vimrc_fern_maps()
-    aug end
 
   " Dispatch ---------------------------------------------------------------------------------------
     let g:dispatch_no_maps = 1
     let g:dispatch_keep_focus = 1
 
   " IndentLine -------------------------------------------------------------------------------------
-    let g:vim_json_syntax_conceal = 0
+    let g:vim_json_syntax_conceal = 1
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
-    aug Vimrc
-      au FileType json IndentLinesDisable
-    aug end
 
   " quick-scope ------------------------------------------------------------------------------------
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
@@ -289,9 +301,6 @@ source ~/.config/nvim/init/qmake.vim
     endif
 
 " COMMANDS /////////////////////////////////////////////////////////////////////////////////////////
-  " Clear search highlighting ----------------------------------------------------------------------
-    com! Noh let @/ = ""
-
   " Set tab width ----------------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
 
@@ -302,37 +311,12 @@ source ~/.config/nvim/init/qmake.vim
     com! Wiki VimwikiIndex
     com! Vimrc edit $MYVIMRC
 
-  " fzf helptags -----------------------------------------------------------------------------------
-    com! H Helptags
-
-  " Rename file ------------------------------------------------------------------------------------
-    com! RenameFile call <SID>RenameFile()
-    fun! <SID>RenameFile()
-      let old_name = expand('%')
-      let new_name = input('New file name: ', expand('%'))
-      if new_name != '' && new_name != old_name
-        exe ':saveas ' . new_name
-        exe ':silent !rm ' . old_name
-        exe ':bd ' . old_name
-        redraw!
-      endif
-    endfun
+  " Help -------------------------------------------------------------------------------------------
+    com! -nargs=? -complete=help H if <q-args> == '' | Helptags | else | h <args> | endif
 
   " Update ctags -----------------------------------------------------------------------------------
     if executable('ctags')
       com! MakeTags !ctags -R .
-    endif
-
-  " Compiledb --------------------------------------------------------------------------------------
-    if executable('compiledb')
-      com! -nargs=? -complete=dir Compiledb call s:compiledb(<q-args>)
-      fun! s:compiledb(path)
-        if a:path != ''
-          exe 'Dispatch cd '.a:path.' && compiledb -o '.getcwd().'/compile_commands.json -n make'
-        else
-          Dispatch compiledb -n make
-        endif
-      endfun
     endif
 
   " Redir ------------------------------------------------------------------------------------------
@@ -341,7 +325,6 @@ source ~/.config/nvim/init/qmake.vim
 
 " AUTOCOMMANDS /////////////////////////////////////////////////////////////////////////////////////
 aug Vimrc
-
   " Return to last edit position -------------------------------------------------------------------
     au BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -360,26 +343,22 @@ aug Vimrc
     au BufLeave term://* stopinsert
 
   " Tab widths -------------------------------------------------------------------------------------
-    au FileType make
-      \ setl ts=8 sts=8 sw=8 noet
-    au FileType html,css,scss,yaml,vim,ruby
-      \ setl ts=2 sts=2 sw=2
+    au FileType yaml,ruby setl ts=2 sts=2 sw=2
 
   " Autocompile ------------------------------------------------------------------------------------
-    au FileType typescript
-      \ setl makeprg=deno\ bundle\ -c\ tsconfig.json\ %\ %:r.js
-    au FileType scss
-      \ setl makeprg=sassc\ %\ %:r.css
     au BufWritePost *.ts,*.scss silent make
-
-  " Abbreviations ----------------------------------------------------------------------------------
-    au FileType c,cpp ia <buffer> <silent> #i #include
-
-  " C/C++ single line comments ---------------------------------------------------------------------
-    au FileType c,cpp set commentstring=//%s
 
   " Quickfix ---------------------------------------------------------------------------------------
     au WinEnter * if winnr('$') == 1 && &buftype ==? "quickfix" | q | endif
+
+  " Open directory ---------------------------------------------------------------------------------
+    autocmd BufEnter * ++nested call s:fern_hijack_directory()
+    fun! s:fern_hijack_directory() abort
+      let path = expand('%:p')
+      if !isdirectory(path) | return | endif
+      bwipeout %
+      exe printf('Fern %s', fnameescape(path))
+    endfun
 
 aug end
 
@@ -392,12 +371,12 @@ aug end
     vnoremap j gj
     nnoremap k gk
     vnoremap k gk
-    noremap Q q
-    noremap q <Nop>
     nnoremap <C-E> 3<C-E>
     nnoremap <C-Y> 3<C-Y>
     vnoremap . :norm .<CR>
     noremap q: :q
+    nnoremap gV `[v`]
+    nnoremap S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
 
   " Windows ----------------------------------------------------------------------------------------
     nnoremap <C-H> <C-W>h
@@ -415,35 +394,35 @@ aug end
     " nnoremap <leader>f :Files<CR>
     nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
+    nnoremap - :Fern %:h -reveal=%<CR>
 
   " Search and Replace -----------------------------------------------------------------------------
     nnoremap <leader>/ :Lines<CR>
     nnoremap <leader>? :BLines<CR>
     nnoremap <leader>s :%s//g<Left><Left>
     vnoremap <leader>s :s//g<Left><Left>
-    nmap <leader>h <Plug>(asterisk-z*)
-    vmap <leader>h <Plug>(asterisk-z*)
-    nmap <leader>c <Plug>(asterisk-z*)cgn
-    vmap <leader>c <Plug>(asterisk-z*)cgn
-    map /  <Plug>(incsearch-forward)
-    map ?  <Plug>(incsearch-backward)
-    map g/ <Plug>(incsearch-stay)
-    map n  <Plug>(incsearch-nohl-n)
-    map N  <Plug>(incsearch-nohl-N)
-    map *  <Plug>(incsearch-nohl-*)
-    map #  <Plug>(incsearch-nohl-#)
-    map g* <Plug>(incsearch-nohl-g*)
-    map g# <Plug>(incsearch-nohl-g#)
-    " nnoremap <silent> <CR> :Noh<CR>
+    map *   <Plug>(asterisk-*)<Plug>(is-nohl-1)
+    map #   <Plug>(asterisk-#)<Plug>(is-nohl-1)
+    map g*  <Plug>(asterisk-g*)<Plug>(is-nohl-1)
+    map g#  <Plug>(asterisk-g#)<Plug>(is-nohl-1)
+    map z*  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
+    map gz* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
+    map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
+    map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+    nmap <leader>h z*
+    vmap <leader>h z*
+    nmap <leader>c z*cgn
+    vmap <leader>c z*cgn
 
   " Misc -------------------------------------------------------------------------------------------
     vnoremap <leader>t :Tabularize /
     vnoremap <leader>n :norm!<Space>
     nnoremap <leader>a :A<CR>
     nnoremap <leader>H :Helptags<CR>
-    nnoremap <leader>A ggVG
+    nnoremap <leader>v ggVG
     nnoremap <leader>ow :set wrap!<CR>
     nnoremap <leader>oi :IndentLinesToggle<CR>
+    nnoremap <leader>on :ToggleLineNumber<CR>
 
   " Clipboard --------------------------------------------------------------------------------------
     nnoremap <leader>p "+p
@@ -467,6 +446,9 @@ aug end
   " Git --------------------------------------------------------------------------------------------
     nnoremap <leader>gs :G<CR>
     nnoremap <leader>gl :Flog<CR>
+    nnoremap <silent> <leader>gd :Gvdiffsplit!<CR>
+    nnoremap <silent> <leader>gh :diffget //2<CR>
+    nnoremap <silent> <leader>gl :diffget //3<CR>
 
   " Command ----------------------------------------------------------------------------------------
     cnoremap <C-J> <Down>
@@ -481,7 +463,7 @@ aug end
     tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
   " LSP --------------------------------------------------------------------------------------------
-    fun! s:vimrc_lsp_maps()
+    fun! s:init_maps_lsp()
       nnoremap <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
       nnoremap <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
       nnoremap <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
@@ -493,41 +475,6 @@ aug end
       nnoremap <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nnoremap <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
       nnoremap <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-    endfun
-
-  " Fern -------------------------------------------------------------------------------------------
-    nnoremap - :Fern %:h<CR>
-    fun! s:vimrc_fern_maps() abort
-      nmap <buffer><nowait> -     <Plug>(fern-action-leave)
-      nmap <buffer><nowait> <BS>  <Plug>(fern-action-leave)
-      nmap <buffer><nowait> <CR>  <Plug>(fern-open-or-enter)
-      nmap <buffer><nowait> h     <Plug>(fern-action-collapse)
-      nmap <buffer><nowait> l     <Plug>(fern-open-or-expand)
-      nmap <buffer><nowait> e     <Plug>(fern-action-open)
-      nmap <buffer><nowait> E     <Plug>(fern-action-open:side)
-
-      nmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)j
-      vmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)
-      nmap <buffer><nowait> N     <Plug>(fern-action-new-path)
-      nmap <buffer><nowait> R     <Plug>(fern-action-rename)
-      nmap <buffer><nowait> C     <Plug>(fern-action-clipboard-copy)
-      nmap <buffer><nowait> M     <Plug>(fern-action-clipboard-move)
-      nmap <buffer><nowait> P     <Plug>(fern-action-clipboard-paste)
-      nmap <buffer><nowait> D     <Plug>(fern-action-trash)
-
-      nmap <buffer><nowait> !     <Plug>(fern-action-hidden-toggle)
-      nmap <buffer><nowait> fi    <Plug>(fern-action-include)
-      nmap <buffer><nowait> fe    <Plug>(fern-action-exclude)
-
-      nmap <buffer><nowait> <F5>  <Plug>(fern-action-reload)
-      nmap <buffer><nowait> <C-C> <Plug>(fern-action-cancel)
-
-      nnoremap <buffer><nowait> q :Bdelete!<CR>
-
-      nnoremap <buffer> <C-H> <C-W>h
-      nnoremap <buffer> <C-L> <C-W>l
-      nnoremap <buffer> <C-K> <C-W>k
-      nnoremap <buffer> <C-J> <C-W>j
     endfun
 
 " SYNTAX ///////////////////////////////////////////////////////////////////////////////////////////
@@ -562,5 +509,5 @@ aug end
       hi! LspCxxHlSymClass     ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
       hi! LspCxxHlSymStruct    ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
       hi! LspCxxHlSymEnum      ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
-      hi! LspCxxHlSymTypeAlias ctermfg=180 guifg=#E5C07B cterm=bold gui=bold
+      hi! LspCxxHlSymTypeAlias ctermfg=180 guifg=#E5C07B
     endif

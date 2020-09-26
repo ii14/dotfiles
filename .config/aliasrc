@@ -123,7 +123,6 @@ alias gcc='gcc -Wall -Wextra -Wshadow -pedantic'
 alias clang++='clang++ -Wall -Wextra -Wpedantic'
 alias clang='clang -Wall -Wextra -Wpedantic'
 alias gdb='gdb -quiet'
-alias qmake='/opt/Qt/5.12.5/gcc_64/bin/qmake'
 alias demangle='c++filt -t'
 
 # dev:other ------------------------------------------------
@@ -139,7 +138,8 @@ alias ytdlu='sudo pip install --upgrade youtube-dl'
 alias ytmp3='youtube-dl -x -f bestaudio/best'
 
 # git ------------------------------------------------------
-alias vimgit='vim "+Gedit :"'
+alias vwiki='vim -c "VimwikiIndex"'
+alias vgit='vim "+Gedit :"'
 alias g='git'
 alias ga='git add'
 alias gA='git add --all :/'
@@ -166,3 +166,4 @@ alias adr='apt-cache rdepends'
 alias cal='ncal -b3'
 alias bc='bc -q'
 alias ipinfo='curl ipinfo.io'
+

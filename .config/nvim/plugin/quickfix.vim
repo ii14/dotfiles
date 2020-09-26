@@ -14,9 +14,6 @@ fun! <SID>QFOpen()
 endfun
 
 fun! <SID>QFSetupBuffer()
-  setl number norelativenumber
-  setl scrolloff=0
-  setl nobuflisted
   nnoremap <buffer><nowait> j j
   nnoremap <buffer><nowait> k k
   nnoremap <buffer><nowait><silent> q :q<CR>

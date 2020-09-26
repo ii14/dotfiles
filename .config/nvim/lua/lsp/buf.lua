@@ -1,3 +1,5 @@
+local completion = require 'completion'
+
 local M = {}
 
 local has_lsp = function()
@@ -8,15 +10,15 @@ local has_lsp = function()
 end
 
 M.attach_completion_lsp = function()
-  require'completion'.on_attach({
+  completion.on_attach({
     chain_complete_list = {
-      default = {{complete_items = {'lsp'}}}
+      default = {{ complete_items = {'lsp'} }}
     }
   })
 end
 
 M.attach_completion_generic = function()
-  require'completion'.on_attach()
+  completion.on_attach()
 end
 
 M.on_attach = function()

@@ -1,42 +1,7 @@
-local nvim_lsp = require 'nvim_lsp'
-local root_pattern = nvim_lsp.util.root_pattern
-
 local api = vim.api
-local util = require 'vim.lsp.util'
+local util = vim.lsp.util
 local callbacks = vim.lsp.callbacks
-local log = require 'vim.lsp.log'
-
-
-local on_attach = function()
-  api.nvim_command('call VimrcLspOnAttach()')
-end
-
--- C/C++
-nvim_lsp.ccls.setup{
-  on_attach = on_attach;
-  init_options = {
-    highlight = { lsRanges = true };
-  };
-  root_dir = root_pattern("compile_commands.json");
-}
-
--- Python
-nvim_lsp.pyls.setup{
-  on_attach = on_attach;
-  settings = {
-    pyls = {
-      plugins = {
-        mccabe = { enabled = false };
-      }
-    }
-  }
-}
-
--- Golang
-nvim_lsp.gopls.setup{
-  on_attach = on_attach;
-}
-
+local log = vim.lsp.log
 
 -- don't switch back from quickfix to previous window
 callbacks['textDocument/references'] = function(_, _, result)
