@@ -262,9 +262,21 @@ call plug#end()
     com! -nargs=1 -complete=command Redir
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
-  " nvim-lsp -----------------------------------------------------------------------------
+  " LSP ----------------------------------------------------------------------------------
     if !exists('s:disable_lsp')
-      com! LspStop setl signcolumn=auto | lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+      com! LspStop
+        \ setl signcolumn=auto |
+        \ lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+
+      com! -nargs=? LspFind
+        \ exe 'lua vim.lsp.buf.workspace_symbol('
+        \ . (<q-args> == '' ? '' : "'".<q-args>."'") . ')'
+
+      com! -range=0 LspFormat
+        \ exe 'lua vim.lsp.buf.' . (<count> ? 'range_formatting()' : 'formatting()')
+
+      com! LspAction
+        \ lua vim.lsp.buf.code_action()
     endif
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
