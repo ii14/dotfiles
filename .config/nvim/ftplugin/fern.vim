@@ -8,15 +8,21 @@ nmap <buffer><nowait> h     <Plug>(fern-action-collapse)
 nmap <buffer><nowait> l     <Plug>(fern-open-or-expand)
 nmap <buffer><nowait> e     <Plug>(fern-action-open)
 nmap <buffer><nowait> E     <Plug>(fern-action-open:side)
+nmap <buffer><nowait> s     <Plug>(fern-action-open:split)
+nmap <buffer><nowait> v     <Plug>(fern-action-open:vsplit)
 
 nmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)j
+nmap <buffer><nowait> gm    <Plug>(fern-action-mark:toggle)
 vmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)
+
 nmap <buffer><nowait> N     <Plug>(fern-action-new-path)
 nmap <buffer><nowait> R     <Plug>(fern-action-rename)
 nmap <buffer><nowait> C     <Plug>(fern-action-clipboard-copy)
 nmap <buffer><nowait> M     <Plug>(fern-action-clipboard-move)
 nmap <buffer><nowait> P     <Plug>(fern-action-clipboard-paste)
-nmap <buffer><nowait> D     <Plug>(fern-action-trash)
+nmap <buffer><nowait> dd    <Plug>(fern-action-trash)
+
+nmap <buffer> <Plug>(fern-action-cd) <Plug>(fern-action-cd:root)
 
 nmap <buffer><nowait> !     <Plug>(fern-action-hidden-toggle)
 nmap <buffer><nowait> fi    <Plug>(fern-action-include)

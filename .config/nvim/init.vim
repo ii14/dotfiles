@@ -74,6 +74,17 @@ call plug#begin('~/.config/nvim/plugged')
 
 call plug#end()
 
+let s:missing_plugs = len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+if s:missing_plugs
+  let count_text = s:missing_plugs == 1
+    \ ? '1 plugin is missing'
+    \ : s:missing_plugs.' plugins are missing'
+  let res = input(count_text.'. Install? [y/n]: ')
+  if res ==? 'y' || res ==? 'yes'
+    PlugInstall
+  endif
+endif
+
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
     " ~/.config/nvim/plugin/theme.vim
@@ -239,6 +250,10 @@ call plug#end()
       let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
     endif
 
+    if has('nvim-0.4')
+      set pumblend=17
+    endif
+
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
   " Set tab width ------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
@@ -361,6 +376,7 @@ aug end
     nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
     nnoremap <silent> - :Fern %:h -reveal=%<CR>
     nnoremap <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
+    nnoremap <silent> g- :Fern . -drawer -reveal=%<CR>
 
   " Search and Replace -------------------------------------------------------------------
     nnoremap <leader>/ :Lines<CR>

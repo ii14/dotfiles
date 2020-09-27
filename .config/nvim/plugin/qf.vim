@@ -21,7 +21,9 @@ fun! <SID>QFSetupBuffer()
   nnoremap <buffer><nowait><silent> <leader>q :q<CR>
   nnoremap <buffer><nowait><silent> <CR> :call <SID>QFSelect()<CR>
   nnoremap <buffer><nowait><silent> c :call <SID>QFExec('cc')<CR>
+  nnoremap <buffer><nowait><silent> J :call <SID>QFExec('cnext')<CR>
   nnoremap <buffer><nowait><silent> ] :call <SID>QFExec('cnext')<CR>
+  nnoremap <buffer><nowait><silent> K :call <SID>QFExec('cprevious')<CR>
   nnoremap <buffer><nowait><silent> [ :call <SID>QFExec('cprevious')<CR>
 
   let b:last_win = winnr('#')
