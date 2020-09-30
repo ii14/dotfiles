@@ -1,5 +1,5 @@
 setl nonumber norelativenumber
-setl colorcolumn=
+" setl colorcolumn=
 
 nmap <buffer><nowait> -     <Plug>(fern-action-leave)
 nmap <buffer><nowait> <BS>  <Plug>(fern-action-leave)
@@ -10,6 +10,7 @@ nmap <buffer><nowait> e     <Plug>(fern-action-open)
 nmap <buffer><nowait> E     <Plug>(fern-action-open:side)
 nmap <buffer><nowait> s     <Plug>(fern-action-open:split)
 nmap <buffer><nowait> v     <Plug>(fern-action-open:vsplit)
+nmap <buffer><nowait> w     <Plug>(fern-action-open:select)
 
 nmap <buffer><nowait> m     <Plug>(fern-action-mark:toggle)j
 nmap <buffer><nowait> gm    <Plug>(fern-action-mark:toggle)

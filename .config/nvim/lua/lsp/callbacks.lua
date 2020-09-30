@@ -57,5 +57,3 @@ callbacks['textDocument/declaration']    = location_callback
 callbacks['textDocument/definition']     = location_callback
 callbacks['textDocument/typeDefinition'] = location_callback
 callbacks['textDocument/implementation'] = location_callback
-
--- vim:ft=lua

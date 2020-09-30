@@ -1,19 +1,20 @@
 local nvim_lsp = require 'nvim_lsp'
-local api = vim.api
 local root_pattern = nvim_lsp.util.root_pattern
-
+local util = require 'lsp/util'
 require 'lsp/callbacks'
 
-local on_attach = function(_, bufnr)
-  api.nvim_command('setlocal signcolumn=yes')
-  api.nvim_command('call VimrcLspOnAttach()')
-end
+
+local on_attach = util.on_attach
+
 
 -- C/C++
 -- TODO: semantic highlighting in clangd. works fine on ccls.
 nvim_lsp.clangd.setup{
-  on_attach = on_attach;
-  cmd = { "clangd-10", "--background-index" };
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    util.map('n', '<leader>a', ':ClangdSwitchSourceHeader<CR>')
+  end;
+  cmd = {"clangd", "--background-index"};
 }
 
 -- nvim_lsp.ccls.setup{
@@ -43,6 +44,6 @@ nvim_lsp.gopls.setup{
 }
 
 -- Lua
-nvim_lsp.sumneko_lua.setup{
-  on_attach = on_attach;
-}
+-- nvim_lsp.sumneko_lua.setup{
+--   on_attach = on_attach;
+-- }

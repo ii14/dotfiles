@@ -1,7 +1,7 @@
 let mapleader      = ' '
 let maplocalleader = ' '
-filetype plugin on
-syntax on
+" filetype plugin on
+" syntax on
 set textwidth=90
 
 if !has('nvim') | let s:disable_lsp = 1 | endif
@@ -68,7 +68,7 @@ call plug#begin('~/.config/nvim/plugged')
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'lambdalisue/fern.vim'
+    Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
 
@@ -87,7 +87,7 @@ endif
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
-    " ~/.config/nvim/plugin/theme.vim
+    source ~/.config/nvim/theme.vim
 
   " fzf ----------------------------------------------------------------------------------
     let $FZF_DEFAULT_OPTS =
@@ -138,7 +138,7 @@ endif
       imap <C-K> <Plug>(completion_prev_source)
 
       aug Vimrc
-        au BufEnter * lua require 'lsp/buf'.on_attach()
+        au BufEnter * lua require('lsp/completion').on_attach()
       aug end
     endif
 
@@ -148,7 +148,7 @@ endif
       if exists('s:disable_deoplete')
         fun! VimrcLspOnAttach()
           call s:init_maps_lsp()
-          lua require 'lsp/buf'.attach_completion_lsp()
+          lua require('lsp/completion').on_attach_lsp()
         endfun
       else
         fun! VimrcLspOnAttach()
@@ -158,7 +158,7 @@ endif
       endif
 
       " ~/.config/nvim/lua/lsp/init.lua
-      lua require 'lsp/init'
+      lua require('lsp/init')
     endif
 
   " Fern ---------------------------------------------------------------------------------
@@ -193,7 +193,8 @@ endif
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    set title                                 " set vim window title
+    " set title                                 " set vim window title
+    set notitle                               " nvim bug, crashes on :Helptags command
     set belloff=all                           " turn off bell
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
@@ -254,12 +255,15 @@ endif
       set pumblend=17
     endif
 
+    set sessionoptions-=help
+    set sessionoptions-=buffers
+
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
   " Set tab width ------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
 
   " Go to the current buffer directory ---------------------------------------------------
-    com! D exe 'cd '.expand('%:h')
+    com! D cd %:h
 
   " Shortcuts ----------------------------------------------------------------------------
     com! Wiki VimwikiIndex
@@ -277,11 +281,12 @@ endif
     com! -nargs=1 -complete=command Redir
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
+    com! Makeprg let &makeprg = input('makeprg=', &makeprg)
+
   " LSP ----------------------------------------------------------------------------------
     if !exists('s:disable_lsp')
       com! LspStop
-        \ setl signcolumn=auto |
-        \ lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+        \ lua require('lsp/util').stop_clients()
 
       com! -nargs=? LspFind
         \ exe 'lua vim.lsp.buf.workspace_symbol('
@@ -325,7 +330,7 @@ aug Vimrc
   " Open help in vertical split, if there is enough space --------------------------------
     au WinNew * au BufEnter * ++once
       \ if (&bt ==? 'help' || &ft ==? 'man' || &ft ==? 'fugitive')
-      \ && winwidth(0) >= 180 | wincmd L | endif
+      \ && winwidth(winnr('#')) >= 180 | wincmd L | endif
 
   " Open directories in fern -------------------------------------------------------------
     au BufEnter * ++nested call s:fern_hijack_directory()
@@ -352,10 +357,22 @@ aug end
     nnoremap S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
     nnoremap <C-E> 3<C-E>
     nnoremap <C-Y> 3<C-Y>
-
-    noremap q <Nop>
-    noremap Q q
     noremap q: :q
+    noremap Q <Nop>
+
+  " Macros -------------------------------------------------------------------------------
+    noremap q <Nop>
+    noremap <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
+    nnoremap <leader>q q
+
+  " Quickfix -----------------------------------------------------------------------------
+    nnoremap qq :QF<CR>
+    nnoremap qn :cnext<CR>
+    nnoremap qp :cprevious<CR>
+    nnoremap ql :clast<CR>
+    nnoremap qf :cfirst<CR>
+    nnoremap qc :cc<CR>
+    nnoremap qd :cclose<CR>
 
   " Windows ------------------------------------------------------------------------------
     nnoremap <C-H> <C-W>h
@@ -365,14 +382,18 @@ aug end
     nnoremap <leader>w <C-W>
 
   " Buffers ------------------------------------------------------------------------------
-    nnoremap <C-N> :bn<CR>
-    nnoremap <C-P> :bp<CR>
+    nnoremap <silent> <C-N> :bn<CR>
+    nnoremap <silent> <C-P> :bp<CR>
     nnoremap <leader>d :Bdelete<CR>
     nnoremap <leader>D :Bdelete!<CR>
     nnoremap <leader>b :Buffers<CR>
 
   " Files --------------------------------------------------------------------------------
-    nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
+    fun! <SID>FILES()
+      return (len(system('git rev-parse'))
+        \ ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
+    endfun
+    nnoremap <expr> <leader>f <SID>FILES()
     nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
     nnoremap <silent> - :Fern %:h -reveal=%<CR>
     nnoremap <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
@@ -425,9 +446,10 @@ aug end
   " Git ----------------------------------------------------------------------------------
     nnoremap <leader>gs :G<CR>
     nnoremap <leader>gl :Flog<CR>
-    " nnoremap <silent> <leader>gd :Gvdiffsplit!<CR>
-    " nnoremap <silent> <leader>gh :diffget //2<CR>
-    " nnoremap <silent> <leader>gl :diffget //3<CR>
+    nnoremap <leader>gb :G blame<CR>
+    nnoremap <leader>gd :Gvdiffsplit!<CR>
+    nnoremap <leader>g2 :diffget //2<CR>
+    nnoremap <leader>g3 :diffget //3<CR>
 
   " Options ------------------------------------------------------------------------------
     nnoremap <leader>ow :set wrap!<CR>

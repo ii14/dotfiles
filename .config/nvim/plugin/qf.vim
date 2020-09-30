@@ -1,4 +1,4 @@
-nnoremap <silent><unique> <leader>q :QF<CR>
+" nnoremap <silent> <leader>q :QF<CR>
 
 com! QF call <SID>QFOpen()
 
@@ -7,7 +7,9 @@ fun! <SID>QFOpen()
     silent clist
   catch
     redraw
-    echom 'quickfix: Empty'
+    echohl ErrorMsg
+    echo 'quickfix: Empty'
+    echohl None
     return
   endtry
   copen
@@ -16,37 +18,46 @@ endfun
 fun! <SID>QFSetupBuffer()
   nnoremap <buffer><nowait> j j
   nnoremap <buffer><nowait> k k
+
   nnoremap <buffer><nowait><silent> q :q<CR>
-  nnoremap <buffer><nowait><silent> <Esc> :q<CR>
-  nnoremap <buffer><nowait><silent> <leader>q :q<CR>
-  nnoremap <buffer><nowait><silent> <CR> :call <SID>QFSelect()<CR>
-  nnoremap <buffer><nowait><silent> c :call <SID>QFExec('cc')<CR>
-  nnoremap <buffer><nowait><silent> J :call <SID>QFExec('cnext')<CR>
-  nnoremap <buffer><nowait><silent> ] :call <SID>QFExec('cnext')<CR>
-  nnoremap <buffer><nowait><silent> K :call <SID>QFExec('cprevious')<CR>
-  nnoremap <buffer><nowait><silent> [ :call <SID>QFExec('cprevious')<CR>
+  nnoremap <buffer><nowait><silent> <Esc> <C-W>p
+
+  nnoremap <buffer><nowait><silent> o <CR><C-W>p
+  nnoremap <buffer><nowait><silent> v :call <SID>QFVSplit()<CR>
+  nnoremap <buffer><nowait><silent> s :call <SID>QFSplit()<CR>
+  " TODO: tab
+
+  nnoremap <buffer><nowait><silent> c :cc<CR><C-W>p
+  nnoremap <buffer><nowait><silent> J :cnext<CR><C-W>p
+  nnoremap <buffer><nowait><silent> n :cnext<CR><C-W>p
+  nnoremap <buffer><nowait><silent> K :cprevious<CR><C-W>p
+  nnoremap <buffer><nowait><silent> p :cprevious<CR><C-W>p
+  nnoremap <buffer><nowait><silent> f :cfirst<CR><C-W>p
+  nnoremap <buffer><nowait><silent> l :clast<CR><C-W>p
 
   let b:last_win = winnr('#')
-  au WinEnter  <buffer> if &ft ==? 'qf' | let b:last_win = winnr('#') | endif
-  au WinClosed <buffer> if &ft ==? 'qf' | exe b:last_win.'wincmd w' | endif
+  au WinEnter <buffer>
+    \ if &ft ==? 'qf' |
+    \   let b:last_win = winnr('#') |
+    \ endif
+  au WinClosed <buffer>
+    \ if &ft ==? 'qf' |
+    \   exe b:last_win.'wincmd w' |
+    \ endif
 endfun
 
-fun! <SID>QFExec(arg)
-  try
-    let w = winnr()
-    silent exe a:arg
-    norm! zz
-    exe w . 'wincmd w'
-    norm! zz
-  catch
-  endtry
+fun! <SID>QFVSplit()
+  let l = line('.')
+  wincmd p
+  wincmd v
+  exe l.'cc'
 endfun
 
-fun! <SID>QFSelect()
-  let w = winnr()
-  .cc
-  exe w . 'wincmd q'
-  norm! zz
+fun! <SID>QFSplit()
+  let l = line('.')
+  wincmd p
+  wincmd s
+  exe l.'cc'
 endfun
 
 aug au_quickfix | au!
