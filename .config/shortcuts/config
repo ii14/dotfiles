@@ -1,7 +1,20 @@
 profile     ~/.profile
 zsh         ~/.config/zsh/.zshrc
 alias       ~/.config/aliasrc
+
 vim         ~/.config/nvim/init.vim
-tmux        ~/.tmux.conf
 ssh         ~/.ssh/config
 git         ~/.gitconfig
+tmux        ~/.tmux.conf
+
+polybar     ~/.config/polybar/config
+rofi        ~/.config/rofi/config.rasi
+i3          ~/.config/i3/config
+bspwm       ~/.config/bspwm/bspwmrc
+sxhkd       ~/.config/sxhkd/sxhkdrc
+
+alacritty   ~/.config/alacritty/alacritty.yml
+kitty       ~/.config/kitty/kitty.conf
+
+ncmpcpp     ~/.config/ncmpcpp/config
+ncmpcppb    ~/.config/ncmpcpp/bindings

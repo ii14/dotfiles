@@ -3,11 +3,12 @@ let maplocalleader = ' '
 " filetype plugin on
 " syntax on
 set textwidth=90
+set termguicolors
 
-if !has('nvim') | let s:disable_lsp = 1 | endif
+if !has('nvim') | let g:disable_lsp = 1 | endif
 
-let s:disable_deoplete = 1
-let s:deoplete_lazy_load = 1
+let g:disable_deoplete = 1
+let g:deoplete_lazy_load = 1
 
 aug Vimrc | au! | aug end
 
@@ -37,13 +38,13 @@ call plug#begin('~/.config/nvim/plugged')
   " Search and Autocompletion ------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
-    if !exists('s:disable_lsp')
+    if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
     endif
-    if !exists('s:disable_deoplete')
+    if !exists('g:disable_deoplete')
       Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
       Plug 'Shougo/neco-syntax'
-      if !exists('s:disable_lsp')
+      if !exists('g:disable_lsp')
         Plug 'Shougo/deoplete-lsp'
       endif
     else
@@ -62,15 +63,18 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
-    if !exists('s:disable_lsp')
+    if !exists('g:disable_lsp')
       Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
+    Plug 'norcalli/nvim-colorizer.lua'
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
+
+    Plug '~/.config/nvim/qf.vim'
 
 call plug#end()
 
@@ -111,8 +115,8 @@ endif
       \ }
 
   " Deoplete -----------------------------------------------------------------------------
-    if !exists('s:disable_deoplete')
-      if !exists('s:deoplete_lazy_load ')
+    if !exists('g:disable_deoplete')
+      if !exists('g:deoplete_lazy_load ')
         let g:deoplete#enable_at_startup = 1
       else
         let g:deoplete#enable_at_startup = 0
@@ -123,7 +127,7 @@ endif
     endif
 
   " completion-nvim ----------------------------------------------------------------------
-    if exists('s:disable_deoplete')
+    if exists('g:disable_deoplete')
       let g:completion_enable_auto_signature = 0
       let g:completion_trigger_on_delete = 1
       let g:completion_auto_change_source = 1
@@ -143,9 +147,9 @@ endif
     endif
 
   " nvim-lsp -----------------------------------------------------------------------------
-    if !exists('s:disable_lsp')
+    if !exists('g:disable_lsp')
       " called when lsp is attached to the current buffer
-      if exists('s:disable_deoplete')
+      if exists('g:disable_deoplete')
         fun! VimrcLspOnAttach()
           call s:init_maps_lsp()
           lua require('lsp/completion').on_attach_lsp()
@@ -188,7 +192,6 @@ endif
 
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
-    set termguicolors
     set laststatus=2                          " show status line
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
@@ -284,7 +287,7 @@ endif
     com! Makeprg let &makeprg = input('makeprg=', &makeprg)
 
   " LSP ----------------------------------------------------------------------------------
-    if !exists('s:disable_lsp')
+    if !exists('g:disable_lsp')
       com! LspStop
         \ lua require('lsp/util').stop_clients()
 
@@ -366,13 +369,15 @@ aug end
     nnoremap <leader>q q
 
   " Quickfix -----------------------------------------------------------------------------
-    nnoremap qq :QF<CR>
-    nnoremap qn :cnext<CR>
-    nnoremap qp :cprevious<CR>
-    nnoremap ql :clast<CR>
-    nnoremap qf :cfirst<CR>
-    nnoremap qc :cc<CR>
-    nnoremap qd :cclose<CR>
+    nnoremap <silent> qq :call qf#open()<CR>
+    nnoremap <silent> qo :call qf#show()<CR>
+    nnoremap <silent> qd :cclose<CR>
+
+    nnoremap <silent> qn :cnext<CR>
+    nnoremap <silent> qp :cprevious<CR>
+    nnoremap <silent> ql :clast<CR>
+    nnoremap <silent> qf :cfirst<CR>
+    nnoremap <silent> qc :cc<CR>
 
   " Windows ------------------------------------------------------------------------------
     nnoremap <C-H> <C-W>h
@@ -455,6 +460,7 @@ aug end
     nnoremap <leader>ow :set wrap!<CR>
     nnoremap <leader>oi :IndentLinesToggle<CR>
     nnoremap <leader>on :LineNumbersToggle<CR>
+    nnoremap <leader>oc :ColorizerToggle<CR>
 
   " Command ------------------------------------------------------------------------------
     cnoremap <C-J> <Down>

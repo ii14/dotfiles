@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
     echo "$opts" | awk '{ print NR ") " $0 }'
     read -rp "select: " x
     opt=$(echo "$opts" | awk "NR == $x { print \$0; exit }")
-elif [ "$1" = 'edit' ]; then
+elif [ "$1" = '--edit' ]; then
     exec $EDITOR "$optfile"
 else
     opt="$1"

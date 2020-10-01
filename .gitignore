@@ -1,3 +1,5 @@
 .ccls-cache
+.clangd
 .ccls
 compile_commands.json
+.qmake.stash

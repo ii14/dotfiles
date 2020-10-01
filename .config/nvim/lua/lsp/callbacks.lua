@@ -39,8 +39,8 @@ callbacks['workspace/symbol']            = symbol_callback
 
 local location_callback = function(_, method, result)
   if result == nil or vim.tbl_isempty(result) then
-  local _ = log.info() and log.info(method, 'No location found')
-  return nil
+    local _ = log.info() and log.info(method, 'No location found')
+    return nil
   end
   if vim.tbl_islist(result) then
     util.jump_to_location(result[1])

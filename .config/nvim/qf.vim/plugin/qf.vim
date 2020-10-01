@@ -1,8 +1,6 @@
-" nnoremap <silent> <leader>q :QF<CR>
+com! QF call qf#open()
 
-com! QF call <SID>QFOpen()
-
-fun! <SID>QFOpen()
+fun! qf#open()
   try
     silent clist
   catch
@@ -15,7 +13,22 @@ fun! <SID>QFOpen()
   copen
 endfun
 
-fun! <SID>QFSetupBuffer()
+fun! qf#show()
+  try
+    silent clist
+  catch
+    redraw
+    echohl ErrorMsg
+    echo 'quickfix: Empty'
+    echohl None
+    return
+  endtry
+  copen
+  wincmd p
+endfun
+
+fun! qf#init()
+  " override j -> gj and k -> gk mappings
   nnoremap <buffer><nowait> j j
   nnoremap <buffer><nowait> k k
 
@@ -23,37 +36,40 @@ fun! <SID>QFSetupBuffer()
   nnoremap <buffer><nowait><silent> <Esc> <C-W>p
 
   nnoremap <buffer><nowait><silent> o <CR><C-W>p
-  nnoremap <buffer><nowait><silent> v :call <SID>QFVSplit()<CR>
-  nnoremap <buffer><nowait><silent> s :call <SID>QFSplit()<CR>
-  " TODO: tab
+  nnoremap <buffer><nowait><silent> s :call qf#split()<CR>
+  nnoremap <buffer><nowait><silent> v :call qf#vsplit()<CR>
+  " TODO: open in tab
 
   nnoremap <buffer><nowait><silent> c :cc<CR><C-W>p
   nnoremap <buffer><nowait><silent> J :cnext<CR><C-W>p
   nnoremap <buffer><nowait><silent> n :cnext<CR><C-W>p
   nnoremap <buffer><nowait><silent> K :cprevious<CR><C-W>p
   nnoremap <buffer><nowait><silent> p :cprevious<CR><C-W>p
-  nnoremap <buffer><nowait><silent> f :cfirst<CR><C-W>p
-  nnoremap <buffer><nowait><silent> l :clast<CR><C-W>p
+  nnoremap <buffer><nowait><silent> F :cfirst<CR><C-W>p
+  nnoremap <buffer><nowait><silent> L :clast<CR><C-W>p
+  nnoremap <buffer><nowait><silent> d :cclose<CR>
 
   let b:last_win = winnr('#')
-  au WinEnter <buffer>
+  au WinEnter <buffer> ++nested
     \ if &ft ==? 'qf' |
     \   let b:last_win = winnr('#') |
     \ endif
-  au WinClosed <buffer>
+  au WinClosed <buffer> ++nested
     \ if &ft ==? 'qf' |
     \   exe b:last_win.'wincmd w' |
     \ endif
+
+  wincmd J
 endfun
 
-fun! <SID>QFVSplit()
+fun! qf#vsplit()
   let l = line('.')
   wincmd p
   wincmd v
   exe l.'cc'
 endfun
 
-fun! <SID>QFSplit()
+fun! qf#split()
   let l = line('.')
   wincmd p
   wincmd s
@@ -61,5 +77,5 @@ fun! <SID>QFSplit()
 endfun
 
 aug au_quickfix | au!
-  au FileType qf call <SID>QFSetupBuffer()
+  au FileType qf call qf#init()
 aug end

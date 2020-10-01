@@ -36,23 +36,24 @@ let g:lightline#bufferline#clickable = 1
 
 fun! LightlineMode()
   if &ft == 'fern' | return 'Fern' | endif
-  if &ft == 'qf' | return 'QuickFix' | endif
+  if &bt == 'quickfix' | return 'QuickFix' | endif
   return winwidth(0) < 50 ? '' : lightline#mode()
 endfun
 
 fun! LightlineFilename()
-  if &ft == 'fern' || &ft == 'qf' | return '' | endif
+  if &ft == 'fern' | return '' | endif
+  if &bt == 'quickfix' | return getqflist({'title':1}).title | endif
   let fname = expand('%:t')
   return fname ==# '' ? '[No Name]' : &mod ? fname.' +' : fname
 endfun
 
 fun! LightlineFileformat()
-  if &ft == 'fern' || &ft == 'qf' | return '' | endif
+  if &ft == 'fern' || &bt == 'quickfix' | return '' | endif
   return winwidth(0) > 70 && &ff !=? 'unix' ? &ff : ''
 endfun
 
 fun! LightlineFileencoding()
-  if &ft == 'fern' || &ft == 'qf' | return '' | endif
+  if &ft == 'fern' || &bt == 'quickfix' | return '' | endif
   return winwidth(0) > 70 && &fenc !=? 'utf-8' ? &fenc : ''
 endfun
 

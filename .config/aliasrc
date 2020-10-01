@@ -51,6 +51,13 @@ ex() {
   fi
 }
 
+dev() {
+  res="$(
+    fd --type d --hidden --follow --exclude '.git' . ~/dev \
+      | fzf --reverse --height=50%)" \
+    && cd "$res"
+}
+
 codi() {
   local syntax="${1:-python}"
   shift
@@ -67,6 +74,8 @@ alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
 alias path='echo -e ${PATH//:/\\n}'
 
 hash -d Trash="$HOME/.local/share/Trash"
+
+alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 alias :q='exit'
 
@@ -137,9 +146,13 @@ alias ytdl='youtube-dl'
 alias ytdlu='sudo pip install --upgrade youtube-dl'
 alias ytmp3='youtube-dl -x -f bestaudio/best'
 
-# git ------------------------------------------------------
-alias vwiki='vim -c "VimwikiIndex"'
+# vim ------------------------------------------------------
 alias vgit='vim "+Gedit :"'
+alias vinstall='vim +PlugInstall +qa'
+alias vupdate='vim +PlugUpdate'
+alias vwiki='vim -c "VimwikiIndex"'
+
+# git ------------------------------------------------------
 alias g='git'
 alias ga='git add'
 alias gA='git add --all :/'

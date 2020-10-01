@@ -1,22 +1,21 @@
-[user]
-	name = <name>
-	email = <email>
+[include]
+	path = ~/.gitprivate
 
 [core]
-	excludesFile = ~/.gitglobalignore
+	excludesFile = ~/.gitignore
 
 [pager]
-    branch = false
+	branch = false
 
 [color]
-    ui = auto
+	ui = auto
 
 [alias]
-    st = status
-    ci = commit --verbose
-    co = checkout
-    aa = add --all
-    br = branch
-    dfs = diff --staged
-    branches = branch -a
-    l = log --format='%Cblue%ad%Creset %C(yellow)%h%Creset %Cgreen%an%Creset%Cred%d%Creset %s' --date=iso8601
+	st = status
+	ci = commit --verbose
+	co = checkout
+	aa = add --all
+	br = branch
+	dfs = diff --staged
+	branches = branch -a
+	l = log --format='%Cblue%ad%Creset %C(yellow)%h%Creset %Cgreen%an%Creset%Cred%d%Creset %s' --date=iso8601

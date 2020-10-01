@@ -3,7 +3,7 @@ typeset -A opt_args
 local -a _config_cmds
 
 _config_cmds=(
-    'edit:edit config list'
+    '--edit:--edit config list'
     $(dictionary keys "$HOME/.config/shortcuts/config")
 )
 

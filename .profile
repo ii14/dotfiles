@@ -1,25 +1,23 @@
 [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
 
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
+
 PathAppend()  { [ -d "$1" ] && PATH="$PATH:$1"; }
-PathPrepend() { [ -d "$1" ] && PATH="$1:$PATH"; }
-
-    # GO
-    PathAppend "/usr/local/go/bin"
-    PathAppend "$HOME/go/bin"
-    # HASKELL
-    PathAppend "/opt/ghc/bin"
-    PathAppend "/opt/cabal/bin"
-    # NIM
-    PathAppend "$HOME/.nimble/bin"
-    # RUST
-    PathAppend "$HOME/.cargo/bin"
-
+PathAppend "/usr/local/go/bin"
+PathAppend "$XDG_DATA_HOME/go/bin"
+PathAppend "/opt/ghc/bin"
+PathAppend "/opt/cabal/bin"
+PathAppend "$XDG_DATA_HOME/nimble"
+PathAppend "$XDG_DATA_HOME/cargo/bin"
 unset PathAppend
-unset PathPrepend
 
 
 export TERMINAL='alacritty'
@@ -33,10 +31,22 @@ export MEDIAPLAYER='mpv'
 
 export ZDOTDIR="$HOME/.config/zsh"
 export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
+export LESSHISTFILE="$HOME/.cache/lesshst"
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+export DOCKER_CONFIG="$XDG_DATA_HOME/docker"
+export GOPATH="$XDG_DATA_HOME/go"
+export PYLINTHOME="$XDG_DATA_HOME/pylint"
+export GEM_HOME="$XDG_DATA_HOME/gem"
+export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem"
+export NIMBLE_DIR="$XDG_DATA_HOME/nimble"
+export CABAL_DIR="$XDG_DATA_HOME/cabal"
+export CABAL_CONFIG="$XDG_CONFIG_HOME/cabal/config"
+export GHCUP_INSTALL_BASE_PREFIX="$XDG_DATA_HOME"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 
 
 export LESS='-R'
-export LESSHISTFILE="$HOME/.cache/lesshst"
 export LESS_TERMCAP_mb=$'\e[1;31m'
 export LESS_TERMCAP_md=$'\e[1;36m'
 export LESS_TERMCAP_so=$'\e[1;44;30m'
