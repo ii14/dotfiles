@@ -4,7 +4,7 @@ alias       ~/.config/aliasrc
 
 vim         ~/.config/nvim/init.vim
 ssh         ~/.ssh/config
-git         ~/.gitconfig
+git         ~/.config/git/config
 tmux        ~/.tmux.conf
 
 polybar     ~/.config/polybar/config
