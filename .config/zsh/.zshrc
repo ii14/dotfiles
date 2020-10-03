@@ -57,12 +57,9 @@ fi
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
 
 [ -f "$HOME/.local/share/shortcuts" ] && source "$HOME/.local/share/shortcuts"
-hashcwd() { hash -d "$1"="$PWD" }
 
 [ -d "$HOME/.emacs.d/bin" ] && export PATH="$PATH:$HOME/.emacs.d/bin"
 # [ -d "$HOME/repos/depot_tools" ] && export PATH="$PATH:$HOME/repos/depot_tools"
-
-export PYTHONSTARTUP=~/.config/pythonrc.py
 
 
 # KEY BINDINGS ===========================================================================

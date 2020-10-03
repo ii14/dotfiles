@@ -4,6 +4,10 @@ mkcd() {
   mkdir -pv "$1" && cd "$1"
 }
 
+hashcwd() {
+  hash -d "$1"="$PWD"
+}
+
 rm() {
   printf 'Continue?: rm'
   for i in "$@"; do printf " $i"; done
