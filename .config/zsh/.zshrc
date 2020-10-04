@@ -37,7 +37,7 @@ else
     # terminal window title
     _ms_customtitle=1
     _ms_settitle() {
-        [[ $_ms_customtitle != 0 ]] && echo -ne "\033]0;$(dirs) - zsh\007"
+        [[ $_ms_customtitle != 0 ]] && echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007"
     }
     title() {
         _ms_customtitle=0

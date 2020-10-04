@@ -17,6 +17,7 @@ PathAppend "/opt/ghc/bin"
 PathAppend "/opt/cabal/bin"
 PathAppend "$XDG_DATA_HOME/nimble"
 PathAppend "$XDG_DATA_HOME/cargo/bin"
+PathAppend "$XDG_DATA_HOME/gem/bin"
 unset PathAppend
 
 
