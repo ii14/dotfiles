@@ -113,6 +113,13 @@ SAVEHIST=10000
 HISTFILE=~/.cache/zsh/history
 
 
+# HISTORY ================================================================================
+
+DIRSTACKSIZE=12
+setopt autopushd pushdminus pushdsilent pushdtohome
+alias dh='dirs -v'
+
+
 # COMPLETION =============================================================================
 
 fpath=(~/.config/zsh/completions $fpath)
