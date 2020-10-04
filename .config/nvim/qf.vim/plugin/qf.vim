@@ -38,7 +38,7 @@ fun! qf#init()
   nnoremap <buffer><nowait><silent> o <CR><C-W>p
   nnoremap <buffer><nowait><silent> s :call qf#split()<CR>
   nnoremap <buffer><nowait><silent> v :call qf#vsplit()<CR>
-  " TODO: open in tab
+  nnoremap <buffer><nowait><silent> t :call qf#tabsplit()<CR>
 
   nnoremap <buffer><nowait><silent> c :cc<CR><C-W>p
   nnoremap <buffer><nowait><silent> J :cnext<CR><C-W>p
@@ -73,6 +73,13 @@ fun! qf#split()
   let l = line('.')
   wincmd p
   wincmd s
+  exe l.'cc'
+endfun
+
+fun! qf#tabsplit()
+  let l = line('.')
+  wincmd p
+  tab split
   exe l.'cc'
 endfun
 

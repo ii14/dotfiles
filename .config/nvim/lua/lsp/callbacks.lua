@@ -13,7 +13,7 @@ local find_qf_index = function(items)
       found_file = true
       if value.lnum == linenr then
         return index
-      elseif value.lnum < linenr or idx ~= -1 then
+      elseif value.lnum < linenr or idx == -1 then
         idx = index
       end
     elseif found_file then
@@ -40,7 +40,7 @@ callbacks['textDocument/references'] = function(_, _, result)
     print('LSP: No location found')
     return nil
   end
-  util.set_qflist(util.locations_to_items(result))
+  set_qflist(util.locations_to_items(result))
   api.nvim_command('copen')
 end
 
