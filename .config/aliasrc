@@ -155,6 +155,7 @@ alias vgit='vim "+Gedit :"'
 alias vinstall='vim +PlugInstall +qa'
 alias vupdate='vim +PlugUpdate'
 alias vwiki='vim -c "VimwikiIndex"'
+alias vimv='vim -u NORC "+syntax off"'
 
 # git ------------------------------------------------------
 alias g='git'

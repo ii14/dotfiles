@@ -3,7 +3,7 @@
 autoload -U colors && colors
 
 # Git prompt -----------------------------------------------------------------------------
-source ~/.zsh/git-prompt.zsh/git-prompt.zsh
+source ~/.config/zsh/plugins/git-prompt.zsh/git-prompt.zsh
 ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
