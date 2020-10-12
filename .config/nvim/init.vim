@@ -32,12 +32,18 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'edersonferreira/dalton-vim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
+
     Plug 'Yggdroot/indentLine'
     Plug 'unblevable/quick-scope'
 
-  " Search and Autocompletion ------------------------------------------------------------
+  " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
+    Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
+    Plug 'lambdalisue/fern-git-status.vim', {'on': 'Fern'}
+    Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
+
+  " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
     endif
@@ -63,15 +69,13 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
+    Plug 'norcalli/nvim-colorizer.lua'
     if !exists('g:disable_lsp')
       Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
-    Plug 'norcalli/nvim-colorizer.lua'
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
-    Plug 'antoinemadec/FixCursorHold.nvim'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
 
     Plug '~/.config/nvim/qf.vim'
@@ -330,11 +334,6 @@ aug Vimrc
   " Auto close quickfix, if it's the last buffer -----------------------------------------
     au WinEnter * if winnr('$') == 1 && &bt ==? "quickfix" | q | endif
 
-  " Open help in vertical split, if there is enough space --------------------------------
-    au WinNew * au BufEnter * ++once
-      \ if (&bt ==? 'help' || &ft ==? 'man' || &ft ==? 'fugitive')
-      \ && winwidth(winnr('#')) >= 180 | wincmd L | endif
-
   " Open directories in fern -------------------------------------------------------------
     au BufEnter * ++nested call s:fern_hijack_directory()
     fun! s:fern_hijack_directory() abort
@@ -344,71 +343,72 @@ aug Vimrc
       exe printf('Fern %s', fnameescape(path))
     endfun
 
+  " Open help in vertical split, if there is enough space --------------------------------
+    au WinNew * au BufEnter * ++once call <SID>NewSplit()
+    fun! <SID>NewSplit()
+      if (&bt ==? 'help' || &ft ==? 'man' || &ft ==? 'fugitive' || &ft ==? 'gitcommit')
+        let p = winnr('#')
+        if winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
+          let b = bufnr()
+          let bh = &l:bufhidden
+          setl bufhidden=hide
+          wincmd p
+          exe winnr('#').'wincmd q'
+          vsplit
+          exe b.'b'
+          let &l:bufhidden = bh
+        endif
+      endif
+    endfun
+
 aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
   " Override defaults --------------------------------------------------------------------
-    nnoremap 0 ^
-    nnoremap ^ 0
-    nnoremap Y y$
-    nnoremap j gj
-    vnoremap j gj
-    nnoremap k gk
-    vnoremap k gk
-    vnoremap . :norm .<CR>
-    nnoremap gV `[v`]
-    nnoremap S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
-    nnoremap <C-E> 3<C-E>
-    nnoremap <C-Y> 3<C-Y>
-    noremap q: :q
-    noremap Q <Nop>
-
-  " Macros -------------------------------------------------------------------------------
-    noremap q <Nop>
-    noremap <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
-    nnoremap <leader>q q
-
-  " Quickfix -----------------------------------------------------------------------------
-    nnoremap <silent> qq :call qf#open()<CR>
-    nnoremap <silent> qo :call qf#show()<CR>
-    nnoremap <silent> qd :cclose<CR>
-
-    nnoremap <silent> qn :cnext<CR>
-    nnoremap <silent> qp :cprevious<CR>
-    nnoremap <silent> ql :clast<CR>
-    nnoremap <silent> qf :cfirst<CR>
-    nnoremap <silent> qc :cc<CR>
+    nno 0 ^
+    nno ^ 0
+    nno Y y$
+    nno j gj
+    vno j gj
+    nno k gk
+    vno k gk
+    vno . :norm .<CR>
+    nno gV `[v`]
+    nno S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
+    nno <C-E> 3<C-E>
+    nno <C-Y> 3<C-Y>
+    no Q <Nop>
 
   " Windows ------------------------------------------------------------------------------
-    nnoremap <C-H> <C-W>h
-    nnoremap <C-J> <C-W>j
-    nnoremap <C-K> <C-W>k
-    nnoremap <C-L> <C-W>l
-    nnoremap <leader>w <C-W>
+    nno <C-H> <C-W>h
+    nno <C-J> <C-W>j
+    nno <C-K> <C-W>k
+    nno <C-L> <C-W>l
+    nno <leader>w <C-W>
 
   " Buffers ------------------------------------------------------------------------------
-    nnoremap <silent> <C-N> :bn<CR>
-    nnoremap <silent> <C-P> :bp<CR>
-    nnoremap <leader>d :Bdelete<CR>
-    nnoremap <leader>D :Bdelete!<CR>
-    nnoremap <leader>b :Buffers<CR>
+    nno <silent> <C-N> :bn<CR>
+    nno <silent> <C-P> :bp<CR>
+    nno <leader>d :Bdelete<CR>
+    nno <leader>D :Bdelete!<CR>
+    nno <leader>b :Buffers<CR>
 
   " Files --------------------------------------------------------------------------------
     fun! <SID>FILES()
       return (len(system('git rev-parse'))
         \ ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
     endfun
-    nnoremap <expr> <leader>f <SID>FILES()
-    nnoremap <leader>F :Files <C-R>=expand('%:h')<CR><CR>
-    nnoremap <silent> - :Fern %:h -reveal=%<CR>
-    nnoremap <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
-    nnoremap <silent> g- :Fern . -drawer -reveal=%<CR>
+    nno <silent><expr> <leader>f <SID>FILES()
+    nno <leader>F :Files <C-R>=expand('%:h')<CR><CR>
+    nno <silent> - :Fern %:h -reveal=%<CR>
+    nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
+    nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
   " Search and Replace -------------------------------------------------------------------
-    nnoremap <leader>/ :Lines<CR>
-    nnoremap <leader>? :BLines<CR>
-    nnoremap <leader>s :%s//g<Left><Left>
-    vnoremap <leader>s :s//g<Left><Left>
+    nno <leader>/ :Lines<CR>
+    nno <leader>? :BLines<CR>
+    nno <leader>s :%s//g<Left><Left>
+    vno <leader>s :s//g<Left><Left>
     nmap <leader>h z*
     vmap <leader>h z*
     nmap <leader>c z*cgn
@@ -422,69 +422,95 @@ aug end
     map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
     map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 
+  " Macros -------------------------------------------------------------------------------
+    no q <Nop>
+    no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
+    nno <leader>q q
+
+  " Quickfix -----------------------------------------------------------------------------
+    nno <silent> qq :call qf#open()<CR>
+    nno <silent> qo :call qf#show()<CR>
+    nno <silent> qd :cclose<CR>
+
+    nno <silent> qn :cnext<CR>
+    nno <silent> qp :cprevious<CR>
+    nno <silent> ql :clast<CR>
+    nno <silent> qf :cfirst<CR>
+    nno <silent> qc :cc<CR>
+
   " Misc ---------------------------------------------------------------------------------
-    vnoremap <leader>t :Tabularize /
-    vnoremap <leader>n :norm!<Space>
-    nnoremap <leader>a :A<CR>
-    nnoremap <leader>H :Helptags<CR>
-    nnoremap <leader>v ggVG
+    vno <leader>t :Tabularize /
+    vno <leader>n :norm!<Space>
+    nno <leader>a :A<CR>
+    nno <leader>H :Helptags<CR>
+    nno <leader>v ggVG
 
   " Clipboard ----------------------------------------------------------------------------
-    nnoremap <leader>p "+p
-    vnoremap <leader>p "+p
-    nnoremap <leader>P "+P
-    vnoremap <leader>P "+P
-    nnoremap <leader>y "+y
-    vnoremap <leader>y "+y
-    nnoremap <leader>Y "+y$
+    nno <leader>p "+p
+    vno <leader>p "+p
+    nno <leader>P "+P
+    vno <leader>P "+P
+    nno <leader>y "+y
+    vno <leader>y "+y
+    nno <leader>Y "+y$
 
   " Make ---------------------------------------------------------------------------------
-    nnoremap m<CR>    :up<CR>:Make<CR>
-    nnoremap m<Space> :up<CR>:Make<Space>
-    nnoremap m!       :up<CR>:Make!<CR>
-    nnoremap m?       :set makeprg?<CR>
-    nnoremap `<CR>    :Dispatch<CR>
-    nnoremap `<Space> :Dispatch<Space>
-    nnoremap `!       :Dispatch!<CR>
-    nnoremap `?       :FocusDispatch<CR>
+    nno m<CR>    :up<CR>:Make<CR>
+    nno m<Space> :up<CR>:Make<Space>
+    nno m!       :up<CR>:Make!<CR>
+    nno m?       :set makeprg?<CR>
+    nno `<CR>    :Dispatch<CR>
+    nno `<Space> :Dispatch<Space>
+    nno `!       :Dispatch!<CR>
+    nno `?       :FocusDispatch<CR>
 
   " Git ----------------------------------------------------------------------------------
-    nnoremap <leader>gs :G<CR>
-    nnoremap <leader>gl :Flog<CR>
-    nnoremap <leader>gb :G blame<CR>
-    nnoremap <leader>gd :Gvdiffsplit!<CR>
-    nnoremap <leader>g2 :diffget //2<CR>
-    nnoremap <leader>g3 :diffget //3<CR>
+    nno <leader>gs :G<CR>
+    nno <leader>gl :Flog<CR>
+    nno <leader>gb :G blame<CR>
+    nno <leader>gd :Gvdiffsplit!<CR>
+    nno <leader>g2 :diffget //2<CR>
+    nno <leader>g3 :diffget //3<CR>
 
   " Options ------------------------------------------------------------------------------
-    nnoremap <leader>ow :set wrap!<CR>
-    nnoremap <leader>oi :IndentLinesToggle<CR>
-    nnoremap <leader>on :LineNumbersToggle<CR>
-    nnoremap <leader>oc :ColorizerToggle<CR>
+    nno <leader>ow :set wrap!<CR>
+    nno <leader>oi :IndentLinesToggle<CR>
+    nno <leader>on :LineNumbersToggle<CR>
+    nno <leader>oc :ColorizerToggle<CR>
 
   " Command ------------------------------------------------------------------------------
-    cnoremap <C-J> <Down>
-    cnoremap <C-K> <Up>
-    cnoremap %% <C-R>=expand('%:h').'/'<CR>
+    cno <C-J> <Down>
+    cno <C-K> <Up>
+    cno %% <C-R>=expand('%:h').'/'<CR>
 
   " Terminal -----------------------------------------------------------------------------
-    tnoremap <C-W> <C-\><C-N><C-W>
-    tnoremap <C-N> <C-\><C-N>:bn<CR>
-    tnoremap <C-P> <C-\><C-N>:bp<CR>
-    tnoremap <C-\> <C-\><C-N>
-    tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+    tno <C-W> <C-\><C-N><C-W>
+    tno <C-N> <C-\><C-N>:bn<CR>
+    tno <C-P> <C-\><C-N>:bp<CR>
+    tno <C-\> <C-\><C-N>
+    tno <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
-      nnoremap <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
-      nnoremap <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-      nnoremap <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-      nnoremap <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-      inoremap <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
-      nnoremap <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-      nnoremap <buffer><silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-      nnoremap <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
-      nnoremap <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-      nnoremap <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-      nnoremap <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+      nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
+      nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+      nno <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+      nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+      ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
+      nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+      nno <buffer><silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+      nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
+      nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+      nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+      nno <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+
+      " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
+      " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
+      " vno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
+      " vno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
+
+      " nno <buffer><silent> <leader>ls :LspFind<CR>
+      " nno <buffer><silent> <leader>lf :LspFormat<CR>
+      " vno <buffer><silent> <leader>lf :LspFormat<CR>
+      " nno <buffer><silent> <leader>la :LspAction<CR>
     endfun

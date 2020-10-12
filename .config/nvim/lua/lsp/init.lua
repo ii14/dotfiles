@@ -47,3 +47,13 @@ nvim_lsp.gopls.setup{
 -- nvim_lsp.sumneko_lua.setup{
 --   on_attach = on_attach;
 -- }
+
+-- Ruby
+nvim_lsp.solargraph.setup{
+  on_attach = on_attach;
+  settings = {
+    solargraph = {
+      diagnostics = true;
+    }
+  };
+}
