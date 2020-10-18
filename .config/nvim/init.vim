@@ -55,7 +55,7 @@ call plug#begin('~/.config/nvim/plugged')
       endif
     else
       Plug 'nvim-lua/completion-nvim'
-      Plug 'steelsojka/completion-buffers'
+      " Plug 'steelsojka/completion-buffers' " slows down startup on large files
     endif
 
   " Development --------------------------------------------------------------------------
@@ -177,7 +177,6 @@ endif
     let g:fern#disable_default_mappings = 1
 
   " Dispatch -----------------------------------------------------------------------------
-    let g:dispatch_no_maps    = 1
     let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
 
   " IndentLine ---------------------------------------------------------------------------
@@ -207,7 +206,7 @@ endif
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
-    set synmaxcol=500                         " highlight only the first 500 columns
+    set synmaxcol=1000                        " highlight only the first 1000 columns
 
   " Editing ------------------------------------------------------------------------------
     set encoding=utf-8
@@ -215,7 +214,7 @@ endif
     set backspace=indent,eol,start            " allow backspace over...
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1                           " keep near lines visible when scrolling
-    set confirm                               " display dialog instead of failing
+    " set confirm                               " display dialog instead of failing
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
     set wrap linebreak breakindent            " visual wrap, on whitespace, follow indentation
@@ -234,6 +233,7 @@ endif
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
     set inccommand=nosplit                    " sed preview
     set wildmenu                              " command completion
+    set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
     set shortmess+=c                          " silent completion
     set pumheight=25                          " autocompletion popup height
     set completeopt+=noselect,menuone
@@ -247,7 +247,7 @@ endif
     set directory=~/.cache/nvim/swap          " swap files
     set backupdir=~/.cache/nvim/backup        " backup files
     set undodir=~/.cache/nvim/undo            " undo files
-    "set autochdir                             " change cwd to the current buffer
+    " set autochdir                             " change cwd to the current buffer
 
   " Grep ---------------------------------------------------------------------------------
     if executable('rg')
@@ -305,6 +305,9 @@ endif
       com! LspAction
         \ lua vim.lsp.buf.code_action()
     endif
+
+  " Toggle mouse -------------------------------------------------------------------------
+    com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -378,6 +381,7 @@ aug end
     nno <C-E> 3<C-E>
     nno <C-Y> 3<C-Y>
     no Q <Nop>
+    nno q: :
 
   " Windows ------------------------------------------------------------------------------
     nno <C-H> <C-W>h
@@ -400,6 +404,7 @@ aug end
     endfun
     nno <silent><expr> <leader>f <SID>FILES()
     nno <leader>F :Files <C-R>=expand('%:h')<CR><CR>
+    nno <leader>h :History<CR>
     nno <silent> - :Fern %:h -reveal=%<CR>
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
@@ -409,8 +414,6 @@ aug end
     nno <leader>? :BLines<CR>
     nno <leader>s :%s//g<Left><Left>
     vno <leader>s :s//g<Left><Left>
-    nmap <leader>h z*
-    vmap <leader>h z*
     nmap <leader>c z*cgn
     vmap <leader>c z*cgn
     map *   <Plug>(asterisk-*)<Plug>(is-nohl-1)
@@ -458,16 +461,12 @@ aug end
     nno m<CR>    :up<CR>:Make<CR>
     nno m<Space> :up<CR>:Make<Space>
     nno m!       :up<CR>:Make!<CR>
-    nno m?       :set makeprg?<CR>
-    nno `<CR>    :Dispatch<CR>
-    nno `<Space> :Dispatch<Space>
-    nno `!       :Dispatch!<CR>
-    nno `?       :FocusDispatch<CR>
 
   " Git ----------------------------------------------------------------------------------
     nno <leader>gs :G<CR>
     nno <leader>gl :Flog<CR>
     nno <leader>gb :G blame<CR>
+    nno <leader>ga :Gwrite<CR>
     nno <leader>gd :Gvdiffsplit!<CR>
     nno <leader>g2 :diffget //2<CR>
     nno <leader>g3 :diffget //3<CR>
@@ -477,6 +476,7 @@ aug end
     nno <leader>oi :IndentLinesToggle<CR>
     nno <leader>on :LineNumbersToggle<CR>
     nno <leader>oc :ColorizerToggle<CR>
+    nno <leader>om :MouseToggle<CR>
 
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>

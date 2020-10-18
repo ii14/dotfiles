@@ -1,6 +1,10 @@
 " quickfix
 hi! link QuickFixLine PMenuSel
 
+" quick-scope
+hi! link QuickScopePrimary Search
+hi! link QuickScopeSecondary WildMenu
+
 " nvim-lsp
 sign define LspDiagnosticsErrorSign       text=\ E
 sign define LspDiagnosticsWarningSign     text=\ W

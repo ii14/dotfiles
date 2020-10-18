@@ -15,10 +15,9 @@ com! StripTrailingWhitespacesEnable let s:strip_enabled = 1
 com! StripTrailingWhitespacesDisable let s:strip_enabled = 0
 
 fun! s:strip()
-  let l = line(".")
-  let c = col(".")
+  let v = winsaveview()
   %s/\s\+$//e
-  call cursor(l, c)
+  call winrestview(v)
 endfun
 
 fun! s:strip_au()

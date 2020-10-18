@@ -3,6 +3,7 @@ local root_pattern = nvim_lsp.util.root_pattern
 local util = require 'lsp/util'
 require 'lsp/callbacks'
 
+local configs = require 'nvim_lsp/configs'
 
 local on_attach = util.on_attach
 
@@ -56,4 +57,16 @@ nvim_lsp.solargraph.setup{
       diagnostics = true;
     }
   };
+}
+
+-- Dlang
+configs.dls = {
+  default_config = {
+    cmd = {"dls"};
+    filetypes = {"d"};
+    root_dir = root_pattern("dub.sdl", "dub.json");
+  };
+}
+nvim_lsp.dls.setup{
+  on_attach = on_attach;
 }

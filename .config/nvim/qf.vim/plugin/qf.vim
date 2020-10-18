@@ -59,7 +59,7 @@ fun! qf#init()
     \   exe b:last_win.'wincmd w' |
     \ endif
 
-  wincmd J
+  " wincmd J  " https://github.com/neovim/neovim/issues/13104
 endfun
 
 fun! qf#vsplit()
