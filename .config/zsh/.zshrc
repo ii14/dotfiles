@@ -9,9 +9,9 @@ ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
 ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233} "
 ZSH_THEME_GIT_PROMPT_SEPARATOR="%K{233} "
-ZSH_THEME_GIT_PROMPT_DETACHED="%K{233}%{$fg_bold[cyan]%}:"
-ZSH_THEME_GIT_PROMPT_BRANCH="%K{233}%{$fg_bold[yellow]%}"
-ZSH_THEME_GIT_PROMPT_UPSTREAM_SYMBOL="%K{233}%{$fg_bold[yellow]%}⟳ "
+ZSH_THEME_GIT_PROMPT_DETACHED="%K{233}%{$fg[cyan]%}:"
+ZSH_THEME_GIT_PROMPT_BRANCH="%K{233}%{$fg[yellow]%}"
+ZSH_THEME_GIT_PROMPT_UPSTREAM_SYMBOL="%K{233}%{$fg[yellow]%}⟳ "
 ZSH_THEME_GIT_PROMPT_UPSTREAM_PREFIX="%K{233}%{$fg[red]%}(%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_UPSTREAM_SUFFIX="%K{233}%{$fg[red]%})"
 ZSH_THEME_GIT_PROMPT_BEHIND="%K{233}↓"
@@ -21,7 +21,7 @@ ZSH_THEME_GIT_PROMPT_STAGED="%K{233}%{$fg[green]%}●"
 ZSH_THEME_GIT_PROMPT_UNSTAGED="%K{233}%{$fg[red]%}+"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%K{233}…"
 ZSH_THEME_GIT_PROMPT_STASHED="%K{233}%{$fg[blue]%}⚑"
-ZSH_THEME_GIT_PROMPT_CLEAN="%K{233}%{$fg_bold[green]%}✔"
+ZSH_THEME_GIT_PROMPT_CLEAN="%K{233}%{$fg[green]%}✔"
 
 # Prompt ---------------------------------------------------------------------------------
 if [[ "$TERM" == 'linux' ]]; then
@@ -50,6 +50,24 @@ else
 fi
 
 # 
+
+# set -o vi
+# vim_ins_mode="%F{233}%K{2}%k%F{2}%f"
+# vim_cmd_mode="%F{233}%K{4}%k%F{4}%f"
+# vim_mode=$vim_ins_mode
+
+# function zle-keymap-select {
+#     vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
+#     zle reset-prompt
+# }
+# zle -N zle-keymap-select
+
+# function zle-line-finish {
+#     vim_mode=$vim_ins_mode
+# }
+# zle -N zle-line-finish
+
+# PROMPT='%K{233}%f %B%(4~|%-1~/…/%2~|%3~)%b $(gitprompt)${vim_mode} '
 
 
 # INCLUDES ===============================================================================
@@ -152,5 +170,17 @@ zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 setopt auto_cd
 setopt notify
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# FZF ====================================================================================
+
+export FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
+
+if command -v fd >/dev/null 2>&1; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude ".git"'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude ".git"'
+    _fzf_compgen_path() { fd --hidden --exclude ".git" . "$@"; }
+    _fzf_compgen_dir() { fd --type d --hidden --exclude ".git" . "$@"; }
+fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

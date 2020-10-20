@@ -27,6 +27,18 @@ fun! qf#show()
   wincmd p
 endfun
 
+fun! qf#toggle()
+  for i in range(1, winnr('$'))
+    let b = winbufnr(i)
+    if getbufvar(b, '&buftype') ==# 'quickfix'
+      cclose
+      return
+    endif
+  endfor
+
+  call qf#show()
+endfun
+
 fun! qf#init()
   " override j -> gj and k -> gk mappings
   nnoremap <buffer><nowait> j j
@@ -51,15 +63,18 @@ fun! qf#init()
 
   let b:last_win = winnr('#')
   au WinEnter <buffer> ++nested
-    \ if &ft ==? 'qf' |
+    \ if &ft ==# 'qf' |
     \   let b:last_win = winnr('#') |
     \ endif
   au WinClosed <buffer> ++nested
-    \ if &ft ==? 'qf' |
+    \ if &ft ==# 'qf' |
     \   exe b:last_win.'wincmd w' |
     \ endif
 
-  " wincmd J  " https://github.com/neovim/neovim/issues/13104
+  " wincmd J with quickfix is broken on the latest builds
+  " issue: https://github.com/neovim/neovim/issues/13104
+  " last working build: https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable/+build/20133359
+  wincmd J
 endfun
 
 fun! qf#vsplit()

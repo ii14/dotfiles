@@ -40,7 +40,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
-    Plug 'lambdalisue/fern-git-status.vim', {'on': 'Fern'}
+    " Plug 'lambdalisue/fern-git-status.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
 
   " Autocompletion -----------------------------------------------------------------------
@@ -157,11 +157,13 @@ endif
         fun! VimrcLspOnAttach()
           call s:init_maps_lsp()
           lua require('lsp/completion').on_attach_lsp()
+          setl omnifunc=v:lua.vim.lsp.omnifunc
         endfun
       else
         fun! VimrcLspOnAttach()
           call s:init_maps_lsp()
           call deoplete#custom#buffer_option('sources', ['lsp'])
+          setl omnifunc=v:lua.vim.lsp.omnifunc
         endfun
       endif
 
@@ -309,6 +311,25 @@ endif
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
 
+  " Fill the rest of line with specified character ---------------------------------------
+    com! -nargs=? Fill call <SID>Fill(<q-args>)
+    fun! <SID>Fill(char)
+      if strlen(a:char) > 1
+        echom 'expected zero or one character'
+        return
+      endif
+      let fill = a:char ==# '' ? '-' : a:char[0]
+      norm! $
+      let ch = getline('.')[col('.') - 1]
+      if ch !=# fill && ch !=# ' '
+        exe 'norm! a '
+      endif
+      let w = &tw - col('.')
+      if w > 0
+        exe 'norm! '.w.'A'.fill
+      endif
+    endfun
+
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
   " Return to last edit position ---------------------------------------------------------
@@ -353,13 +374,13 @@ aug Vimrc
         let p = winnr('#')
         if winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
           let b = bufnr()
-          let bh = &l:bufhidden
-          setl bufhidden=hide
+          " let bh = &l:bufhidden
+          " setl bufhidden=hide
           wincmd p
           exe winnr('#').'wincmd q'
           vsplit
           exe b.'b'
-          let &l:bufhidden = bh
+          " let &l:bufhidden = bh
         endif
       endif
     endfun
@@ -433,6 +454,7 @@ aug end
   " Quickfix -----------------------------------------------------------------------------
     nno <silent> qq :call qf#open()<CR>
     nno <silent> qo :call qf#show()<CR>
+    nno <silent> qg :call qf#toggle()<CR>
     nno <silent> qd :cclose<CR>
 
     nno <silent> qn :cnext<CR>
@@ -498,6 +520,7 @@ aug end
       nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
       ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
       nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+      nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
       nno <buffer><silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
       nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>

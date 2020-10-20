@@ -50,23 +50,23 @@ nvim_lsp.gopls.setup{
 -- }
 
 -- Ruby
-nvim_lsp.solargraph.setup{
-  on_attach = on_attach;
-  settings = {
-    solargraph = {
-      diagnostics = true;
-    }
-  };
-}
+-- nvim_lsp.solargraph.setup{
+--   on_attach = on_attach;
+--   settings = {
+--     solargraph = {
+--       diagnostics = true;
+--     }
+--   };
+-- }
 
 -- Dlang
-configs.dls = {
-  default_config = {
-    cmd = {"dls"};
-    filetypes = {"d"};
-    root_dir = root_pattern("dub.sdl", "dub.json");
-  };
-}
-nvim_lsp.dls.setup{
-  on_attach = on_attach;
-}
+-- configs.dls = {
+--   default_config = {
+--     cmd = {"dls"};
+--     filetypes = {"d"};
+--     root_dir = root_pattern("dub.sdl", "dub.json");
+--   };
+-- }
+-- nvim_lsp.dls.setup{
+--   on_attach = on_attach;
+-- }
