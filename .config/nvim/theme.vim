@@ -6,6 +6,9 @@ let g:lightline = {}
 
 let g:lightline.colorscheme = 'onedark'
 
+" let g:lightline.separator    = {'left': '', 'right': ''}
+" let g:lightline.subseparator = {'left': '', 'right': ''}
+
 let g:lightline.active = {
   \ 'left'  : [['mode', 'paste'], ['fugitive', 'readonly', 'filename']],
   \ 'right' : [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']],

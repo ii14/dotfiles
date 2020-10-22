@@ -330,6 +330,19 @@ endif
       endif
     endfun
 
+  " Abbreviations ------------------------------------------------------------------------
+    fun! s:cabbrev(lhs, rhs)
+      exe "cnoreabbrev <expr> " . a:lhs .
+        \ " (getcmdtype() ==# ':' && getcmdline() ==# '" . a:lhs .
+        \ "') ? '".a:rhs."' : '".a:lhs."'"
+    endfun
+
+    call s:cabbrev('h',   'H')
+    call s:cabbrev('git', 'Git')
+    call s:cabbrev('g',   'G')
+    call s:cabbrev('rg',  'Rg')
+    call s:cabbrev('ag',  'Ag')
+
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
   " Return to last edit position ---------------------------------------------------------
@@ -504,13 +517,6 @@ aug end
     cno <C-J> <Down>
     cno <C-K> <Up>
     cno %% <C-R>=expand('%:h').'/'<CR>
-
-  " Terminal -----------------------------------------------------------------------------
-    tno <C-W> <C-\><C-N><C-W>
-    tno <C-N> <C-\><C-N>:bn<CR>
-    tno <C-P> <C-\><C-N>:bp<CR>
-    tno <C-\> <C-\><C-N>
-    tno <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()

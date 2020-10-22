@@ -1,5 +1,5 @@
 setl nonumber norelativenumber
-" setl colorcolumn=
+setl textwidth=0
 
 nmap <buffer><nowait> -     <Plug>(fern-action-leave)
 nmap <buffer><nowait> <BS>  <Plug>(fern-action-leave)
