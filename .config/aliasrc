@@ -17,7 +17,7 @@ rm() {
     echo 'Operation cancelled.'
     return
   fi
-  command rm -v -- $@
+  command rm -v $@
 }
 
 makecommand() {
