@@ -3,3 +3,4 @@
 .ccls
 compile_commands.json
 .qmake.stash
+.exrc
