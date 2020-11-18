@@ -16,7 +16,7 @@ com! StripTrailingWhitespacesDisable let s:strip_enabled = 0
 
 fun! s:strip()
   let v = winsaveview()
-  %s/\s\+$//e
+  keeppatterns %s/\s\+$//e
   call winrestview(v)
 endfun
 
