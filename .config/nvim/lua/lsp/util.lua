@@ -22,11 +22,8 @@ end
 
 M.stop_clients = function()
   api.nvim_command('setlocal signcolumn=auto')
-  -- TODO: not always working
-  for id, client in ipairs(lsp.get_active_clients()) do
-    lsp.stop_client(id)
-    print(client.config.name .. ' LSP stopped.')
-  end
+  lsp.stop_client(lsp.get_active_clients())
+  print('LSP stopped.')
 end
 
 return M
