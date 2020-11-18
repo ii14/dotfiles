@@ -25,6 +25,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'haya14busa/is.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
+    Plug 'junegunn/vim-peekaboo'
     " Plug 'bkad/CamelCaseMotion'
 
   " Visual -------------------------------------------------------------------------------
@@ -63,7 +64,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'rbong/vim-flog'
     Plug 'ii14/vim-dispatch'
     Plug 'cdelledonne/vim-cmake'
-    Plug 'nacitar/a.vim'
+    Plug 'SirVer/ultisnips'
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -137,13 +138,14 @@ endif
       let g:completion_auto_change_source = 1
       let g:completion_matching_ignore_case = 1
       let g:completion_matching_strategy_list = ['exact', 'fuzzy', 'substring']
+      let g:completion_enable_snippet = 'UltiSnips'
       let g:completion_chain_complete_list = {'default': [
         \   {'complete_items': ['path'], 'triggered_only': ['/']},
         \   {'complete_items': ['path', 'buffers']},
         \ ]}
 
-      imap <C-J> <Plug>(completion_next_source)
-      imap <C-K> <Plug>(completion_prev_source)
+      " imap <C-J> <Plug>(completion_next_source)
+      " imap <C-K> <Plug>(completion_prev_source)
 
       aug Vimrc
         au BufEnter * lua require('lsp/completion').on_attach()
@@ -191,6 +193,11 @@ endif
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
     let g:qs_max_chars = 150
     let g:qs_buftype_blacklist = ['terminal', 'nofile']
+
+  " peekaboo -----------------------------------------------------------------------------
+    let g:peekaboo_window = 'vert bo 50 new'
+    let g:peekaboo_compact = 0
+    let g:peekaboo_delay = 500
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
@@ -264,8 +271,11 @@ endif
       set pumblend=17
     endif
 
-    set sessionoptions-=help
-    set sessionoptions-=buffers
+  " Projects -----------------------------------------------------------------------------
+    set exrc                                  " project specific vimrc
+    set secure                                " dont allow au, shell and write in exrc
+    " set sessionoptions-=help
+    " set sessionoptions-=buffers
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
   " Set tab width ------------------------------------------------------------------------
@@ -339,7 +349,6 @@ endif
 
     call s:cabbrev('h',   'H')
     call s:cabbrev('git', 'Git')
-    call s:cabbrev('g',   'G')
     call s:cabbrev('rg',  'Rg')
     call s:cabbrev('ag',  'Ag')
 
@@ -360,7 +369,7 @@ aug Vimrc
     au BufLeave term://* stopinsert
 
   " Tab widths ---------------------------------------------------------------------------
-    au FileType yaml,ruby setl ts=2 sts=2 sw=2
+    au FileType yaml,ruby,lua setl ts=2 sts=2 sw=2
 
   " make autowrite -----------------------------------------------------------------------
     au QuickFixCmdPre make update
@@ -383,18 +392,15 @@ aug Vimrc
   " Open help in vertical split, if there is enough space --------------------------------
     au WinNew * au BufEnter * ++once call <SID>NewSplit()
     fun! <SID>NewSplit()
-      if (&bt ==? 'help' || &ft ==? 'man' || &ft ==? 'fugitive' || &ft ==? 'gitcommit')
+      if (&bt ==# 'help' || &ft ==# 'man' || &ft ==# 'fugitive' || &ft ==# 'gitcommit')
+        let b = bufnr()
         let p = winnr('#')
-        if winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
-          let b = bufnr()
-          " let bh = &l:bufhidden
-          " setl bufhidden=hide
-          wincmd p
-          exe winnr('#').'wincmd q'
-          vsplit
-          exe b.'b'
-          " let &l:bufhidden = bh
-        endif
+        let v = winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
+        wincmd J
+        wincmd p
+        if v | vsplit | else | split | endif
+        exe b.'b'
+        exe winnr('50j').'wincmd q'
       endif
     endfun
 
@@ -479,8 +485,6 @@ aug end
   " Misc ---------------------------------------------------------------------------------
     vno <leader>t :Tabularize /
     vno <leader>n :norm!<Space>
-    nno <leader>a :A<CR>
-    nno <leader>H :Helptags<CR>
     nno <leader>v ggVG
 
   " Clipboard ----------------------------------------------------------------------------
@@ -498,9 +502,9 @@ aug end
     nno m!       :up<CR>:Make!<CR>
 
   " Git ----------------------------------------------------------------------------------
-    nno <leader>gs :G<CR>
+    nno <leader>gs :Git<CR>
     nno <leader>gl :Flog<CR>
-    nno <leader>gb :G blame<CR>
+    nno <leader>gb :Git blame<CR>
     nno <leader>ga :Gwrite<CR>
     nno <leader>gd :Gvdiffsplit!<CR>
     nno <leader>g2 :diffget //2<CR>
@@ -527,7 +531,6 @@ aug end
       ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
       nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
       nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
-      nno <buffer><silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
       nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
@@ -538,8 +541,9 @@ aug end
       " vno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
       " vno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
-      " nno <buffer><silent> <leader>ls :LspFind<CR>
-      " nno <buffer><silent> <leader>lf :LspFormat<CR>
-      " vno <buffer><silent> <leader>lf :LspFormat<CR>
-      " nno <buffer><silent> <leader>la :LspAction<CR>
+      nno <buffer><silent> <leader>ls :LspFind<CR>
+      nno <buffer><silent> <leader>lf :LspFormat<CR>
+      vno <buffer><silent> <leader>lf :LspFormat<CR>
+      nno <buffer><silent> <leader>la :LspAction<CR>
     endfun
+
