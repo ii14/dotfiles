@@ -8,6 +8,7 @@ hashcwd() {
   hash -d "$1"="$PWD"
 }
 
+setopt rmstarsilent
 rm() {
   printf 'Continue?: rm'
   for i in "$@"; do printf " $i"; done
@@ -16,7 +17,7 @@ rm() {
     echo 'Operation cancelled.'
     return
   fi
-  command rm -v $@
+  command rm -v -- $@
 }
 
 makecommand() {
@@ -127,9 +128,12 @@ alias getclip='xclip -sel clipboard -o'
 # tmux -----------------------------------------------------
 alias tm='tmux'
 alias ts='tmux new-session -A -s'
-alias ta='tmux attach -t'
-alias tA='tmux attach'
 alias tl='tmux ls'
+ta() {
+    [ ! -z "$1" ] \
+        && tmux attach -t "$1" \
+        || tmux attach
+}
 
 # dev:cpp --------------------------------------------------
 alias g++='g++ -Wall -Wextra -Wshadow'
