@@ -1,0 +1,126 @@
+# Preprocessor ---------------------------------------------------------------------------
+snippet #i
+#include <${1:iostream}>
+endsnippet
+
+snippet #p
+#pragma once
+
+endsnippet
+
+# C++ ------------------------------------------------------------------------------------
+snippet main
+int main(int argc, char* argv[])
+{
+	${0}
+}
+endsnippet
+
+snippet fun
+${1:void} ${2:function_name}(${3})
+{
+	${4}
+}
+endsnippet
+
+snippet ns
+namespace ${1} {
+} // $1
+endsnippet
+
+snippet if
+if (${1:true}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet ife
+if (${1:true}) {
+	${2:${VISUAL}}
+} else {
+	${0}
+}
+endsnippet
+
+snippet el
+else {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet elif
+else if (${1:true}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet try
+try {
+} catch (const ${1:std::exception}& err) {
+}
+endsnippet
+
+snippet ld
+[${1}](${2}){${3}}
+endsnippet
+
+snippet fori
+for (int ${2:i} = 0; $2 < ${1:count}; ++$2) {
+}
+endsnippet
+
+snippet it
+for (auto ${2:it} = ${1:container}.begin(); $2 != $1.end(); ++$2) {
+}
+endsnippet
+
+snippet sc
+static_cast<${1:unsigned}>(${2:expr})${3}
+endsnippet
+
+snippet rc
+reinterpret_cast<${1:unsigned}>(${2:expr})${3}
+endsnippet
+
+snippet dc
+dynamic_cast<${1:unsigned}>(${2:expr})${3}
+endsnippet
+
+snippet sp
+std::shared_ptr<${1:unsigned}>${2}
+endsnippet
+
+snippet up
+std::unique_ptr<${1:unsigned}>${2}
+endsnippet
+
+snippet mu
+std::make_unique<${1:unsigned}>(${2})${3}
+endsnippet
+
+snippet ms
+std::make_shared<${1:unsigned}>(${2})${3}
+endsnippet
+
+# Qt -------------------------------------------------------------------------------------
+snippet qobj
+class ${0} : public QObject
+{
+	Q_OBJECT
+public:
+private:
+};
+endsnippet
+
+snippet qapp
+int main(int argc, char* argv[])
+{
+	QCoreApplication app(argc, argv);
+	${0}
+	return app.exec();
+}
+endsnippet
+
+snippet qc
+qobject_cast<${1:QObject}*>(${2:expr})${3}
+endsnippet
