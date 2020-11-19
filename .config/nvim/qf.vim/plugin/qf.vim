@@ -71,10 +71,10 @@ fun! qf#init()
     \   exe b:last_win.'wincmd w' |
     \ endif
 
-  " wincmd J with quickfix is broken on the latest builds
-  " issue: https://github.com/neovim/neovim/issues/13104
-  " last working build: https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable/+build/20133359
-  wincmd J
+  let b:qf_isLoc = !empty(getloclist(0))
+  if !b:qf_isLoc
+    wincmd J
+  endif
 endfun
 
 fun! qf#vsplit()

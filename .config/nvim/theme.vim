@@ -38,26 +38,26 @@ let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
 fun! LightlineMode()
-  if &ft == 'fern' | return 'Fern' | endif
-  if &bt == 'quickfix' | return 'QuickFix' | endif
+  if &ft ==# 'fern' | return 'Fern' | endif
+  if &bt ==# 'quickfix' | return get(b:, 'qf_isLoc', 1) ? 'Location' : 'QuickFix' | endif
   return winwidth(0) < 50 ? '' : lightline#mode()
 endfun
 
 fun! LightlineFilename()
-  if &ft == 'fern' | return '' | endif
-  if &bt == 'quickfix' | return getqflist({'title':1}).title | endif
+  if &ft ==# 'fern' | return '' | endif
+  if &bt ==# 'quickfix' | return getqflist({'title':1}).title | endif
   let fname = expand('%:t')
   return fname ==# '' ? '[No Name]' : &mod ? fname.' +' : fname
 endfun
 
 fun! LightlineFileformat()
-  if &ft == 'fern' || &bt == 'quickfix' | return '' | endif
-  return winwidth(0) > 70 && &ff !=? 'unix' ? &ff : ''
+  if &ft ==# 'fern' || &bt ==# 'quickfix' | return '' | endif
+  return winwidth(0) > 70 && &ff !=# 'unix' ? &ff : ''
 endfun
 
 fun! LightlineFileencoding()
-  if &ft == 'fern' || &bt == 'quickfix' | return '' | endif
-  return winwidth(0) > 70 && &fenc !=? 'utf-8' ? &fenc : ''
+  if &ft ==# 'fern' || &bt ==# 'quickfix' | return '' | endif
+  return winwidth(0) > 70 && &fenc !=# 'utf-8' ? &fenc : ''
 endfun
 
 fun! LightlineFiletype()
@@ -65,7 +65,7 @@ fun! LightlineFiletype()
 endfun
 
 fun! LightlineFugitive()
-  if &ft == 'fern' || &ft == 'qf' | return '' | endif
+  if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
   return winwidth(0) > 70 && exists('*FugitiveHead') ? FugitiveHead() : ''
 endfun
 
