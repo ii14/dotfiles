@@ -41,7 +41,6 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
-    " Plug 'lambdalisue/fern-git-status.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
 
   " Autocompletion -----------------------------------------------------------------------
@@ -102,7 +101,7 @@ endif
     let $FZF_DEFAULT_OPTS =
       \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
     let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
-    let g:fzf_layout = {'down': '40%'}
+    " let g:fzf_layout = {'down': '40%'}
     let g:fzf_colors = {
       \ 'fg'      : ['fg', 'Normal'],
       \ 'bg'      : ['bg', 'Normal'],
@@ -208,8 +207,8 @@ endif
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    " set title                                 " set vim window title
-    set notitle                               " nvim bug, crashes on :Helptags command
+    set title                                 " set vim window title
+    " set notitle                               " nvim bug, crashes on :Helptags command
     set belloff=all                           " turn off bell
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
@@ -300,7 +299,19 @@ endif
     com! -nargs=1 -complete=command Redir
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
-    com! Makeprg let &makeprg = input('makeprg=', &makeprg)
+  " Toggle mouse -------------------------------------------------------------------------
+    com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
+
+  " Makeprg prompt -----------------------------------------------------------------------
+    com! Makeprg call <SID>Makeprg()
+    fun! <SID>Makeprg()
+      let x = input('makeprg=', &makeprg)
+      redraw
+      if x !=# ''
+        let &makeprg = x
+        echo x
+      endif
+    endfun
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
@@ -317,9 +328,6 @@ endif
       com! LspAction
         \ lua vim.lsp.buf.code_action()
     endif
-
-  " Toggle mouse -------------------------------------------------------------------------
-    com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
 
   " Fill the rest of line with specified character ---------------------------------------
     com! -nargs=? Fill call <SID>Fill(<q-args>)
@@ -341,16 +349,19 @@ endif
     endfun
 
   " Abbreviations ------------------------------------------------------------------------
-    fun! s:cabbrev(lhs, rhs)
+    fun! Cabbrev(lhs, rhs)
       exe "cnoreabbrev <expr> " . a:lhs .
         \ " (getcmdtype() ==# ':' && getcmdline() ==# '" . a:lhs .
-        \ "') ? '".a:rhs."' : '".a:lhs."'"
+        \ "') ? '" . a:rhs . "' : '" . a:lhs . "'"
     endfun
 
-    call s:cabbrev('h',   'H')
-    call s:cabbrev('git', 'Git')
-    call s:cabbrev('rg',  'Rg')
-    call s:cabbrev('ag',  'Ag')
+    call Cabbrev('h',         'H')
+    call Cabbrev('git',       'Git')
+    call Cabbrev('rg',        'Rg')
+    call Cabbrev('ag',        'Ag')
+    call Cabbrev('gr',        'silent grep')
+    call Cabbrev('gre',       'silent grep')
+    call Cabbrev('grep',      'silent grep')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -376,6 +387,10 @@ aug Vimrc
 
   " Autocompile --------------------------------------------------------------------------
     au BufWritePost *.ts,*.scss silent make
+
+  " Open quickfix window on grep ---------------------------------------------------------
+    au QuickFixCmdPost grep call timer_start(10, { -> execute('cwindow') })
+    au QuickFixCmdPost lgrep call timer_start(10, { -> execute('lwindow') })
 
   " Auto close quickfix, if it's the last buffer -----------------------------------------
     au WinEnter * if winnr('$') == 1 && &bt ==? "quickfix" | q | endif
