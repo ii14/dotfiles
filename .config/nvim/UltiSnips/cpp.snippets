@@ -3,6 +3,10 @@ snippet #i
 #include <${1:iostream}>
 endsnippet
 
+snippet #d
+#define ${1}
+endsnippet
+
 snippet #p
 #pragma once
 
@@ -11,6 +15,13 @@ endsnippet
 # C++ ------------------------------------------------------------------------------------
 snippet main
 int main(int argc, char* argv[])
+{
+	${0}
+}
+endsnippet
+
+snippet mainn
+int main()
 {
 	${0}
 }
@@ -25,7 +36,10 @@ endsnippet
 
 snippet ns
 namespace ${1} {
-} // $1
+
+${2:${VISUAL}}
+
+} // namespace $1
 endsnippet
 
 snippet if
@@ -56,6 +70,7 @@ endsnippet
 
 snippet try
 try {
+	${0:${VISUAL}}
 } catch (const ${1:std::exception}& err) {
 }
 endsnippet
