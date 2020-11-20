@@ -1,24 +1,25 @@
-local nvim_lsp = require 'nvim_lsp'
-local root_pattern = nvim_lsp.util.root_pattern
+local lspconfig = require 'lspconfig'
+local root_pattern = lspconfig.util.root_pattern
 local util = require 'lsp/util'
 require 'lsp/callbacks'
 
-local configs = require 'nvim_lsp/configs'
+local configs = require 'lspconfig/configs'
 
 local on_attach = util.on_attach
 
 
 -- C/C++
 -- TODO: semantic highlighting in clangd. works fine on ccls.
-nvim_lsp.clangd.setup{
+lspconfig.clangd.setup{
   on_attach = function(client, bufnr)
     on_attach(client, bufnr)
     util.map('n', '<leader>a', ':ClangdSwitchSourceHeader<CR>')
+    util.map('n', '<leader>A', ':vs | ClangdSwitchSourceHeader<CR>')
   end;
   cmd = {"clangd", "--background-index"};
 }
 
--- nvim_lsp.ccls.setup{
+-- lspconfig.ccls.setup{
 --   on_attach = on_attach;
 --   init_options = {
 --     highlight = { lsRanges = true };
@@ -28,7 +29,7 @@ nvim_lsp.clangd.setup{
 
 
 -- Python
-nvim_lsp.pyls.setup{
+lspconfig.pyls.setup{
   on_attach = on_attach;
   settings = {
     pyls = {
@@ -40,17 +41,17 @@ nvim_lsp.pyls.setup{
 }
 
 -- Golang
-nvim_lsp.gopls.setup{
+lspconfig.gopls.setup{
   on_attach = on_attach;
 }
 
 -- Lua
--- nvim_lsp.sumneko_lua.setup{
+-- lspconfig.sumneko_lua.setup{
 --   on_attach = on_attach;
 -- }
 
 -- Ruby
--- nvim_lsp.solargraph.setup{
+-- lspconfig.solargraph.setup{
 --   on_attach = on_attach;
 --   settings = {
 --     solargraph = {
@@ -67,6 +68,6 @@ nvim_lsp.gopls.setup{
 --     root_dir = root_pattern("dub.sdl", "dub.json");
 --   };
 -- }
--- nvim_lsp.dls.setup{
+-- lspconfig.dls.setup{
 --   on_attach = on_attach;
 -- }
