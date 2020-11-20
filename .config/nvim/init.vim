@@ -215,6 +215,7 @@ endif
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=1000                        " highlight only the first 1000 columns
+    if has('nvim-0.4') | set pumblend=17 | endif
 
   " Editing ------------------------------------------------------------------------------
     set encoding=utf-8
@@ -266,15 +267,9 @@ endif
       let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
     endif
 
-    if has('nvim-0.4')
-      set pumblend=17
-    endif
-
   " Projects -----------------------------------------------------------------------------
     set exrc                                  " project specific vimrc
     set secure                                " dont allow au, shell and write in exrc
-    " set sessionoptions-=help
-    " set sessionoptions-=buffers
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
   " Set tab width ------------------------------------------------------------------------
