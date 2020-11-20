@@ -1,5 +1,4 @@
 # PROMPT =================================================================================
-
 autoload -U colors && colors
 
 # Git prompt -----------------------------------------------------------------------------
@@ -30,23 +29,17 @@ if [[ "$TERM" == 'linux' ]]; then
 elif [[ -v SSH_CONNECTION ]]; then
     # print user@host if logged in through ssh
     PROMPT='%K{233}%f%B %b%n@%m%B %(4~|%-1~/…/%2~|%3~) %b$(gitprompt)%F{233}%K{2}%k%F{2}%f '
+
+    # terminal window title
+    _set_title() { echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007"; }
+    precmd_functions+=(_set_title)
 else
     # local prompt
     PROMPT='%K{233}%f %B%(4~|%-1~/…/%2~|%3~)%b $(gitprompt)%F{233}%K{2}%k%F{2}%f '
 
     # terminal window title
-    _ms_customtitle=1
-    _ms_settitle() {
-        [[ $_ms_customtitle != 0 ]] && echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007"
-    }
-    title() {
-        _ms_customtitle=0
-        echo -ne "\033]0;$1\007"
-    }
-    restoretitle() {
-        _ms_customtitle=1
-    }
-    precmd_functions+=(_ms_settitle)
+    _set_title() { echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007"; }
+    precmd_functions+=(_set_title)
 fi
 
 # 
@@ -71,17 +64,26 @@ fi
 
 
 # INCLUDES ===============================================================================
-
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
-
 [ -f "$HOME/.local/share/shortcuts" ] && source "$HOME/.local/share/shortcuts"
 
-[ -d "$HOME/.emacs.d/bin" ] && export PATH="$PATH:$HOME/.emacs.d/bin"
-# [ -d "$HOME/repos/depot_tools" ] && export PATH="$PATH:$HOME/repos/depot_tools"
+
+# COMMAND HISTORY ========================================================================
+setopt append_history
+setopt share_history
+setopt histignorealldups
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.cache/zsh/history
+
+
+# DIRECTORY STACK ========================================================================
+DIRSTACKSIZE=12
+setopt autopushd pushdminus pushdsilent pushdtohome
+alias dh='dirs -v'
 
 
 # KEY BINDINGS ===========================================================================
-
 export KEYTIMEOUT=1
 
 # Emacs key bindings ---------------------------------------------------------------------
@@ -93,8 +95,10 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey '^[[A'  up-line-or-beginning-search
 bindkey '^[OA'  up-line-or-beginning-search
+bindkey '^p'    up-line-or-beginning-search
 bindkey '^[[B'  down-line-or-beginning-search
 bindkey '^[OB'  down-line-or-beginning-search
+bindkey '^n'    down-line-or-beginning-search
 
 # Search backward for string ---------------------------------------------------- [Ctrl-R]
 bindkey '^r' history-incremental-search-backward
@@ -112,8 +116,8 @@ bindkey '\e[1;3D' backward-word
 # Go to end of line ---------------------------------------------------------------- [End]
 [[ "${terminfo[kend]}" != "" ]] && bindkey "${terminfo[kend]}" end-of-line
 
-# One directory up -------------------------------------------------------------- [Ctrl-U]
-# bindkey -s '^u' 'cd ..^M'
+# One directory up --------------------------------------------------------------- [Alt-U]
+bindkey -s '\eu' 'cd ..^M'
 
 # Edit command line ------------------------------------------------------------- [Ctrl-E]
 autoload -U edit-command-line
@@ -121,25 +125,7 @@ zle -N edit-command-line
 bindkey '^e' edit-command-line
 
 
-# HISTORY ================================================================================
-
-setopt append_history
-setopt share_history
-setopt histignorealldups
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=~/.cache/zsh/history
-
-
-# HISTORY ================================================================================
-
-DIRSTACKSIZE=12
-setopt autopushd pushdminus pushdsilent pushdtohome
-alias dh='dirs -v'
-
-
 # COMPLETION =============================================================================
-
 fpath=(~/.config/zsh/completions $fpath)
 
 autoload -Uz compinit
@@ -172,7 +158,6 @@ setopt notify
 
 
 # FZF ====================================================================================
-
 export FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
 
 if command -v fd >/dev/null 2>&1; then
