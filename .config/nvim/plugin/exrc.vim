@@ -7,16 +7,17 @@ endfun
 
 fun! s:reload()
   let p = s:path()
-  if filereadable(p)
+  try
     exe 'source '.p
-    redraw
-    echo 'exrc reloaded: '.p
-  else
+  catch
     redraw
     echohl ErrorMsg
-    echo '.exrc not found'
+    echom 'failed to load .exrc'
     echohl None
-  endif
+    return
+  endtry
+  redraw
+  echo 'exrc reloaded: '.p
 endfun
 
 aug au_exrc | au!
