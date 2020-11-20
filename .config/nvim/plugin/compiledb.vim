@@ -6,14 +6,20 @@ com! -nargs=? -complete=dir Compiledb call s:run(<q-args>)
 fun! s:run(path)
   if a:path !=# ''
     let g:compiledb_path = a:path
-    exe 'Dispatch cd ' . a:path . ' && compiledb -o '
-      \ . getcwd() . '/compile_commands.json -n make'
+    let cmd = 'Dispatch (cd ' . a:path . ' && compiledb -o '
+      \ . getcwd() . '/compile_commands.json -n make)'
   elseif exists('g:compiledb_path')
-    exe 'Dispatch cd ' . g:compiledb_path . ' && compiledb -o '
-      \ . getcwd() . '/compile_commands.json -n make'
+    let cmd = 'Dispatch (cd ' . g:compiledb_path . ' && compiledb -o '
+      \ . getcwd() . '/compile_commands.json -n make)'
   else
-    Dispatch compiledb -n make
+    let cmd = 'Dispatch (compiledb -n make)'
   endif
+
+  if exists('g:compiledb_post')
+    let cmd = cmd.' && '.g:compiledb_post
+  endif
+
+  exe cmd
 endfun
 
 com! -nargs=? -complete=dir CompiledbPath call s:path(<q-args>)
