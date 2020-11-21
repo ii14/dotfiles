@@ -2,4 +2,18 @@
 display=$(xdpyinfo | grep 'name of display' | awk '{print $NF}')
 size=$(xdpyinfo | grep 'dimensions' | awk '{print $2}')
 output="$HOME/videos/screencast-$(date '+%y%m%d-%H%M%S').mp4"
-ffmpeg -hide_banner -y -f x11grab -r 30 -s "${size}" -i "${display}.0" "${output}"
+if [ -z "$1" ]; then
+  ffmpeg \
+    -hide_banner -y \
+    -f x11grab -r 30 -s "${size}" -i "${display}.0" \
+    "${output}"
+elif [ "$1" = '-a' ]; then
+  ffmpeg \
+    -hide_banner -y \
+    -f x11grab -r 30 -s "${size}" -i "${display}.0" \
+    -f pulse -ac 2 -i 0 \
+    "${output}"
+else
+  echo 'unknown option' >&2
+  exit 1
+fi
