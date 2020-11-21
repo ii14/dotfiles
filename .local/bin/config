@@ -27,7 +27,7 @@ run() {
 }
 
 match_and_run() {
-    file=$(dictionary "$optfile" "$1" 2>/dev/null | sed "s|^~/|$HOME/|")
+    file=$(dictionary --values "$optfile" "$1" 2>/dev/null | sed "s|^~/|$HOME/|")
     [ -z "$file" ] && die 'Option not found'
     run "$file"
 }
