@@ -1,7 +1,5 @@
 let mapleader      = ' '
 let maplocalleader = ' '
-" filetype plugin on
-" syntax on
 set textwidth=90
 set termguicolors
 
@@ -205,60 +203,54 @@ endif
 
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
-    set laststatus=2                          " show status line
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
     set title                                 " set vim window title
     " set notitle                               " nvim bug, crashes on :Helptags command
-    set belloff=all                           " turn off bell
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=1000                        " highlight only the first 1000 columns
-    if has('nvim-0.4') | set pumblend=17 | endif
+    set pumblend=17                           " popup menu pseudo transparency
 
   " Editing ------------------------------------------------------------------------------
-    set encoding=utf-8
     set history=1000                          " command history size
-    set backspace=indent,eol,start            " allow backspace over...
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1                           " keep near lines visible when scrolling
     " set confirm                               " display dialog instead of failing
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
-    set wrap linebreak breakindent            " visual wrap, on whitespace, follow indentation
-    set diffopt+=iwhite,vertical
+    set linebreak breakindent                 " visual wrap on whitespace, follow indentation
+    set diffopt+=iwhite                       " ignore whitespace in diff
+    set diffopt+=vertical                     " start diff as a vertical split
 
   " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces
     set shiftwidth=4 tabstop=4 softtabstop=4  " tab width
-    set smarttab shiftround                   " follow tab grid
-    set autoindent smartindent                " follow previous indentation, auto indent blocks
+    set shiftround                            " follow tab grid
+    set smartindent                           " smarter auto indentation
     set foldmethod=indent foldlevel=999       " folding based on indentation
 
   " Search and Autocompletion ------------------------------------------------------------
     set path+=**
-    set hlsearch incsearch                    " search highlighting, incremental
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
     set inccommand=nosplit                    " sed preview
-    set wildmenu                              " command completion
     set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
     set shortmess+=c                          " silent completion
     set pumheight=25                          " autocompletion popup height
-    set completeopt+=noselect,menuone
-    set completeopt-=preview
+    set completeopt+=noselect                 " no auto-select in completion
+    set completeopt+=menuone                  " open popup when there is only one match
+    set completeopt-=preview                  " no preview window
 
   " Buffers ------------------------------------------------------------------------------
     set hidden                                " don't close buffers
-    set autoread                              " update buffer if changed outside of vim
     set noswapfile                            " disable swap files
     set undofile                              " persistent undo history
     set directory=~/.cache/nvim/swap          " swap files
     set backupdir=~/.cache/nvim/backup        " backup files
     set undodir=~/.cache/nvim/undo            " undo files
-    " set autochdir                             " change cwd to the current buffer
 
   " Grep ---------------------------------------------------------------------------------
     if executable('rg')
