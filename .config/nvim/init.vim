@@ -78,8 +78,9 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'vimwiki/vimwiki'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
 
-    Plug '~/.config/nvim/qf.vim'
-    Plug '~/.config/nvim/pro.vim'
+    Plug '~/.config/nvim/m/qf.vim'
+    Plug '~/.config/nvim/m/pro.vim'
+    Plug '~/.config/nvim/m/qmake.vim'
 
 call plug#end()
 
