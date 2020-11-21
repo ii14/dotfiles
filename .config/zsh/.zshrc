@@ -31,14 +31,18 @@ elif [[ -v SSH_CONNECTION ]]; then
     PROMPT='%K{233}%f%B %b%n@%m%B %(4~|%-1~/…/%2~|%3~) %b$(gitprompt)%F{233}%K{2}%k%F{2}%f '
 
     # terminal window title
-    _set_title() { echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007"; }
+    _set_title() {
+        echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007" 2>/dev/null;
+    }
     precmd_functions+=(_set_title)
 else
     # local prompt
     PROMPT='%K{233}%f %B%(4~|%-1~/…/%2~|%3~)%b $(gitprompt)%F{233}%K{2}%k%F{2}%f '
 
     # terminal window title
-    _set_title() { echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007"; }
+    _set_title() {
+        echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007" 2>/dev/null;
+    }
     precmd_functions+=(_set_title)
 fi
 
