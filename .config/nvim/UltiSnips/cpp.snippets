@@ -1,40 +1,49 @@
+priority -50
+extends c
+priority -49
+
 # Preprocessor ---------------------------------------------------------------------------
-snippet #i
+snippet #i "#include"
 #include <${1:iostream}>
 endsnippet
 
-snippet #d
-#define ${1}
-endsnippet
-
-snippet #p
-#pragma once
-
-endsnippet
-
 # C++ ------------------------------------------------------------------------------------
-snippet main
+snippet main "main function"
 int main(int argc, char* argv[])
 {
 	${0}
 }
 endsnippet
 
-snippet mainn
+snippet mainn "main function no arguments"
 int main()
 {
 	${0}
 }
 endsnippet
 
-snippet fun
+snippet fun "function"
 ${1:void} ${2:function_name}(${3})
 {
 	${4}
 }
 endsnippet
 
-snippet ns
+snippet s "struct"
+struct ${1}
+{
+	${2}
+};
+endsnippet
+
+snippet c "class"
+class ${1}
+{
+	${2}
+};
+endsnippet
+
+snippet ns "namespace"
 namespace ${1} {
 
 ${2:${VISUAL}}
@@ -42,13 +51,13 @@ ${2:${VISUAL}}
 } // namespace $1
 endsnippet
 
-snippet if
+snippet if "if"
 if (${1:true}) {
 	${0:${VISUAL}}
 }
 endsnippet
 
-snippet ife
+snippet ife "if/else"
 if (${1:true}) {
 	${2:${VISUAL}}
 } else {
@@ -56,69 +65,69 @@ if (${1:true}) {
 }
 endsnippet
 
-snippet el
+snippet el "else"
 else {
 	${0:${VISUAL}}
 }
 endsnippet
 
-snippet elif
+snippet elif "else if"
 else if (${1:true}) {
 	${0:${VISUAL}}
 }
 endsnippet
 
-snippet try
+snippet try "try/catch"
 try {
 	${0:${VISUAL}}
 } catch (const ${1:std::exception}& err) {
 }
 endsnippet
 
-snippet ld
+snippet ld "lambda"
 [${1}](${2}){${3}}
 endsnippet
 
-snippet fori
+snippet fori "for loop"
 for (int ${2:i} = 0; $2 < ${1:count}; ++$2) {
 }
 endsnippet
 
-snippet it
+snippet it "for loop iterator"
 for (auto ${2:it} = ${1:container}.begin(); $2 != $1.end(); ++$2) {
 }
 endsnippet
 
-snippet sc
+snippet sc "static cast"
 static_cast<${1:unsigned}>(${2:expr})${3}
 endsnippet
 
-snippet rc
+snippet rc "reinterpret cast"
 reinterpret_cast<${1:unsigned}>(${2:expr})${3}
 endsnippet
 
-snippet dc
+snippet dc "dynamic cast"
 dynamic_cast<${1:unsigned}>(${2:expr})${3}
 endsnippet
 
-snippet sp
+snippet sp "shared pointer"
 std::shared_ptr<${1:unsigned}>${2}
 endsnippet
 
-snippet up
+snippet up "unique pointer"
 std::unique_ptr<${1:unsigned}>${2}
 endsnippet
 
-snippet mu
+snippet mu "make shared pointer"
 std::make_unique<${1:unsigned}>(${2})${3}
 endsnippet
 
-snippet ms
+snippet ms "make unique pointer"
 std::make_shared<${1:unsigned}>(${2})${3}
 endsnippet
 
 # Qt -------------------------------------------------------------------------------------
-snippet qobj
+snippet qobj "QObject definition"
 class ${0} : public QObject
 {
 	Q_OBJECT
@@ -127,7 +136,7 @@ private:
 };
 endsnippet
 
-snippet qapp
+snippet qapp "QApplication main function"
 int main(int argc, char* argv[])
 {
 	QCoreApplication app(argc, argv);
@@ -136,6 +145,6 @@ int main(int argc, char* argv[])
 }
 endsnippet
 
-snippet qc
+snippet qc "qobject cast"
 qobject_cast<${1:QObject}*>(${2:expr})${3}
 endsnippet

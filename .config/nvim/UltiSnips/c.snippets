@@ -1,0 +1,26 @@
+priority -50
+
+# Preprocessor ---------------------------------------------------------------------------
+snippet #i "#include"
+#include <${1:stdio.h}>
+endsnippet
+
+snippet #iq "#include double quotes"
+#include "${1}"
+endsnippet
+
+snippet #d "#define"
+#define $1
+endsnippet
+
+snippet #p "#pragma once"
+#pragma once
+
+$0
+endsnippet
+
+snippet #if "#if" b
+#if ${1:0}
+${VISUAL}$0
+#endif
+endsnippet
