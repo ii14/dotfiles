@@ -10,7 +10,7 @@ let g:lightline.colorscheme = 'onedark'
 " let g:lightline.subseparator = {'left': '', 'right': ''}
 
 let g:lightline.active = {
-  \ 'left'  : [['mode', 'paste'], ['fugitive', 'readonly', 'filename']],
+  \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro', 'readonly', 'filename']],
   \ 'right' : [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']],
   \ }
 
@@ -26,6 +26,7 @@ let g:lightline.component_function = {
   \ 'fileencoding' : 'LightlineFileencoding',
   \ 'filetype'     : 'LightlineFiletype',
   \ 'fugitive'     : 'LightlineFugitive',
+  \ 'pro'          : 'LightlinePro',
   \ }
 
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -67,6 +68,11 @@ endfun
 fun! LightlineFugitive()
   if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
   return winwidth(0) > 70 && exists('*FugitiveHead') ? FugitiveHead() : ''
+endfun
+
+fun! LightlinePro()
+  if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
+  return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
 endfun
 
 aug au_theme | au!

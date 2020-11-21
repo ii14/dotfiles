@@ -1,5 +1,9 @@
 com! -nargs=1 -complete=customlist,s:comp_configs Config call s:select_config(<q-args>)
 
+fun! pro#selected() abort
+  return get(s:, 'selected_config', '')
+endfun
+
 fun! s:select_config(config) abort
   if !has_key(g:, 'pro#configs') || a:config ==# '_' || !has_key(g:pro#configs, a:config)
     echom 'Selected config does not exist'
