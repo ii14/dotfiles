@@ -39,6 +39,12 @@ BEGIN {
     # parse key option
     if (i < ARGC) {
         key = ARGV[i++]
+        if (!key) {
+            print "Error: Empty key" > "/dev/stderr"
+            print_help()
+            err = 0
+            exit 1
+        }
         err = 1
     }
 
