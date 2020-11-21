@@ -3,8 +3,15 @@ typeset -A opt_args
 local -a _config_cmds
 
 _config_cmds=(
-    '--edit:--edit config list'
-    $(dictionary keys "$HOME/.config/shortcuts/config")
+    '-i:interactive'
+    '--interactive:interactive'
+    '-e:edit config list'
+    '--edit:edit config list'
+    '-l:config list'
+    '--list:config list'
+    '-q:query list'
+    '--query:query list'
+    $(config --list)
 )
 
 _describe -t commands 'config files' _config_cmds

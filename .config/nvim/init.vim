@@ -81,6 +81,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug '~/.config/nvim/m/qf.vim'
     Plug '~/.config/nvim/m/pro.vim'
     Plug '~/.config/nvim/m/qmake.vim'
+    Plug '~/.config/nvim/m/config.vim'
 
 call plug#end()
 

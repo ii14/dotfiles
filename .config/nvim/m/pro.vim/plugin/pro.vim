@@ -1,4 +1,4 @@
-com! -nargs=1 -complete=customlist,s:comp_configs Config call s:select_config(<q-args>)
+com! -nargs=1 -complete=customlist,s:comp_configs Pro call s:select_config(<q-args>)
 
 fun! pro#selected() abort
   return get(s:, 'selected_config', '')
