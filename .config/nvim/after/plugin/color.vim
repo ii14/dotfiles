@@ -6,14 +6,13 @@ hi! link QuickScopePrimary Search
 hi! link QuickScopeSecondary WildMenu
 
 " nvim-lsp
-sign define LspDiagnosticsErrorSign       text=\ E
-sign define LspDiagnosticsWarningSign     text=\ W
-sign define LspDiagnosticsInformationSign text=\ i
+sign define LspDiagnosticsSignError       text=\ E
+sign define LspDiagnosticsSignWarning     text=\ W
+sign define LspDiagnosticsSignInformation text=\ i
 
-hi! link LspDiagnosticsError       ErrorMsg
-hi! link LspDiagnosticsWarning     WarningMsg
-hi! link LspDiagnosticsInformation Function
-hi! link LspDiagnosticsUnderline   Underlined
+hi! link LspDiagnosticsDefaultError       ErrorMsg
+hi! link LspDiagnosticsDefaultWarning     WarningMsg
+hi! link LspDiagnosticsDefaultInformation Function
 
 " vim-lsp-cxx-highlight
 hi! link LspCxxHlSymUnknown        Normal
