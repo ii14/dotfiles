@@ -42,7 +42,7 @@ fi
 [ -z "$1" ] && print_help
 
 if [ "$1" = '-i' ] || [ "$1" = '--interactive' ]; then
-    opts=$(dictionary keys "$optfile")
+    opts=$(dictionary --keys "$optfile")
     (echo "$opts" | awk '{ print NR ") " $0 }') >&2
     read -rp "Select: " x
     opt=$(echo "$opts" | awk "NR == $x { print \$0; exit }")
@@ -54,7 +54,7 @@ if [ "$1" = '-e' ] || [ "$1" = '--edit' ]; then
 fi
 
 if [ "$1" = '-l' ] || [ "$1" = '--list' ]; then
-    dictionary keys "$optfile"
+    dictionary --keys "$optfile"
     exit $?
 fi
 
