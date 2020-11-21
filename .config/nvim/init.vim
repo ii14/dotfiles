@@ -79,6 +79,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
 
     Plug '~/.config/nvim/qf.vim'
+    Plug '~/.config/nvim/pro.vim'
 
 call plug#end()
 
