@@ -17,10 +17,11 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
+    Plug 'tpope/vim-abolish'
     Plug 'tommcdo/vim-exchange'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
-    Plug 'haya14busa/is.vim'
+		Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     Plug 'junegunn/vim-peekaboo'
@@ -34,6 +35,7 @@ call plug#begin('~/.config/nvim/plugged')
 
     Plug 'Yggdroot/indentLine'
     Plug 'unblevable/quick-scope'
+    Plug 'machakann/vim-highlightedyank'
 
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
@@ -182,8 +184,12 @@ endif
   " Dispatch -----------------------------------------------------------------------------
     let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
 
+  " incsearch.vim ------------------------------------------------------------------------
+    let g:incsearch#auto_nohlsearch = 1
+
   " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
+    let g:indentLine_fileTypeExclude = ['man']
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
@@ -197,6 +203,9 @@ endif
     let g:peekaboo_window = 'vert bo 50 new'
     let g:peekaboo_compact = 0
     let g:peekaboo_delay = 500
+
+  " highlighted-yank ---------------------------------------------------------------------
+    let g:highlightedyank_highlight_duration = 200
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
@@ -460,14 +469,19 @@ aug end
     vno <leader>s :s//g<Left><Left>
     nmap <leader>c z*cgn
     vmap <leader>c z*cgn
-    map *   <Plug>(asterisk-*)<Plug>(is-nohl-1)
-    map #   <Plug>(asterisk-#)<Plug>(is-nohl-1)
-    map g*  <Plug>(asterisk-g*)<Plug>(is-nohl-1)
-    map g#  <Plug>(asterisk-g#)<Plug>(is-nohl-1)
-    map z*  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
-    map gz* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
-    map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
-    map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+    map /   <Plug>(incsearch-forward)
+    map ?   <Plug>(incsearch-backward)
+    map g/  <Plug>(incsearch-stay)
+    map n   <Plug>(incsearch-nohl-n)
+    map N   <Plug>(incsearch-nohl-N)
+    map *   <Plug>(incsearch-nohl)<Plug>(asterisk-*)
+    map g*  <Plug>(incsearch-nohl)<Plug>(asterisk-g*)
+    map #   <Plug>(incsearch-nohl)<Plug>(asterisk-#)
+    map g#  <Plug>(incsearch-nohl)<Plug>(asterisk-g#)
+    map z*  <Plug>(incsearch-nohl0)<Plug>(asterisk-z*)
+    map gz* <Plug>(incsearch-nohl0)<Plug>(asterisk-gz*)
+    map z#  <Plug>(incsearch-nohl0)<Plug>(asterisk-z#)
+    map gz# <Plug>(incsearch-nohl0)<Plug>(asterisk-gz#)
 
   " Macros -------------------------------------------------------------------------------
     no q <Nop>
