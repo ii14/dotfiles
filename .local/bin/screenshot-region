@@ -1,3 +1,0 @@
-#!/bin/bash
-output="$HOME/pictures/screenshot/screenshot-$(date '+%y%m%d-%H%M%S').png"
-import "${output}"
