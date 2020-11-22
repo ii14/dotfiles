@@ -17,13 +17,14 @@ end
 M.on_attach = function(client, bufnr)
   api.nvim_command('setlocal signcolumn=yes')
   api.nvim_command('call VimrcLspOnAttach()')
-  print(client.config.name .. ' LSP started.')
+  print('LSP: ' .. client.config.name .. ' started')
 end
 
 M.stop_clients = function()
   api.nvim_command('setlocal signcolumn=auto')
+  lsp.diagnostic.clear(api.nvim_get_current_buf())
   lsp.stop_client(lsp.get_active_clients())
-  print('LSP stopped.')
+  print('LSP: stopped')
 end
 
 return M
