@@ -1,78 +1,78 @@
 #!/bin/zsh
 
-mkcd() {
-  mkdir -pv "$1" && cd "$1"
+function mkcd {
+    mkdir -pv "$1" && cd "$1"
 }
 
-hashcwd() {
-  hash -d "$1"="$PWD"
+function hashcwd {
+    hash -d "$1"="$PWD"
 }
 
 setopt rmstarsilent
-rm() {
-  printf 'Continue?: rm'
-  for i in "$@"; do printf " $i"; done
-  read -rsk r; echo
-  if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
-    echo 'Operation cancelled.'
-    return
-  fi
-  command rm -v $@
+function rm {
+    printf 'Continue?: rm'
+    for i in "$@"; do printf " $i"; done
+    read -rsk r; echo
+    if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
+        echo 'Operation cancelled.'
+        return
+    fi
+    command rm -v $@
 }
 
-makecommand() {
-  [ -z "$1" ] && echo 'Command name required' >&2 && return 1
-  mkdir -p ~/.local/bin
-  local cmd=~/.local/bin/$1
-  if [ -e $cmd ]; then
-    echo "Command $1 already exists" >&2
-  else
-    [ -z "$2" ] \
-      && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > $cmd \
-      || echo -e "#!/usr/bin/env $2\n" > $cmd
-    chmod +x $cmd
-  fi
-  $EDITOR $cmd
+function makecommand {
+    [ -z "$1" ] && echo 'Command name required' >&2 && return 1
+    mkdir -p ~/.local/bin
+    local cmd=~/.local/bin/$1
+    if [ -e $cmd ]; then
+        echo "Command $1 already exists" >&2
+    else
+        [ -z "$2" ] \
+            && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > $cmd \
+            || echo -e "#!/usr/bin/env $2\n" > $cmd
+                    chmod +x $cmd
+    fi
+    $EDITOR $cmd
 }
 
-ex() {
-  if [ -f "$1" ]; then
-    case $1 in
-      *.tar.bz2)  tar xjf "$1"   ;;
-      *.tar.gz)   tar xzf "$1"   ;;
-      *.tar.xz)   tar xf "$1"    ;;
-      *.bz2)      bunzip2 "$1"   ;;
-      *.rar)      unrar x "$1"   ;;
-      *.gz)       gunzip "$1"    ;;
-      *.tar)      tar xf "$1"    ;;
-      *.tbz2)     tar xjf "$1"   ;;
-      *.tgz)      tar xzf "$1"   ;;
-      *.zip)      unzip "$1"     ;;
-      *.Z)        uncompress "$1";;
-      *.7z)       7z x "$1"      ;;
-      *)          echo "'$1' cannot be extracted via ex()" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
+function ex {
+    if [ -f "$1" ]; then
+        case $1 in
+            *.tar.bz2)  tar xjf "$1"   ;;
+            *.tar.gz)   tar xzf "$1"   ;;
+            *.tar.xz)   tar xf "$1"    ;;
+            *.bz2)      bunzip2 "$1"   ;;
+            *.rar)      unrar x "$1"   ;;
+            *.gz)       gunzip "$1"    ;;
+            *.tar)      tar xf "$1"    ;;
+            *.tbz2)     tar xjf "$1"   ;;
+            *.tgz)      tar xzf "$1"   ;;
+            *.zip)      unzip "$1"     ;;
+            *.Z)        uncompress "$1";;
+            *.7z)       7z x "$1"      ;;
+            *)          echo "'$1' cannot be extracted via ex()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
 }
 
-dev() {
-  res="$(
-    fd --type d --hidden --follow --exclude '.git' . ~/dev \
-      | fzf --reverse --height=50%)" \
-    && cd "$res"
+function dev {
+    res="$(
+        fd --type d --hidden --follow --exclude '.git' . ~/dev \
+            | fzf --reverse --height=50%)" \
+        && cd "$res"
 }
 
-codi() {
-  local syntax="${1:-python}"
-  shift
-  vim -c \
-    "set bt=nofile ls=0 noru nonu nornu |\
-    hi ColorColumn ctermbg=NONE |\
-    hi VertSplit ctermbg=NONE |\
-    hi NonText ctermfg=0 |\
-    Codi $syntax" "$@"
+function codi {
+    local syntax="${1:-python}"
+    shift
+    vim -c \
+        "set bt=nofile ls=0 noru nonu nornu |\
+        hi ColorColumn ctermbg=NONE |\
+        hi VertSplit ctermbg=NONE |\
+        hi NonText ctermfg=0 |\
+        Codi $syntax" "$@"
 }
 
 
@@ -129,10 +129,12 @@ alias getclip='xclip -sel clipboard -o'
 alias tm='tmux'
 alias ts='tmux new-session -A -s'
 alias tl='tmux ls'
-ta() {
-    [ ! -z "$1" ] \
-        && tmux attach -t "$1" \
-        || tmux attach
+function ta {
+    if [[ -z "$1" ]]; then
+        tmux attach
+    else
+        tmux attach -t "$1"
+    fi
 }
 
 # dev:cpp --------------------------------------------------
@@ -163,7 +165,13 @@ alias vwiki='vim -c "VimwikiIndex"'
 alias vimv='vim -u NORC "+syntax off"'
 
 # git ------------------------------------------------------
-alias g='git'
+function g {
+    if [[ $# -eq 0 ]]; then
+        git status
+    else
+        git $@
+    fi
+}
 alias ga='git add'
 alias gA='git add --all :/'
 alias gc='git commit'
