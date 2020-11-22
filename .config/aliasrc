@@ -164,7 +164,7 @@ alias ffmpeg='ffmpeg -hide_banner'
 alias ffplay='ffplay -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias ytdl='youtube-dl'
-alias ytdlu='sudo pip install --upgrade youtube-dl'
+alias ytdlu='pip install --upgrade youtube-dl'
 alias ytmp3='youtube-dl -x -f bestaudio/best'
 
 # vim ------------------------------------------------------
