@@ -128,6 +128,13 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^e' edit-command-line
 
+# Menu vim movement ----------------------------------------------------- [Ctrl-{h,j,k,l}]
+zmodload zsh/complist
+bindkey -M menuselect '^k' up-line-or-history
+bindkey -M menuselect '^j' down-line-or-history
+bindkey -M menuselect '^l' forward-char
+bindkey -M menuselect '^h' backward-char
+
 
 # COMPLETION =============================================================================
 fpath=(~/.config/zsh/completions $fpath)
@@ -156,6 +163,8 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # ignored
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
+
+zstyle ':completion:*' menu select
 
 setopt auto_cd
 setopt notify
