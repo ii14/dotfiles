@@ -166,10 +166,12 @@ export FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-dow
 
 if command -v fd >/dev/null 2>&1; then
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude ".git"'
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --exclude ".git"'
     export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude ".git"'
     _fzf_compgen_path() { fd --hidden --exclude ".git" . "$@"; }
     _fzf_compgen_dir() { fd --type d --hidden --exclude ".git" . "$@"; }
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+bindkey '^g' fzf-cd-widget
