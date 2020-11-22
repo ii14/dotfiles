@@ -432,6 +432,10 @@ aug end
     vno j gj
     nno k gk
     vno k gk
+    nno gj j
+    vno gj j
+    nno gk k
+    vno gk k
     vno . :norm .<CR>
     nno gV `[v`]
     nno S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
