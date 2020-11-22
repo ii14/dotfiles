@@ -288,7 +288,12 @@ endif
     com! Vimrc edit $MYVIMRC
 
   " Help ---------------------------------------------------------------------------------
-    com! -nargs=? -complete=help H if <q-args> == '' | Helptags | else | h <args> | endif
+    com! -nargs=? -complete=help H
+      \ if <q-args> ==# '' | Helptags | else | h <args> | endif
+
+  " Buffers ------------------------------------------------------------------------------
+    com! -nargs=? -bang -complete=buffer B
+      \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
 
   " Update ctags -------------------------------------------------------------------------
     if executable('ctags')
@@ -356,6 +361,7 @@ endif
     endfun
 
     call Cabbrev('h',         'H')
+    call Cabbrev('b',         'B')
     call Cabbrev('bd',        'Bdelete')
     call Cabbrev('bd!',       'Bdelete!')
     call Cabbrev('gr',        'silent grep')
@@ -455,9 +461,6 @@ aug end
   " Buffers ------------------------------------------------------------------------------
     nno <silent> <C-N> :bn<CR>
     nno <silent> <C-P> :bp<CR>
-    nno <leader>d :Bdelete<CR>
-    nno <leader>D :Bdelete!<CR>
-    nno <leader>b :Buffers<CR>
 
   " Files --------------------------------------------------------------------------------
     fun! <SID>FILES()
