@@ -21,7 +21,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tommcdo/vim-exchange'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
-		Plug 'haya14busa/incsearch.vim'
+    Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     Plug 'junegunn/vim-peekaboo'

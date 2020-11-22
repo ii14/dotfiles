@@ -183,4 +183,4 @@ fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-bindkey '^g' fzf-cd-widget
+bindkey '^f' fzf-cd-widget
