@@ -1,3 +1,7 @@
+if !executable('config')
+  finish
+endif
+
 com! -nargs=1 -complete=customlist,s:comp Config call s:query(<q-args>)
 
 fun! s:comp(ArgLead, CmdLine, CursorPos)
