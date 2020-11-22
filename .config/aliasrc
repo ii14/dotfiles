@@ -64,6 +64,16 @@ function dev {
         && cd "$res"
 }
 
+function pro {
+    res="$(
+        cd "${1:-.}" && \
+        fd -H -t d '^\.git$' . | sed 's#/\.git$##' \
+            | fzf --reverse --height=50%)" \
+        && cd "${1:-.}/$res"
+}
+
+alias mm='pro ~/dev/mm'
+
 function codi {
     local syntax="${1:-python}"
     shift
