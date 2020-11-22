@@ -77,6 +77,7 @@ call plug#begin('~/.config/nvim/plugged')
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'metakirby5/codi.vim', {'on': 'Codi'}
+    Plug 'mtth/scratch.vim'
 
     Plug '~/.config/nvim/m/qf.vim'
     Plug '~/.config/nvim/m/pro.vim'

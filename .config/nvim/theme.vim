@@ -46,6 +46,7 @@ endfun
 
 fun! LightlineFilename()
   if &ft ==# 'fern' | return '' | endif
+  if &ft ==# 'scratch' | return 'Scratch' | endif
   if &bt ==# 'quickfix' | return getqflist({'title':1}).title | endif
   let fname = expand('%:t')
   return fname ==# '' ? '[No Name]' : &mod ? fname.' +' : fname
