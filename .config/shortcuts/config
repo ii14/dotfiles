@@ -1,5 +1,6 @@
 profile     ~/.profile
 zsh         ~/.config/zsh/.zshrc
+fish        ~/.config/fish/config.fish
 alias       ~/.config/aliasrc
 
 vim         ~/.config/nvim/init.vim
