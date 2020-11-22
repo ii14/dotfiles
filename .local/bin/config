@@ -19,6 +19,7 @@ print_help() {
 
 run() {
     if [ "$query_mode" -ne 0 ]; then
+        cd "$(dirname "$1")"
         exec $EDITOR "$1"
     else
         echo "$1"
