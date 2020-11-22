@@ -190,7 +190,7 @@ endif
 
   " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
-    let g:indentLine_fileTypeExclude = ['man']
+    let g:indentLine_fileTypeExclude = ['man', 'fern']
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
@@ -216,8 +216,8 @@ endif
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    set title                                 " set vim window title
-    " set notitle                               " nvim bug, crashes on :Helptags command
+    " set title                                 " set vim window title
+    set notitle                               " nvim bug, crashes on :Helptags command
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
@@ -355,12 +355,15 @@ endif
     endfun
 
     call Cabbrev('h',         'H')
-    call Cabbrev('git',       'Git')
-    call Cabbrev('rg',        'Rg')
-    call Cabbrev('ag',        'Ag')
+    call Cabbrev('bd',        'Bdelete')
+    call Cabbrev('bd!',       'Bdelete!')
     call Cabbrev('gr',        'silent grep')
     call Cabbrev('gre',       'silent grep')
     call Cabbrev('grep',      'silent grep')
+
+    call Cabbrev('git',       'Git')
+    call Cabbrev('rg',        'Rg')
+    call Cabbrev('ag',        'Ag')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -560,6 +563,7 @@ aug end
       " vno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
       " vno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
+      nno <buffer><silent> <leader>lS :LspStop<CR>
       nno <buffer><silent> <leader>ls :LspFind<CR>
       nno <buffer><silent> <leader>lf :LspFormat<CR>
       vno <buffer><silent> <leader>lf :LspFormat<CR>
