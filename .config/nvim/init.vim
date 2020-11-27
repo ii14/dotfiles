@@ -191,7 +191,7 @@ endif
 
   " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
-    let g:indentLine_fileTypeExclude = ['man', 'fern']
+    let g:indentLine_fileTypeExclude = ['man', 'fern', 'floggraph']
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
@@ -217,8 +217,10 @@ endif
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    " set title                                 " set vim window title
-    set notitle                               " nvim bug, crashes on :Helptags command
+    " set notitle                               " nvim bug, crashes on :Helptags command
+    set title                                 " set vim window title
+    set titlestring=nvim:\ %F
+    set titlelen=45
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
