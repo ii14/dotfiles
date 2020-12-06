@@ -1,5 +1,7 @@
 com! -nargs=1 -complete=customlist,s:comp_configs Pro call s:select_config(<q-args>)
 
+com! FZFPro call fzf#run(fzf#wrap({'source': s:fzf_pro(), 'sink': 'Pro'}))
+
 fun! pro#selected() abort
   return get(s:, 'selected_config', '')
 endfun
@@ -49,6 +51,16 @@ fun! s:comp_configs(ArgLead, CmdLine, CursorPos)
     let d = copy(g:pro#configs)
     try | call remove(d, '_') | catch | | endtry
     return sort(filter(keys(d), 'v:val =~ "^' . a:ArgLead . '"'))
+  catch
+    return []
+  endtry
+endfun
+
+fun! s:fzf_pro()
+  try
+    let d = copy(g:pro#configs)
+    try | call remove(d, '_') | catch | | endtry
+    return sort(keys(d))
   catch
     return []
   endtry

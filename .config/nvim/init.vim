@@ -548,6 +548,7 @@ aug end
     nno <leader>on :LineNumbersToggle<CR>
     nno <leader>oc :ColorizerToggle<CR>
     nno <leader>om :MouseToggle<CR>
+    nno <leader>r :FZFPro<CR>
 
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>
@@ -566,7 +567,7 @@ aug end
       nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-      nno <buffer><silent> g?    <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+      nno <buffer><silent> g?    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 
       " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
       " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
