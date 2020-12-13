@@ -3,8 +3,13 @@ let maplocalleader = ' '
 set textwidth=90
 set termguicolors
 
-if !has('nvim') | let g:disable_lsp = 1 | endif
+if !has('nvim')
+  let g:disable_lsp = 1
+  let g:disable_treesitter = 1
+endif
 
+" let g:disable_lsp = 1
+" let g:disable_treesitter = 1
 let g:disable_deoplete = 1
 let g:deoplete_lazy_load = 1
 
@@ -30,6 +35,8 @@ call plug#begin('~/.config/nvim/plugged')
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
     Plug 'edersonferreira/dalton-vim'
+    Plug 'nanotech/jellybeans.vim'
+
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
 
@@ -40,6 +47,7 @@ call plug#begin('~/.config/nvim/plugged')
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
+
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
 
@@ -64,6 +72,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'ii14/vim-dispatch'
     Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips'
+    Plug 'ii14/exrc.vim'
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -71,13 +80,17 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'norcalli/nvim-colorizer.lua'
     if !exists('g:disable_lsp')
+      Plug 'nvim-treesitter/nvim-treesitter', {'commit': '3c07232', 'do': ':TSUpdate'}
+      Plug 'nvim-treesitter/playground', {'commit': '0cb0a18'}
+    endif
+    if !exists('g:disable_lsp')
       Plug 'jackguo380/vim-lsp-cxx-highlight'
     endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'metakirby5/codi.vim', {'on': 'Codi'}
     Plug 'mtth/scratch.vim'
+    Plug 'vifm/vifm.vim'
 
     Plug '~/.config/nvim/m/qf.vim'
     Plug '~/.config/nvim/m/pro.vim'
@@ -104,8 +117,12 @@ endif
   " fzf ----------------------------------------------------------------------------------
     let $FZF_DEFAULT_OPTS =
       \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
-    let g:fzf_action = {'ctrl-s': 'split', 'ctrl-v': 'vsplit'}
-    " let g:fzf_layout = {'down': '40%'}
+
+    let g:fzf_action = {
+      \ 'ctrl-s': 'split',
+      \ 'ctrl-v': 'vsplit',
+      \ }
+
     let g:fzf_colors = {
       \ 'fg'      : ['fg', 'Normal'],
       \ 'bg'      : ['bg', 'Normal'],
@@ -114,13 +131,15 @@ endif
       \ 'bg+'     : ['bg', 'CursorLine', 'CursorColumn'],
       \ 'hl+'     : ['fg', 'Statement'],
       \ 'info'    : ['fg', 'PreProc'],
-      \ 'border'  : ['fg', 'Ignore'],
+      \ 'border'  : ['fg', 'LineNr'],
       \ 'prompt'  : ['fg', 'Function'],
       \ 'pointer' : ['fg', 'Exception'],
       \ 'marker'  : ['fg', 'Keyword'],
       \ 'spinner' : ['fg', 'Label'],
-      \ 'header'  : ['fg', 'Comment']
+      \ 'header'  : ['fg', 'Comment'],
       \ }
+
+    " let g:fzf_layout = {'down': '40%'}
 
   " Deoplete -----------------------------------------------------------------------------
     if !exists('g:disable_deoplete')
@@ -176,12 +195,34 @@ endif
       lua require('lsp/init')
     endif
 
+  " Treesitter ---------------------------------------------------------------------------
+    if !exists('g:disable_lsp')
+      lua require('nvim-treesitter.configs').setup{
+        \   highlight = {
+        \     enable = true;
+        \   };
+        \   incremental_selection = {
+        \     enable = true;
+        \     keymaps = {
+        \       init_selection = "gnn";
+        \       node_incremental = "grn";
+        \       scope_incremental = "grc";
+        \       node_decremental = "grm";
+        \     };
+        \   };
+        \ }
+    endif
+
   " Fern ---------------------------------------------------------------------------------
     let g:loaded_netrw             = 1 " disable netrw
     let g:loaded_netrwPlugin       = 1
     let g:loaded_netrwSettings     = 1
     let g:loaded_netrwFileHandlers = 1
     let g:fern#disable_default_mappings = 1
+
+  " exrc.vim -----------------------------------------------------------------------------
+    let exrc#names = ['.exrc']
+    au Vimrc BufWritePost .exrc ExrcTrust
 
   " Dispatch -----------------------------------------------------------------------------
     let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
@@ -195,6 +236,7 @@ endif
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
+    au Vimrc TermOpen * nested IndentLinesDisable
 
   " quick-scope --------------------------------------------------------------------------
     let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
@@ -244,7 +286,10 @@ endif
     set shiftwidth=4 tabstop=4 softtabstop=4  " tab width
     set shiftround                            " follow tab grid
     set smartindent                           " smarter auto indentation
-    set foldmethod=indent foldlevel=999       " folding based on indentation
+    set foldlevel=999                         " unfold everything by default
+    set foldmethod=indent                     " folding based on indentation
+    " set foldmethod=expr                       " treesitter indentation
+    " set foldexpr=nvim_treesitter#foldexpr()   " treesitter indentation
 
   " Search and Autocompletion ------------------------------------------------------------
     set path+=**
@@ -273,10 +318,6 @@ endif
       set grepformat=%f:%l:%m
       let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
     endif
-
-  " Projects -----------------------------------------------------------------------------
-    set exrc                                  " project specific vimrc
-    set secure                                " dont allow au, shell and write in exrc
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
   " Set tab width ------------------------------------------------------------------------
@@ -373,6 +414,7 @@ endif
     call Cabbrev('git',       'Git')
     call Cabbrev('rg',        'Rg')
     call Cabbrev('ag',        'Ag')
+    call Cabbrev('vifm',      'Vifm')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -580,4 +622,3 @@ aug end
       vno <buffer><silent> <leader>lf :LspFormat<CR>
       nno <buffer><silent> <leader>la :LspAction<CR>
     endfun
-

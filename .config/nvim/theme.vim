@@ -1,6 +1,5 @@
 set background=dark
 colorscheme onedark
-" colorscheme dalton
 
 let g:lightline = {}
 
