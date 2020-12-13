@@ -9,7 +9,7 @@ if !has('nvim')
 endif
 
 " let g:disable_lsp = 1
-" let g:disable_treesitter = 1
+let g:disable_treesitter = 1
 let g:disable_deoplete = 1
 let g:deoplete_lazy_load = 1
 
@@ -79,7 +79,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'norcalli/nvim-colorizer.lua'
-    if !exists('g:disable_lsp')
+    if !exists('g:disable_treesitter')
       Plug 'nvim-treesitter/nvim-treesitter', {'commit': '3c07232', 'do': ':TSUpdate'}
       Plug 'nvim-treesitter/playground', {'commit': '0cb0a18'}
     endif
@@ -196,7 +196,7 @@ endif
     endif
 
   " Treesitter ---------------------------------------------------------------------------
-    if !exists('g:disable_lsp')
+    if !exists('g:disable_treesitter')
       lua require('nvim-treesitter.configs').setup{
         \   highlight = {
         \     enable = true;
