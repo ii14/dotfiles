@@ -74,17 +74,6 @@ function pro {
 
 alias mm='pro ~/dev/mm'
 
-function codi {
-    local syntax="${1:-python}"
-    shift
-    vim -c \
-        "set bt=nofile ls=0 noru nonu nornu |\
-        hi ColorColumn ctermbg=NONE |\
-        hi VertSplit ctermbg=NONE |\
-        hi NonText ctermfg=0 |\
-        Codi $syntax" "$@"
-}
-
 
 alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
 alias path='echo -e ${PATH//:/\\n}'
@@ -92,6 +81,7 @@ alias path='echo -e ${PATH//:/\\n}'
 hash -d Trash="$HOME/.local/share/Trash"
 
 alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias htop="echo -e '\033]0;htop\007'; htop"
 
 alias :q='exit'
 
@@ -130,6 +120,7 @@ alias h='history'
 alias j='jobs'
 alias m='make'
 alias rr='ranger'
+alias zathura='zathura --fork'
 
 # xclip ----------------------------------------------------
 alias setclip='xclip -sel clipboard -i'
