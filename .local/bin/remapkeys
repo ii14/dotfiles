@@ -2,7 +2,7 @@
 
 # Set CapsLock to Ctrl and Esc
 setxkbmap -option ctrl:nocaps
-xcape -e 'Control_L=Escape' -t 200
+xcape -e 'Control_L=Escape' -t 100
 
 # Thinkpad T420
 xmodmap -e 'keycode 166 = Prior'    # PageUp
