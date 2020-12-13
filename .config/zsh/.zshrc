@@ -123,10 +123,10 @@ bindkey '\e[1;3D' backward-word
 # One directory up --------------------------------------------------------------- [Alt-U]
 bindkey -s '\eu' 'cd ..^M'
 
-# Edit command line ------------------------------------------------------------- [Ctrl-E]
+# Edit command line -------------------------------------------------------------- [Alt-E]
 autoload -U edit-command-line
 zle -N edit-command-line
-bindkey '^e' edit-command-line
+bindkey '\ee' edit-command-line
 
 # Menu vim movement ----------------------------------------------------- [Ctrl-{h,j,k,l}]
 zmodload zsh/complist
