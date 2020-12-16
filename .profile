@@ -31,7 +31,8 @@ export MEDIAPLAYER='mpv'
 
 
 export ZDOTDIR="$HOME/.config/zsh"
-export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
+[ -x "$HOME/.local/bin/dmenupass" ] \
+    && export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
 export LESSHISTFILE="$HOME/.cache/lesshst"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"

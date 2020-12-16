@@ -198,4 +198,3 @@ alias adr='apt-cache rdepends'
 alias cal='ncal -b3'
 alias bc='bc -q'
 alias ipinfo='curl ipinfo.io'
-
