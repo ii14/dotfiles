@@ -23,19 +23,21 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
-    Plug 'tommcdo/vim-exchange'
+    Plug 'tpope/vim-unimpaired'
+    " Plug 'tommcdo/vim-exchange'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
     Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
     Plug 'moll/vim-bbye'
     Plug 'junegunn/vim-peekaboo'
+    Plug 'AndrewRadev/splitjoin.vim'
     " Plug 'bkad/CamelCaseMotion'
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
-    Plug 'edersonferreira/dalton-vim'
-    Plug 'nanotech/jellybeans.vim'
+    " Plug 'edersonferreira/dalton-vim'
+    " Plug 'nanotech/jellybeans.vim'
 
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
@@ -70,7 +72,7 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
     Plug 'ii14/vim-dispatch'
-    Plug 'cdelledonne/vim-cmake'
+    " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips'
     Plug 'ii14/exrc.vim'
 
@@ -83,13 +85,13 @@ call plug#begin('~/.config/nvim/plugged')
       Plug 'nvim-treesitter/nvim-treesitter', {'commit': '3c07232', 'do': ':TSUpdate'}
       Plug 'nvim-treesitter/playground', {'commit': '0cb0a18'}
     endif
-    if !exists('g:disable_lsp')
-      Plug 'jackguo380/vim-lsp-cxx-highlight'
-    endif
+    " if !exists('g:disable_lsp')
+    "   Plug 'jackguo380/vim-lsp-cxx-highlight'
+    " endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'mtth/scratch.vim'
+    " Plug 'mtth/scratch.vim'
     Plug 'vifm/vifm.vim'
 
     Plug '~/.config/nvim/m/qf.vim'
@@ -147,9 +149,7 @@ endif
         let g:deoplete#enable_at_startup = 1
       else
         let g:deoplete#enable_at_startup = 0
-        aug Vimrc
-          au InsertEnter * call deoplete#enable()
-        aug end
+        au Vimrc InsertEnter * call deoplete#enable()
       endif
     endif
 
@@ -169,9 +169,7 @@ endif
       " imap <C-J> <Plug>(completion_next_source)
       " imap <C-K> <Plug>(completion_prev_source)
 
-      aug Vimrc
-        au BufEnter * lua require('lsp/completion').on_attach()
-      aug end
+      au Vimrc BufEnter * lua require('lsp/completion').on_attach()
     endif
 
   " nvim-lsp -----------------------------------------------------------------------------
@@ -350,16 +348,8 @@ endif
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
 
-  " Makeprg prompt -----------------------------------------------------------------------
-    com! Makeprg call <SID>Makeprg()
-    fun! <SID>Makeprg()
-      let x = input('makeprg=', &makeprg)
-      redraw
-      if x !=# ''
-        let &makeprg = x
-        echo x
-      endif
-    endfun
+  " Set option prompt --------------------------------------------------------------------
+    com! Makeprg Set makeprg
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
@@ -376,25 +366,6 @@ endif
       com! LspAction
         \ lua vim.lsp.buf.code_action()
     endif
-
-  " Fill the rest of line with specified character ---------------------------------------
-    com! -nargs=? Fill call <SID>Fill(<q-args>)
-    fun! <SID>Fill(char)
-      if strlen(a:char) > 1
-        echom 'expected zero or one character'
-        return
-      endif
-      let fill = a:char ==# '' ? '-' : a:char[0]
-      norm! $
-      let ch = getline('.')[col('.') - 1]
-      if ch !=# fill && ch !=# ' '
-        exe 'norm! a '
-      endif
-      let w = &tw - col('.')
-      if w > 0
-        exe 'norm! '.w.'A'.fill
-      endif
-    endfun
 
   " Abbreviations ------------------------------------------------------------------------
     fun! Cabbrev(lhs, rhs)
@@ -414,6 +385,7 @@ endif
     call Cabbrev('git',       'Git')
     call Cabbrev('rg',        'Rg')
     call Cabbrev('ag',        'Ag')
+    call Cabbrev('config',    'Config')
     call Cabbrev('vifm',      'Vifm')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
@@ -471,6 +443,9 @@ aug Vimrc
         exe winnr('50j').'wincmd q'
       endif
     endfun
+
+  " Fix wrong size on alacritty on i3 ----------------------------------------------------
+    au VimEnter * silent exec "!kill -s SIGWINCH $PPID"
 
 aug end
 
