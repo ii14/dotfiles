@@ -329,6 +329,21 @@ endif
     endif
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
+  " Command abbreviations ----------------------------------------------------------------
+    fun! Cabbrev(lhs, rhs)
+      exe "cnoreabbrev <expr> " . a:lhs .
+        \ " (getcmdtype() ==# ':' && getcmdline() ==# '" . a:lhs .
+        \ "') ? '" . a:rhs . "' : '" . a:lhs . "'"
+    endfun
+
+  " :bd doesn't close window, :bq closes the window --------------------------------------
+    if index(g:plugs_order, 'vim-bbye') != -1
+      call Cabbrev('bd',  'Bd')
+      call Cabbrev('bd!', 'Bd!')
+      call Cabbrev('bq',  'bd')
+      call Cabbrev('bq!', 'bd!')
+    endif
+
   " Set tab width ------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
 
@@ -339,17 +354,19 @@ endif
     com! Wiki VimwikiIndex
     com! Vimrc edit $MYVIMRC
 
-  " Help ---------------------------------------------------------------------------------
-    com! -nargs=? -complete=help H
-      \ if <q-args> ==# '' | Helptags | else | h <args> | endif
-
-  " Buffers ------------------------------------------------------------------------------
-    com! -nargs=? -bang -complete=buffer B
-      \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
+  " Use fzf for help and buffers ---------------------------------------------------------
+    if index(g:plugs_order, 'fzf.vim') != -1
+      com! -nargs=? -complete=help H
+        \ if <q-args> ==# '' | Helptags | else | h <args> | endif
+      com! -nargs=? -bang -complete=buffer B
+        \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
+      call Cabbrev('h', 'H')
+      call Cabbrev('b', 'B')
+    endif
 
   " Update ctags -------------------------------------------------------------------------
     if executable('ctags')
-      com! MakeTags !ctags -R .
+      com! Ctags !ctags -R .
     endif
 
   " Redir --------------------------------------------------------------------------------
@@ -378,21 +395,12 @@ endif
         \ lua vim.lsp.buf.code_action()
     endif
 
-  " Abbreviations ------------------------------------------------------------------------
-    fun! Cabbrev(lhs, rhs)
-      exe "cnoreabbrev <expr> " . a:lhs .
-        \ " (getcmdtype() ==# ':' && getcmdline() ==# '" . a:lhs .
-        \ "') ? '" . a:rhs . "' : '" . a:lhs . "'"
-    endfun
+  " Grep populates quickfix, so make it silent -------------------------------------------
+    call Cabbrev('gr',   'silent grep')
+    call Cabbrev('gre',  'silent grep')
+    call Cabbrev('grep', 'silent grep')
 
-    call Cabbrev('h',         'H')
-    call Cabbrev('b',         'B')
-    call Cabbrev('bd',        'Bdelete')
-    call Cabbrev('bd!',       'Bdelete!')
-    call Cabbrev('gr',        'silent grep')
-    call Cabbrev('gre',       'silent grep')
-    call Cabbrev('grep',      'silent grep')
-
+  " Some abbreviations -------------------------------------------------------------------
     call Cabbrev('git',       'Git')
     call Cabbrev('rg',        'Rg')
     call Cabbrev('ag',        'Ag')
