@@ -38,6 +38,8 @@ command! -nargs=1 -complete=customlist,s:CompConfigs Pro call s:SelectConfig(<q-
 
 command! FZFPro call fzf#run(fzf#wrap({'source': s:CompFzf(), 'sink': 'Pro'}))
 
+let s:selected_config = ''
+
 fun! pro#selected() abort
   return get(s:, 'selected_config', '')
 endfun
@@ -103,12 +105,19 @@ fun! s:CompFzf()
   endtry
 endfun
 
-if has_key(g:, 'pro#config') && has_key(g:pro#configs, g:pro#config)
-  let s:selected_config = g:pro#config
-  if has_key(g:pro#configs, '_')
-    call s:LetConfig(g:pro#configs, '_')
+fun! s:Init()
+  if s:selected_config ==# ''
+    if has_key(g:, 'pro#config') && has_key(get(g:, 'pro#configs', {}), g:pro#config)
+      let s:selected_config = g:pro#config
+      if has_key(g:pro#configs, '_')
+        call s:LetConfig(g:pro#configs, '_')
+      endif
+      call s:LetConfig(g:pro#configs, g:pro#config)
+    endif
   endif
-  call s:LetConfig(g:pro#configs, g:pro#config)
-else
-  let s:selected_config = ''
-endif
+endfun
+
+augroup ProVim
+  autocmd!
+  autocmd VimEnter,SourcePost * call s:Init()
+augroup END
