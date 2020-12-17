@@ -1,14 +1,17 @@
-com! -nargs=1 -complete=option Set call <SID>Set(<q-args>)
+" Description: Set option via prompt
+" Usage: :Set {option}
 
-fun! <SID>Set(option)
+command! -nargs=1 -complete=option Set call s:Set(<q-args>)
+
+fun! s:Set(option)
   if !exists('&' . a:option)
     echomsg 'Unknown option: ' . a:option
     return
   endif
-  exe 'let x = &' . a:option
+  execute 'let x = &' . a:option
   let x = input(a:option . '=', x)
   if x !=# ''
-    exe 'let &' . a:option . ' = x'
+    execute 'let &' . a:option . ' = x'
   else
     redraw
   endif

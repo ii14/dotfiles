@@ -1,5 +1,8 @@
-com! LineNumbersToggle call s:line_numbers_toggle()
-fun! s:line_numbers_toggle() abort
+" Description: Toggle line numbers
+
+com! LineNumbersToggle call s:LineNumbersToggle()
+
+fun! s:LineNumbersToggle() abort
   execute {
     \ '00': 'set relativenumber number',
     \ '01': 'set norelativenumber number',

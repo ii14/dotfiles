@@ -1,9 +1,33 @@
+" Description: Generate compile_commands.json for C++ language servers
+"
+" Usage:
+"
+"     :Compiledb {directory}
+"         Uses g:compiledb_path if {directory} is not specified.
+"
+" Configuration:
+"
+"     g:compiledb_path
+"         Path to makefile directory.
+"         Default: '.'
+"
+"     g:compiledb_post
+"         Post hook.
+"
+" Dependencies:
+"
+"     - compiledb (installed via pip)
+"     - tpope/dispatch.vim
+
+" TODO: fallback to :make
+
 if !executable('compiledb')
   finish
 endif
 
-com! -nargs=? -complete=dir Compiledb call s:run(<q-args>)
-fun! s:run(path)
+command! -nargs=? -complete=dir Compiledb call s:Run(<q-args>)
+
+fun! s:Run(path)
   if a:path !=# ''
     let g:compiledb_path = a:path
     let cmd = 'Dispatch (cd ' . a:path . ' && compiledb -o '
@@ -19,28 +43,5 @@ fun! s:run(path)
     let cmd = cmd.' && '.g:compiledb_post
   endif
 
-  exe cmd
-endfun
-
-com! -nargs=? -complete=dir CompiledbPath call s:path(<q-args>)
-fun! s:path(path)
-  if a:path !=# ''
-    let g:compiledb_path = a:path
-  else
-    if exists('g:compiledb_path')
-      echo g:compiledb_path
-    else
-      echo '.'
-    endif
-  endif
-endfun
-
-com! CompiledbEdit call s:edit()
-fun! s:edit()
-  let path = getcwd().'/compile_commands.json'
-  if filereadable(path)
-    exe 'edit ' . path
-  else
-    echo 'File ' . path . ' does not exist!'
-  endif
+  execute cmd
 endfun

@@ -1,21 +1,29 @@
-" Fill the rest of the line with specified character. Useful for headings
+" Description: Fill the rest of the line with specified character. Useful for headings
+"
+" Usage:
+"
+"     :Fill {character}
+"         Fill from the end of line up to text width with {character}.
+"         If {character} is not specified, uses '-'.
 
-com! -nargs=? Fill call <SID>Fill(<q-args>)
+" TODO: if the line is empty, don't add space on the beginning
 
-fun! <SID>Fill(char)
+command! -nargs=? Fill call s:Fill(<q-args>)
+
+fun! s:Fill(char)
   if strlen(a:char) > 1
-    echom 'expected zero or one character'
+    echo 'expected zero or one character'
     return
   endif
   let fill = a:char ==# '' ? '-' : a:char[0]
-  norm! $
+  normal! $
   let ch = getline('.')[col('.') - 1]
   if ch !=# fill && ch !=# ' '
-    exe 'norm! a '
+    execute 'norm! a '
   endif
   let w = &tw - col('.')
   if w > 0
-    exe 'norm! '.w.'A'.fill
+    execute 'norm! '.w.'A'.fill
   endif
 endfun
 
