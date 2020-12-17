@@ -1,6 +1,23 @@
-com! QMake call s:run()
+" Description: Run qmake
+" Usage: :QMake
+" Configuration:
+"
+"     g:qmake#bin
+"         Path to qmake binary.
+"         Default: 'qmake'
+"
+"     g:qmake#dir
+"         Build directory.
+"
+"     g:qmake#args
+"         QMake arguments.
+"
+"     g:qmake#post
+"         Post hook.
 
-fun! s:format() abort
+command! QMake call s:Run()
+
+fun! s:Format() abort
   let bin  = get(g:, 'qmake#bin',  'qmake')
   let dir  = get(g:, 'qmake#dir',  '')
   let args = get(g:, 'qmake#args', '')
@@ -16,10 +33,10 @@ fun! s:format() abort
   return cmd
 endfun
 
-fun! s:run() abort
+fun! s:Run() abort
   if len(readdir(getcwd(), { n -> filereadable(n) && n =~ '.pro$' })) > 0
-    exe '!'.s:format()
+    execute '!'.s:Format()
   else
-    echom 'QMake: Project file not found'
+    echomsg 'QMake: Project file not found'
   endif
 endfun
