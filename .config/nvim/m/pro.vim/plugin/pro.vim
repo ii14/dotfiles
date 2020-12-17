@@ -119,5 +119,5 @@ endfun
 
 augroup ProVim
   autocmd!
-  autocmd VimEnter,SourcePost * call s:Init()
+  autocmd VimEnter * call s:Init() | autocmd ProVim SourcePost * call s:Init()
 augroup END
