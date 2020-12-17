@@ -423,9 +423,6 @@ aug Vimrc
     au TermOpen * setl nonumber norelativenumber
     au BufLeave term://* stopinsert
 
-  " Tab widths ---------------------------------------------------------------------------
-    au FileType yaml,ruby,lua setl ts=2 sts=2 sw=2
-
   " make autowrite -----------------------------------------------------------------------
     au QuickFixCmdPre make update
 
