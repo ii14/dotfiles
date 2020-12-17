@@ -16,7 +16,7 @@ let g:deoplete_lazy_load = 1
 aug Vimrc | au! | aug end
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
-call plug#begin('~/.config/nvim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
 
   " Editing ------------------------------------------------------------------------------
     Plug 'tpope/vim-surround'
