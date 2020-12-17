@@ -94,10 +94,12 @@ call plug#begin('~/.local/share/nvim/plugged')
     " Plug 'mtth/scratch.vim'
     Plug 'vifm/vifm.vim'
 
+  " Custom -------------------------------------------------------------------------------
     Plug '~/.config/nvim/m/qf.vim'
     Plug '~/.config/nvim/m/pro.vim'
     Plug '~/.config/nvim/m/qmake.vim'
     Plug '~/.config/nvim/m/config.vim'
+    Plug '~/.config/nvim/m/autosplit.vim'
 
 call plug#end()
 
@@ -123,6 +125,11 @@ endif
     let g:fzf_action = {
       \ 'ctrl-s': 'split',
       \ 'ctrl-v': 'vsplit',
+      \ 'ctrl-t': 'tab split',
+      \ }
+
+    let g:fzf_layout = {
+      \ 'window': {'width': 0.9, 'height': 0.6, 'border': 'sharp'},
       \ }
 
     let g:fzf_colors = {
@@ -140,8 +147,6 @@ endif
       \ 'spinner' : ['fg', 'Label'],
       \ 'header'  : ['fg', 'Comment'],
       \ }
-
-    " let g:fzf_layout = {'down': '40%'}
 
   " Deoplete -----------------------------------------------------------------------------
     if !exists('g:disable_deoplete')
@@ -222,6 +227,12 @@ endif
     let exrc#names = ['.exrc']
     au Vimrc BufWritePost .exrc ExrcTrust
 
+  " autosplit.vim ------------------------------------------------------------------------
+    let g:autosplit_rules = {
+      \ 'filetype' : ['man', 'fugitive', 'gitcommit'],
+      \ 'buftype'  : ['help'],
+      \ }
+
   " Dispatch -----------------------------------------------------------------------------
     let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
 
@@ -266,7 +277,7 @@ endif
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=1000                        " highlight only the first 1000 columns
-    set pumblend=17                           " popup menu pseudo transparency
+    set pumblend=10 winblend=10               " pseudo transparency
 
   " Editing ------------------------------------------------------------------------------
     set history=1000                          " command history size
@@ -427,21 +438,6 @@ aug Vimrc
       if !isdirectory(path) | return | endif
       bwipeout %
       exe printf('Fern %s', fnameescape(path))
-    endfun
-
-  " Open help in vertical split, if there is enough space --------------------------------
-    au WinNew * au BufEnter * ++once call <SID>NewSplit()
-    fun! <SID>NewSplit()
-      if (&bt ==# 'help' || &ft ==# 'man' || &ft ==# 'fugitive' || &ft ==# 'gitcommit')
-        let b = bufnr()
-        let p = winnr('#')
-        let v = winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
-        wincmd J
-        wincmd p
-        if v | vsplit | else | split | endif
-        exe b.'b'
-        exe winnr('50j').'wincmd q'
-      endif
     endfun
 
   " Fix wrong size on alacritty on i3 ----------------------------------------------------
