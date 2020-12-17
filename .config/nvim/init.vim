@@ -225,7 +225,7 @@ endif
 
   " exrc.vim -----------------------------------------------------------------------------
     let exrc#names = ['.exrc']
-    au Vimrc BufWritePost .exrc ExrcTrust
+    au Vimrc BufWritePost .exrc nested ExrcTrust
 
   " autosplit.vim ------------------------------------------------------------------------
     let g:autosplit_rules = {
