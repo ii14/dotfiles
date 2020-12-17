@@ -268,7 +268,6 @@ endif
     set number relativenumber                 " line numbers
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    " set notitle                               " nvim bug, crashes on :Helptags command
     set title                                 " set vim window title
     set titlestring=nvim:\ %F
     set titlelen=45

@@ -1,5 +1,8 @@
 " Open windows in vertical split, if there is enough space
 
+" There is no good way to change the default behavior of opening the help window, so the
+" solution is hacky and might not work on every version of (neo)vim.
+
 let s:rules = get(g:, 'autosplit_rules', {})
 
 let s:bts = get(s:rules, 'buftype', [])
