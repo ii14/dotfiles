@@ -1,19 +1,23 @@
 priority -50
 
-# Preprocessor ---------------------------------------------------------------------------
-snippet #i "#include"
-#include <${1:stdio.h}>
+# PREPROCESSOR ---------------------------------------------------------------------------
+snippet #i "#include angle brackets" b
+#include $0
 endsnippet
 
-snippet #iq "#include double quotes"
-#include "${1}"
+snippet #< "#include angle brackets" b
+#include <${1:stdio.h>}$0
 endsnippet
 
-snippet #d "#define"
-#define $1
+snippet #" "#include double quotes" b
+#include "${1:`!p snip.rv = '"' if not fn.endswith('.c') else fn.rsplit('.', 1)[0] + '.h"'`}$0
 endsnippet
 
-snippet #p "#pragma once"
+snippet #d "#define" b
+#define $0
+endsnippet
+
+snippet #p "#pragma once" b
 #pragma once
 
 $0
@@ -23,4 +27,63 @@ snippet #if "#if" b
 #if ${1:0}
 ${VISUAL}$0
 #endif
+endsnippet
+
+# MAIN -----------------------------------------------------------------------------------
+snippet main "main function" b
+int main(int argc, char* argv[])
+{
+	${0}
+}
+endsnippet
+
+snippet mainn "main function with no arguments" b
+int main()
+{
+	${0}
+}
+endsnippet
+
+# BRANCHING ------------------------------------------------------------------------------
+snippet if "if"
+if (${1:true}) {
+	${2:${VISUAL}}
+}$0
+endsnippet
+
+snippet ie "if/else"
+if (${1:true}) {
+	${2:${VISUAL}}
+} else {
+	${3}
+}$0
+endsnippet
+
+snippet el "else"
+else {
+	${1:${VISUAL}}
+}$0
+endsnippet
+
+snippet ei "else if"
+else if (${1:true}) {
+	${2:${VISUAL}}
+}$0
+endsnippet
+
+snippet for "for loop"
+for (int ${2:i} = 0; $2 < ${1:count}; ++$2) {
+	${3:${VISUAL}}
+}$0
+endsnippet
+
+# ERGONOMICS -----------------------------------------------------------------------------
+snippet `p "parens" i
+($1)$0
+endsnippet
+
+snippet `b "brackets"
+{
+	$1
+}$0
 endsnippet

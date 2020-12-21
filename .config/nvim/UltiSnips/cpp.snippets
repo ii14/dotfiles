@@ -2,44 +2,50 @@ priority -50
 extends c
 priority -49
 
-# Preprocessor ---------------------------------------------------------------------------
-snippet #i "#include"
-#include <${1:iostream}>
+# PREPROCESSOR ---------------------------------------------------------------------------
+snippet #i "#include angle brackets" b
+#include $0
 endsnippet
 
-# C++ ------------------------------------------------------------------------------------
-snippet main "main function"
+snippet #< "#include angle brackets" b
+#include <${1:iostream>}$0
+endsnippet
+
+snippet #" "#include double quotes" b
+#include "${1:`!p snip.rv = '"' if not fn.endswith('.cpp') else fn.rsplit('.', 1)[0] + '.hpp"'`}$0
+endsnippet
+
+# MAIN -----------------------------------------------------------------------------------
+snippet qmain "main function with QCoreApplication" b
 int main(int argc, char* argv[])
 {
+	QCoreApplication app(argc, argv);
 	${0}
+	return app.exec();
 }
 endsnippet
 
-snippet mainn "main function no arguments"
-int main()
-{
-	${0}
-}
-endsnippet
-
-snippet fun "function"
-${1:void} ${2:function_name}(${3})
-{
-	${4}
-}
-endsnippet
-
-snippet s "struct"
+# DEFINITIONS ----------------------------------------------------------------------------
+snippet s "struct definition"
 struct ${1}
 {
 	${2}
 };
 endsnippet
 
-snippet c "class"
+snippet c "class definition"
 class ${1}
 {
 	${2}
+};
+endsnippet
+
+snippet q "QObject definition" b
+class ${0} : public QObject
+{
+	Q_OBJECT
+public:
+private:
 };
 endsnippet
 
@@ -51,32 +57,14 @@ ${2:${VISUAL}}
 } // namespace $1
 endsnippet
 
-snippet if "if"
-if (${1:true}) {
-	${0:${VISUAL}}
+snippet fn "function"
+${1:void} ${2:function_name}(${3})
+{
+	${4}
 }
 endsnippet
 
-snippet ife "if/else"
-if (${1:true}) {
-	${2:${VISUAL}}
-} else {
-	${0}
-}
-endsnippet
-
-snippet el "else"
-else {
-	${0:${VISUAL}}
-}
-endsnippet
-
-snippet elif "else if"
-else if (${1:true}) {
-	${0:${VISUAL}}
-}
-endsnippet
-
+# BRANCHING ------------------------------------------------------------------------------
 snippet try "try/catch"
 try {
 	${0:${VISUAL}}
@@ -84,65 +72,84 @@ try {
 }
 endsnippet
 
+snippet it "for loop iterator"
+for (auto ${2:it} = ${1:container}.begin(); $2 != $1.end(); ++$2) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet fore "for loop it"
+for (const auto& ${2:item} : ${1:container}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
 snippet ld "lambda"
 [${1}](${2}){${3}}
 endsnippet
 
-snippet fori "for loop"
-for (int ${2:i} = 0; $2 < ${1:count}; ++$2) {
-}
+# SMART POINTERS -------------------------------------------------------------------------
+snippet sp "std::shared_ptr"
+std::shared_ptr<${1:int}>${2}
 endsnippet
 
-snippet it "for loop iterator"
-for (auto ${2:it} = ${1:container}.begin(); $2 != $1.end(); ++$2) {
-}
+snippet up "std::unique_ptr"
+std::unique_ptr<${1:int}>${2}
 endsnippet
 
+snippet mu "std::make_unique"
+std::make_unique<${1:int}>(${2})${3}
+endsnippet
+
+snippet ms "std::make_shared"
+std::make_shared<${1:int}>(${2})${3}
+endsnippet
+
+# COMMON CLASSES -------------------------------------------------------------------------
+snippet vec "std::vector" w
+std::vector<${1:int}>$0
+endsnippet
+
+snippet cvec "const std::vector&" w
+const std::vector<${1:int}>&$0
+endsnippet
+
+snippet str "std::string" w
+std::string
+endsnippet
+
+snippet cstr "const std::string&" w
+const std::string&
+endsnippet
+
+snippet qs "QString"
+QString
+endsnippet
+
+snippet cqs "const QString&"
+const QString&
+endsnippet
+
+snippet ul "std::unique_lock"
+std::unique_lock<${2:std::mutex}> ${3:lock}(${1:mutex});
+$0
+endsnippet
+
+snippet cr "const reference" i
+const ${1:${VISUAL}}&$0
+endsnippet
+
+# CASTS ----------------------------------------------------------------------------------
 snippet sc "static cast"
-static_cast<${1:unsigned}>(${2:expr})${3}
+static_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
 snippet rc "reinterpret cast"
-reinterpret_cast<${1:unsigned}>(${2:expr})${3}
+reinterpret_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
 snippet dc "dynamic cast"
-dynamic_cast<${1:unsigned}>(${2:expr})${3}
-endsnippet
-
-snippet sp "shared pointer"
-std::shared_ptr<${1:unsigned}>${2}
-endsnippet
-
-snippet up "unique pointer"
-std::unique_ptr<${1:unsigned}>${2}
-endsnippet
-
-snippet mu "make shared pointer"
-std::make_unique<${1:unsigned}>(${2})${3}
-endsnippet
-
-snippet ms "make unique pointer"
-std::make_shared<${1:unsigned}>(${2})${3}
-endsnippet
-
-# Qt -------------------------------------------------------------------------------------
-snippet qobj "QObject definition"
-class ${0} : public QObject
-{
-	Q_OBJECT
-public:
-private:
-};
-endsnippet
-
-snippet qapp "QApplication main function"
-int main(int argc, char* argv[])
-{
-	QCoreApplication app(argc, argv);
-	${0}
-	return app.exec();
-}
+dynamic_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
 snippet qc "qobject cast"
