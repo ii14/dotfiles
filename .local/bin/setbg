@@ -1,0 +1,3 @@
+#!/bin/bash
+[ ! -z "$1" ] && cp "$1" ~/.config/wall.png
+xwallpaper --center ~/.config/wall.png
