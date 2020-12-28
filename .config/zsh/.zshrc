@@ -46,44 +46,34 @@ else
     precmd_functions+=(_set_title)
 fi
 
-# 
-
-# set -o vi
-# vim_ins_mode="%F{233}%K{2}%k%F{2}%f"
-# vim_cmd_mode="%F{233}%K{4}%k%F{4}%f"
-# vim_mode=$vim_ins_mode
-
-# function zle-keymap-select {
-#     vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
-#     zle reset-prompt
-# }
-# zle -N zle-keymap-select
-
-# function zle-line-finish {
-#     vim_mode=$vim_ins_mode
-# }
-# zle -N zle-line-finish
-
-# PROMPT='%K{233}%f %B%(4~|%-1~/…/%2~|%3~)%b $(gitprompt)${vim_mode} '
-
 
 # INCLUDES ===============================================================================
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
 [ -f "$HOME/.local/share/shortcuts" ] && source "$HOME/.local/share/shortcuts"
 
 
-# COMMAND HISTORY ========================================================================
+# OPTIONS ================================================================================
+setopt menu_complete            # insert first match of the completion
+setopt auto_cd                  # change directory by writing the directory name
+setopt notify                   # report job status immediately
+setopt no_flow_control          # disable flow control - Ctrl+S and Ctrl+Q keys
+setopt interactive_comments     # allow comments
+
+# History --------------------------------------------------------------------------------
 setopt append_history
-setopt share_history
-setopt histignorealldups
-HISTSIZE=10000
+setopt share_history            # share history between sessions
+setopt hist_ignore_all_dups     # remove duplicate commands from history
+setopt hist_ignore_space        # don't add commands with leading space to history
 SAVEHIST=10000
+HISTSIZE=10000
 HISTFILE=~/.cache/zsh/history
 
-
-# DIRECTORY STACK ========================================================================
+# Directory stack ------------------------------------------------------------------------
+setopt auto_pushd               # automatically push previous directory to the stack
+setopt pushd_minus              # swap + and -
+setopt pushd_silent             # silend pushd and popd
+setopt pushd_to_home            # pushd defaults to $HOME
 DIRSTACKSIZE=12
-setopt autopushd pushdminus pushdsilent pushdtohome
 alias dh='dirs -v'
 
 
@@ -104,6 +94,14 @@ bindkey '^[[B'  down-line-or-beginning-search
 bindkey '^[OB'  down-line-or-beginning-search
 bindkey '^n'    down-line-or-beginning-search
 
+# Backward delete word ---------------------------------------------------------- [Ctrl-W]
+my-backward-delete-word() {
+    local WORDCHARS=${WORDCHARS/\//}
+    zle backward-delete-word
+}
+zle -N my-backward-delete-word
+bindkey '^w' my-backward-delete-word
+
 # Search backward for string ---------------------------------------------------- [Ctrl-R]
 bindkey '^r' history-incremental-search-backward
 
@@ -114,10 +112,8 @@ bindkey '\e[1;3D' backward-word
 # Completion menu backwards -------------------------------------------------- [Shift-Tab]
 [[ "${terminfo[kcbt]}" != "" ]] && bindkey "${terminfo[kcbt]}" reverse-menu-complete
 
-# Go to beginning of line --------------------------------------------------------- [Home]
+# Go to beginning or end of line -------------------------------------------- [Home] [End]
 [[ "${terminfo[khome]}" != "" ]] && bindkey "${terminfo[khome]}" beginning-of-line
-
-# Go to end of line ---------------------------------------------------------------- [End]
 [[ "${terminfo[kend]}" != "" ]] && bindkey "${terminfo[kend]}" end-of-line
 
 # One directory up --------------------------------------------------------------- [Alt-U]
@@ -131,9 +127,29 @@ bindkey '\ee' edit-command-line
 # Menu vim movement ----------------------------------------------------- [Ctrl-{h,j,k,l}]
 zmodload zsh/complist
 bindkey -M menuselect '^k' up-line-or-history
+bindkey -M menuselect '^p' up-line-or-history
 bindkey -M menuselect '^j' down-line-or-history
+bindkey -M menuselect '^n' down-line-or-history
 bindkey -M menuselect '^l' forward-char
 bindkey -M menuselect '^h' backward-char
+
+bindkey -M menuselect '^y' accept-search
+bindkey -M menuselect '^e' send-break
+bindkey -M menuselect '^r' history-incremental-search-forward
+
+# Swtich between background and foreground -------------------------------------- [Ctrl-Z]
+function fg-bg() {
+    if [[ $#BUFFER -eq 0 ]]; then
+        fg
+    else
+        zle push-input
+    fi
+}
+zle -N fg-bg
+bindkey '^z' fg-bg
+
+# Expand "!" with space
+bindkey ' ' magic-space
 
 
 # COMPLETION =============================================================================
@@ -166,9 +182,6 @@ zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 
 zstyle ':completion:*' menu select
 
-setopt auto_cd
-setopt notify
-
 
 # FZF ====================================================================================
 export FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
@@ -184,3 +197,25 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 bindkey '^f' fzf-cd-widget
+
+
+# SAFER RM ===============================================================================
+setopt rmstarsilent
+function rm {
+    printf 'Continue?: rm'
+    for i in "$@"; do printf " $i"; done
+    read -rsk r; echo
+    if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
+        echo 'Operation cancelled.'
+        return
+    fi
+    command rm -v $@
+}
+
+
+# DIRECTORY HASHES =======================================================================
+hash -d Trash="$HOME/.local/share/Trash"
+
+function hashcwd {
+    hash -d "$1"="$PWD"
+}

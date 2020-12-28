@@ -1,60 +1,29 @@
 #!/bin/zsh
 
+alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
+alias path='echo -e ${PATH//:/\\n}'
+alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+# FLAGS ----------------------------------------------------------------------------------
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias mkd='mkdir -p'
+alias df='df -h'
+alias du='du -h'
+alias dmesg='dmesg -T'
+alias cal='ncal -b3'
+alias bc='bc -q'
+
+# CD -------------------------------------------------------------------------------------
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
 function mkcd {
     mkdir -pv "$1" && cd "$1"
-}
-
-function hashcwd {
-    hash -d "$1"="$PWD"
-}
-
-setopt rmstarsilent
-function rm {
-    printf 'Continue?: rm'
-    for i in "$@"; do printf " $i"; done
-    read -rsk r; echo
-    if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
-        echo 'Operation cancelled.'
-        return
-    fi
-    command rm -v $@
-}
-
-function makecommand {
-    [ -z "$1" ] && echo 'Command name required' >&2 && return 1
-    mkdir -p ~/.local/bin
-    local cmd=~/.local/bin/$1
-    if [ -e $cmd ]; then
-        echo "Command $1 already exists" >&2
-    else
-        [ -z "$2" ] \
-            && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > $cmd \
-            || echo -e "#!/usr/bin/env $2\n" > $cmd
-                    chmod +x $cmd
-    fi
-    $EDITOR $cmd
-}
-
-function ex {
-    if [ -f "$1" ]; then
-        case $1 in
-            *.tar.bz2)  tar xjf "$1"   ;;
-            *.tar.gz)   tar xzf "$1"   ;;
-            *.tar.xz)   tar xf "$1"    ;;
-            *.bz2)      bunzip2 "$1"   ;;
-            *.rar)      unrar x "$1"   ;;
-            *.gz)       gunzip "$1"    ;;
-            *.tar)      tar xf "$1"    ;;
-            *.tbz2)     tar xjf "$1"   ;;
-            *.tgz)      tar xzf "$1"   ;;
-            *.zip)      unzip "$1"     ;;
-            *.Z)        uncompress "$1";;
-            *.7z)       7z x "$1"      ;;
-            *)          echo "'$1' cannot be extracted via ex()" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
 }
 
 function dev {
@@ -74,46 +43,19 @@ function pro {
 
 alias mm='pro ~/dev/mm'
 
-
-alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
-alias path='echo -e ${PATH//:/\\n}'
-
-hash -d Trash="$HOME/.local/share/Trash"
-
-alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias htop="echo -e '\033]0;htop\007'; htop"
-
-alias :q='exit'
-
-# flags ----------------------------------------------------
-alias cp='cp -iv'
-alias mv='mv -iv'
-alias mkd='mkdir -p'
-alias df='df -h'
-alias du='du -h'
-alias dmesg='dmesg -T'
-
-# cd -------------------------------------------------------
-alias cd..='cd ..'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ......='cd ../../../../..'
-
-# ls -------------------------------------------------------
+# LS -------------------------------------------------------------------------------------
 alias ls='ls -hN --color=auto --group-directories-first'
 alias l='ls -Av --color=auto --group-directories-first'
 alias ll='ls -l --color=auto --group-directories-first'
 alias la='ls -lAv --color=auto --group-directories-first'
 
-# colors ---------------------------------------------------
+# COLORS ---------------------------------------------------------------------------------
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias diff='diff --color=auto'
 
-# shortcuts ------------------------------------------------
+# SHORTCUTS ------------------------------------------------------------------------------
 alias ka='killall'
 alias c='clear'
 alias h='history'
@@ -122,11 +64,11 @@ alias m='make'
 alias rr='ranger'
 alias zathura='zathura --fork'
 
-# xclip ----------------------------------------------------
+# XCLIP ----------------------------------------------------------------------------------
 alias setclip='xclip -sel clipboard -i'
 alias getclip='xclip -sel clipboard -o'
 
-# tmux -----------------------------------------------------
+# TMUX -----------------------------------------------------------------------------------
 alias tm='tmux'
 alias ts='tmux new-session -A -s'
 alias tl='tmux ls'
@@ -138,7 +80,7 @@ function ta {
     fi
 }
 
-# dev:cpp --------------------------------------------------
+# DEV: CPP -------------------------------------------------------------------------------
 alias g++='g++ -Wall -Wextra -Wshadow'
 alias gcc='gcc -Wall -Wextra -Wshadow -pedantic'
 alias clang++='clang++ -Wall -Wextra -Wpedantic'
@@ -146,11 +88,26 @@ alias clang='clang -Wall -Wextra -Wpedantic'
 alias gdb='gdb -quiet'
 alias demangle='c++filt -t'
 
-# dev:other ------------------------------------------------
+# DEV: OTHER -----------------------------------------------------------------------------
 alias py='python3.8'
 alias sass='sassc'
 
-# a/v ------------------------------------------------------
+function makecommand {
+    [ -z "$1" ] && echo 'Filename required' >&2 && return 1
+    mkdir -p ~/.local/bin
+    local cmd=~/.local/bin/$1
+    if [ -e "$cmd" ]; then
+        [ ! -f "$cmd" ] && echo 'File exists, but is not a regular file' >&2 && return 1
+    else
+        [ -z "$2" ] \
+            && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > "$cmd" \
+            || echo -e "#!/usr/bin/env $2\n" > "$cmd"
+        chmod +x "$cmd"
+    fi
+    "$EDITOR" "$cmd"
+}
+
+# A/V ------------------------------------------------------------------------------------
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffplay='ffplay -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
@@ -158,14 +115,14 @@ alias ytdl='youtube-dl'
 alias ytdlu='pip install --upgrade youtube-dl'
 alias ytmp3='youtube-dl -x -f bestaudio/best'
 
-# vim ------------------------------------------------------
+# VIM ------------------------------------------------------------------------------------
 alias vgit='vim "+Gedit :"'
 alias vinstall='vim +PlugInstall +qa'
 alias vupdate='vim +PlugUpdate'
 alias vwiki='vim -c "VimwikiIndex"'
 alias vimv='vim -u NORC "+syntax off"'
 
-# git ------------------------------------------------------
+# GIT ------------------------------------------------------------------------------------
 function g {
     if [[ $# -eq 0 ]]; then
         git status
@@ -186,7 +143,7 @@ alias gs='git status'
 alias gP='git push'
 alias gp='git pull'
 
-# apt ------------------------------------------------------
+# APT ------------------------------------------------------------------------------------
 alias ag='sudo apt-get'
 alias ai='sudo apt-get install'
 alias ar='sudo apt-get remove'
@@ -195,6 +152,27 @@ alias as='apt-cache search'
 alias ad='apt-cache depends'
 alias adr='apt-cache rdepends'
 
-alias cal='ncal -b3'
-alias bc='bc -q'
+# MISC -----------------------------------------------------------------------------------
 alias ipinfo='curl ipinfo.io'
+
+function ex {
+    if [ -f "$1" ]; then
+        case $1 in
+            *.tar.bz2)  tar xvjf "$1"       ;;
+            *.tar.gz)   tar xvzf "$1"       ;;
+            *.tar.xz)   tar xvf "$1"        ;;
+            *.tar)      tar xvf "$1"        ;;
+            *.tbz2)     tar xvjf "$1"       ;;
+            *.tgz)      tar xvzf "$1"       ;;
+            *.bz2)      bunzip2 -v "$1"     ;;
+            *.rar)      unrar xv "$1"       ;;
+            *.gz)       gunzip -v "$1"      ;;
+            *.zip)      unzip -v "$1"       ;;
+            *.Z)        uncompress -v "$1"  ;;
+            *.7z)       7z x "$1"           ;;
+            *)          echo "'$1' cannot be extracted via ex()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
