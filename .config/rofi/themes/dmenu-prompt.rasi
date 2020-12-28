@@ -1,0 +1,13 @@
+@import "dmenu"
+
+#horibox {
+    children: [ prompt, entry ];
+}
+
+#prompt {
+    padding: @padding-no-r;
+}
+
+#entry {
+    width: 100%;
+}

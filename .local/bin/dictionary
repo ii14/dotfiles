@@ -74,7 +74,7 @@ BEGIN {
     }
 }
 
-NF > 1 && $1 !~ /^#/ && (!key || $1 == key) {
+NF > 0 && $1 !~ /^#/ && (!key || $1 == key) {
     if (keys && values) {
         print $0
     } else if (keys && !values) {

@@ -31,8 +31,8 @@ export MEDIAPLAYER='mpv'
 
 
 export ZDOTDIR="$HOME/.config/zsh"
-[ -x "$HOME/.local/bin/dmenupass" ] \
-    && export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
+[ -x "$HOME/.local/bin/rofibin/sshpass" ] \
+    && export SUDO_ASKPASS="$HOME/.local/bin/rofibin/sshpass"
 export LESSHISTFILE="$HOME/.cache/lesshst"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"
@@ -49,7 +49,7 @@ export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 
 
-export LESS='-R'
+export LESS='-iMR'
 export LESS_TERMCAP_mb=$'\e[1;31m'
 export LESS_TERMCAP_md=$'\e[1;36m'
 export LESS_TERMCAP_so=$'\e[1;44;30m'

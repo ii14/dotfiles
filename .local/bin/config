@@ -1,6 +1,6 @@
 #!/bin/bash
 
-optfile="$HOME/.config/shortcuts/config"
+optfile="$HOME/.config/dictionary/config"
 query_mode=1
 
 log() { echo "$@" >&2; }
@@ -20,7 +20,7 @@ print_help() {
 run() {
     if [ "$query_mode" -ne 0 ]; then
         cd "$(dirname "$1")"
-        exec $EDITOR "$1"
+        exec "$EDITOR" "$1"
     else
         echo "$1"
         exit 0
@@ -33,7 +33,13 @@ match_and_run() {
     run "$file"
 }
 
-[ -z "$1" ] && print_help
+if [ -z "$1" ]; then
+    if [ -t 1 ]; then
+        print_help
+    else
+        exec "$TERMINAL" -e "$0" --interactive
+    fi
+fi
 
 if [ "$1" = '-q' ] || [ "$1" = '--query' ]; then
     query_mode=0
@@ -46,8 +52,16 @@ if [ "$1" = '-i' ] || [ "$1" = '--interactive' ]; then
     opts=$(dictionary --keys "$optfile")
     (echo "$opts" | awk '{ print NR ") " $0 }') >&2
     read -rp "Select: " x
-    opt=$(echo "$opts" | awk "NR == $x { print \$0; exit }")
-    match_and_run "$opt"
+    if (echo "$x" | grep -e '[[:digit:]]\+') >/dev/null; then
+        match="$(echo "$opts" | awk "NR == $x { print \$0; exit }")"
+        [ -z "$match" ] && die 'Option not found'
+        match_and_run "$match"
+    elif (echo "$opts" | grep -e "^$x\$") >/dev/null; then
+        match_and_run "$x"
+    else
+        match=$(echo "$opts" | grep -e "^$x" 2>/dev/null) || die 'Option not found'
+        match_and_run "$match"
+    fi
 fi
 
 if [ "$1" = '-e' ] || [ "$1" = '--edit' ]; then

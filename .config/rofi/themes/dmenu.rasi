@@ -1,0 +1,43 @@
+@import "colors"
+
+* {
+    color-accent: @color-green;
+}
+
+#window {
+    anchor: north;
+    location: north;
+    width: 100%;
+    children: [ horibox ];
+}
+
+#horibox {
+    orientation: horizontal;
+    children: [ prompt, entry, listview ];
+}
+
+#prompt {
+    padding: @padding-all;
+}
+
+#entry {
+    padding: @padding-all;
+    width: 10em;
+    text-color: @color-accent;
+    expand: false;
+    background-color: @color-bg-alt;
+}
+
+#listview {
+    layout: horizontal;
+    lines: 100;
+}
+
+#element {
+    padding: @padding-all;
+}
+
+#element.selected {
+    background-color: @color-accent;
+    text-color: @color-bg;
+}

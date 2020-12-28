@@ -1,0 +1,25 @@
+#!/bin/bash
+
+options="logout\nsuspend\nreboot\nshutdown"
+style='* { color-accent: @color-red; }'
+selected="$(echo -e "$options" | rofi -p 'powermenu' -dmenu -theme dmenu -theme-str "$style")"
+case $selected in
+
+'logout')
+    i3-msg exit
+    ;;
+
+'suspend')
+    mpc -q pause
+    systemctl suspend
+    ;;
+
+'reboot')
+    systemctl reboot
+    ;;
+
+'shutdown')
+    systemctl poweroff
+    ;;
+
+esac

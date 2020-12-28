@@ -1,0 +1,102 @@
+@import "colors"
+
+#window {
+    anchor: north;
+    location: north;
+    width: 100%;
+}
+
+#mainbox {
+    children: [ inputbar, listview, message ];
+}
+
+#inputbar {
+    text-color: @color-fg;
+    children: [ prompt, entry ];
+}
+
+#prompt {
+    text-color: @color-fg;
+    padding: @padding-all;
+}
+
+#entry {
+    text-color: @color-green;
+    background-color: @color-bg-alt;
+    padding: @padding-all;
+}
+
+#num-filtered-rows {
+    text-color: @color-fg-alt;
+    padding: @padding-all;
+}
+
+#listview {
+    border: 1px 0;
+    border-color: #4b5263;
+    dynamic: true;
+    fixed-height: false;
+    scrollbar: true;
+}
+
+#element {
+    padding: @padding-all;
+    background-color: @color-bg-one;
+    text-color: @color-fg-alt;
+}
+
+#element.urgent {
+    text-color: @color-red;
+}
+
+#element.active {
+    text-color: @color-blue;
+    font: @text-font-bold;
+}
+
+#element.selected {
+    text-color: @color-bg-one;
+}
+
+#element.selected.normal {
+    background-color: @color-green;
+}
+
+#element.selected.urgent {
+    background-color: @color-red;
+}
+
+#element.selected.active {
+    background-color: @color-blue;
+}
+
+#scrollbar {
+    width: 4px;
+    handle-color: #4b5263;
+    handle-width: 6px;
+    border: 0 0 0 1px;
+    border-color: @color-bg-one;
+    padding: 0;
+    background-color: #2c323c;
+}
+
+#textbox {
+    text-color: @color-red;
+    padding: @padding-all;
+}
+
+#mode-switcher {
+    border: 1px 0px 0px;
+    border-color: @color-bg;
+    width: 30%;
+}
+
+#button {
+    text-color: @color-green;
+    padding: @padding-all;
+}
+
+#button.selected {
+    background-color: @color-green;
+    text-color: @color-bg;
+}

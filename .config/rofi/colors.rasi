@@ -1,0 +1,49 @@
+// +------[ One Dark ]------+
+// |  Color Name  |   Hex   |
+// | Black        | #282c34 |
+// | White        | #abb2bf |
+// | Light Red    | #e06c75 |
+// | Dark Red     | #be5046 |
+// | Green        | #98c379 |
+// | Light Yellow | #e5c07b |
+// | Dark Yellow  | #d19a66 |
+// | Blue         | #61afef |
+// | Magenta      | #c678dd |
+// | Cyan         | #56b6c2 |
+// | Gutter Grey  | #4b5263 |
+// | Comment Grey | #5c6370 |
+// +------------------------+
+
+* {
+    color-bg     : #000000;
+    color-fg     : #ffffff;
+    color-bg-one : #282c34;
+    color-bg-alt : #101010;
+    color-fg-alt : #abb2bf;
+    color-blue   : #61afef;
+    color-red    : #e06c75;
+    color-green  : #9ecd6f;
+    color-yellow : #e5c07b;
+
+    text-font      : "tewi 8";
+    text-font-bold : "tewi Bold 8";
+
+    padding-all  : 3px 6px;
+    padding-v    : 3px 0;
+    padding-h    : 0 6px;
+    padding-l    : 0 6px 0 0;
+    padding-r    : 0 0 0 6px;
+    padding-t    : 3px 0 0 0;
+    padding-b    : 0 0 3px 0;
+    padding-no-l : 3px 6px 3px 0;
+    padding-no-r : 3px 0 3px 6px;
+    padding-no-t : 0 6px 3px 6px;
+    padding-no-b : 3px 6px 0 6px;
+
+    background-color : @color-bg;
+    text-color       : @color-fg;
+
+    spacing : 0;
+    padding : 0;
+    border  : 0;
+}

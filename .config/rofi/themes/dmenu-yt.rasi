@@ -1,0 +1,19 @@
+@import "dmenu"
+
+#horibox {
+    children: [ prompt, listview ];
+}
+
+#prompt {
+    padding: @padding-no-r;
+}
+
+#listview {
+    lines: 1;
+}
+
+#element.selected {
+    background-color: @color-bg;
+    padding: @padding-all;
+    text-color: @color-accent;
+}

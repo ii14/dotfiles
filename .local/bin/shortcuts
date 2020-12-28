@@ -1,5 +1,5 @@
 #!/bin/bash
 awk \
     'NF == 2 { print "alias " $1 "=" $2 }' \
-    "$HOME/.config/shortcuts/directories" \
+    "$HOME/.config/dictionary/directories" \
     > "$HOME/.local/share/shortcuts"
