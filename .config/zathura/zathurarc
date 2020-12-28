@@ -1,0 +1,38 @@
+set selection-clipboard "clipboard"
+
+set adjust-open "width"
+
+set font "tewi 8"
+
+# colors
+set default-bg "#282c34"
+set default-fg "#abb2bf"
+
+set statusbar-bg "#282c34"
+set statusbar-fg "#abb2bf"
+
+set inputbar-bg "#151515"
+set inputbar-fg "#abb2bf"
+
+set notification-error-bg "#AC4142" #08
+set notification-error-fg "#151515" #00
+
+set notification-warning-bg "#AC4142" #08
+set notification-warning-fg "#151515" #00
+
+set highlight-color "#F4BF75" #0A
+set highlight-active-color "#6A9FB5" #0D
+
+set completion-highlight-fg "#151515" #02
+set completion-highlight-bg "#90A959" #0C
+
+set completion-bg "#303030" #02
+set completion-fg "#E0E0E0" #0C
+
+set notification-bg "#90A959" #0B
+set notification-fg "#151515" #00
+
+set recolor "true"
+set recolor-lightcolor "#282c34" #00
+set recolor-darkcolor "#e6efff" #06
+set recolor-reverse-video "true"
