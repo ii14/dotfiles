@@ -1,0 +1,81 @@
+#!/bin/bash
+
+tmp_dir=/tmp/yt
+log_all=/tmp/yt/yt.log
+
+Log() {
+    echo "$1" >&2
+}
+
+Usage() {
+    Log 'Usage:'
+    Log '    yt                -- interactive'
+    Log '    yt <url/file>     -- play url or file'
+    Log '    yt f [directory]  -- fuzzy finder'
+    Log '    yt c              -- url from clipboard'
+    Log '    yt l              -- logs'
+}
+
+if [ -t 1 ]; then
+    if [[ -z "$1" ]]; then
+        read -rp '> ' url
+    elif [[ "$1" = '--help' ]]; then
+        Usage
+        exit 0
+    elif [[ "$1" = 'l' ]]; then
+        [[ ! -f "$log_all" ]] && exit 0
+        [[ -z "$2" ]] && lines=25 || lines="$2"
+        tail -n "$lines" "$log_all"
+        exit 0
+    elif [[ "$1" = 'f' ]]; then
+        [[ -z "$2" ]] \
+            && path='.' \
+            || path="$2"
+        url="$(fd "$path" -t f -e 'mp4' -e 'mkv' -e 'webm' | fzf --height=50% --reverse)"
+        [[ -z "$url" ]] && exit 1
+    else
+        url="$1"
+    fi
+
+    if [[ "$url" = 'c' ]]; then
+        url="$(xclip -sel clipboard -o)"
+        Log "clipboard?: $url (ctrl+c/enter)"
+        read -rsn1
+    fi
+else
+    url="$(xclip -sel clipboard -o)"
+    url="$(echo "$url" | rofi -dmenu -p 'play in mpv?' -theme dmenu-yt)" || exit 0
+fi
+
+if [[ -z "$url" ]]; then
+    Log 'no url'
+    exit 1
+fi
+
+if echo -n "$url" | grep -Eo '^[-_A-Za-z0-9]{11}$' &>/dev/null; then
+    Log 'prepending "ytdl://"'
+    url="ytdl://$url"
+fi
+
+Log "url: $url"
+
+mkdir -p /tmp/yt
+
+(
+    tmp_log="$(mktemp --tmpdir="$tmp_dir")"
+    echo '----------' >> "$tmp_log"
+    echo "mpv \"$url\"" >> "$tmp_log"
+    mpv --pause "$url" &>> "$tmp_log"
+    code=$?
+    if [[ "$code" -ne 0 ]]; then
+        Log "mpv returned $code"
+        notify-send "yt: mpv returned $code"
+    fi
+    echo "mpv returned $code" >> "$tmp_log"
+    cat "$tmp_log" >> "$log_all"
+    rm "$tmp_log"
+) &
+
+Log "pid: $!"
+disown
+exit 0
