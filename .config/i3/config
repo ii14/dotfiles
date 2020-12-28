@@ -1,0 +1,163 @@
+font pango:tewi 8
+
+set $mod Mod4
+
+set $exec exec --no-startup-id
+
+set $rofibin ~/.local/bin/rofibin
+
+# LAUNCH ---------------------------------------------------------------------------------
+bindsym $mod+Return         $exec i3-sensible-terminal
+bindsym $mod+Shift+Return   $exec rofi -show run -theme dmenu
+bindsym $mod+semicolon      $exec rofi -show run -theme dmenu
+bindsym $mod+apostrophe     $exec rofi -show ssh -theme dmenu
+bindsym $mod+slash          $exec rofi -show window -theme vert
+bindsym $mod+Shift+slash    $exec rofi -show windowcd -theme vert
+
+# WINDOWS --------------------------------------------------------------------------------
+bindsym $mod+Delete         kill
+
+bindsym $mod+h              focus left
+bindsym $mod+j              focus down
+bindsym $mod+k              focus up
+bindsym $mod+l              focus right
+
+bindsym $mod+Shift+h        move left
+bindsym $mod+Shift+j        move down
+bindsym $mod+Shift+k        move up
+bindsym $mod+Shift+l        move right
+
+bindsym $mod+v              split h
+bindsym $mod+s              split v
+bindsym $mod+t              split v; layout tabbed
+
+bindsym $mod+q              layout toggle split
+bindsym $mod+w              layout tabbed
+bindsym $mod+e              layout stacking
+
+bindsym $mod+a              focus parent
+bindsym $mod+c              focus child
+
+bindsym $mod+f              fullscreen toggle
+
+bindsym $mod+Shift+space    floating toggle
+bindsym $mod+space          focus mode_toggle
+# Mouse+$mod to drag floating windows
+floating_modifier $mod
+
+bindsym $mod+r mode "resize"
+mode "resize" {
+    bindsym h       resize shrink width 10 px or 10 ppt
+    bindsym j       resize grow height 10 px or 10 ppt
+    bindsym k       resize shrink height 10 px or 10 ppt
+    bindsym l       resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+
+# WORKSPACES -----------------------------------------------------------------------------
+set $ws1    "1"
+set $ws2    "2"
+set $ws3    "3"
+set $ws4    "4"
+set $ws5    "5"
+set $ws6    "6"
+set $ws7    "7"
+set $ws8    "8"
+set $ws9    "9"
+set $ws10   "10"
+
+# focus workspaces
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+bracketleft  workspace prev
+bindsym $mod+bracketright workspace next
+bindsym $mod+p            workspace prev
+bindsym $mod+n            workspace next
+bindsym $mod+Tab          workspace back_and_forth
+
+# move window to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# i3 -------------------------------------------------------------------------------------
+# reload config
+bindsym $mod+Shift+c reload
+# restart i3 inplace
+bindsym $mod+Shift+r restart
+# exit i3
+bindsym $mod+Shift+e $exec $rofibin/power
+
+# MISC -----------------------------------------------------------------------------------
+bindsym Print                   $exec $rofibin/screenshot
+
+bindsym XF86AudioRaiseVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioLowerVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ -10%
+bindsym XF86AudioMute           $exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute        $exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# bindsym XF86AudioNext           $exec mpc next
+# bindsym XF86AudioPlay           $exec mpc toggle
+# bindsym XF86AudioPrev           $exec mpc prev
+# bindsym XF86AudioStop           $exec mpc stop
+bindsym XF86AudioNext           $exec cmus-remote --next
+bindsym XF86AudioPlay           $exec cmus-remote --pause
+bindsym XF86AudioPrev           $exec cmus-remote --prev
+bindsym XF86AudioStop           $exec cmus-remote --stop
+
+bindsym $mod+y                  $exec yt
+
+# CLASSES --------------------------------------------------------------------------------
+assign      [class="Firefox"]   $ws1
+assign      [class="mpv"]       $ws2
+for_window  [class="Firefox"]   layout tabbed
+for_window  [class="mpv"]       layout tabbed
+
+# INIT -----------------------------------------------------------------------------------
+$exec xss-lock --transfer-sleep-lock -- i3lock --nofork
+$exec setbg
+$exec compton
+$exec xsetroot -cursor_name left_ptr
+$exec nm-applet
+$exec volumeicon
+$exec redshift
+$exec remapkeys
+
+bar {
+    i3bar_command launch-polybar i3
+}
+
+# COLORS ---------------------------------------------------------------------------------
+# class                 border  backgr. text    indicator child_border
+# client.focused          #61afef #61afef #ffffff #61afef   #3e4452
+# client.focused_inactive #3e4452 #3e4452 #abb2bf #484e50   #3e4452
+# client.unfocused        #3e4452 #3e4452 #1e2127 #292d2e   #3e4452
+# client.urgent           #be5046 #be5046 #ffffff #be5046   #be5046
+# client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+# client.background       #000000
+# new_window normal 1
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
+client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
+client.unfocused        #333333 #282c34 #5c6370 #292d2e   #222222
+client.urgent           #e06c75 #be5046 #ffffff #be5046   #be5046
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.background       #000000
