@@ -1,0 +1,4 @@
+-o "%(upload_date)s-%(uploader)s-%(title)s-%(id)s.%(ext)s"
+-w
+-v
+--write-info-json
