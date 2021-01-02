@@ -2,6 +2,8 @@
 
 repos='
 git@github.com:woefe/git-prompt.zsh.git
+git@github.com:zsh-users/zsh-syntax-highlighting.git
+git@github.com:zsh-users/zsh-autosuggestions.git
 '
 
 for repo in $repos; do

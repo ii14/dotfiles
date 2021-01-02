@@ -1,59 +1,88 @@
-# PROMPT =================================================================================
+# PROMPT /////////////////////////////////////////////////////////////////////////////////
 autoload -U colors && colors
 
 # Git prompt -----------------------------------------------------------------------------
-source ~/.config/zsh/plugins/git-prompt.zsh/git-prompt.zsh
-ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
+if [[ -d ~/.config/zsh/plugins/git-prompt.zsh ]]; then
+    source ~/.config/zsh/plugins/git-prompt.zsh/git-prompt.zsh
+    ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
+    ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
+    ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233} "
+    ZSH_THEME_GIT_PROMPT_SEPARATOR="%K{233} "
+    ZSH_THEME_GIT_PROMPT_DETACHED="%K{233}%{$fg[cyan]%}:"
+    ZSH_THEME_GIT_PROMPT_BRANCH="%K{233}%{$fg[yellow]%}"
+    ZSH_THEME_GIT_PROMPT_UPSTREAM_SYMBOL="%K{233}%{$fg[yellow]%}⟳ "
+    ZSH_THEME_GIT_PROMPT_UPSTREAM_PREFIX="%K{233}%{$fg[red]%}(%{$fg[yellow]%}"
+    ZSH_THEME_GIT_PROMPT_UPSTREAM_SUFFIX="%K{233}%{$fg[red]%})"
+    ZSH_THEME_GIT_PROMPT_BEHIND="%K{233}↓"
+    ZSH_THEME_GIT_PROMPT_AHEAD="%K{233}↑"
+    ZSH_THEME_GIT_PROMPT_UNMERGED="%K{233}%{$fg[red]%}x"
+    ZSH_THEME_GIT_PROMPT_STAGED="%K{233}%{$fg[green]%}●"
+    ZSH_THEME_GIT_PROMPT_UNSTAGED="%K{233}%{$fg[red]%}+"
+    ZSH_THEME_GIT_PROMPT_UNTRACKED="%K{233}…"
+    ZSH_THEME_GIT_PROMPT_STASHED="%K{233}%{$fg[blue]%}⚑"
+    ZSH_THEME_GIT_PROMPT_CLEAN="%K{233}%{$fg[green]%}✔"
+    _zsh_gitprompt_loaded=0
+fi
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233} "
-ZSH_THEME_GIT_PROMPT_SEPARATOR="%K{233} "
-ZSH_THEME_GIT_PROMPT_DETACHED="%K{233}%{$fg[cyan]%}:"
-ZSH_THEME_GIT_PROMPT_BRANCH="%K{233}%{$fg[yellow]%}"
-ZSH_THEME_GIT_PROMPT_UPSTREAM_SYMBOL="%K{233}%{$fg[yellow]%}⟳ "
-ZSH_THEME_GIT_PROMPT_UPSTREAM_PREFIX="%K{233}%{$fg[red]%}(%{$fg[yellow]%}"
-ZSH_THEME_GIT_PROMPT_UPSTREAM_SUFFIX="%K{233}%{$fg[red]%})"
-ZSH_THEME_GIT_PROMPT_BEHIND="%K{233}↓"
-ZSH_THEME_GIT_PROMPT_AHEAD="%K{233}↑"
-ZSH_THEME_GIT_PROMPT_UNMERGED="%K{233}%{$fg[red]%}x"
-ZSH_THEME_GIT_PROMPT_STAGED="%K{233}%{$fg[green]%}●"
-ZSH_THEME_GIT_PROMPT_UNSTAGED="%K{233}%{$fg[red]%}+"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%K{233}…"
-ZSH_THEME_GIT_PROMPT_STASHED="%K{233}%{$fg[blue]%}⚑"
-ZSH_THEME_GIT_PROMPT_CLEAN="%K{233}%{$fg[green]%}✔"
+# Vim mode indicator ---------------------------------------------------------------------
+_zsh_vim_ins_mode=2 # main mode color: green
+_zsh_vim_cmd_mode=4 # vim mode color: blue
+_zsh_vim_mode=$_zsh_vim_ins_mode
+
+function zle-keymap-select {
+    _zsh_vim_mode="${${KEYMAP/vicmd/${_zsh_vim_cmd_mode}}/(main|viins)/${_zsh_vim_ins_mode}}"
+    zle reset-prompt
+}
+zle -N zle-keymap-select
+
+function zle-line-finish {
+    _zsh_vim_mode=$_zsh_vim_ins_mode
+}
+zle -N zle-line-finish
+
+function TRAPINT() {
+    _zsh_vim_mode=$_zsh_vim_ins_mode
+    return $(( 128 + $1 ))
+}
 
 # Prompt ---------------------------------------------------------------------------------
 if [[ "$TERM" == 'linux' ]]; then
     # no fancy prompt on linux tty
     PROMPT='%n@%m:%~$ '
-elif [[ -v SSH_CONNECTION ]]; then
-    # print user@host if logged in through ssh
-    PROMPT='%K{233}%f%B %b%n@%m%B %(4~|%-1~/…/%2~|%3~) %b$(gitprompt)%F{233}%K{2}%k%F{2}%f '
-
-    # terminal window title
-    _set_title() {
-        (echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
-    }
-    precmd_functions+=(_set_title)
 else
-    # local prompt
-    PROMPT='%K{233}%f %B%(4~|%-1~/…/%2~|%3~)%b $(gitprompt)%F{233}%K{2}%k%F{2}%f '
+    PROMPT='%K{233}%f '
 
-    # terminal window title
+    # print user@host if logged in through ssh
+    if [[ -v SSH_CONNECTION ]]; then
+        PROMPT+='%b%n@%m%B '
+    fi
+
+    # print directory
+    PROMPT+='%B%(4~|%-1~/…/%2~|%3~)%b '
+
+    # print git branch
+    if [[ -v _zsh_gitprompt_loaded ]]; then
+        PROMPT+='$(gitprompt)'
+    fi
+
+    # print emacs/vim mode indicator
+    PROMPT+='%F{233}%K{${_zsh_vim_mode}}%k%F{${_zsh_vim_mode}}%f '
+
+    # set terminal window title
     _set_title() {
         (echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
     }
     precmd_functions+=(_set_title)
 fi
 
-
-# INCLUDES ===============================================================================
+# INCLUDES ///////////////////////////////////////////////////////////////////////////////
 [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
 [ -f "$HOME/.local/share/shortcuts" ] && source "$HOME/.local/share/shortcuts"
 
 
-# OPTIONS ================================================================================
+# OPTIONS ////////////////////////////////////////////////////////////////////////////////
 setopt menu_complete            # insert first match of the completion
+setopt list_packed              # fit more completions on the screen
 setopt auto_cd                  # change directory by writing the directory name
 setopt notify                   # report job status immediately
 setopt no_flow_control          # disable flow control - Ctrl+S and Ctrl+Q keys
@@ -77,11 +106,12 @@ DIRSTACKSIZE=12
 alias dh='dirs -v'
 
 
-# KEY BINDINGS ===========================================================================
+# KEY BINDINGS ///////////////////////////////////////////////////////////////////////////
 export KEYTIMEOUT=1
 
-# Emacs key bindings ---------------------------------------------------------------------
+# Emacs key bindings with Vim normal mode ------------------------------------------ [Esc]
 bindkey -e
+bindkey '\e' vi-cmd-mode
 
 # Filter history ------------------------------------------------------------- [Up] [Down]
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
@@ -124,7 +154,7 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\ee' edit-command-line
 
-# Menu vim movement ----------------------------------------------------- [Ctrl-{h,j,k,l}]
+# Completion menu vim movement ------------------------------------------ [Ctrl-{h,j,k,l}]
 zmodload zsh/complist
 bindkey -M menuselect '^k' up-line-or-history
 bindkey -M menuselect '^p' up-line-or-history
@@ -135,6 +165,7 @@ bindkey -M menuselect '^h' backward-char
 
 bindkey -M menuselect '^y' accept-search
 bindkey -M menuselect '^e' send-break
+bindkey -M menuselect '\e' send-break
 bindkey -M menuselect '^r' history-incremental-search-forward
 
 # Swtich between background and foreground -------------------------------------- [Ctrl-Z]
@@ -152,7 +183,7 @@ bindkey '^z' fg-bg
 bindkey ' ' magic-space
 
 
-# COMPLETION =============================================================================
+# COMPLETION /////////////////////////////////////////////////////////////////////////////
 fpath=(~/.config/zsh/completions $fpath)
 
 autoload -Uz compinit
@@ -166,7 +197,7 @@ zstyle ':completion:*' menu select=2
 eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+# zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
 zstyle ':completion:*' menu select=long
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
@@ -183,7 +214,23 @@ zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 zstyle ':completion:*' menu select
 
 
-# FZF ====================================================================================
+# SYNTAX HIGHLIGHTING ////////////////////////////////////////////////////////////////////
+if [[ -d ~/.config/zsh/plugins/zsh-syntax-highlighting ]]; then
+    typeset -A ZSH_HIGHLIGHT_STYLES
+    ZSH_HIGHLIGHT_STYLES[comment]='fg=black'
+    source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+
+# AUTOSUGGESTIONS ////////////////////////////////////////////////////////////////////////
+if [[ -d ~/.config/zsh/plugins/zsh-autosuggestions ]]; then
+    ZSH_AUTOSUGGEST_USE_ASYNC=1
+    source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    bindkey '^ ' autosuggest-accept
+fi
+
+
+# FZF ////////////////////////////////////////////////////////////////////////////////////
 export FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
 
 if command -v fd >/dev/null 2>&1; then
@@ -199,7 +246,7 @@ fi
 bindkey '^f' fzf-cd-widget
 
 
-# SAFER RM ===============================================================================
+# SAFER RM ///////////////////////////////////////////////////////////////////////////////
 setopt rmstarsilent
 function rm {
     printf 'Continue?: rm'
@@ -212,9 +259,14 @@ function rm {
     command rm -v $@
 }
 
+alias t='trash -v'
 
-# DIRECTORY HASHES =======================================================================
-hash -d Trash="$HOME/.local/share/Trash"
+
+# DIRECTORY HASHES ///////////////////////////////////////////////////////////////////////
+hash -d trash="$HOME/.local/share/Trash"
+hash -d dls="$(xdg-user-dir DOWNLOAD)"
+hash -d pic="$(xdg-user-dir PICTURES)"
+hash -d vid="$(xdg-user-dir VIDEOS)"
 
 function hashcwd {
     hash -d "$1"="$PWD"
