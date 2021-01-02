@@ -69,9 +69,15 @@ else
     PROMPT+='%F{233}%K{${_zsh_vim_mode}}%k%F{${_zsh_vim_mode}}%f '
 
     # set terminal window title
-    _set_title() {
-        (echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
-    }
+    if [[ -v SSH_CONNECTION ]]; then
+        _set_title() {
+            (echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
+        }
+    else
+        _set_title() {
+            (echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
+        }
+    fi
     precmd_functions+=(_set_title)
 fi
 
