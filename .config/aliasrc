@@ -11,8 +11,10 @@ alias mkd='mkdir -p'
 alias df='df -h'
 alias du='du -h'
 alias dmesg='dmesg -T'
-alias cal='ncal -b3'
+alias cal='cal -b3'
 alias bc='bc -q'
+alias mount='mount -v'
+alias umount='umount -v'
 
 # CD -------------------------------------------------------------------------------------
 alias cd..='cd ..'
@@ -117,10 +119,9 @@ alias ytmp3='youtube-dl -x -f bestaudio/best'
 
 # VIM ------------------------------------------------------------------------------------
 alias vgit='vim "+Gedit :"'
-alias vinstall='vim +PlugInstall +qa'
-alias vupdate='vim +PlugUpdate'
-alias vwiki='vim -c "VimwikiIndex"'
-alias vimv='vim -u NORC "+syntax off"'
+alias vim-install='vim +PlugInstall +qa'
+alias vim-update='vim +PlugUpdate'
+alias vimclean='vim -u NORC --clean "+syntax off"'
 
 # GIT ------------------------------------------------------------------------------------
 function g {
