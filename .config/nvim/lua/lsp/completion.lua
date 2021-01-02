@@ -6,7 +6,7 @@ local M = {}
 M.on_attach_lsp = function()
   completion.on_attach({
     chain_complete_list = {
-      default = {{ complete_items = {'lsp'} }}
+      default = {{ complete_items = {'lsp', 'snippet'} }}
     }
   })
 end

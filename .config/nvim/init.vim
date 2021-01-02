@@ -24,7 +24,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-unimpaired'
-    " Plug 'tommcdo/vim-exchange'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
     Plug 'haya14busa/incsearch.vim'
@@ -32,7 +31,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'moll/vim-bbye'
     Plug 'junegunn/vim-peekaboo'
     Plug 'AndrewRadev/splitjoin.vim'
-    " Plug 'bkad/CamelCaseMotion'
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
@@ -73,13 +71,14 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'rbong/vim-flog'
     Plug 'ii14/vim-dispatch'
     " Plug 'cdelledonne/vim-cmake'
-    Plug 'SirVer/ultisnips'
+    Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
+    Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
     if !exists('g:disable_treesitter')
       Plug 'nvim-treesitter/nvim-treesitter', {'commit': '3c07232', 'do': ':TSUpdate'}
@@ -263,6 +262,9 @@ endif
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
 
+  " scratch.vim --------------------------------------------------------------------------
+    let g:scratch_insert_autohide = 0
+
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
     set number relativenumber                 " line numbers
@@ -368,6 +370,11 @@ endif
       com! Ctags !ctags -R .
     endif
 
+    " https://github.com/pylipp/qtilities
+    if executable('qmltags')
+      com! Qmltags !qmltags
+    endif
+
   " Redir --------------------------------------------------------------------------------
     com! -nargs=1 -complete=command Redir
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
@@ -403,8 +410,23 @@ endif
     call Cabbrev('git',       'Git')
     call Cabbrev('rg',        'Rg')
     call Cabbrev('ag',        'Ag')
+    call Cabbrev('man',       'Man')
     call Cabbrev('config',    'Config')
     call Cabbrev('vifm',      'Vifm')
+
+  " Execute visual selection -------------------------------------------------------------
+    com! -range ExecuteVisualSelection call ExecuteVisualSelection()
+    fun! ExecuteVisualSelection(...)
+      let [line_start, column_start] = getpos("'<")[1:2]
+      let [line_end, column_end] = getpos("'>")[1:2]
+      let lines = getline(line_start, line_end)
+      if len(lines) == 0
+        return ''
+      endif
+      let lines[-1] = lines[-1][:column_end - 2]
+      let lines[0] = lines[0][column_start - 1:]
+      execute join(lines, "\n")
+    endfun
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -496,8 +518,8 @@ aug end
   " Search and Replace -------------------------------------------------------------------
     nno <leader>/ :Lines<CR>
     nno <leader>? :BLines<CR>
-    nno <leader>s :%s//g<Left><Left>
-    vno <leader>s :s//g<Left><Left>
+    nno <leader>s :%s/
+    vno <leader>s :s/
     nmap <leader>c z*cgn
     vmap <leader>c z*cgn
     map /   <Plug>(incsearch-forward)
@@ -513,6 +535,7 @@ aug end
     map gz* <Plug>(incsearch-nohl0)<Plug>(asterisk-gz*)
     map z#  <Plug>(incsearch-nohl0)<Plug>(asterisk-z#)
     map gz# <Plug>(incsearch-nohl0)<Plug>(asterisk-gz#)
+    nno <silent> <leader><CR> :let @/ = ''<CR>
 
   " Macros -------------------------------------------------------------------------------
     no q <Nop>
@@ -544,6 +567,7 @@ aug end
     nno <leader>y "+y
     vno <leader>y "+y
     nno <leader>Y "+y$
+    nno <leader>gv :let @+ = @"<CR>
 
   " Make ---------------------------------------------------------------------------------
     nno m<CR>    :up<CR>:Make<CR>

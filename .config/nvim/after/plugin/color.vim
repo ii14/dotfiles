@@ -1,3 +1,6 @@
+" Transparent background
+" hi! Normal guibg=NONE ctermbg=NONE
+
 " quickfix
 hi! link QuickFixLine PMenuSel
 
