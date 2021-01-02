@@ -112,6 +112,7 @@ export KEYTIMEOUT=1
 # Emacs key bindings with Vim normal mode ------------------------------------------ [Esc]
 bindkey -e
 bindkey '\e' vi-cmd-mode
+bindkey -M vicmd '\e' vi-add-next
 
 # Filter history ------------------------------------------------------------- [Up] [Down]
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
