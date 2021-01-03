@@ -47,6 +47,8 @@ export CABAL_CONFIG="$XDG_CONFIG_HOME/cabal/config"
 export GHCUP_INSTALL_BASE_PREFIX="$XDG_DATA_HOME"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
+export PSQL_HISTORY="$XDG_CACHE_HOME/psql_history"
 
 
 export LESS='-iMR'
