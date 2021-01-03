@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: $(basename $BASH_SOURCE) <time> <text>" >&2
-    exit 1
-fi
-sleep "$1"
-notify-send -u CRITICAL "$2"
