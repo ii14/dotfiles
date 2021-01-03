@@ -2,7 +2,7 @@
 
 alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
 alias path='echo -e ${PATH//:/\\n}'
-alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME'
 
 # FLAGS ----------------------------------------------------------------------------------
 alias cp='cp -iv'
