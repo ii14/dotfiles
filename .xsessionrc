@@ -1,0 +1,19 @@
+#!/bin/sh
+
+remapkeys &
+redshift &
+
+case "$DESKTOP_SESSION" in
+
+    i3*)
+        ;;
+
+    bspwm)
+        setbg &
+        compton &
+        launch-sxhkd &
+        launch-polybar bspwm &
+        dunst &
+        ;;
+
+esac
