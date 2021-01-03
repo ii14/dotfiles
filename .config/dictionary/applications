@@ -2,15 +2,15 @@ adom
 alsamixer
 bash
 bc
-cmus                ~/.local/bin/launch-cmus
+cmus                ~/.local/bin/X11/launch-cmus
 dash
 fish
 htop
 irb
-man                 ~/.local/bin/rofibin/man
+man                 ~/.local/bin/X11/rofi-man
 matterhorn
 nvim
-polybar             ~/.local/bin/launch-polybar
+polybar             ~/.local/bin/X11/launch-polybar
 python
 python2
 python2.7

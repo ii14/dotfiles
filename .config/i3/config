@@ -4,8 +4,6 @@ set $mod Mod4
 
 set $exec exec --no-startup-id
 
-set $rofibin ~/.local/bin/rofibin
-
 # LAUNCH ---------------------------------------------------------------------------------
 bindsym $mod+Return         $exec i3-sensible-terminal
 bindsym $mod+Shift+Return   $exec rofi -show run -theme dmenu
@@ -106,10 +104,10 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace
 bindsym $mod+Shift+r restart
 # exit i3
-bindsym $mod+Shift+e $exec $rofibin/power
+bindsym $mod+Shift+e $exec rofi-power
 
 # MISC -----------------------------------------------------------------------------------
-bindsym Print                   $exec $rofibin/screenshot
+bindsym Print                   $exec rofi-screenshot
 
 bindsym XF86AudioRaiseVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ -5%

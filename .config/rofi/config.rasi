@@ -2,7 +2,7 @@ configuration {
     modi: "combi,run,ssh,window,windowcd";
     combi-modi: "window,ssh,run";
 
-    run-command: "newwindow {cmd}";
+    run-command: "new-window {cmd}";
     run-shell-command: "{terminal} -e bash -c \"echo -ne '\033]0;{cmd}\007'; exec {cmd}\"";
 
     drun-display-format: "{name} [<span weight='light' size='small'>({generic})</span>]";
