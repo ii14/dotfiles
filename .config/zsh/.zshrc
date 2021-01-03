@@ -1,9 +1,11 @@
+ZSH_PLUGIN_PATH=~/.config/zsh/plugins
+
 # PROMPT /////////////////////////////////////////////////////////////////////////////////
 autoload -U colors && colors
 
 # Git prompt -----------------------------------------------------------------------------
-if [[ -d ~/.config/zsh/plugins/git-prompt.zsh ]]; then
-    source ~/.config/zsh/plugins/git-prompt.zsh/git-prompt.zsh
+if [[ -f $ZSH_PLUGIN_PATH/git-prompt.zsh/git-prompt.zsh ]]; then
+    source $ZSH_PLUGIN_PATH/git-prompt.zsh/git-prompt.zsh
     ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
     ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
     ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233} "
@@ -198,41 +200,40 @@ compinit -d ~/.cache/zsh/zcompdump
 
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' format '%B%F{2}Completing %d%f%b'
 zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
+# zstyle ':completion:*' menu select=2
 eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors ''
+# zstyle ':completion:*' list-colors ''
 # zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+# zstyle ':completion:*' menu select=long
+# zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
 zstyle ':completion:*' verbose true
+
+# zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+# zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
-
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-
-# ignored
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 
 zstyle ':completion:*' menu select
 
 
 # SYNTAX HIGHLIGHTING ////////////////////////////////////////////////////////////////////
-if [[ -d ~/.config/zsh/plugins/zsh-syntax-highlighting ]]; then
+if [[ -f $ZSH_PLUGIN_PATH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
     typeset -A ZSH_HIGHLIGHT_STYLES
     ZSH_HIGHLIGHT_STYLES[comment]='fg=black'
-    source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source $ZSH_PLUGIN_PATH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 
 # AUTOSUGGESTIONS ////////////////////////////////////////////////////////////////////////
-if [[ -d ~/.config/zsh/plugins/zsh-autosuggestions ]]; then
+if [[ -f $ZSH_PLUGIN_PATH/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
     ZSH_AUTOSUGGEST_USE_ASYNC=1
-    source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source $ZSH_PLUGIN_PATH/zsh-autosuggestions/zsh-autosuggestions.zsh
     bindkey '^ ' autosuggest-accept
 fi
 
@@ -248,7 +249,8 @@ if command -v fd >/dev/null 2>&1; then
     _fzf_compgen_dir() { fd --type d --hidden --exclude ".git" . "$@"; }
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# install fzf with ./install --xdg
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 bindkey '^f' fzf-cd-widget
 
