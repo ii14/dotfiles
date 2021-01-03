@@ -125,6 +125,7 @@ bindsym XF86AudioPlay           $exec cmus-remote --pause
 bindsym XF86AudioPrev           $exec cmus-remote --prev
 bindsym XF86AudioStop           $exec cmus-remote --stop
 
+bindsym $mod+m                  $exec launch-cmus
 bindsym $mod+y                  $exec yt
 
 # CLASSES --------------------------------------------------------------------------------

@@ -2,7 +2,7 @@ adom
 alsamixer
 bash
 bc
-cmus
+cmus                ~/.local/bin/launch-cmus
 dash
 fish
 htop
