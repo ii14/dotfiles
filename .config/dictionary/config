@@ -1,6 +1,5 @@
 profile     ~/.profile
 zsh         ~/.config/zsh/.zshrc
-fish        ~/.config/fish/config.fish
 alias       ~/.config/aliasrc
 
 vim         ~/.config/nvim/init.vim
@@ -18,8 +17,5 @@ sxhkd       ~/.config/sxhkd/sxhkdrc
 alacritty   ~/.config/alacritty/alacritty.yml
 kitty       ~/.config/kitty/kitty.conf
 
-ncmpcpp     ~/.config/ncmpcpp/config
-ncmpcppb    ~/.config/ncmpcpp/bindings
 cmus        ~/.config/cmus/rc
-
 mpv         ~/.config/mpv/mpv.conf
