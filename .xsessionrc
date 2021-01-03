@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ -d "$HOME/.local/bin/X11" ] && export PATH="$PATH:$HOME/.local/bin/X11"
+
 remapkeys &
 redshift &
 
