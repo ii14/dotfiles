@@ -15,6 +15,8 @@ alias cal='ncal -b3'
 alias bc='bc -q'
 alias mount='mount -v'
 alias umount='umount -v'
+alias wget='wget --hsts-file ~/.cache/wget-hsts'
+alias zathura='zathura --fork'
 
 # CD -------------------------------------------------------------------------------------
 alias cd..='cd ..'
@@ -25,7 +27,12 @@ alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
 function mkcd {
-    mkdir -pv "$1" && cd "$1"
+    if (( ARGC != 1 )); then
+        echo 'usage: mkcd <directory>' >&2
+        return 1
+    fi
+    [[ ! -d "$1" ]] && mkdir -pv "$1"
+    cd "$1"
 }
 
 function dev {
@@ -64,7 +71,6 @@ alias h='history'
 alias j='jobs'
 alias m='make'
 alias rr='ranger'
-alias zathura='zathura --fork'
 
 # XCLIP ----------------------------------------------------------------------------------
 alias setclip='xclip -sel clipboard -i'
@@ -119,9 +125,11 @@ alias ytmp3='youtube-dl -x -f bestaudio/best'
 
 # VIM ------------------------------------------------------------------------------------
 alias vgit='vim "+Gedit :"'
-alias vim-install='vim +PlugInstall +qa'
-alias vim-update='vim +PlugUpdate'
+alias vim-install='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugInstall'
+alias vim-update='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugUpdate'
 alias vimclean='vim -u NORC --clean "+syntax off"'
+alias :q='exit'
+alias :e='vim'
 
 # GIT ------------------------------------------------------------------------------------
 function g {
@@ -150,6 +158,7 @@ alias ai='sudo apt-get install'
 alias ar='sudo apt-get remove'
 alias au='sudo apt-get update'
 alias as='apt-cache search'
+alias asn='apt-cache search --names-only'
 alias ad='apt-cache depends'
 alias adr='apt-cache rdepends'
 
@@ -157,23 +166,39 @@ alias adr='apt-cache rdepends'
 alias ipinfo='curl ipinfo.io'
 
 function ex {
-    if [ -f "$1" ]; then
+    if (( ARGC != 1 )); then
+        echo 'usage: ex <file>' >&2
+        return 1
+    fi
+    if [[ -f "$1" ]]; then
         case $1 in
-            *.tar.bz2)  tar xvjf "$1"       ;;
-            *.tar.gz)   tar xvzf "$1"       ;;
-            *.tar.xz)   tar xvf "$1"        ;;
-            *.tar)      tar xvf "$1"        ;;
-            *.tbz2)     tar xvjf "$1"       ;;
-            *.tgz)      tar xvzf "$1"       ;;
-            *.bz2)      bunzip2 -v "$1"     ;;
-            *.rar)      unrar xv "$1"       ;;
-            *.gz)       gunzip -v "$1"      ;;
-            *.zip)      unzip -v "$1"       ;;
-            *.Z)        uncompress -v "$1"  ;;
-            *.7z)       7z x "$1"           ;;
-            *)          echo "'$1' cannot be extracted via ex()" ;;
+            *.(tar.bz2|tbz2|tbz))
+                tar -xvjf "$1" ;;
+            *.(tar.gz|tgz))
+                tar -xvzf "$1" ;;
+            *.(tar.xz|txz))
+                tar -xvJf "$1" ;;
+            *.tar)
+                tar -xvf "$1" ;;
+            *.rar)
+                unrar xv "$1" ;;
+            *.7z)
+                7z x "$1" ;;
+            *.zip)
+                unzip -v "$1" ;;
+            *.bz2)
+                bunzip2 -v "$1" ;;
+            *.gz)
+                gunzip -v "$1" ;;
+            *.Z)
+                uncompress -v "$1" ;;
+            *)
+                echo "'$1' cannot be extracted via ex()" >&2
+                return 1
+                ;;
         esac
     else
-        echo "'$1' is not a valid file"
+        echo "'$1' is not a valid file" >&2
+        return 1
     fi
 }
