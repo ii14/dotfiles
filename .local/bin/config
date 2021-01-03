@@ -30,6 +30,7 @@ run() {
 match_and_run() {
     file=$(dictionary --values "$optfile" "$1" 2>/dev/null | sed "s|^~/|$HOME/|")
     [ -z "$file" ] && die 'Option not found'
+    [ ! -f "$file" ] && die 'File does not exist'
     run "$file"
 }
 
