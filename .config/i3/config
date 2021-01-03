@@ -131,8 +131,10 @@ bindsym $mod+y                  $exec yt
 # CLASSES --------------------------------------------------------------------------------
 assign      [class="Firefox"]   $ws1
 assign      [class="mpv"]       $ws2
+assign      [class="cmus"]      $ws10
 for_window  [class="Firefox"]   layout tabbed
 for_window  [class="mpv"]       layout tabbed
+for_window  [class="cmus"]      focus
 
 # INIT -----------------------------------------------------------------------------------
 $exec xss-lock --transfer-sleep-lock -- i3lock --nofork
