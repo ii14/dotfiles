@@ -1,0 +1,39 @@
+snippet cxxflags "standard CXXFLAGS"
+CXXFLAGS = -std=c++14 -Wall -Wextra -g
+endsnippet
+
+snippet cc "CC"
+$1: $2$3
+	$(CC) $(CFLAGS) -c -o $1 $2$4
+endsnippet
+
+snippet cxx "CXX"
+$1: $2$3
+	$(CXX) $(CXXFLAGS) -c -o $1 $2$4
+endsnippet
+
+snippet cxxtemp
+INCLUDES =
+CXXFLAGS = -std=c++14 -Wall -Wextra -g $(INCLUDES)
+LFLAGS   =
+
+SOURCES  = $1
+OBJECTS  = $(SOURCES:.cpp=.o)
+
+TARGET   = main
+
+all: $(TARGET)
+
+$2
+
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS) $(LFLAGS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+clean:
+	rm -rf $(TARGET) $(OBJECTS)
+
+.PHONY: all clean
+endsnippet
