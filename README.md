@@ -30,6 +30,7 @@
 - `rofi` (https://github.com/davatorium/rofi/releases)
 - `xcape` (apt)
 - `xclip` (apt)
+- `xdotool` (apt)
 - `xwallpaper` (https://github.com/stoeckmann/xwallpaper)
 
 ### Dev
