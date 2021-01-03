@@ -31,8 +31,6 @@ export MEDIAPLAYER='mpv'
 
 
 export ZDOTDIR="$HOME/.config/zsh"
-[ -x "$HOME/.local/bin/rofibin/sshpass" ] \
-    && export SUDO_ASKPASS="$HOME/.local/bin/rofibin/sshpass"
 export LESSHISTFILE="$HOME/.cache/lesshst"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 export PYTHONSTARTUP="$XDG_CONFIG_HOME/pythonrc.py"

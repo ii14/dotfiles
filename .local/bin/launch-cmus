@@ -1,7 +1,1 @@
-#!/bin/bash
-wid=$(xdotool search --class 'cmus')
-if [ -z "$wid" ]; then
-    exec alacritty --class 'Alacritty,cmus' -e cmus
-else
-    exec xdotool windowactivate "$wid"
-fi
+X11/launch-cmus

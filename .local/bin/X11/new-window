@@ -1,0 +1,13 @@
+#!/bin/bash
+optfile="$HOME/.config/dictionary/applications"
+if [ -z "$1" ]; then
+    exec "$TERMINAL"
+elif opt=$(dictionary "$optfile" "$1" 2>/dev/null); then
+    if [ -z "$opt" ]; then
+        exec "$TERMINAL" -e bash -c "echo -ne '\033]0;$@\007'; exec $@"
+    else
+        exec $opt
+    fi
+else
+    exec "$@"
+fi

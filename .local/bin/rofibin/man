@@ -1,13 +1,1 @@
-#!/bin/bash
-
-manpage=$( \
-    apropos -s '' . | \
-    grep -v -E '^.+ \(0\)' | \
-    awk '{print $1 $2}' | \
-    sort | \
-    rofi -p 'man' -dmenu -theme dmenu -sort -matching fuzzy | \
-    sed -E 's/(.+)\((.+)\)$/\2 \1/')
-
-[ -z "$manpage" ] && exit 1
-
-exec "$TERMINAL" -t "man: $manpage" -e man $manpage
+../X11/rofi-man

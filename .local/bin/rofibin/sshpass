@@ -1,2 +1,1 @@
-#!/bin/bash
-rofi -p "$1" -dmenu -password -theme dmenu-prompt
+../X11/rofi-sshpass

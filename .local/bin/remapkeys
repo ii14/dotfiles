@@ -1,16 +1,1 @@
-#!/bin/bash
-
-# Set CapsLock to Ctrl and Esc
-setxkbmap -option ctrl:nocaps
-xcape -e 'Control_L=Escape' -t 150
-
-# Thinkpad T420
-xmodmap -e 'keycode 166 = Prior'    # PageUp
-xmodmap -e 'keycode 167 = Next'     # PageDown
-xmodmap -e 'keycode 135 = Super_L'  # Win
-
-# Swap Escape and CapsLock
-# xmodmap -e 'clear lock'
-# xmodmap -e 'keycode 9 = Caps_Lock NoSymbol Caps_Lock'
-# xmodmap -e 'keycode 66 = Escape NoSymbol Escape'
-
+X11/remapkeys

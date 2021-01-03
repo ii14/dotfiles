@@ -1,6 +1,10 @@
 #!/bin/sh
 
-[ -d "$HOME/.local/bin/X11" ] && export PATH="$PATH:$HOME/.local/bin/X11"
+[ -d "$HOME/.local/bin/X11" ] \
+    && export PATH="$PATH:$HOME/.local/bin/X11"
+
+[ -x "$HOME/.local/bin/X11/rofi-sshpass" ] \
+    && export SUDO_ASKPASS="$HOME/.local/bin/X11/rofi-sshpass"
 
 remapkeys &
 redshift &

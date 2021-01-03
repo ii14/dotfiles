@@ -1,0 +1,25 @@
+#!/bin/bash
+
+options="screen\narea\nwindow"
+selected="$(echo -e "$options" | rofi -p 'screenshot' -dmenu -theme dmenu)"
+
+directory=$(xdg-user-dir PICTURES) || directory="$HOME"
+directory="$directory/screenshot"
+mkdir -p "$directory"
+output="$directory/screenshot-$(date '+%y%m%d-%H%M%S').png"
+
+case $selected in
+
+'screen')
+    scrot "$output"
+    ;;
+
+'area')
+    scrot -s "$output"
+    ;;
+
+'window')
+    scrot -u "$output"
+    ;;
+
+esac
