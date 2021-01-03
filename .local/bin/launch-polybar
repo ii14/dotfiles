@@ -1,7 +1,32 @@
 #!/bin/bash
-killall -q polybar
-while pgrep -x polybar >/dev/null; do sleep 1; done
-for i in $(polybar -m | awk -F: '{print $1}'); do
-    MONITOR=$i polybar "${1:-default}" &
+
+if [ -z "$1" ]; then
+  case "$DESKTOP_SESSION" in
+    i3*)    bar='i3'      ;;
+    bspwm)  bar='bspwm'   ;;
+    *)      bar='default' ;;
+  esac
+else
+  bar="$1"
+fi
+
+for pid in $(pgrep -x polybar); do
+  # this is probably a retarded way to do this, but search for pid
+  # in windows to determine if it's in the current x11 session or not
+  if xdotool search --pid "$pid" >/dev/null; then
+    kill "$pid"
+    for (( i = 0; i < 20; i++ )); do
+      if x=$(ps -p "$pid" -ho comm 2>/dev/null) && [ "$x" = 'polybar' ]; then
+        echo "Killed $pid"
+        break
+      fi
+      sleep 0.25
+    done
+  fi
 done
-echo "Polybar launched"
+
+for i in $(polybar -m | awk -F: '{print $1}'); do
+  MONITOR=$i polybar "$bar" &
+done
+
+echo "Polybar \"$bar\" launched"
