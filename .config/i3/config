@@ -16,6 +16,7 @@ bindsym $mod+Shift+slash    $exec rofi -show windowcd -theme vert
 
 # WINDOWS --------------------------------------------------------------------------------
 bindsym $mod+Delete         kill
+bindsym $mod+Shift+q        kill
 
 bindsym $mod+h              focus left
 bindsym $mod+j              focus down
@@ -110,8 +111,8 @@ bindsym $mod+Shift+e $exec $rofibin/power
 # MISC -----------------------------------------------------------------------------------
 bindsym Print                   $exec $rofibin/screenshot
 
-bindsym XF86AudioRaiseVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ +10%
-bindsym XF86AudioLowerVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ -10%
+bindsym XF86AudioRaiseVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume    $exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioMute           $exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioMicMute        $exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
