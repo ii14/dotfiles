@@ -7,6 +7,9 @@
 [pager]
 	branch = false
 
+[push]
+    default = current
+
 [color]
 	ui = auto
 
