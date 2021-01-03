@@ -10,6 +10,7 @@ irb
 man                 ~/.local/bin/rofibin/man
 matterhorn
 nvim
+polybar             ~/.local/bin/launch-polybar
 python
 python2
 python2.7
