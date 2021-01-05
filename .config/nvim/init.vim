@@ -511,7 +511,11 @@ aug end
     nno <silent><expr> <leader>f <SID>FILES()
     nno <leader>F :Files <C-R>=expand('%:h')<CR><CR>
     nno <leader>h :History<CR>
-    nno <silent> - :Fern %:h -reveal=%<CR>
+
+    fun! <SID>FERN()
+      return ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%')."\<CR>"
+    endfun
+    nno <silent><expr> - <SID>FERN()
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
