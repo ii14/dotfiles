@@ -57,6 +57,10 @@ alias ls='ls -hN --color=auto --group-directories-first'
 alias l='ls -Av --color=auto --group-directories-first'
 alias ll='ls -l --color=auto --group-directories-first'
 alias la='ls -lAv --color=auto --group-directories-first'
+alias lad='ls -d .*(/)'
+alias lsa='ls -a .*(.)'
+alias lsx='ls -l *(*)'
+alias lsd='ls -d *(/)'
 
 # COLORS ---------------------------------------------------------------------------------
 alias grep='grep --color=auto'
@@ -164,6 +168,9 @@ alias adr='apt-cache rdepends'
 
 # MISC -----------------------------------------------------------------------------------
 alias ipinfo='curl ipinfo.io'
+function unshorten {
+    curl -s "https://linkunshorten.com/api/link?url=$1" | jq -M .
+}
 
 function ex {
     if (( ARGC != 1 )); then
@@ -185,7 +192,7 @@ function ex {
             *.7z)
                 7z x "$1" ;;
             *.zip)
-                unzip -v "$1" ;;
+                unzip "$1" ;;
             *.bz2)
                 bunzip2 -v "$1" ;;
             *.gz)
