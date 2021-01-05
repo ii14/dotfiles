@@ -125,14 +125,19 @@ bindsym XF86AudioStop           $exec cmus-remote --stop
 
 bindsym $mod+m                  $exec launch-cmus
 bindsym $mod+y                  $exec yt
+bindsym $mod+grave              $exec quake-terminal
 
 # CLASSES --------------------------------------------------------------------------------
 assign      [class="Firefox"]   $ws1
-assign      [class="mpv"]       $ws2
-assign      [class="cmus"]      $ws10
 for_window  [class="Firefox"]   layout tabbed
+
+assign      [class="mpv"]       $ws2
 for_window  [class="mpv"]       layout tabbed
+
+assign      [class="cmus"]      $ws10
 for_window  [class="cmus"]      focus
+
+for_window [class="quake-terminal"] move scratchpad, border pixel 1
 
 # INIT -----------------------------------------------------------------------------------
 $exec xss-lock --transfer-sleep-lock -- i3lock --nofork

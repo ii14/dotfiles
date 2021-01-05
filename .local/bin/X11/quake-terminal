@@ -1,0 +1,26 @@
+#!/bin/bash
+
+toggle() {
+    resolution="$(xdpyinfo | awk '/dimensions/ { print $2 }')"
+    w="${resolution%x*}"
+
+    y=0
+    if barsize=$(xdotool search --class polybar getwindowgeometry); then
+        barsize="$(echo "$barsize" | awk '/Geometry/ { print $2 }')"
+        y="${barsize#*x}"
+    fi
+
+    i3-msg "[class=\"quake-terminal\"]
+        move position 0 px $y px,
+        resize set $w px 50 ppt,
+        scratchpad show"
+}
+
+if [ "$1" = 'sh' ]; then
+    toggle >/dev/null
+    exec "$(grep "$USER" /etc/passwd | cut -d ':' -f 7)"
+fi
+
+xdotool search --class 'quake-terminal' \
+    || exec alacritty --class 'Alacritty,quake-terminal' -e "$0" sh
+toggle
