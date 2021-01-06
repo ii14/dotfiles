@@ -1,27 +1,27 @@
 [include]
-	path = ~/.config/git/private
+    path = ~/.config/git/private
 
 [core]
-	excludesFile = ~/.config/git/ignore
+    excludesFile = ~/.config/git/ignore
 
 [pager]
-	branch = false
+    branch = false
 
 [push]
     default = current
 
 [color]
-	ui = auto
+    ui = auto
 
 [alias]
-	st = status
-	ci = commit --verbose
-	co = checkout
-	aa = add --all
-	br = branch
-	dfs = diff --staged
-	branches = branch -a
+    st = status
+    ci = commit --verbose
+    co = checkout
+    aa = add --all
+    br = branch
+    dfs = diff --staged
+    branches = branch -a
     np = !git --no-pager
-	l = log --graph --abbrev-commit --decorate --format=tformat:'%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)' --all
+    l = log --graph --abbrev-commit --decorate --format=tformat:'%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)' --all
     lt = !git --no-pager l -n 10
     l1 = !git --no-pager log -n 1
