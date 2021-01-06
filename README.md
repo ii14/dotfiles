@@ -12,6 +12,7 @@
 ### Shell
 - `bat` (https://github.com/sharkdp/bat/releases)
 - `curl` (apt)
+- `entr` (http://eradman.com/entrproject/)
 - `fd` (https://github.com/sharkdp/fd/releases)
 - `fzf` (https://github.com/junegunn/fzf/releases)
 - `htop` (apt)
