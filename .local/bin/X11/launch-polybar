@@ -1,5 +1,8 @@
 #!/bin/bash
 
+[ -f "$HOME/.config/polybar/env" ] \
+  && source "$HOME/.config/polybar/env"
+
 if [ -z "$1" ]; then
   case "$DESKTOP_SESSION" in
     i3*)    bar='i3'      ;;

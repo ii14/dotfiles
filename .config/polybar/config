@@ -19,7 +19,7 @@ font-2 = siji:pixelsize=10;1
 
 modules-left = i3 bspwm xwindow
 modules-center =
-modules-right = filesystem wlan eth battery temperature memory cpu date
+modules-right = fs wlan eth battery temperature memory cpu date
 
 width = 100%
 height = 19
@@ -117,7 +117,7 @@ label-empty-padding = 1
 ; NETWORK --------------------------------------------------------------------------------
 [module/wlan]
 type = internal/network
-interface = wlp3s0
+interface = ${env:POLYBAR_WLAN:wlp3s0}
 interval = 3.0
 format-connected = <ramp-signal> <label-connected>
 format-connected-underline = ${colors.primary}
@@ -133,7 +133,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp0s25
+interface = ${env:POLYBAR_ETH:enp0s25}
 interval = 3.0
 format-connected-underline = ${colors.primary}
 format-connected-prefix = " "
@@ -179,17 +179,22 @@ label-song-maxlen = 35
 label-song-ellipsis = true
 
 ; SYSTEM MONITORING ----------------------------------------------------------------------
-[module/filesystem]
-type = internal/fs
-interval = 25
-label-mounted = %{F#777}%mountpoint%%{F-} %percentage_used%%
-label-mounted-underline = ${colors.primary}
-label-unmounted = %mountpoint% not mounted
-label-unmounted-foreground = ${colors.foreground-alt}
-spacing = 1
+; [module/filesystem]
+; type = internal/fs
+; interval = 60
+; label-mounted = %{F#777}%mountpoint%%{F-} %percentage_used%%
+; label-mounted-underline = ${colors.primary}
+; label-unmounted = %mountpoint% not mounted
+; label-unmounted-foreground = ${colors.foreground-alt}
+; spacing = 1
 
-mount-0 = /
-mount-1 = /home
+; mount-0 = /
+; mount-1 = /home
+
+[module/fs]
+type = custom/script
+exec = $HOME/.config/polybar/scripts/fs.sh
+interval = 60
 
 [module/cpu]
 type = internal/cpu
