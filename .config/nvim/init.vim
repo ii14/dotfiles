@@ -598,7 +598,11 @@ aug end
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>
     cno <C-K> <Up>
-    cno <C-R><C-D> <C-R>=expand('%:h').'/'<CR>
+    fun! <SID>ExpandDir()
+      let d = expand('%:h')
+      return (d ==# '' ? './' : d.'/')
+    endfun
+    cno <expr> <C-R><C-D> <SID>ExpandDir()
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
