@@ -69,7 +69,7 @@ mkdir -p /tmp/yt
     code=$?
     if [[ "$code" -ne 0 ]]; then
         Log "mpv returned $code"
-        notify-send "yt: mpv returned $code"
+        notify-send yt "mpv returned $code"
     fi
     echo "mpv returned $code" >> "$tmp_log"
     cat "$tmp_log" >> "$log_all"
