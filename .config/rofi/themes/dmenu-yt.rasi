@@ -5,7 +5,8 @@
 }
 
 #prompt {
-    padding: @padding-no-r;
+    background-color: @color-green;
+    text-color: @color-bg;
 }
 
 #listview {
