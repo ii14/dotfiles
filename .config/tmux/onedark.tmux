@@ -34,7 +34,7 @@ set "message-command-style" "bg=$onedark_visual_grey,fg=$onedark_white"
 set "status-attr" "none"
 set "status-left-attr" "none"
 
-setw "window-status-style" "bg=$onedark_black,fg=$onedark_white"
+setw "window-status-style" "bg=default,fg=$onedark_white"
 setw "window-status-activity-style" "bg=$onedark_visual_grey,fg=$onedark_white"
 setw "window-status-bell-style" "bg=$onedark_visual_grey,fg=$onedark_white"
 
@@ -46,7 +46,7 @@ set "window-active-style" "fg=$onedark_white"
 set "display-panes-active-colour" "$onedark_yellow"
 set "display-panes-colour" "$onedark_blue"
 
-set "status-bg" "$onedark_black"
+set "status-bg" "default"
 set "status-fg" "$onedark_white"
 
 set "@prefix_highlight_fg" "$onedark_black"
