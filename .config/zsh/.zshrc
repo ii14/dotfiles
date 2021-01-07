@@ -89,7 +89,7 @@ fi
 
 
 # OPTIONS ////////////////////////////////////////////////////////////////////////////////
-setopt menu_complete            # insert first match of the completion
+# setopt menu_complete            # insert first match of the completion
 setopt list_packed              # fit more completions on the screen
 setopt auto_cd                  # change directory by writing the directory name
 setopt notify                   # report job status immediately
@@ -119,8 +119,10 @@ export KEYTIMEOUT=1
 
 # Emacs key bindings with Vim normal mode ------------------------------------------ [Esc]
 bindkey -e
-bindkey '\e' vi-cmd-mode
-bindkey -M vicmd '\e' vi-add-next
+bindkey '^x\e' vi-cmd-mode
+# bindkey -M vicmd '\e' vi-add-next
+bindkey -r '^j'
+bindkey -rM vicmd '^j'
 
 # Filter history ------------------------------------------------------------- [Up] [Down]
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
@@ -164,20 +166,22 @@ zle -N edit-command-line
 bindkey '\ee' edit-command-line
 
 # Completion menu vim movement ------------------------------------------ [Ctrl-{h,j,k,l}]
-zmodload zsh/complist
-bindkey -M menuselect '^k' up-line-or-history
-bindkey -M menuselect '^p' up-line-or-history
-bindkey -M menuselect '^j' down-line-or-history
-bindkey -M menuselect '^n' down-line-or-history
-bindkey -M menuselect '^l' forward-char
-bindkey -M menuselect '^h' backward-char
+# zmodload zsh/complist
+# bindkey -M menuselect '^k' up-line-or-history
+# bindkey -M menuselect '^p' up-line-or-history
+# bindkey -M menuselect '^j' down-line-or-history
+# bindkey -M menuselect '^n' down-line-or-history
+# bindkey -M menuselect '^l' forward-char
+# bindkey -M menuselect '^h' backward-char
 
-bindkey -M menuselect '^y' accept-search
-bindkey -M menuselect '^e' send-break
-bindkey -M menuselect '\e' send-break
-bindkey -M menuselect '^r' history-incremental-search-forward
+# bindkey -M menuselect '^y' accept-search
+# bindkey -M menuselect '^e' send-break
+# bindkey -M menuselect '\e' send-break
+# bindkey -M menuselect '^r' history-incremental-search-forward
 
-# Swtich between background and foreground -------------------------------------- [Ctrl-Z]
+bindkey '^y' accept-search
+
+# Switch between background and foreground -------------------------------------- [Ctrl-Z]
 function fg-bg() {
     if [[ $#BUFFER -eq 0 ]]; then
         fg
@@ -198,28 +202,34 @@ fpath=(~/.config/zsh/completions $fpath)
 autoload -Uz compinit
 compinit -d ~/.cache/zsh/zcompdump
 
-zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' add-space false
+
 zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format '%B%F{2}Completing %d%f%b'
+zstyle ':completion:*' use-compctl false
+
+zstyle ':completion:*' verbose true
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*:descriptions' format '%B%F{2}%d%f%b'
+zstyle ':completion:*:messages' format '%F{5}%d%f'
+zstyle ':completion:*:warnings' format '%F{1}No matches for: %d%f'
+zstyle ':completion:*:corrections' format '%B%F{3}%d (errors: %e)%f%b'
 zstyle ':completion:*' group-name ''
-# zstyle ':completion:*' menu select=2
+
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+
 eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-# zstyle ':completion:*' list-colors ''
-# zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-# zstyle ':completion:*' menu select=long
-# zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
 
-# zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-# zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+# zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+# zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 
-zstyle ':completion:*' menu select
+# zstyle ':completion:*' menu select
+
+# zstyle ':completion:*' list-dirs-first true
+# zstyle ':completion:*:manuals' separate-sections true
 
 
 # SYNTAX HIGHLIGHTING ////////////////////////////////////////////////////////////////////
@@ -227,14 +237,6 @@ if [[ -f $ZSH_PLUGIN_PATH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]
     typeset -A ZSH_HIGHLIGHT_STYLES
     ZSH_HIGHLIGHT_STYLES[comment]='fg=black'
     source $ZSH_PLUGIN_PATH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
-
-# AUTOSUGGESTIONS ////////////////////////////////////////////////////////////////////////
-if [[ -f $ZSH_PLUGIN_PATH/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-    ZSH_AUTOSUGGEST_USE_ASYNC=1
-    source $ZSH_PLUGIN_PATH/zsh-autosuggestions/zsh-autosuggestions.zsh
-    bindkey '^ ' autosuggest-accept
 fi
 
 
