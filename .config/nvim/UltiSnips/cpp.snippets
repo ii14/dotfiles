@@ -3,10 +3,6 @@ extends c
 priority -49
 
 # PREPROCESSOR ---------------------------------------------------------------------------
-snippet #i "#include angle brackets" b
-#include $0
-endsnippet
-
 snippet #< "#include angle brackets" b
 #include <${1:iostream>}$0
 endsnippet
@@ -84,16 +80,16 @@ for (const auto& ${2:item} : ${1:container}) {
 }
 endsnippet
 
-snippet ld "lambda"
+snippet ld "lambda" w
 [${1}](${2}){${3}}
 endsnippet
 
 # SMART POINTERS -------------------------------------------------------------------------
-snippet sp "std::shared_ptr"
+snippet sp "std::shared_ptr" w
 std::shared_ptr<${1:int}>${2}
 endsnippet
 
-snippet up "std::unique_ptr"
+snippet up "std::unique_ptr" w
 std::unique_ptr<${1:int}>${2}
 endsnippet
 
@@ -122,11 +118,11 @@ snippet cstr "const std::string&" w
 const std::string&
 endsnippet
 
-snippet qs "QString"
+snippet qs "QString" w
 QString
 endsnippet
 
-snippet cqs "const QString&"
+snippet cqs "const QString&" w
 const QString&
 endsnippet
 
@@ -140,18 +136,18 @@ const ${1:${VISUAL}}&$0
 endsnippet
 
 # CASTS ----------------------------------------------------------------------------------
-snippet sc "static cast"
+snippet sc "static cast" w
 static_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
-snippet rc "reinterpret cast"
+snippet rc "reinterpret cast" w
 reinterpret_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
-snippet dc "dynamic cast"
+snippet dc "dynamic cast" w
 dynamic_cast<${1:int}>(${2:expr})${3}
 endsnippet
 
-snippet qc "qobject cast"
+snippet qc "qobject cast" w
 qobject_cast<${1:QObject}*>(${2:expr})${3}
 endsnippet

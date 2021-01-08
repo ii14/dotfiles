@@ -1,7 +1,7 @@
 priority -50
 
 # PREPROCESSOR ---------------------------------------------------------------------------
-snippet #i "#include angle brackets" b
+snippet #i "#include" b
 #include $0
 endsnippet
 
@@ -42,6 +42,18 @@ int main()
 {
 	${0}
 }
+endsnippet
+
+# TYPES ----------------------------------------------------------------------------------
+snippet s "struct definition"
+typedef struct ${1}
+{
+	${2}
+} $1;
+endsnippet
+
+snippet cc "const char*" w
+const char*
 endsnippet
 
 # BRANCHING ------------------------------------------------------------------------------
