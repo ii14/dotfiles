@@ -1,18 +1,14 @@
-snippet cxxflags "standard CXXFLAGS"
-CXXFLAGS = -std=c++14 -Wall -Wextra -g
-endsnippet
-
-snippet cc "CC"
+snippet cc "CC rule" b
 $1: $2$3
 	$(CC) $(CFLAGS) -c -o $1 $2$4
 endsnippet
 
-snippet cxx "CXX"
+snippet cxx "CXX rule" b
 $1: $2$3
 	$(CXX) $(CXXFLAGS) -c -o $1 $2$4
 endsnippet
 
-snippet cxxtemp
+snippet CXX1 "basic CXX template" b
 INCLUDES =
 CXXFLAGS = -std=c++14 -Wall -Wextra -g $(INCLUDES)
 LFLAGS   =
@@ -38,7 +34,7 @@ clean:
 .PHONY: all clean
 endsnippet
 
-snippet CXX "CXX template"
+snippet CXX "CXX template" b
 TARGET   = ${1:main}
 SOURCES  = ${2:main.cpp}
 CXXFLAGS = ${3:-std=c++17 -Wall -Wextra -g}
@@ -57,6 +53,40 @@ build/%.o: %.cpp
 $(TARGET): $(OBJS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+-include $(DEPS)
+
+.PHONY: all clean info
+
+clean:
+	@rm -rvf $(TARGET) $(OBJS) $(DEPS)
+
+info:
+	@echo "[*] Target:       $(TARGET)"
+	@echo "[*] Sources:      $(SOURCES)"
+	@echo "[*] Objects:      $(OBJS)"
+	@echo "[*] Dependencies: $(DEPS)"
+endsnippet
+
+snippet CC "CC template" b
+TARGET   = ${1:main}
+SOURCES  = ${2:main.c}
+CCFLAGS  = ${3:-std=c99 -Wall -Wextra -pedantic -g}
+INCLUDE  = ${4}
+LDFLAGS  = ${5}
+
+OBJS     = $(addprefix build/,$(SOURCES:.c=.o))
+DEPS     = $(OBJS:.o=.d)
+
+all: $(TARGET)
+
+build/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC) $(CCFLAGS) $(INCLUDE) -c -MMD -o $@ $<
+
+$(TARGET): $(OBJS)
+	@mkdir -p $(@D)
+	$(CC) $(CCFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
 -include $(DEPS)
 
