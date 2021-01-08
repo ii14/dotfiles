@@ -22,5 +22,8 @@ if [ "$1" = 'sh' ]; then
 fi
 
 xdotool search --class 'quake-terminal' \
-    || exec alacritty --class 'Alacritty,quake-terminal' -e "$0" sh
+    || exec alacritty \
+        --config-file ~/.config/alacritty/quake-terminal.yml \
+        --class 'Alacritty,quake-terminal' \
+        -e "$0" sh
 toggle
