@@ -348,9 +348,6 @@ endif
   " Set tab width ------------------------------------------------------------------------
     com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
 
-  " Go to the current buffer directory ---------------------------------------------------
-    com! D cd %:h
-
   " Shortcuts ----------------------------------------------------------------------------
     com! Wiki VimwikiIndex
     com! Vimrc edit $MYVIMRC
@@ -472,6 +469,11 @@ aug Vimrc
 aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
+  fun! <SID>CurrentDirectory()
+    let d = expand('%:h')
+    return (d ==# '' ? './' : d.'/')
+  endfun
+
   " Override defaults --------------------------------------------------------------------
     nno 0 ^
     nno ^ 0
@@ -509,7 +511,8 @@ aug end
         \ ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
     endfun
     nno <silent><expr> <leader>f <SID>FILES()
-    nno <leader>F :Files <C-R>=expand('%:h')<CR><CR>
+    nno <silent><expr> <leader>F ':Files '.<SID>CurrentDirectory()."\<CR>"
+    nno '; :Files<Space>
     nno <leader>h :History<CR>
 
     fun! <SID>FERN()
@@ -522,8 +525,10 @@ aug end
   " Search and Replace -------------------------------------------------------------------
     nno <leader>/ :Lines<CR>
     nno <leader>? :BLines<CR>
-    nno <leader>s :%s/
-    vno <leader>s :s/
+    nmap <leader>s <Plug>(incsearch-nohl):%s/
+    vmap <leader>s <Plug>(incsearch-nohl):s/
+    nmap <leader>S <Plug>(incsearch-nohl):%S/
+    vmap <leader>S <Plug>(incsearch-nohl):S/
     nmap <leader>c z*cgn
     vmap <leader>c z*cgn
     map /   <Plug>(incsearch-forward)
@@ -598,11 +603,7 @@ aug end
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>
     cno <C-K> <Up>
-    fun! <SID>ExpandDir()
-      let d = expand('%:h')
-      return (d ==# '' ? './' : d.'/')
-    endfun
-    cno <expr> <C-R><C-D> <SID>ExpandDir()
+    cno <expr> <C-R><C-D> <SID>CurrentDirectory()
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
