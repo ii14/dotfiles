@@ -44,7 +44,8 @@ fun! LightlineMode()
 endfun
 
 fun! LightlineFilename()
-  if &ft ==# 'fern' | return '' | endif
+  " fern internals, can potentially break
+  if &ft ==# 'fern' | try | return b:fern.root._path | catch | return '' | endtry | endif
   if &ft ==# 'scratch' | return 'Scratch' | endif
   if &bt ==# 'quickfix' | return getqflist({'title':1}).title | endif
   let fname = expand('%:t')
