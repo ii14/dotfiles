@@ -260,14 +260,22 @@ bindkey '^f' fzf-cd-widget
 # SAFER RM ///////////////////////////////////////////////////////////////////////////////
 setopt rmstarsilent
 function rm {
-    printf 'Continue?: rm'
-    for i in "$@"; do printf " $i"; done
+    echo 'Continue? [enter/y]:'
+    echo -n 'rm'
+    for i in "$@"; do
+        if [[ $i == '-'* ]]; then
+            echo -ne " \e[33m$i\e[0m"
+        else
+            echo -ne " $i"
+        fi
+    done
     read -rsk r; echo
     if [[ $r != $'\n' && $r != 'y' && $r != 'Y' ]]; then
         echo 'Operation cancelled.'
-        return
+        return 1
     fi
     command rm -v $@
+    return $?
 }
 
 alias t='trash -v'
