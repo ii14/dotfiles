@@ -1,5 +1,6 @@
 cfg $HOME/.config
 lcb $HOME/.local/bin
+lcs $HOME/.local/share
 doc $HOME/documents
 dl  $HOME/Downloads
 pic $HOME/pictures
