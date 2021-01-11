@@ -469,7 +469,7 @@ aug Vimrc
 aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
-  fun! <SID>CurrentDirectory()
+  fun! BufDirectory()
     let d = expand('%:h')
     return (d ==# '' ? './' : d.'/')
   endfun
@@ -511,7 +511,7 @@ aug end
         \ ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
     endfun
     nno <silent><expr> <leader>f <SID>FILES()
-    nno <silent><expr> <leader>F ':Files '.<SID>CurrentDirectory()."\<CR>"
+    nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
     nno '; :Files<Space>
     nno <leader>h :History<CR>
 
@@ -603,7 +603,7 @@ aug end
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>
     cno <C-K> <Up>
-    cno <expr> <C-R><C-D> <SID>CurrentDirectory()
+    cno <expr> <C-R><C-D> BufDirectory()
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
