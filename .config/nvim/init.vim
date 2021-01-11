@@ -5,11 +5,9 @@ set termguicolors
 
 if !has('nvim')
   let g:disable_lsp = 1
-  let g:disable_treesitter = 1
 endif
 
 " let g:disable_lsp = 1
-let g:disable_treesitter = 1
 let g:disable_deoplete = 1
 let g:deoplete_lazy_load = 1
 
@@ -80,13 +78,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
-    if !exists('g:disable_treesitter')
-      Plug 'nvim-treesitter/nvim-treesitter', {'commit': '3c07232', 'do': ':TSUpdate'}
-      Plug 'nvim-treesitter/playground', {'commit': '0cb0a18'}
-    endif
-    " if !exists('g:disable_lsp')
-    "   Plug 'jackguo380/vim-lsp-cxx-highlight'
-    " endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
@@ -160,24 +151,6 @@ call PlugCheckMissing()
 
       " ~/.config/nvim/lua/lsp/init.lua
       lua require('lsp/init')
-    endif
-
-  " Treesitter ---------------------------------------------------------------------------
-    if !exists('g:disable_treesitter')
-      lua require('nvim-treesitter.configs').setup{
-        \   highlight = {
-        \     enable = true;
-        \   };
-        \   incremental_selection = {
-        \     enable = true;
-        \     keymaps = {
-        \       init_selection = "gnn";
-        \       node_incremental = "grn";
-        \       scope_incremental = "grc";
-        \       node_decremental = "grm";
-        \     };
-        \   };
-        \ }
     endif
 
   " Fern ---------------------------------------------------------------------------------
@@ -263,8 +236,6 @@ call PlugCheckMissing()
     set smartindent                           " smarter auto indentation
     set foldlevel=999                         " unfold everything by default
     set foldmethod=indent                     " folding based on indentation
-    " set foldmethod=expr                       " treesitter indentation
-    " set foldexpr=nvim_treesitter#foldexpr()   " treesitter indentation
 
   " Search and Autocompletion ------------------------------------------------------------
     set path+=**
