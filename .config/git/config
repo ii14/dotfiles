@@ -18,10 +18,11 @@
     ci = commit --verbose
     co = checkout
     aa = add --all
-    br = branch
+    df = diff
     dfs = diff --staged
-    branches = branch -a
-    np = !git --no-pager
+    br = branch
+    brs = branch -a
     l = log --graph --abbrev-commit --decorate --format=tformat:'%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)' --all
     lt = !git --no-pager l -n 10
     l1 = !git --no-pager log -n 1
+    np = !git --no-pager
