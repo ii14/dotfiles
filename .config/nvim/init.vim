@@ -486,7 +486,7 @@ aug end
     nno '; :Files<Space>
     nno <leader>h :History<CR>
 
-    nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%')."\<CR>"
+    nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t')."\<CR>"
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
