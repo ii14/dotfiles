@@ -330,6 +330,8 @@ endif
     endif
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
+  " See ~/.config/nvim/plugin
+
   " Command abbreviations ----------------------------------------------------------------
     fun! Cabbrev(lhs, rhs)
       exe "cnoreabbrev <expr> " . a:lhs .
@@ -345,11 +347,6 @@ endif
       call Cabbrev('bq!', 'bd!')
     endif
 
-  " Set tab width ------------------------------------------------------------------------
-    com! -count=4 -bang T
-      \ setl ts=<count> sts=<count> sw=<count> |
-      \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
-
   " Shortcuts ----------------------------------------------------------------------------
     com! Wiki VimwikiIndex
     com! Vimrc edit $MYVIMRC
@@ -362,16 +359,6 @@ endif
         \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
       call Cabbrev('h', 'H')
       call Cabbrev('b', 'B')
-    endif
-
-  " Update ctags -------------------------------------------------------------------------
-    if executable('ctags')
-      com! Ctags !ctags -R .
-    endif
-
-    " https://github.com/pylipp/qtilities
-    if executable('qmltags')
-      com! Qmltags !qmltags
     endif
 
   " Redir --------------------------------------------------------------------------------
@@ -413,20 +400,6 @@ endif
     call Cabbrev('config',    'Config')
     call Cabbrev('vifm',      'Vifm')
 
-  " Execute visual selection -------------------------------------------------------------
-    com! -range ExecuteVisualSelection call ExecuteVisualSelection()
-    fun! ExecuteVisualSelection(...)
-      let [line_start, column_start] = getpos("'<")[1:2]
-      let [line_end, column_end] = getpos("'>")[1:2]
-      let lines = getline(line_start, line_end)
-      if len(lines) == 0
-        return ''
-      endif
-      let lines[-1] = lines[-1][:column_end - 2]
-      let lines[0] = lines[0][column_start - 1:]
-      execute join(lines, "\n")
-    endfun
-
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
   " Return to last edit position ---------------------------------------------------------
@@ -461,7 +434,7 @@ aug Vimrc
     fun! s:fern_hijack_directory() abort
       let path = expand('%:p')
       if !isdirectory(path) | return | endif
-      bwipeout %
+      Bwipeout %
       exe printf('Fern %s', fnameescape(path))
     endfun
 
