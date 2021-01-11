@@ -268,6 +268,7 @@ endif
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
     set number relativenumber                 " line numbers
+    set nowrap
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
     set title                                 " set vim window title
@@ -284,7 +285,6 @@ endif
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1                           " keep near lines visible when scrolling
-    " set confirm                               " display dialog instead of failing
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
     set linebreak breakindent                 " visual wrap on whitespace, follow indentation
@@ -346,7 +346,9 @@ endif
     endif
 
   " Set tab width ------------------------------------------------------------------------
-    com! -nargs=1 T setl ts=<args> sts=<args> sw=<args>
+    com! -count=4 -bang T
+      \ setl ts=<count> sts=<count> sw=<count> |
+      \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
 
   " Shortcuts ----------------------------------------------------------------------------
     com! Wiki VimwikiIndex
