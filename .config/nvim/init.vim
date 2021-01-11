@@ -102,16 +102,8 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 call plug#end()
 
-let s:missing_plugs = len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-if s:missing_plugs
-  let count_text = s:missing_plugs == 1
-    \ ? '1 plugin is missing'
-    \ : s:missing_plugs.' plugins are missing'
-  let res = input(count_text.'. Install? [y/n]: ')
-  if res ==? 'y' || res ==? 'yes'
-    PlugInstall
-  endif
-endif
+source ~/.config/nvim/functions.vim
+call PlugCheckMissing()
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
@@ -330,14 +322,7 @@ endif
     endif
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
-  " See ~/.config/nvim/plugin
-
-  " Command abbreviations ----------------------------------------------------------------
-    fun! Cabbrev(lhs, rhs)
-      exe "cnoreabbrev <expr> " . a:lhs .
-        \ " (getcmdtype() ==# ':' && getcmdline() ==# '" . a:lhs .
-        \ "') ? '" . a:rhs . "' : '" . a:lhs . "'"
-    endfun
+  " See ~/.config/nvim/plugin for more command definitions
 
   " :bd doesn't close window, :bq closes the window --------------------------------------
     if index(g:plugs_order, 'vim-bbye') != -1
@@ -416,11 +401,9 @@ aug Vimrc
     au TermOpen * setl nonumber norelativenumber
     au BufLeave term://* stopinsert
 
-  " make autowrite -----------------------------------------------------------------------
+  " Make autowrite and autocompile SCSS --------------------------------------------------
     au QuickFixCmdPre make update
-
-  " Autocompile --------------------------------------------------------------------------
-    au BufWritePost *.ts,*.scss silent make
+    au BufWritePost *.scss silent make
 
   " Open quickfix window on grep ---------------------------------------------------------
     au QuickFixCmdPost grep call timer_start(10, { -> execute('cwindow') })
@@ -444,11 +427,6 @@ aug Vimrc
 aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
-  fun! BufDirectory()
-    let d = expand('%:h')
-    return (d ==# '' ? './' : d.'/')
-  endfun
-
   " Override defaults --------------------------------------------------------------------
     nno 0 ^
     nno ^ 0
