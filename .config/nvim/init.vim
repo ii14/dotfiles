@@ -506,19 +506,12 @@ aug end
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
-    fun! <SID>FILES()
-      return (len(system('git rev-parse'))
-        \ ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<CR>"
-    endfun
-    nno <silent><expr> <leader>f <SID>FILES()
+    nno <silent><expr> <leader>f (len(system('git rev-parse'))?':Files':':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
     nno '; :Files<Space>
     nno <leader>h :History<CR>
 
-    fun! <SID>FERN()
-      return ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%')."\<CR>"
-    endfun
-    nno <silent><expr> - <SID>FERN()
+    nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%')."\<CR>"
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
