@@ -10,7 +10,7 @@ let g:lightline.colorscheme = 'onedark'
 
 let g:lightline.active = {
   \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro', 'readonly', 'filename']],
-  \ 'right' : [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']],
+  \ 'right' : [['lineinfo'], ['percent'], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
   \ }
 
 let g:lightline.tabline = {
@@ -25,6 +25,7 @@ let g:lightline.component_function = {
   \ 'fileencoding' : 'LightlineFileencoding',
   \ 'filetype'     : 'LightlineFiletype',
   \ 'fugitive'     : 'LightlineFugitive',
+  \ 'lsp'          : 'LightlineLsp',
   \ 'pro'          : 'LightlinePro',
   \ }
 
@@ -69,6 +70,14 @@ endfun
 fun! LightlineFugitive()
   if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
   return winwidth(0) > 70 && exists('*FugitiveHead') ? FugitiveHead() : ''
+endfun
+
+fun! LightlineLsp()
+  try
+    return luaeval("require('lsp/util').get_client_name()")
+  catch
+    return ''
+  endtry
 endfun
 
 fun! LightlinePro()

@@ -27,4 +27,12 @@ M.stop_clients = function()
   print('LSP: stopped')
 end
 
+M.get_client_name = function()
+  local clients = lsp.buf_get_clients()
+  for _, client in pairs(clients) do
+    return client.name
+  end
+  return ''
+end
+
 return M
