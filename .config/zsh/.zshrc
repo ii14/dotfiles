@@ -201,6 +201,9 @@ fpath=(~/.config/zsh/completions $fpath)
 
 autoload -Uz compinit
 compinit -d ~/.cache/zsh/zcompdump
+compdef _rc rc
+compdef g=git
+compdef dot=git
 
 zstyle ':completion:*' add-space false
 

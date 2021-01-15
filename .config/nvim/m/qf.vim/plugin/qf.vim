@@ -48,18 +48,6 @@ fun! qf#init()
   nnoremap <buffer><nowait><silent> <Esc> <C-W>p
 
   nnoremap <buffer><nowait><silent> o <CR><C-W>p
-  nnoremap <buffer><nowait><silent> s :call qf#split()<CR>
-  nnoremap <buffer><nowait><silent> v :call qf#vsplit()<CR>
-  nnoremap <buffer><nowait><silent> t :call qf#tabsplit()<CR>
-
-  nnoremap <buffer><nowait><silent> c :cc<CR><C-W>p
-  nnoremap <buffer><nowait><silent> J :cnext<CR><C-W>p
-  nnoremap <buffer><nowait><silent> n :cnext<CR><C-W>p
-  nnoremap <buffer><nowait><silent> K :cprevious<CR><C-W>p
-  nnoremap <buffer><nowait><silent> p :cprevious<CR><C-W>p
-  nnoremap <buffer><nowait><silent> F :cfirst<CR><C-W>p
-  nnoremap <buffer><nowait><silent> L :clast<CR><C-W>p
-  nnoremap <buffer><nowait><silent> d :cclose<CR>
 
   let b:last_win = winnr('#')
   au WinEnter <buffer> ++nested
@@ -71,31 +59,67 @@ fun! qf#init()
     \   exe b:last_win.'wincmd w' |
     \ endif
 
-  let b:qf_isLoc = !empty(getloclist(0))
+  let l:loc_len = len(getloclist(0))
+  let b:qf_isLoc = l:loc_len > 0
   if !b:qf_isLoc
     wincmd J
+    let l:qf_len = len(getqflist())
+    if l:qf_len < 10
+      exe 'resize ' . l:qf_len
+    endif
+    nnoremap <buffer><nowait><silent> s :call qf#csplit()<CR>
+    nnoremap <buffer><nowait><silent> v :call qf#cvsplit()<CR>
+    nnoremap <buffer><nowait><silent> t :call qf#ctabsplit()<CR>
+  else
+    if l:loc_len < 10
+      exe 'resize ' . l:loc_len
+    endif
+    nnoremap <buffer><nowait><silent> s :call qf#lsplit()<CR>
+    nnoremap <buffer><nowait><silent> v :call qf#lvsplit()<CR>
+    nnoremap <buffer><nowait><silent> t :call qf#ltabsplit()<CR>
   endif
 endfun
 
-fun! qf#vsplit()
+fun! qf#cvsplit()
   let l = line('.')
   wincmd p
   wincmd v
   exe l.'cc'
 endfun
 
-fun! qf#split()
+fun! qf#csplit()
   let l = line('.')
   wincmd p
   wincmd s
   exe l.'cc'
 endfun
 
-fun! qf#tabsplit()
+fun! qf#ctabsplit()
   let l = line('.')
   wincmd p
   tab split
   exe l.'cc'
+endfun
+
+fun! qf#lvsplit()
+  let l = line('.')
+  wincmd p
+  wincmd v
+  exe l.'ll'
+endfun
+
+fun! qf#lsplit()
+  let l = line('.')
+  wincmd p
+  wincmd s
+  exe l.'ll'
+endfun
+
+fun! qf#ltabsplit()
+  let l = line('.')
+  wincmd p
+  tab split
+  exe l.'ll'
 endfun
 
 aug au_quickfix | au!

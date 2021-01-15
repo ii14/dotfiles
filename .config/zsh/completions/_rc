@@ -1,8 +1,8 @@
-#compdef config
+#compdef rc
 typeset -A opt_args
-local -a _config_cmds
+local -a _rc_cmds
 
-_config_cmds=(
+_rc_cmds=(
     '-i:interactive'
     '--interactive:interactive'
     '-e:edit config list'
@@ -11,8 +11,8 @@ _config_cmds=(
     '--list:config list'
     '-q:query list'
     '--query:query list'
-    $(config --list)
+    $(rc --list)
 )
 
-_describe -t commands 'config files' _config_cmds
+_describe -t commands 'rc files' _rc_cmds
 return $?

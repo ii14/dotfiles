@@ -85,10 +85,10 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'vifm/vifm.vim'
 
   " Custom -------------------------------------------------------------------------------
+    Plug '~/.config/nvim/m/rc.vim'
     Plug '~/.config/nvim/m/qf.vim'
     Plug '~/.config/nvim/m/pro.vim'
     Plug '~/.config/nvim/m/qmake.vim'
-    Plug '~/.config/nvim/m/config.vim'
     Plug '~/.config/nvim/m/autosplit.vim'
 
 call plug#end()
@@ -270,10 +270,9 @@ call PlugCheckMissing()
 
   " :bd doesn't close window, :bq closes the window --------------------------------------
     if index(g:plugs_order, 'vim-bbye') != -1
+      com! -nargs=? -bang -complete=buffer Bq bd<bang> <args>
+      call Cabbrev('bq',  'Bq')
       call Cabbrev('bd',  'Bd')
-      call Cabbrev('bd!', 'Bd!')
-      call Cabbrev('bq',  'bd')
-      call Cabbrev('bq!', 'bd!')
     endif
 
   " Shortcuts ----------------------------------------------------------------------------
@@ -314,6 +313,9 @@ call PlugCheckMissing()
 
       com! LspAction
         \ lua vim.lsp.buf.code_action()
+
+      com! LspDiagnostics
+        \ lua vim.lsp.diagnostic.set_loclist()
     endif
 
   " Grep populates quickfix, so make it silent -------------------------------------------
@@ -322,12 +324,12 @@ call PlugCheckMissing()
     call Cabbrev('grep', 'silent grep')
 
   " Some abbreviations -------------------------------------------------------------------
-    call Cabbrev('git',       'Git')
-    call Cabbrev('rg',        'Rg')
-    call Cabbrev('ag',        'Ag')
-    call Cabbrev('man',       'Man')
-    call Cabbrev('config',    'Config')
-    call Cabbrev('vifm',      'Vifm')
+    call Cabbrev('git',  'Git')
+    call Cabbrev('rg',   'Rg')
+    call Cabbrev('ag',   'Ag')
+    call Cabbrev('man',  'Man')
+    call Cabbrev('rc',   'Rc')
+    call Cabbrev('vifm', 'Vifm')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -443,15 +445,9 @@ aug end
 
   " Quickfix -----------------------------------------------------------------------------
     nno <silent> qq :call qf#open()<CR>
-    nno <silent> qo :call qf#show()<CR>
     nno <silent> qg :call qf#toggle()<CR>
-    nno <silent> qd :cclose<CR>
-
-    nno <silent> qn :cnext<CR>
-    nno <silent> qp :cprevious<CR>
-    nno <silent> ql :clast<CR>
-    nno <silent> qf :cfirst<CR>
-    nno <silent> qc :cc<CR>
+    nno <silent> qo :call qf#show()<CR>
+    nno <silent> qc :cclose<CR>
 
   " Misc ---------------------------------------------------------------------------------
     vno <leader>t :Tabularize /
@@ -519,4 +515,5 @@ aug end
       nno <buffer><silent> <leader>lf :LspFormat<CR>
       vno <buffer><silent> <leader>lf :LspFormat<CR>
       nno <buffer><silent> <leader>la :LspAction<CR>
+      nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
     endfun

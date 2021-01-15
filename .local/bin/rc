@@ -1,13 +1,13 @@
 #!/bin/bash
 
-optfile="$HOME/.config/dictionary/config"
+optfile="$HOME/.config/dictionary/rc"
 query_mode=1
 
 log() { echo "$@" >&2; }
 die() { log "$@"; exit 1; }
 
 print_help() {
-    log 'Usage: config [-q] [-i|-e|-l|<config>]'
+    log 'Usage: rc [-q] [-i|-e|-l|<config>]'
     log
     log '  <config>               -- select config'
     log '  -l, --list             -- print config list'
