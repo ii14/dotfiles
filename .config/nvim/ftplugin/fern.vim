@@ -37,7 +37,9 @@ fun! <SID>fern_close()
   if fern#internal#drawer#is_drawer()
     q
   else
+    let bufnr = bufnr()
     Bdelete!
+    exe 'bwipeout ' . bufnr
   endif
 endfun
 
