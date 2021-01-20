@@ -387,6 +387,8 @@ aug end
     vno gk k
     vno . :norm .<CR>
     nno gV `[v`]
+    vno < <gv
+    vno > >gv
     nno S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
     nno <C-E> 3<C-E>
     nno <C-Y> 3<C-Y>
