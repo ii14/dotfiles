@@ -1,11 +1,15 @@
 @import "dmenu"
 
+* {
+    color-accent: @color-yellow;
+}
+
 #horibox {
     children: [ prompt, listview ];
 }
 
 #prompt {
-    background-color: @color-green;
+    background-color: @color-accent;
     text-color: @color-bg;
 }
 
