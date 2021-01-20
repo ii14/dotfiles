@@ -489,9 +489,11 @@ aug end
     nno <leader>r :FZFPro<CR>
 
   " Command ------------------------------------------------------------------------------
+    cno <expr> <C-R><C-D> BufDirectory()
     cno <C-J> <Down>
     cno <C-K> <Up>
-    cno <expr> <C-R><C-D> BufDirectory()
+    cno <C-,> <C-Left>
+    cno <C-.> <C-Right>
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
