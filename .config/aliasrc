@@ -155,6 +155,21 @@ alias gl1='git --no-pager log -n 1'
 alias gs='git status'
 alias gP='git push'
 alias gp='git pull'
+function clone {
+    if ! repo="$(echo "$1" | sed 's:.*/\(.*\)\.git:\1:')"; then
+        echo 'failed to parse uri' >&2
+        return 1
+    fi
+    if ! git clone "$1"; then
+        echo 'failed to clone repo' >&2
+        return 1
+    fi
+    if ! cd "$repo"; then
+        echo 'directory not found' >&2
+        return 1
+    fi
+    return 0
+}
 
 # APT ------------------------------------------------------------------------------------
 alias ag='sudo apt-get'
