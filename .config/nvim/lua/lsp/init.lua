@@ -63,6 +63,10 @@ lspconfig.sumneko_lua.setup{
   },
 }
 
+lspconfig.tsserver.setup{
+  on_attach = on_attach,
+}
+
 -- lspconfig.denols.setup{
 --   on_attach = on_attach,
 --   -- cmd = {'deno', 'lsp', '-L', 'debug'},
