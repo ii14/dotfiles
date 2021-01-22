@@ -12,10 +12,13 @@ hi! link QuickScopeSecondary WildMenu
 sign define LspDiagnosticsSignError       text=\ E
 sign define LspDiagnosticsSignWarning     text=\ W
 sign define LspDiagnosticsSignInformation text=\ i
+sign define LspDiagnosticsSignHint        text=\ H
 
 hi! link LspDiagnosticsDefaultError       ErrorMsg
 hi! link LspDiagnosticsDefaultWarning     WarningMsg
 hi! link LspDiagnosticsDefaultInformation Function
+hi! link LspDiagnosticsDefaultHint        Function
+hi! LspDiagnosticsUnderlineHint           ctermfg=39 guifg=#61AFEF cterm=underline gui=underline
 
 " vim-lsp-cxx-highlight
 hi! link LspCxxHlSymUnknown        Normal
