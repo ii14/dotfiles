@@ -18,6 +18,7 @@ toggle() {
 
 if [ "$1" = 'sh' ]; then
     toggle >/dev/null
+    # exec tmux new-session -A -s quake-terminal
     exec "$(grep "$USER" /etc/passwd | cut -d ':' -f 7)"
 fi
 
