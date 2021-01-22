@@ -26,7 +26,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'haya14busa/vim-asterisk'
     Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
-    Plug 'moll/vim-bbye'
+    Plug 'ii14/vim-bbye'
     Plug 'junegunn/vim-peekaboo'
     Plug 'AndrewRadev/splitjoin.vim'
 
@@ -95,6 +95,8 @@ call plug#end()
 
 source ~/.config/nvim/functions.vim
 call PlugCheckMissing()
+
+source ~/.config/nvim/term.vim
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
@@ -271,8 +273,8 @@ call PlugCheckMissing()
   " :bd doesn't close window, :bq closes the window --------------------------------------
     if index(g:plugs_order, 'vim-bbye') != -1
       com! -nargs=? -bang -complete=buffer Bq bd<bang> <args>
-      call Cabbrev('bq',  'Bq')
-      call Cabbrev('bd',  'Bd')
+      call Cabbrev('bq', 'Bq')
+      call Cabbrev('bd', 'Bd')
     endif
 
   " Shortcuts ----------------------------------------------------------------------------
@@ -345,7 +347,8 @@ aug Vimrc
 
   " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber
-    au BufLeave term://* stopinsert
+    au TermEnter * setl nocursorline
+    au TermLeave * setl cursorline
 
   " Make autowrite and autocompile SCSS --------------------------------------------------
     au QuickFixCmdPre make update
