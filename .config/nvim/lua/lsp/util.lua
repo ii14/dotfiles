@@ -16,7 +16,7 @@ end
 
 M.on_attach = function(client, bufnr)
   api.nvim_command('setlocal signcolumn=yes')
-  api.nvim_command('call VimrcLspOnAttach()')
+  api.nvim_command('doautocmd User LspAttach')
   print('LSP: ' .. client.config.name .. ' started')
 end
 

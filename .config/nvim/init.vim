@@ -136,19 +136,14 @@ source ~/.config/nvim/term.vim
 
   " nvim-lsp -----------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      " called when lsp is attached to the current buffer
+      au Vimrc User LspAttach
+        \ call s:init_maps_lsp() |
+        \ setl omnifunc=v:lua.vim.lsp.omnifunc
+
       if exists('g:disable_deoplete')
-        fun! VimrcLspOnAttach()
-          call s:init_maps_lsp()
-          lua require('lsp/completion').on_attach_lsp()
-          setl omnifunc=v:lua.vim.lsp.omnifunc
-        endfun
+        au Vimrc User LspAttach lua require('lsp/completion').on_attach_lsp()
       else
-        fun! VimrcLspOnAttach()
-          call s:init_maps_lsp()
-          call deoplete#custom#buffer_option('sources', ['lsp'])
-          setl omnifunc=v:lua.vim.lsp.omnifunc
-        endfun
+        au Vimrc User LspAttach call deoplete#custom#buffer_option('sources', ['lsp'])
       endif
 
       " ~/.config/nvim/lua/lsp/init.lua
