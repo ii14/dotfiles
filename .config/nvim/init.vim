@@ -267,7 +267,9 @@ source ~/.config/nvim/term.vim
 
   " :bd doesn't close window, :bq closes the window --------------------------------------
     if index(g:plugs_order, 'vim-bbye') != -1
-      com! -nargs=? -bang -complete=buffer Bq bd<bang> <args>
+      com! -nargs=? -bang -complete=buffer Bq
+        \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
+        \ | bd! | else | bd<bang> <args> | endif
       call Cabbrev('bq', 'Bq')
       call Cabbrev('bd', 'Bd')
     endif
