@@ -9,6 +9,7 @@ htop
 irb
 man                 ~/.local/bin/X11/rofi-man
 matterhorn
+node
 nvim
 polybar             ~/.local/bin/X11/launch-polybar
 python
