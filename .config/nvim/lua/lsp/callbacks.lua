@@ -28,7 +28,7 @@ local set_qflist = function(items)
   local qf_index = find_qf_index(items)
   if qf_index ~= -1 then
     local view = vim.fn.winsaveview()
-    api.nvim_command('cc ' .. qf_index)
+    vim.cmd('cc ' .. qf_index)
     vim.fn.winrestview(view)
   end
 end
@@ -41,7 +41,7 @@ callbacks['textDocument/references'] = function(_, _, result)
     return nil
   end
   set_qflist(util.locations_to_items(result))
-  api.nvim_command('copen')
+  vim.cmd('copen')
 end
 
 local symbol_callback = function(_, _, result, _, bufnr)
@@ -50,7 +50,7 @@ local symbol_callback = function(_, _, result, _, bufnr)
     return nil
   end
   set_qflist(util.symbols_to_items(result, bufnr))
-  api.nvim_command('copen')
+  vim.cmd('copen')
 end
 
 callbacks['textDocument/documentSymbol'] = symbol_callback
@@ -65,7 +65,7 @@ local location_callback = function(_, _, result)
     util.jump_to_location(result[1])
     if #result > 1 then
       set_qflist(util.locations_to_items(result))
-      api.nvim_command("copen")
+      vim.cmd("copen")
     end
   else
     util.jump_to_location(result)

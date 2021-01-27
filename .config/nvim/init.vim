@@ -3,13 +3,11 @@ let maplocalleader = ' '
 set textwidth=90
 set termguicolors
 
-if !has('nvim')
+if !has('nvim-0.5.0')
   let g:disable_lsp = 1
 endif
 
 " let g:disable_lsp = 1
-let g:disable_deoplete = 1
-let g:deoplete_lazy_load = 1
 
 aug Vimrc | au! | aug end
 
@@ -53,16 +51,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
     endif
-    if !exists('g:disable_deoplete')
-      Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
-      Plug 'Shougo/neco-syntax'
-      if !exists('g:disable_lsp')
-        Plug 'Shougo/deoplete-lsp'
-      endif
-    else
-      Plug 'nvim-lua/completion-nvim'
-      " Plug 'steelsojka/completion-buffers' " slows down startup on large files
-    endif
+    Plug 'hrsh7th/nvim-compe'
 
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
@@ -81,7 +70,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    " Plug 'mtth/scratch.vim'
     Plug 'vifm/vifm.vim'
 
   " Custom -------------------------------------------------------------------------------
@@ -105,46 +93,21 @@ source ~/.config/nvim/term.vim
   " fzf ----------------------------------------------------------------------------------
     source ~/.config/nvim/fzf.vim
 
-  " Deoplete -----------------------------------------------------------------------------
-    if !exists('g:disable_deoplete')
-      if !exists('g:deoplete_lazy_load ')
-        let g:deoplete#enable_at_startup = 1
-      else
-        let g:deoplete#enable_at_startup = 0
-        au Vimrc InsertEnter * call deoplete#enable()
-      endif
-    endif
+  " Completion ---------------------------------------------------------------------------
+    let g:compe = {}
+    let g:compe.enabled = v:true
+    let g:compe.source = {
+      \ 'path': v:true,
+      \ 'buffer': v:true,
+      \ 'nvim_lsp': v:true,
+      \ 'ultisnips': v:true,
+      \ }
 
-  " completion-nvim ----------------------------------------------------------------------
-    if exists('g:disable_deoplete')
-      let g:completion_enable_auto_signature = 0
-      let g:completion_trigger_on_delete = 1
-      let g:completion_auto_change_source = 1
-      let g:completion_matching_ignore_case = 1
-      let g:completion_matching_strategy_list = ['exact', 'fuzzy', 'substring']
-      let g:completion_enable_snippet = 'UltiSnips'
-      let g:completion_chain_complete_list = {'default': [
-        \   {'complete_items': ['path'], 'triggered_only': ['/']},
-        \   {'complete_items': ['path', 'buffers']},
-        \ ]}
-
-      " imap <C-J> <Plug>(completion_next_source)
-      " imap <C-K> <Plug>(completion_prev_source)
-
-      au Vimrc BufEnter * lua require('lsp/completion').on_attach()
-    endif
-
-  " nvim-lsp -----------------------------------------------------------------------------
+  " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       au Vimrc User LspAttach
         \ call s:init_maps_lsp() |
         \ setl omnifunc=v:lua.vim.lsp.omnifunc
-
-      if exists('g:disable_deoplete')
-        au Vimrc User LspAttach lua require('lsp/completion').on_attach_lsp()
-      else
-        au Vimrc User LspAttach call deoplete#custom#buffer_option('sources', ['lsp'])
-      endif
 
       " ~/.config/nvim/lua/lsp/init.lua
       lua require('lsp/init')
@@ -196,9 +159,6 @@ source ~/.config/nvim/term.vim
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
-
-  " scratch.vim --------------------------------------------------------------------------
-    let g:scratch_insert_autohide = 0
 
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
@@ -339,13 +299,11 @@ aug Vimrc
       \ endif
 
   " Cursor line highlighting -------------------------------------------------------------
-    au VimEnter,WinEnter,BufWinEnter * setl cursorline
-    au WinLeave * setl nocursorline
+    au VimEnter,WinEnter,BufWinEnter,TermLeave * setl cursorline
+    au WinLeave,TermEnter * setl nocursorline
 
   " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber
-    au TermEnter * setl nocursorline
-    au TermLeave * setl cursorline
 
   " Make autowrite and autocompile SCSS --------------------------------------------------
     au QuickFixCmdPre make update
