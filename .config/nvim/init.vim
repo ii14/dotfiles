@@ -99,12 +99,25 @@ source ~/.config/nvim/term.vim
     let g:compe.source = {
       \ 'path': v:true,
       \ 'buffer': v:true,
-      \ 'nvim_lsp': v:true,
       \ 'ultisnips': v:true,
       \ }
 
+    ino <silent><expr> <C-Space> compe#complete()
+    ino <silent><expr> <CR>      compe#confirm('<CR>')
+    ino <silent><expr> <C-e>     compe#close('<C-e>')
+
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
+      let s:compe_lsp = {}
+      let s:compe_lsp.enabled = v:true
+      let s:compe_lsp.source = {
+        \ 'path': v:true,
+        \ 'nvim_lsp': v:true,
+        \ 'ultisnips': v:true,
+        \ }
+
+      au Vimrc User LspAttach call compe#setup(s:compe_lsp, 0)
+
       au Vimrc User LspAttach
         \ call s:init_maps_lsp() |
         \ setl omnifunc=v:lua.vim.lsp.omnifunc
