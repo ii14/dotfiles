@@ -5,9 +5,11 @@ set termguicolors
 
 if !has('nvim-0.5.0')
   let g:disable_lsp = 1
+  let g:disable_dap = 1
 endif
 
 " let g:disable_lsp = 1
+" let g:disable_dap = 1
 
 aug Vimrc | au! | aug end
 
@@ -37,7 +39,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'mengelbrecht/lightline-bufferline'
 
     Plug 'Yggdroot/indentLine'
-    Plug 'unblevable/quick-scope'
     Plug 'machakann/vim-highlightedyank'
 
   " File management ----------------------------------------------------------------------
@@ -52,6 +53,9 @@ call plug#begin('~/.local/share/nvim/plugged')
       Plug 'neovim/nvim-lspconfig'
     endif
     Plug 'hrsh7th/nvim-compe'
+    Plug 'tamago324/compe-necosyntax'
+    Plug 'Shougo/neco-syntax'
+    " Plug '~/dev/vim/nvim-compe'
 
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
@@ -60,6 +64,9 @@ call plug#begin('~/.local/share/nvim/plugged')
     " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
+    if !exists('g:disable_dap')
+      Plug 'mfussenegger/nvim-dap'
+    endif
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -95,23 +102,25 @@ source ~/.config/nvim/term.vim
 
   " Completion ---------------------------------------------------------------------------
     let g:compe = {}
-    let g:compe.enabled = v:true
     let g:compe.source = {
       \ 'path': v:true,
+      \ 'calc': v:true,
       \ 'buffer': v:true,
+      \ 'necosyntax': v:true,
       \ 'ultisnips': v:true,
       \ }
 
     ino <silent><expr> <C-Space> compe#complete()
     ino <silent><expr> <CR>      compe#confirm('<CR>')
-    ino <silent><expr> <C-e>     compe#close('<C-e>')
+    ino <silent><expr> <C-E>     compe#close('<C-E>')
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       let s:compe_lsp = {}
-      let s:compe_lsp.enabled = v:true
       let s:compe_lsp.source = {
         \ 'path': v:true,
+        \ 'calc': v:true,
+        \ 'buffer': v:true,
         \ 'nvim_lsp': v:true,
         \ 'ultisnips': v:true,
         \ }
@@ -124,6 +133,13 @@ source ~/.config/nvim/term.vim
 
       " ~/.config/nvim/lua/lsp/init.lua
       lua require('lsp/init')
+    endif
+
+  " DAP ----------------------------------------------------------------------------------
+    if !exists('g:disable_dap')
+      lua require('debugger')
+      com! -complete=file -nargs=* DebugC
+        \ lua require('debugger').start_c_debugger({<f-args>}, 'gdb')
     endif
 
   " Fern ---------------------------------------------------------------------------------
@@ -156,11 +172,6 @@ source ~/.config/nvim/term.vim
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
     au Vimrc TermOpen * nested IndentLinesDisable
-
-  " quick-scope --------------------------------------------------------------------------
-    let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-    let g:qs_max_chars = 150
-    let g:qs_buftype_blacklist = ['terminal', 'nofile']
 
   " peekaboo -----------------------------------------------------------------------------
     let g:peekaboo_window = 'vert bo 50 new'
@@ -492,3 +503,16 @@ aug end
       nno <buffer><silent> <leader>la :LspAction<CR>
       nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
     endfun
+
+  " DAP ----------------------------------------------------------------------------------
+    if !exists('g:disable_dap')
+      nno <leader>d<Space>    :DebugC<Space>
+      nno <leader>d<CR>       :DebugC<CR>
+      nno <silent> <leader>dc :lua require'dap'.continue()<CR>
+      nno <silent> <leader>dn :lua require'dap'.step_over()<CR>
+      nno <silent> <leader>di :lua require'dap'.step_into()<CR>
+      nno <silent> <leader>do :lua require'dap'.step_out()<CR>
+      nno <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>
+      nno <silent> <leader>dr :lua require'dap'.repl.open()<CR>
+      nno <silent> <leader>dl :lua require'dap'.repl.run_last()<CR>
+    endif

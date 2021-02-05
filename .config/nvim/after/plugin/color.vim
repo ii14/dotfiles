@@ -20,6 +20,11 @@ hi! link LspDiagnosticsDefaultInformation Function
 hi! link LspDiagnosticsDefaultHint        Function
 hi! LspDiagnosticsUnderlineHint           ctermfg=39 guifg=#61AFEF cterm=underline gui=underline
 
+" DAP
+sign define DapBreakpoint text=\ ● texthl=ErrorMsg
+sign define DapLogPoint   text=\ L texthl=Function
+sign define DapStopped    text=\ → texthl=WarningMsg linehl=Visual
+
 " vim-lsp-cxx-highlight
 hi! link LspCxxHlSymUnknown        Normal
 hi! link LspCxxHlSymTypeParameter  Structure

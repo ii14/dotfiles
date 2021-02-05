@@ -9,7 +9,7 @@ let g:lightline.colorscheme = 'onedark'
 " let g:lightline.subseparator = {'left': '', 'right': ''}
 
 let g:lightline.active = {
-  \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro', 'readonly', 'filename']],
+  \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro', 'filename']],
   \ 'right' : [['lineinfo'], ['percent'], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
   \ }
 
@@ -39,31 +39,58 @@ let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
 fun! LightlineMode()
-  if &ft ==# 'fern' | return 'Fern' | endif
-  if &bt ==# 'quickfix' | return get(b:, 'qf_isLoc', 1) ? 'Location' : 'QuickFix' | endif
+  if &ft ==# 'fern'
+    return 'Fern'
+  endif
+  if &bt ==# 'quickfix'
+    return get(b:, 'qf_isLoc', 1) ? 'Location' : 'QuickFix'
+  endif
   return winwidth(0) < 50 ? '' : lightline#mode()
 endfun
 
 fun! LightlineFilename()
-  " fern internals, can potentially break
-  if &ft ==# 'fern' | try
-    return (len($HOME) > 1 && match(b:fern.root._path, $HOME) == 0)
-      \ ? '~'.b:fern.root._path[len($HOME):] : b:fern.root._path
-  catch | return '' | endtry | endif
-  if &ft ==# 'scratch' | return 'Scratch' | endif
-  if &bt ==# 'quickfix' | return getqflist({'title':1}).title | endif
+  if &ft ==# 'fern'
+    " fern internals, can potentially break
+    try
+      return (len($HOME) > 1 && match(b:fern.root._path, $HOME) == 0)
+        \ ? '~'.b:fern.root._path[len($HOME):]
+        \ : b:fern.root._path
+    catch
+      return ''
+    endtry
+  endif
+
+  if &ft ==# 'scratch'
+    return 'Scratch'
+  endif
+
+  if &ft ==# 'dap-repl'
+    return 'Debugger'
+  endif
+
+  if &bt ==# 'quickfix'
+    return getqflist({'title':1}).title
+  endif
+
   let fname = expand('%:t')
-  return fname ==# '' ? '[No Name]' : &mod ? fname.' +' : fname
+  return
+    \ (&ro ? '[RO] ' : '') .
+    \ (fname ==# '' ? '[No Name]' : fname) .
+    \ (&mod ? ' +' : '')
 endfun
 
 fun! LightlineFileformat()
-  if &ft ==# 'fern' || &bt ==# 'quickfix' | return '' | endif
-  return winwidth(0) > 70 && &ff !=# 'unix' ? &ff : ''
+  return winwidth(0) > 70
+    \ && &ft !=# 'fern'
+    \ && &bt !=# 'quickfix'
+    \ && &ff !=# 'unix' ? &ff : ''
 endfun
 
 fun! LightlineFileencoding()
-  if &ft ==# 'fern' || &bt ==# 'quickfix' | return '' | endif
-  return winwidth(0) > 70 && &fenc !=# 'utf-8' ? &fenc : ''
+  return winwidth(0) > 70
+    \ && &ft !=# 'fern'
+    \ && &bt !=# 'quickfix'
+    \ && &fenc !=# 'utf-8' ? &fenc : ''
 endfun
 
 fun! LightlineFiletype()
@@ -71,8 +98,11 @@ fun! LightlineFiletype()
 endfun
 
 fun! LightlineFugitive()
-  if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
-  return winwidth(0) > 70 && exists('*FugitiveHead') ? FugitiveHead() : ''
+  return winwidth(0) > 70
+    \ && &ft !=# 'fern'
+    \ && &ft !=# 'qf'
+    \ && exists('*FugitiveHead')
+    \ ? FugitiveHead() : ''
 endfun
 
 fun! LightlineLsp()
@@ -84,7 +114,9 @@ fun! LightlineLsp()
 endfun
 
 fun! LightlinePro()
-  if &ft ==# 'fern' || &ft ==# 'qf' | return '' | endif
+  if &ft ==# 'fern' || &ft ==# 'qf'
+    return ''
+  endif
   return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
 endfun
 
