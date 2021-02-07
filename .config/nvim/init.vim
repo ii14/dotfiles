@@ -468,7 +468,8 @@ aug end
     nno <leader>on :LineNumbersToggle<CR>
     nno <leader>oc :ColorizerToggle<CR>
     nno <leader>om :MouseToggle<CR>
-    nno <leader>r :FZFPro<CR>
+    nno <silent> <leader>r :call fzf#run(fzf#wrap(
+      \ {'source':pro#configs(), 'sink':'silent Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
     cno <expr> <C-R><C-D> BufDirectory()

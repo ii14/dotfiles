@@ -1,0 +1,108 @@
+*pro.txt*					Simple config management
+
+==============================================================================
+*pro.vim* is a simple config management plugin.
+
+Plugin is meant to be used with ii14/|exrc.vim| plugin or 'exrc' option.
+
+
+g:pro							*g:pro*
+	A dictionary with configurations.
+>
+	let pro = {}
+
+	let pro.release = {
+	  \ '&makeprg'   : 'make -j -C build/release',
+	  \ 'qmake#dir'  : 'build/release',
+	  \ }
+
+	let pro.debug = {
+	  \ '&makeprg'   : 'make -j -C build/debug',
+	  \ 'qmake#dir'  : 'build/debug',
+	  \ 'qmake#args' : 'CONFIG+=debug',
+	  \ }
+
+	let pro.test = {
+	  \ '&makeprg'   : 'make -j -C build/test && ./build/test/test',
+	  \ 'qmake#dir'  : 'build/test',
+	  \ 'qmake#args' : 'CONFIG+=debug CONFIG+=test',
+	  \ }
+<
+	When config is selected, previous values are cached as default values
+	and any missing settings will be reverted (NOT IMPLEMENTED YET).
+	It's also possible to set the default values explicitly by using _ key:
+>
+	let pro._ = {'$MY_VAR': 'default_value'}
+
+	let pro.debug = {'$MY_VAR': 'debug_value'}
+	" in 'debug' $MY_VAR is set to 'debug_value'
+
+	let pro.release = {}
+	" in 'release' $MY_VAR is set to 'default_value'
+<
+
+g:pro#default						*g:pro#default*
+	Default config. Automatically selected upon initialization.
+>
+	let pro#default = 'debug'
+<
+
+:Pro[!] [{config}]					*:Pro*
+	Apply settings from {config}.
+>
+	:Pro debug
+<
+	If {config} is not provided, prints out the currently selected config,
+	unless ! was provided, in which case the settings are reapplied.
+
+	|:verbose| modifier prints out configurations and their settings.
+>
+	:verbose Pro
+	    release
+	        &makeprg = make -j -C build/release
+	        qmake#dir = build/release
+	    debug *
+	        &makeprg = make -j -C build/debug
+	        qmake#args = CONFIG+=debug
+	        qmake#dir = build/debug
+	    test
+	        &makeprg = make -j -C build/test && ./build/test/test
+	        qmake#args = CONFIG+=debug CONFIG+=test
+	        qmake#dir = build/test
+<
+	|:silent| modifier runs the command silently.
+
+
+pro#selected()						*pro#selected()*
+	Returns name of the currently selected config.
+
+	Display current config in lightline:
+>
+	let g:lightline = {}
+
+	let g:lightline.active = {
+	  \ 'left': [
+	  \   ['mode', 'paste'],
+	  \   ['pro', 'readonly', 'filename', 'modified'],
+	  \ ]}
+
+	let g:lightline.component_function = {
+	  \ 'pro': 'LightlinePro',
+	  \ }
+
+	fun! LightlinePro()
+	  return exists('*pro#selected') ? pro#selected() : ''
+	endfun
+<
+
+pro#configs()						*pro#configs()*
+	Returns list of all config names.
+
+	Select config with fzf.vim:
+>
+	nnoremap <silent> <leader>r :call fzf#run(fzf#wrap(
+	  \ {'source': pro#configs(), 'sink': 'silent Pro'}))<CR>
+<
+
+==============================================================================
+vim:tw=78:sw=8:sts=8:ts=8:noet:ft=help:norl:

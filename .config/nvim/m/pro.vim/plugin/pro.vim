@@ -1,75 +1,134 @@
-" Description: Simple project config management
-" Usage:
-" Use with vim's 'exrc' feature or with 'ii14/exrc.vim' plugin.
-" Example of a local .exrc file:
-"
-"     let g:pro#configs = {}
-"
-"     " Default config. All configs inherit from '_'.
-"     let g:pro#configs['_'] = {
-"       \ '$MY_ENV_VAR': 'my_value'
-"       \ }
-"
-"     let g:pro#configs['release'] = {
-"       \ '&makeprg'     : 'make -j -C build/release',
-"       \ 'g:qmake#dir'  : 'build/release',
-"       \ }
-"
-"     let g:pro#configs['debug'] = {
-"       \ '&makeprg'     : 'make -j -C build/debug',
-"       \ 'g:qmake#dir'  : 'build/debug',
-"       \ 'g:qmake#args' : 'CONFIG+=debug',
-"       \ }
-"
-"     let g:pro#configs['test'] = {
-"       \ '&makeprg'     : 'make -j -C build/test-release;'
-"       \                . './build/test/test',
-"       \ 'g:qmake#dir'  : 'build/test,
-"       \ 'g:qmake#args' : 'CONFIG+=test',
-"       \ }
-"
-"     " Set which config is selected by default.
-"     let g:pro#config = 'debug'
-"
-" Switch between project configurations with :Pro {config} or :FZFPro
-" The plugin is still in progress, but it works.
+" pro.vim - Simple config management
+" Maintainer:   ii14
+" Version:      0.1.0
 
-command! -nargs=1 -complete=customlist,s:CompConfigs Pro call s:SelectConfig(<q-args>)
+" TODO: cache original values before initializing
+" TODO: recover when selected config was deleted
+" TODO: add pro#hook - function executed after selecting config
 
-command! FZFPro call fzf#run(fzf#wrap({'source': s:CompFzf(), 'sink': 'Pro'}))
+if exists('g:loaded_pro')
+  finish
+endif
+let g:loaded_pro = 1
 
-let s:selected_config = ''
+" Public API -------------------------------------------------------------------
 
-fun! pro#selected() abort
-  return get(s:, 'selected_config', '')
+" Select config
+command! -nargs=? -bar -bang -complete=customlist,s:Completion Pro
+  \ call s:Command(<q-args>, <q-mods>, '<bang>')
+
+" Get selected config name
+fun! pro#selected()
+  return s:Selected
 endfun
 
-fun! s:SelectConfig(config) abort
-  if !has_key(g:, 'pro#configs') || a:config ==# '_' || !has_key(g:pro#configs, a:config)
-    echomsg 'Selected config does not exist'
+" Get list of config names
+fun! pro#configs()
+  try
+    let d = copy(g:pro)
+    try
+      call remove(d, '_')
+    catch
+    endtry
+    return sort(keys(d))
+  catch
+    return []
+  endtry
+endfun
+
+" Private ----------------------------------------------------------------------
+
+let s:Selected = ''
+
+fun! s:Command(config, mods, bang) abort
+  " Modifiers
+  let l:silent = v:false
+  let l:verbose = v:false
+  for l:mod in split(a:mods, ' ')
+    if l:mod ==# 'verbose'
+      let l:verbose = v:true
+    elseif l:mod ==# 'silent'
+      let l:silent = v:true
+    else
+      echohl ErrorMsg
+      echomsg 'Modifer "' . l:mod . '" not allowed'
+      echohl None
+      return
+    endif
+  endfor
+
+  " Bang
+  let l:config = a:config !=# '' ? a:config :
+    \ a:bang ==# '!' ? s:Selected : ''
+  if l:config !=# ''
+    if !s:HasConfig(l:config)
+      echohl ErrorMsg
+      echomsg 'Config "' . l:config . '" does not exist'
+      echohl None
+      return
+    endif
+  endif
+
+  " Verbose
+  if l:verbose
+    if l:config ==# ''
+      let l:configs = get(g:, 'pro', {})
+      for l:name in sort(keys(l:configs))
+        echohl Function
+        echo l:name . (l:name ==# s:Selected ? ' *' : '')
+        echohl None
+        let l:val = l:configs[l:name]
+        for l:key in sort(keys(l:val))
+          echo '    ' . l:key . ' = ' . l:val[l:key]
+        endfor
+      endfor
+    else
+      echohl Function
+      echo l:config . (l:config ==# s:Selected ? ' *' : '')
+      echohl None
+      let l:val = get(get(g:, 'pro', {}), l:config, {})
+      for l:key in sort(keys(l:val))
+        echo '    ' . l:key . ' = ' . l:val[l:key]
+      endfor
+    endif
     return
   endif
 
-  let l:has_default = has_key(g:pro#configs, '_')
+  if l:config ==# ''
+    if !l:silent
+      echo s:Selected
+    endif
+    return
+  endif
+
+  call s:Select(l:config)
+  if !l:silent
+    echo l:config
+  endif
+endfun
+
+fun! s:Select(config) abort
+  let l:has_default = has_key(g:pro, '_')
 
   if l:has_default
-    call s:UnletConfig(g:pro#configs, '_')
+    call s:UnletConfig(g:pro, '_')
   endif
 
-  if s:selected_config !=# '' && has_key(g:pro#configs, s:selected_config)
-    call s:UnletConfig(g:pro#configs, s:selected_config)
+  if s:Selected !=# '' && has_key(g:pro, s:Selected)
+    call s:UnletConfig(g:pro, s:Selected)
   endif
 
-  let s:selected_config = a:config
+  let s:Selected = a:config
 
   if l:has_default
-    call s:LetConfig(g:pro#configs, '_')
+    call s:LetConfig(g:pro, '_')
   endif
 
-  call s:LetConfig(g:pro#configs, a:config)
+  call s:LetConfig(g:pro, a:config)
+endfun
 
-  redraw
-  echo 'Selected config: ' . a:config
+fun! s:HasConfig(config)
+  return has_key(g:, 'pro') && a:config !=# '_' && has_key(g:pro, a:config)
 endfun
 
 fun! s:LetConfig(dict, key) abort
@@ -78,46 +137,36 @@ fun! s:LetConfig(dict, key) abort
   endfor
 endfun
 
-" TODO: cache original values before initializing
 fun! s:UnletConfig(dict, key) abort
   for key in keys(get(a:dict, a:key))
-    try | execute 'unlet ' . key | catch | | endtry
+    try
+      execute 'unlet ' . key
+    catch
+    endtry
   endfor
 endfun
 
-fun! s:CompConfigs(ArgLead, CmdLine, CursorPos)
-  try
-    let d = copy(g:pro#configs)
-    try | call remove(d, '_') | catch | | endtry
-    return sort(filter(keys(d), 'v:val =~ "^' . a:ArgLead . '"'))
-  catch
-    return []
-  endtry
-endfun
-
-fun! s:CompFzf()
-  try
-    let d = copy(g:pro#configs)
-    try | call remove(d, '_') | catch | | endtry
-    return sort(keys(d))
-  catch
-    return []
-  endtry
+fun! s:Completion(ArgLead, CmdLine, CursorPos)
+  return filter(pro#configs(), 'v:val =~ "^' . a:ArgLead . '"')
 endfun
 
 fun! s:Init()
-  if s:selected_config ==# ''
-    if has_key(g:, 'pro#config') && has_key(get(g:, 'pro#configs', {}), g:pro#config)
-      let s:selected_config = g:pro#config
-      if has_key(g:pro#configs, '_')
-        call s:LetConfig(g:pro#configs, '_')
+  if s:Selected ==# '' && has_key(g:, 'pro#default')
+    if s:HasConfig(g:pro#default)
+      let s:Selected = g:pro#default
+      if has_key(g:pro, '_')
+        call s:LetConfig(g:pro, '_')
       endif
-      call s:LetConfig(g:pro#configs, g:pro#config)
+      call s:LetConfig(g:pro, g:pro#default)
     endif
   endif
 endfun
+
+" Autocommands -----------------------------------------------------------------
 
 augroup ProVim
   autocmd!
   autocmd VimEnter * call s:Init() | autocmd ProVim SourcePost * call s:Init()
 augroup END
+
+" vim: et sw=2 sts=2 tw=80 :

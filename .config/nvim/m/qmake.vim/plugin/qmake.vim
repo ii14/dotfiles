@@ -15,6 +15,8 @@
 "     g:qmake#post
 "         Post hook.
 
+" TODO: accept args in :QMake
+
 command! QMake call s:Run()
 
 fun! s:Format() abort
