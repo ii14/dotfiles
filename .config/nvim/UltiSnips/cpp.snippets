@@ -13,11 +13,37 @@ endsnippet
 
 # MAIN -----------------------------------------------------------------------------------
 snippet qmain "main function with QCoreApplication" b
+#include <QCoreApplication>
+
 int main(int argc, char* argv[])
 {
 	QCoreApplication app(argc, argv);
 	${0}
 	return app.exec();
+}
+endsnippet
+
+snippet qmlmain "main function with QML" b
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char* argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    QQmlContext* ctx = engine.rootContext();
+
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+
+    engine.load(url);
+
+    return app.exec();
 }
 endsnippet
 
