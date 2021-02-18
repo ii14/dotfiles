@@ -61,6 +61,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
+    Plug 'ii14/pro.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
@@ -84,7 +85,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Custom -------------------------------------------------------------------------------
     Plug '~/.config/nvim/m/rc.vim'
     Plug '~/.config/nvim/m/qf.vim'
-    Plug '~/.config/nvim/m/pro.vim'
     Plug '~/.config/nvim/m/qmake.vim'
     Plug '~/.config/nvim/m/autosplit.vim'
 
