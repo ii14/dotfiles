@@ -119,7 +119,7 @@ export KEYTIMEOUT=1
 
 # Emacs key bindings with Vim normal mode ------------------------------------------ [Esc]
 bindkey -e
-bindkey '^x\e' vi-cmd-mode
+# bindkey '^x\e' vi-cmd-mode
 # bindkey -M vicmd '\e' vi-add-next
 bindkey -r '^j'
 bindkey -rM vicmd '^j'
@@ -160,10 +160,10 @@ bindkey '\e[1;3D' backward-word
 # One directory up --------------------------------------------------------------- [Alt-U]
 bindkey -s '\eu' 'cd ..^M'
 
-# Edit command line -------------------------------------------------------------- [Alt-E]
+# Edit command line ------------------------------------------------------ [Ctrl-X,Ctrl-E]
 autoload -U edit-command-line
 zle -N edit-command-line
-bindkey '\ee' edit-command-line
+bindkey '^x^e' edit-command-line
 
 # Completion menu vim movement ------------------------------------------ [Ctrl-{h,j,k,l}]
 # zmodload zsh/complist
