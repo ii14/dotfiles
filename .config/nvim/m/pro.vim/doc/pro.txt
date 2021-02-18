@@ -86,12 +86,8 @@ pro#selected()						*pro#selected()*
 	  \ ]}
 
 	let g:lightline.component_function = {
-	  \ 'pro': 'LightlinePro',
+	  \ 'pro': 'pro#selected',
 	  \ }
-
-	fun! LightlinePro()
-	  return exists('*pro#selected') ? pro#selected() : ''
-	endfun
 <
 
 pro#configs()						*pro#configs()*

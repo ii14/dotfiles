@@ -38,15 +38,13 @@ let s:Selected = ''
 let s:VarsDefault = {}
 let s:VarsEmpty = []
 
-fun! s:Command(config, mods, bang) abort
+fun! s:Command(name, mods, bang) abort
   " Modifiers
-  let l:silent = v:false
   let l:verbose = v:false
   for l:mod in split(a:mods, ' ')
     if l:mod ==# 'verbose'
       let l:verbose = v:true
     elseif l:mod ==# 'silent'
-      let l:silent = v:true
     else
       echohl ErrorMsg
       echomsg 'Modifer "'.l:mod.'" not allowed'
@@ -55,12 +53,19 @@ fun! s:Command(config, mods, bang) abort
     endif
   endfor
 
+  if a:name ==# '?'
+    echo s:Selected
+    return
+  endif
+
   " Bang
-  let l:config = a:config !=# '' ? a:config : a:bang ? s:Selected : ''
-  if l:config !=# ''
-    if !s:HasConfig(l:config)
+  let l:name = a:name !=# '' ? a:name : a:bang ? s:Selected : ''
+
+  " Validate
+  if l:name !=# ''
+    if !s:HasConfig(l:name)
       echohl ErrorMsg
-      echomsg 'Config "'.l:config.'" does not exist'
+      echomsg 'Config "'.l:name.'" does not exist'
       echohl None
       return
     endif
@@ -68,42 +73,42 @@ fun! s:Command(config, mods, bang) abort
 
   " Verbose
   if l:verbose
-    if l:config ==# ''
-      let l:configs = get(g:, 'pro', {})
-      for l:name in sort(keys(l:configs))
+    if l:name !=# ''
+      call s:PrintConfig(l:name)
+    else
+      for l:name in sort(keys(get(g:, 'pro', {})))
         call s:PrintConfig(l:name)
       endfor
-    else
-      call s:PrintConfig(l:config)
     endif
     return
   endif
 
-  if l:config ==# ''
+  if l:name ==# ''
     echo s:Selected
   else
-    call s:Select(l:config)
+    call s:Select(l:name)
   endif
 endfun
 
-fun! s:Select(config) abort
+fun! s:Select(name) abort
   call s:LetDefault()
-  let s:Selected = a:config
+  let s:Selected = a:name
   if has_key(g:pro, '_')
     call s:LetConfig(g:pro, '_')
   endif
-  call s:LetConfig(g:pro, a:config)
+  call s:LetConfig(g:pro, a:name)
   doautocmd User ProUpdate
 endfun
 
-fun! s:HasConfig(config)
-  return has_key(g:, 'pro') && a:config !=# '_' && has_key(g:pro, a:config)
+fun! s:HasConfig(name)
+  return has_key(g:, 'pro') && a:name !=# '_' && has_key(g:pro, a:name)
 endfun
 
 fun! s:LetConfig(dict, key) abort
-  let exceptions = []
+  let l:exceptions = []
 
-  for [l:lhs, l:rhs] in items(get(a:dict, a:key))
+  let l:config = get(a:dict, a:key)
+  for l:lhs in keys(l:config)
     if index(s:VarsEmpty, l:lhs) == -1 || !has_key(s:VarsDefault, l:lhs)
       if exists(l:lhs)
         execute 'let s:VarsDefault[l:lhs] = '.l:lhs
@@ -112,19 +117,19 @@ fun! s:LetConfig(dict, key) abort
       endif
     endif
     try
-      execute 'let '.l:lhs.' = l:rhs'
+      execute 'let '.l:lhs.' = l:config[l:lhs]'
     catch
-      call add(exceptions, [l:lhs, v:exception])
+      call add(l:exceptions, [l:lhs, v:exception])
     endtry
   endfor
 
-  if len(exceptions) > 0
+  if len(l:exceptions) > 0
     redraw
     echohl ErrorMsg
     echomsg 'Exception occurred in config "'.a:key.'":'
-    for exception in exceptions
-      echomsg '  In "'.exception[0].'":'
-      echomsg '    '.exception[1]
+    for l:exception in l:exceptions
+      echomsg '  In "'.l:exception[0].'":'
+      echomsg '    '.l:exception[1]
     endfor
     echohl None
   endif
@@ -137,8 +142,8 @@ fun! s:LetDefault() abort
     catch
     endtry
   endfor
-  for [l:lhs, l:rhs] in items(s:VarsDefault)
-    execute 'let '.l:lhs.' = l:rhs'
+  for l:lhs in keys(s:VarsDefault)
+    execute 'let '.l:lhs.' = s:VarsDefault[l:lhs]'
   endfor
 endfun
 
@@ -146,14 +151,14 @@ fun! s:Completion(ArgLead, CmdLine, CursorPos)
   return filter(pro#configs(), 'v:val =~ ''\V\^''.a:ArgLead')
 endfun
 
-fun! s:PrintConfig(config) abort
+fun! s:PrintConfig(name) abort
   echohl Function
-  echo a:config.(a:config ==# s:Selected ? ' *' : '')
+  echo a:name.(a:name ==# s:Selected ? ' *' : '')
   echohl None
-  let l:val = get(get(g:, 'pro', {}), a:config, {})
-  for l:lhs in sort(keys(l:val))
-    let l:rhs = l:val[l:lhs]
-    echo '    '.l:lhs.' = '.(type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
+  let l:config = get(get(g:, 'pro', {}), a:name, {})
+  for l:lhs in sort(keys(l:config))
+    echo '    '.l:lhs.' = '.(type(l:config[l:lhs]) == v:t_string
+      \ ? l:config[l:lhs] : string(l:config[l:lhs]))
   endfor
 endfun
 
