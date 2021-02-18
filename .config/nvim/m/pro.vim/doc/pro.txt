@@ -47,14 +47,6 @@ g:pro#default						*g:pro#default*
 	let g:pro#default = 'debug'
 <
 
-g:pro#hook						*g:pro#hook*
-	Execute after selecting the config.
->
-	let g:pro#hook =<< END
-	  echomsg 'Selected config: ' . pro#selected()
-	END
-<
-
 :Pro[!] [{config}]					*:Pro*
 	Apply settings from {config}.
 >
@@ -109,6 +101,15 @@ pro#configs()						*pro#configs()*
 >
 	nnoremap <silent> <leader>r :call fzf#run(fzf#wrap(
 	  \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
+<
+
+ProUpdate						*ProUpdate*
+	Configuration update event.
+>
+	augroup Project
+	  autocmd!
+	  autocmd User ProUpdate echomsg 'Selected config: ' . pro#selected()
+	augroup end
 <
 
 ==============================================================================

@@ -109,7 +109,7 @@ fun! s:Select(config) abort
     call s:LetConfig(g:pro, '_')
   endif
   call s:LetConfig(g:pro, a:config)
-  call s:CallHook()
+  doautocmd User ProUpdate
 endfun
 
 fun! s:HasConfig(config)
@@ -139,39 +139,6 @@ fun! s:LetDefault() abort
   for [l:key, l:val] in items(s:VarsDefault)
     execute 'let ' . l:key . ' = l:val'
   endfor
-endfun
-
-fun! s:CallHook() abort
-  if !has_key(g:, 'pro#hook')
-    return
-  endif
-
-  " if get(s:, 'InHook', v:false)
-  "   echohl ErrorMsg
-  "   echomsg 'Recursion in g:pro#hook is not allowed'
-  "   echohl None
-  "   return
-  " endif
-
-  let s:InHook = v:true
-  echomsg expand('<sfile>')
-
-  try
-    if type(g:pro#hook) == v:t_string
-      execute g:pro#hook
-    elseif type(g:pro#hook) == v:t_list
-      execute join(g:pro#hook, "\n")
-    else
-      throw 'Invalid g:pro#hook type'
-    endif
-  catch
-    let l:exception = v:exception
-  endtry
-
-  let s:InHook = v:false
-  if has_key(l:, 'exception')
-    throw l:exception
-  endif
 endfun
 
 fun! s:Completion(ArgLead, CmdLine, CursorPos)
