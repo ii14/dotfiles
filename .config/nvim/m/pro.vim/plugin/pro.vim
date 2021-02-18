@@ -143,7 +143,7 @@ fun! s:LetDefault() abort
 endfun
 
 fun! s:Completion(ArgLead, CmdLine, CursorPos)
-  return filter(pro#configs(), 'v:val =~ "^'.a:ArgLead.'"')
+  return filter(pro#configs(), 'v:val =~ ''\V\^''.a:ArgLead')
 endfun
 
 fun! s:PrintConfig(config) abort
