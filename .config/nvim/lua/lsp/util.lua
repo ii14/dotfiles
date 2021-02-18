@@ -14,17 +14,15 @@ M.has_lsp = function()
   return false
 end
 
-M.on_attach = function(client)
+M.on_attach = function()
   vim.cmd('setlocal signcolumn=yes')
   vim.cmd('doautocmd User LspAttach')
-  print('LSP: ' .. client.config.name .. ' started')
 end
 
 M.stop_clients = function()
   vim.cmd('setlocal signcolumn=auto')
   lsp.diagnostic.clear(api.nvim_get_current_buf())
   lsp.stop_client(lsp.get_active_clients())
-  print('LSP: stopped')
 end
 
 M.get_client_name = function()
