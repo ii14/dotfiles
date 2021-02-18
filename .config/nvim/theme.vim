@@ -9,7 +9,7 @@ let g:lightline.colorscheme = 'onedark'
 " let g:lightline.subseparator = {'left': '', 'right': ''}
 
 let g:lightline.active = {
-  \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro', 'filename']],
+  \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro'], ['filename']],
   \ 'right' : [['lineinfo'], ['percent'], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
   \ }
 
@@ -69,12 +69,14 @@ fun! LightlineFilename()
   endif
 
   if &bt ==# 'quickfix'
-    return getqflist({'title':1}).title
+    return get(b:, 'qf_isLoc', 1)
+      \ ? getloclist(0, {'title':1}).title
+      \ : getqflist({'title':1}).title
   endif
 
   let fname = expand('%:t')
   return
-    \ (&ro ? '[RO] ' : '') .
+    \ (&ro ? ' ' : '') .
     \ (fname ==# '' ? '[No Name]' : fname) .
     \ (&mod ? ' +' : '')
 endfun
