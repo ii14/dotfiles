@@ -104,19 +104,26 @@ alias demangle='c++filt -t'
 alias py='python3.8'
 alias sass='sassc'
 
-function makecommand {
-    [ -z "$1" ] && echo 'Filename required' >&2 && return 1
-    mkdir -p ~/.local/bin
-    local cmd=~/.local/bin/$1
-    if [ -e "$cmd" ]; then
-        [ ! -f "$cmd" ] && echo 'File exists, but is not a regular file' >&2 && return 1
-    else
-        [ -z "$2" ] \
-            && echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > "$cmd" \
-            || echo -e "#!/usr/bin/env $2\n" > "$cmd"
-        chmod +x "$cmd"
+# edit script
+function es {
+    if (( ARGC != 1 )); then
+        echo 'usage: es <filename>' >&2
+        return 1
     fi
-    "$EDITOR" "$cmd"
+    if [ -e "$1" ]; then
+        if [ ! -f "$1" ]; then
+            echo 'File exists, but is not a regular file' >&2
+            return 1
+        fi
+    else
+        if [ -z "$2" ]; then
+            echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > "$1"
+        else
+            echo -e "#!/usr/bin/env $2\n" > "$1"
+        fi
+        chmod +x "$1"
+    fi
+    "$EDITOR" "$1"
 }
 
 # A/V ------------------------------------------------------------------------------------
@@ -187,40 +194,85 @@ function unshorten {
     curl -s "https://linkunshorten.com/api/link?url=$1" | jq -M .
 }
 
+function rcd {
+    if (( ARGC != 1 )); then
+        echo 'usage: rcd <config>' >&2
+        return 1
+    fi
+    cd "${$(rc -q "$1"):h}"
+}
+
+# ARCHIVES -------------------------------------------------------------------------------
 function ex {
     if (( ARGC != 1 )); then
         echo 'usage: ex <file>' >&2
         return 1
     fi
-    if [[ -f "$1" ]]; then
-        case $1 in
-            *.(tar.bz2|tbz2|tbz))
-                tar -xvjf "$1" ;;
-            *.(tar.gz|tgz))
-                tar -xvzf "$1" ;;
-            *.(tar.xz|txz))
-                tar -xvJf "$1" ;;
-            *.tar)
-                tar -xvf "$1" ;;
-            *.rar)
-                unrar xv "$1" ;;
-            *.7z)
-                7z x "$1" ;;
-            *.zip)
-                unzip "$1" ;;
-            *.bz2)
-                bunzip2 -v "$1" ;;
-            *.gz)
-                gunzip -v "$1" ;;
-            *.Z)
-                uncompress -v "$1" ;;
-            *)
-                echo "'$1' cannot be extracted via ex()" >&2
-                return 1
-                ;;
-        esac
-    else
+    if [[ ! -f "$1" ]]; then
         echo "'$1' is not a valid file" >&2
         return 1
     fi
+    case $1 in
+        *.(tar.bz2|tbz2|tbz))
+            tar -xvjf "$1" ;;
+        *.(tar.gz|tgz))
+            tar -xvzf "$1" ;;
+        *.(tar.xz|txz))
+            tar -xvJf "$1" ;;
+        *.tar)
+            tar -xvf "$1" ;;
+        *.rar)
+            unrar xv "$1" ;;
+        *.7z)
+            7z x "$1" ;;
+        *.zip)
+            unzip "$1" ;;
+        *.bz2)
+            bunzip2 -v "$1" ;;
+        *.gz)
+            gunzip -v "$1" ;;
+        *.Z)
+            uncompress -v "$1" ;;
+        *)
+            echo "'$1' cannot be extracted via ex()" >&2
+            return 1
+            ;;
+    esac
+}
+
+function exl {
+    if (( ARGC != 1 )); then
+        echo 'usage: ex <file>' >&2
+        return 1
+    fi
+    if [[ ! -f "$1" ]]; then
+        echo "'$1' is not a valid file" >&2
+        return 1
+    fi
+    case $1 in
+        *.(tar.bz2|tbz2|tbz))
+            tar -tvjf "$1" ;;
+        *.(tar.gz|tgz))
+            tar -tvzf "$1" ;;
+        *.(tar.xz|txz))
+            tar -tvJf "$1" ;;
+        *.tar)
+            tar -tvf "$1" ;;
+        *.rar)
+            unrar vl "$1" ;;
+        *.7z)
+            7z l "$1" ;;
+        *.zip)
+            unzip -l "$1" ;;
+        *.bz2)
+            bunzip2 -vt "$1" ;;
+        *.gz)
+            gunzip -vl "$1" ;;
+        *.Z)
+            uncompress -vl "$1" ;;
+        *)
+            echo "'$1' cannot be extracted via exl()" >&2
+            return 1
+            ;;
+    esac
 }
