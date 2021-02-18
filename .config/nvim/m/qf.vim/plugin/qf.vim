@@ -71,7 +71,7 @@ fun! qf#init()
     nnoremap <buffer><nowait><silent> v :call qf#cvsplit()<CR>
     nnoremap <buffer><nowait><silent> t :call qf#ctabsplit()<CR>
   else
-    if l:loc_len < 10 && match(getloclist({'title':1}).title, '^:Dispatch') == -1
+    if l:loc_len < 10 && match(getloclist(0, {'title':1}).title, '^:Dispatch') == -1
       exe 'resize ' . l:loc_len
     endif
     nnoremap <buffer><nowait><silent> s :call qf#lsplit()<CR>
