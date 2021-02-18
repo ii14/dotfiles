@@ -152,16 +152,16 @@ bar {
 }
 
 # COLORS ---------------------------------------------------------------------------------
+# new_window normal 1
 # class                 border  backgr. text    indicator child_border
-# client.focused          #61afef #61afef #ffffff #61afef   #3e4452
-# client.focused_inactive #3e4452 #3e4452 #abb2bf #484e50   #3e4452
-# client.unfocused        #3e4452 #3e4452 #1e2127 #292d2e   #3e4452
+# client.focused          #285577 #285577 #ffffff #2e9ef4   #285577
+# client.focused_inactive #5c6370 #5c6370 #ffffff #484e50   #282c34
+# client.unfocused        #3e4452 #3e4452 #abb2bf #292d2e   #282c34
 # client.urgent           #be5046 #be5046 #ffffff #be5046   #be5046
 # client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
-# client.background       #000000
-# new_window normal 1
+# client.background       #282c34
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
-client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
+client.focused_inactive #5c6370 #4b5263 #ffffff #484e50   #4b5263
 client.unfocused        #333333 #282c34 #5c6370 #292d2e   #222222
 client.urgent           #e06c75 #be5046 #ffffff #be5046   #be5046
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
