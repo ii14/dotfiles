@@ -49,7 +49,7 @@ fun! s:Command(config, mods, bang) abort
       let l:silent = v:true
     else
       echohl ErrorMsg
-      echomsg 'Modifer "' . l:mod . '" not allowed'
+      echomsg 'Modifer "'.l:mod.'" not allowed'
       echohl None
       return
     endif
@@ -60,7 +60,7 @@ fun! s:Command(config, mods, bang) abort
   if l:config !=# ''
     if !s:HasConfig(l:config)
       echohl ErrorMsg
-      echomsg 'Config "' . l:config . '" does not exist'
+      echomsg 'Config "'.l:config.'" does not exist'
       echohl None
       return
     endif
@@ -71,26 +71,10 @@ fun! s:Command(config, mods, bang) abort
     if l:config ==# ''
       let l:configs = get(g:, 'pro', {})
       for l:name in sort(keys(l:configs))
-        echohl Function
-        echo l:name . (l:name ==# s:Selected ? ' *' : '')
-        echohl None
-        let l:val = l:configs[l:name]
-        for l:key in sort(keys(l:val))
-          let l:rhs = l:val[l:key]
-          echo '    ' . l:key . ' = ' .
-            \ (type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
-        endfor
+        call s:PrintConfig(l:name)
       endfor
     else
-      echohl Function
-      echo l:config . (l:config ==# s:Selected ? ' *' : '')
-      echohl None
-      let l:val = get(get(g:, 'pro', {}), l:config, {})
-      for l:key in sort(keys(l:val))
-        let l:rhs = l:val[l:key]
-        echo '    ' . l:key . ' = ' .
-          \ (type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
-      endfor
+      call s:PrintConfig(l:config)
     endif
     return
   endif
@@ -119,18 +103,18 @@ endfun
 fun! s:LetConfig(dict, key) abort
   let exceptions = []
 
-  for [l:key, l:val] in items(get(a:dict, a:key))
-    if index(s:VarsEmpty, l:key) == -1 || !has_key(s:VarsDefault, l:key)
-      if exists(l:key)
-        execute 'let s:VarsDefault[l:key] = ' . l:key
+  for [l:lhs, l:rhs] in items(get(a:dict, a:key))
+    if index(s:VarsEmpty, l:lhs) == -1 || !has_key(s:VarsDefault, l:lhs)
+      if exists(l:lhs)
+        execute 'let s:VarsDefault[l:lhs] = '.l:lhs
       else
-        call add(s:VarsEmpty, l:key)
+        call add(s:VarsEmpty, l:lhs)
       endif
     endif
     try
-      execute 'let ' . l:key . ' = l:val'
+      execute 'let '.l:lhs.' = l:rhs'
     catch
-      call add(exceptions, [l:key, v:exception])
+      call add(exceptions, [l:lhs, v:exception])
     endtry
   endfor
 
@@ -139,27 +123,38 @@ fun! s:LetConfig(dict, key) abort
     echohl ErrorMsg
     echomsg 'Exception occurred in config "'.a:key.'":'
     for exception in exceptions
-      echomsg '  In "' . exception[0] . '":'
-      echomsg '    ' . exception[1]
+      echomsg '  In "'.exception[0].'":'
+      echomsg '    '.exception[1]
     endfor
     echohl None
   endif
 endfun
 
 fun! s:LetDefault() abort
-  for l:key in s:VarsEmpty
+  for l:lhs in s:VarsEmpty
     try
-      execute 'unlet ' . l:key
+      execute 'unlet '.l:lhs
     catch
     endtry
   endfor
-  for [l:key, l:val] in items(s:VarsDefault)
-    execute 'let ' . l:key . ' = l:val'
+  for [l:lhs, l:rhs] in items(s:VarsDefault)
+    execute 'let '.l:lhs.' = l:rhs'
   endfor
 endfun
 
 fun! s:Completion(ArgLead, CmdLine, CursorPos)
-  return filter(pro#configs(), 'v:val =~ "^' . a:ArgLead . '"')
+  return filter(pro#configs(), 'v:val =~ "^'.a:ArgLead.'"')
+endfun
+
+fun! s:PrintConfig(config) abort
+  echohl Function
+  echo a:config.(a:config ==# s:Selected ? ' *' : '')
+  echohl None
+  let l:val = get(get(g:, 'pro', {}), a:config, {})
+  for l:lhs in sort(keys(l:val))
+    let l:rhs = l:val[l:lhs]
+    echo '    '.l:lhs.' = '.(type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
+  endfor
 endfun
 
 fun! s:Init()
