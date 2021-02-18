@@ -9,42 +9,50 @@ Plugin is meant to be used with ii14/|exrc.vim| plugin or 'exrc' option.
 g:pro							*g:pro*
 	A dictionary with configurations.
 >
-	let pro = {}
+	let g:pro = {}
 
-	let pro.release = {
-	  \ '&makeprg'   : 'make -j -C build/release',
-	  \ 'qmake#dir'  : 'build/release',
+	let g:pro.release = {
+	  \ '&makeprg'     : 'make -j -C build/release',
+	  \ 'g:qmake#dir'  : 'build/release',
 	  \ }
 
-	let pro.debug = {
-	  \ '&makeprg'   : 'make -j -C build/debug',
-	  \ 'qmake#dir'  : 'build/debug',
-	  \ 'qmake#args' : 'CONFIG+=debug',
+	let g:pro.debug = {
+	  \ '&makeprg'     : 'make -j -C build/debug',
+	  \ 'g:qmake#dir'  : 'build/debug',
+	  \ 'g:qmake#args' : 'CONFIG+=debug',
 	  \ }
 
-	let pro.test = {
-	  \ '&makeprg'   : 'make -j -C build/test && ./build/test/test',
-	  \ 'qmake#dir'  : 'build/test',
-	  \ 'qmake#args' : 'CONFIG+=debug CONFIG+=test',
+	let g:pro.test = {
+	  \ '&makeprg'     : 'make -j -C build/test && ./build/test/test',
+	  \ 'g:qmake#dir'  : 'build/test',
+	  \ 'g:qmake#args' : 'CONFIG+=debug CONFIG+=test',
 	  \ }
 <
-	When config is selected, previous values are cached as default values
-	and any missing settings will be reverted (NOT IMPLEMENTED YET).
-	It's also possible to set the default values explicitly by using _ key:
+	When config is selected with |:Pro|, previous values are saved as
+	default values and any missing settings will be reverted. It's also
+	possible to set the default values explicitly by using _ key:
 >
-	let pro._ = {'$MY_VAR': 'default_value'}
+	let g:pro._ = {'$MY_VAR': 'default_value'}
 
-	let pro.debug = {'$MY_VAR': 'debug_value'}
+	let g:pro.debug = {'$MY_VAR': 'debug_value'}
 	" in 'debug' $MY_VAR is set to 'debug_value'
 
-	let pro.release = {}
+	let g:pro.release = {}
 	" in 'release' $MY_VAR is set to 'default_value'
 <
 
 g:pro#default						*g:pro#default*
 	Default config. Automatically selected upon initialization.
 >
-	let pro#default = 'debug'
+	let g:pro#default = 'debug'
+<
+
+g:pro#hook						*g:pro#hook*
+	Execute after selecting the config.
+>
+	let g:pro#hook =<< END
+	  echomsg 'Selected config: ' . pro#selected()
+	END
 <
 
 :Pro[!] [{config}]					*:Pro*
@@ -53,7 +61,8 @@ g:pro#default						*g:pro#default*
 	:Pro debug
 <
 	If {config} is not provided, prints out the currently selected config,
-	unless ! was provided, in which case the settings are reapplied.
+	unless ! was provided, in which case the settings from the currently
+	selected config are reapplied.
 
 	|:verbose| modifier prints out configurations and their settings.
 >
@@ -70,8 +79,6 @@ g:pro#default						*g:pro#default*
 	        qmake#args = CONFIG+=debug CONFIG+=test
 	        qmake#dir = build/test
 <
-	|:silent| modifier runs the command silently.
-
 
 pro#selected()						*pro#selected()*
 	Returns name of the currently selected config.
@@ -101,7 +108,7 @@ pro#configs()						*pro#configs()*
 	Select config with fzf.vim:
 >
 	nnoremap <silent> <leader>r :call fzf#run(fzf#wrap(
-	  \ {'source': pro#configs(), 'sink': 'silent Pro'}))<CR>
+	  \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
 <
 
 ==============================================================================

@@ -1,31 +1,22 @@
-" Open windows in vertical split, if there is enough space
-
-" There is no good way to change the default behavior of opening the help window, so the
-" solution is hacky and might not work on every version of (neo)vim.
-
-let s:rules = get(g:, 'autosplit_rules', {})
-
-let s:bts = get(s:rules, 'buftype', [])
-let s:fts = get(s:rules, 'filetype', [])
+" Description: Open windows in vertical split, if there is enough space
 
 fun! s:NewSplit()
-  if (index(s:bts, &buftype) != -1 || index(s:fts, &filetype) != -1)
-    let b = bufnr()
-    let p = winnr('#')
-    let v = winwidth(p) >= getwinvar(p, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
-    wincmd J
-    wincmd p
-    if v
-      vsplit
-    else
-      split
-    endif
-    exe b . 'b'
-    exe winnr('50j') . 'wincmd q'
+  if (index(get(g:, 'autosplit_bt', []), &buftype) == -1 &&
+    \ index(get(g:, 'autosplit_ft', []), &filetype) == -1)
+    return
   endif
+
+  let wid = win_getid()
+  let bufnr = bufnr()
+  let prev = winnr('#')
+  let vert = winwidth(prev) >= getwinvar(prev, '&tw', 80) + getwinvar(winnr(), '&tw', 80)
+
+  wincmd p
+  execute printf('%s +%db', (vert ? 'vsplit' : 'split'), bufnr)
+  execute printf('%dwincmd q', win_id2win(wid))
 endfun
 
 augroup Autosplit
   autocmd!
   autocmd WinNew * autocmd BufEnter * ++once call s:NewSplit()
-augroup END
+augroup end

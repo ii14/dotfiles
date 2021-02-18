@@ -6,10 +6,12 @@ set termguicolors
 if !has('nvim-0.5.0')
   let g:disable_lsp = 1
   let g:disable_dap = 1
+  let g:disable_ts = 1
 endif
 
 " let g:disable_lsp = 1
 " let g:disable_dap = 1
+let g:disable_ts = 1
 
 aug Vimrc | au! | aug end
 
@@ -32,19 +34,14 @@ call plug#begin('~/.local/share/nvim/plugged')
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
-    " Plug 'edersonferreira/dalton-vim'
-    " Plug 'nanotech/jellybeans.vim'
-
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
-
     Plug 'Yggdroot/indentLine'
-    Plug 'machakann/vim-highlightedyank'
+    " Plug 'hoob3rt/lualine.nvim'
 
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
-
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
 
@@ -74,6 +71,11 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
+    if !exists('g:disable_ts')
+      Plug 'nvim-treesitter/nvim-treesitter'
+      Plug 'nvim-treesitter/playground'
+      Plug 'vigoux/architext.nvim'
+    endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
@@ -89,6 +91,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 call plug#end()
 
 source ~/.config/nvim/functions.vim
+
 call PlugCheckMissing()
 
 source ~/.config/nvim/term.vim
@@ -120,7 +123,6 @@ source ~/.config/nvim/term.vim
       let s:compe_lsp.source = {
         \ 'path': v:true,
         \ 'calc': v:true,
-        \ 'buffer': v:true,
         \ 'nvim_lsp': v:true,
         \ 'ultisnips': v:true,
         \ }
@@ -142,6 +144,14 @@ source ~/.config/nvim/term.vim
         \ lua require('debugger').start_c_debugger({<f-args>}, 'gdb')
     endif
 
+  " Treesitter ---------------------------------------------------------------------------
+    if !exists('g:disable_ts')
+      lua require'nvim-treesitter.configs'.setup {
+        \   incremental_selection = { enable = true },
+        \   textobjects = { enable = true },
+        \ }
+    endif
+
   " Fern ---------------------------------------------------------------------------------
     let g:loaded_netrw             = 1 " disable netrw
     let g:loaded_netrwPlugin       = 1
@@ -154,10 +164,8 @@ source ~/.config/nvim/term.vim
     au Vimrc BufWritePost .exrc nested ExrcTrust
 
   " autosplit.vim ------------------------------------------------------------------------
-    let g:autosplit_rules = {
-      \ 'filetype' : ['man', 'fugitive', 'gitcommit'],
-      \ 'buftype'  : ['help'],
-      \ }
+    let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
+    let g:autosplit_bt = ['help']
 
   " Dispatch -----------------------------------------------------------------------------
     let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
@@ -177,9 +185,6 @@ source ~/.config/nvim/term.vim
     let g:peekaboo_window = 'vert bo 50 new'
     let g:peekaboo_compact = 0
     let g:peekaboo_delay = 500
-
-  " highlighted-yank ---------------------------------------------------------------------
-    let g:highlightedyank_highlight_duration = 200
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
@@ -326,6 +331,9 @@ aug Vimrc
     au VimEnter,WinEnter,BufWinEnter,TermLeave * setl cursorline
     au WinLeave,TermEnter * setl nocursorline
 
+  " Highlight yanked text ----------------------------------------------------------------
+    au TextYankPost * silent! lua vim.highlight.on_yank()
+
   " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber
 
@@ -389,7 +397,8 @@ aug end
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
-    nno <silent><expr> <leader>f (len(system('git rev-parse'))?':Files':':GFiles --exclude-standard --others --cached')."\<CR>"
+    nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
+      \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
     nno '; :Files<Space>
     nno <leader>h :History<CR>
@@ -469,7 +478,7 @@ aug end
     nno <leader>oc :ColorizerToggle<CR>
     nno <leader>om :MouseToggle<CR>
     nno <silent> <leader>r :call fzf#run(fzf#wrap(
-      \ {'source':pro#configs(), 'sink':'silent Pro'}))<CR>
+      \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
     cno <expr> <C-R><C-D> BufDirectory()

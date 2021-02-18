@@ -2,10 +2,6 @@
 " Maintainer:   ii14
 " Version:      0.1.0
 
-" TODO: cache original values before initializing
-" TODO: recover when selected config was deleted
-" TODO: add pro#hook - function executed after selecting config
-
 if exists('g:loaded_pro')
   finish
 endif
@@ -15,7 +11,7 @@ let g:loaded_pro = 1
 
 " Select config
 command! -nargs=? -bar -bang -complete=customlist,s:Completion Pro
-  \ call s:Command(<q-args>, <q-mods>, '<bang>')
+  \ call s:Command(<q-args>, <q-mods>, <bang>0)
 
 " Get selected config name
 fun! pro#selected()
@@ -39,6 +35,8 @@ endfun
 " Private ----------------------------------------------------------------------
 
 let s:Selected = ''
+let s:VarsDefault = {}
+let s:VarsEmpty = []
 
 fun! s:Command(config, mods, bang) abort
   " Modifiers
@@ -58,8 +56,7 @@ fun! s:Command(config, mods, bang) abort
   endfor
 
   " Bang
-  let l:config = a:config !=# '' ? a:config :
-    \ a:bang ==# '!' ? s:Selected : ''
+  let l:config = a:config !=# '' ? a:config : a:bang ? s:Selected : ''
   if l:config !=# ''
     if !s:HasConfig(l:config)
       echohl ErrorMsg
@@ -79,7 +76,9 @@ fun! s:Command(config, mods, bang) abort
         echohl None
         let l:val = l:configs[l:name]
         for l:key in sort(keys(l:val))
-          echo '    ' . l:key . ' = ' . l:val[l:key]
+          let l:rhs = l:val[l:key]
+          echo '    ' . l:key . ' = ' .
+            \ (type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
         endfor
       endfor
     else
@@ -88,43 +87,29 @@ fun! s:Command(config, mods, bang) abort
       echohl None
       let l:val = get(get(g:, 'pro', {}), l:config, {})
       for l:key in sort(keys(l:val))
-        echo '    ' . l:key . ' = ' . l:val[l:key]
+        let l:rhs = l:val[l:key]
+        echo '    ' . l:key . ' = ' .
+          \ (type(l:rhs) == v:t_string ? l:rhs : string(l:rhs))
       endfor
     endif
     return
   endif
 
   if l:config ==# ''
-    if !l:silent
-      echo s:Selected
-    endif
-    return
-  endif
-
-  call s:Select(l:config)
-  if !l:silent
-    echo l:config
+    echo s:Selected
+  else
+    call s:Select(l:config)
   endif
 endfun
 
 fun! s:Select(config) abort
-  let l:has_default = has_key(g:pro, '_')
-
-  if l:has_default
-    call s:UnletConfig(g:pro, '_')
-  endif
-
-  if s:Selected !=# '' && has_key(g:pro, s:Selected)
-    call s:UnletConfig(g:pro, s:Selected)
-  endif
-
+  call s:LetDefault()
   let s:Selected = a:config
-
-  if l:has_default
+  if has_key(g:pro, '_')
     call s:LetConfig(g:pro, '_')
   endif
-
   call s:LetConfig(g:pro, a:config)
+  call s:CallHook()
 endfun
 
 fun! s:HasConfig(config)
@@ -133,17 +118,60 @@ endfun
 
 fun! s:LetConfig(dict, key) abort
   for [l:key, l:val] in items(get(a:dict, a:key))
+    if index(s:VarsEmpty, l:key) == -1 || !has_key(s:VarsDefault, l:key)
+      if exists(l:key)
+        execute 'let s:VarsDefault[l:key] = ' . l:key
+      else
+        call add(s:VarsEmpty, l:key)
+      endif
+    endif
     execute 'let ' . l:key . ' = l:val'
   endfor
 endfun
 
-fun! s:UnletConfig(dict, key) abort
-  for key in keys(get(a:dict, a:key))
+fun! s:LetDefault() abort
+  for l:key in s:VarsEmpty
     try
-      execute 'unlet ' . key
+      execute 'unlet ' . l:key
     catch
     endtry
   endfor
+  for [l:key, l:val] in items(s:VarsDefault)
+    execute 'let ' . l:key . ' = l:val'
+  endfor
+endfun
+
+fun! s:CallHook() abort
+  if !has_key(g:, 'pro#hook')
+    return
+  endif
+
+  " if get(s:, 'InHook', v:false)
+  "   echohl ErrorMsg
+  "   echomsg 'Recursion in g:pro#hook is not allowed'
+  "   echohl None
+  "   return
+  " endif
+
+  let s:InHook = v:true
+  echomsg expand('<sfile>')
+
+  try
+    if type(g:pro#hook) == v:t_string
+      execute g:pro#hook
+    elseif type(g:pro#hook) == v:t_list
+      execute join(g:pro#hook, "\n")
+    else
+      throw 'Invalid g:pro#hook type'
+    endif
+  catch
+    let l:exception = v:exception
+  endtry
+
+  let s:InHook = v:false
+  if has_key(l:, 'exception')
+    throw l:exception
+  endif
 endfun
 
 fun! s:Completion(ArgLead, CmdLine, CursorPos)
@@ -151,14 +179,8 @@ fun! s:Completion(ArgLead, CmdLine, CursorPos)
 endfun
 
 fun! s:Init()
-  if s:Selected ==# '' && has_key(g:, 'pro#default')
-    if s:HasConfig(g:pro#default)
-      let s:Selected = g:pro#default
-      if has_key(g:pro, '_')
-        call s:LetConfig(g:pro, '_')
-      endif
-      call s:LetConfig(g:pro, g:pro#default)
-    endif
+  if s:Selected ==# '' && s:HasConfig(get(g:, 'pro#default', '_'))
+    call s:Select(g:pro#default)
   endif
 endfun
 
