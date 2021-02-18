@@ -117,6 +117,8 @@ fun! s:HasConfig(config)
 endfun
 
 fun! s:LetConfig(dict, key) abort
+  let exceptions = []
+
   for [l:key, l:val] in items(get(a:dict, a:key))
     if index(s:VarsEmpty, l:key) == -1 || !has_key(s:VarsDefault, l:key)
       if exists(l:key)
@@ -125,8 +127,23 @@ fun! s:LetConfig(dict, key) abort
         call add(s:VarsEmpty, l:key)
       endif
     endif
-    execute 'let ' . l:key . ' = l:val'
+    try
+      execute 'let ' . l:key . ' = l:val'
+    catch
+      call add(exceptions, [l:key, v:exception])
+    endtry
   endfor
+
+  if len(exceptions) > 0
+    redraw
+    echohl ErrorMsg
+    echomsg 'Exception occurred in config "'.a:key.'":'
+    for exception in exceptions
+      echomsg '  In "' . exception[0] . '":'
+      echomsg '    ' . exception[1]
+    endfor
+    echohl None
+  endif
 endfun
 
 fun! s:LetDefault() abort
