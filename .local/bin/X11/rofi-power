@@ -1,6 +1,6 @@
 #!/bin/bash
 
-options="logout\nswitch user\nsuspend\nreboot\nshutdown"
+options="logout\nswitch user\nsuspend\nreboot\nshutdown\ncancel"
 style='* { color-accent: @color-red; } #element { padding: 3px 16px; }'
 selected="$(echo -e "$options" | rofi -p 'powermenu' -dmenu -theme dmenu -theme-str "$style")"
 case $selected in
