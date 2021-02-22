@@ -30,13 +30,14 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
     Plug 'junegunn/vim-peekaboo'
-    Plug 'AndrewRadev/splitjoin.vim'
+    Plug 'mbbill/undotree'
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'Yggdroot/indentLine'
+    " Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
     " Plug 'hoob3rt/lualine.nvim'
 
   " File management ----------------------------------------------------------------------
@@ -60,8 +61,10 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'ii14/vim-dispatch'
     " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
-    Plug 'ii14/exrc.vim'
-    Plug 'ii14/pro.vim'
+    " Plug 'ii14/exrc.vim'
+    Plug '~/.config/nvim/m/exrc.vim'
+    " Plug 'ii14/pro.vim'
+    Plug '~/.config/nvim/m/pro.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
@@ -104,14 +107,13 @@ source ~/.config/nvim/term.vim
     source ~/.config/nvim/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
-    let g:compe = {}
-    let g:compe.source = {
+    let g:compe = {'source': {
       \ 'path': v:true,
       \ 'calc': v:true,
       \ 'buffer': v:true,
       \ 'necosyntax': v:true,
       \ 'ultisnips': v:true,
-      \ }
+      \ }}
 
     ino <silent><expr> <C-Space> compe#complete()
     ino <silent><expr> <CR>      compe#confirm('<CR>')
@@ -119,19 +121,17 @@ source ~/.config/nvim/term.vim
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      let s:compe_lsp = {}
-      let s:compe_lsp.source = {
+      let s:compe_lsp = {'source': {
         \ 'path': v:true,
         \ 'calc': v:true,
         \ 'nvim_lsp': v:true,
         \ 'ultisnips': v:true,
-        \ }
+        \ }}
 
-      au Vimrc User LspAttach call compe#setup(s:compe_lsp, 0)
-
-      au Vimrc User LspAttach
-        \ call s:init_maps_lsp() |
-        \ setl omnifunc=v:lua.vim.lsp.omnifunc
+      aug Vimrc
+        au User LspAttach call compe#setup(s:compe_lsp, 0)
+        au User LspAttach call s:init_maps_lsp()
+      aug end
 
       " ~/.config/nvim/lua/lsp/init.lua
       lua require('lsp/init')
@@ -161,14 +161,17 @@ source ~/.config/nvim/term.vim
 
   " exrc.vim -----------------------------------------------------------------------------
     let exrc#names = ['.exrc']
-    au Vimrc BufWritePost .exrc nested ExrcTrust
+    aug Vimrc
+      au BufWritePost .exrc ++nested ExrcTrust
+      au SourcePost .exrc silent Pro!
+    aug end
 
   " autosplit.vim ------------------------------------------------------------------------
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
     let g:autosplit_bt = ['help']
 
   " Dispatch -----------------------------------------------------------------------------
-    let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
+    " let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
 
   " incsearch.vim ------------------------------------------------------------------------
     let g:incsearch#auto_nohlsearch = 1
@@ -179,12 +182,20 @@ source ~/.config/nvim/term.vim
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
-    au Vimrc TermOpen * nested IndentLinesDisable
+    au Vimrc TermOpen * ++nested IndentLinesDisable
+
+    let g:indent_blankline_char = '¦'
+    let g:indent_blankline_char_highlight = 'Comment'
 
   " peekaboo -----------------------------------------------------------------------------
     let g:peekaboo_window = 'vert bo 50 new'
     let g:peekaboo_compact = 0
     let g:peekaboo_delay = 500
+
+  " undotree -----------------------------------------------------------------------------
+    let g:undotree_DiffAutoOpen = 0
+    let g:undotree_WindowLayout = 2
+    let g:undotree_HelpLine = 0
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
@@ -195,9 +206,8 @@ source ~/.config/nvim/term.vim
     set nowrap
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
-    set title                                 " set vim window title
+    set title titlelen=45                     " set vim window title
     set titlestring=nvim:\ %F
-    set titlelen=45
     set shortmess+=I                          " no intro message
     set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
@@ -261,6 +271,7 @@ source ~/.config/nvim/term.vim
         \ | bd! | else | bd<bang> <args> | endif
       call Cabbrev('bq', 'Bq')
       call Cabbrev('bd', 'Bd')
+      call Cabbrev('bw', 'Bw')
     endif
 
   " Shortcuts ----------------------------------------------------------------------------
@@ -282,28 +293,23 @@ source ~/.config/nvim/term.vim
       \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
 
   " Toggle mouse -------------------------------------------------------------------------
-    com! MouseToggle if &mouse ==# '' | set mouse=a | else | set mouse= | endif
+    com! MouseToggle let &mouse = (&mouse ==# '' ? 'a' : '')
 
   " Set option prompt --------------------------------------------------------------------
     com! Makeprg Set makeprg
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      com! LspStop
-        \ lua require('lsp/util').stop_clients()
+      com! LspStop lua require('lsp/util').stop_clients()
+      com! LspAction lua vim.lsp.buf.code_action()
+      com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
 
       com! -nargs=? LspFind
-        \ exe 'lua vim.lsp.buf.workspace_symbol('
-        \ . (<q-args> == '' ? '' : "'".<q-args>."'") . ')'
+        \ call luaeval('vim.lsp.buf.workspace_symbol(_A)',
+        \ <q-args> is# '' ? v:null : <q-args>)
 
       com! -range=0 LspFormat
-        \ exe 'lua vim.lsp.buf.' . (<count> ? 'range_formatting()' : 'formatting()')
-
-      com! LspAction
-        \ lua vim.lsp.buf.code_action()
-
-      com! LspDiagnostics
-        \ lua vim.lsp.diagnostic.set_loclist()
+        \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
     endif
 
   " Grep populates quickfix, so make it silent -------------------------------------------
@@ -342,19 +348,20 @@ aug Vimrc
     au BufWritePost *.scss silent make
 
   " Open quickfix window on grep ---------------------------------------------------------
-    au QuickFixCmdPost grep call timer_start(10, { -> execute('cwindow') })
+    au QuickFixCmdPost  grep call timer_start(10, { -> execute('cwindow') })
     au QuickFixCmdPost lgrep call timer_start(10, { -> execute('lwindow') })
 
   " Auto close quickfix, if it's the last buffer -----------------------------------------
-    au WinEnter * if winnr('$') == 1 && &bt ==? "quickfix" | q | endif
+    au WinEnter * if winnr('$') == 1 && &bt ==# 'quickfix' | q | endif
 
   " Open directories in fern -------------------------------------------------------------
     au BufEnter * ++nested call s:fern_hijack_directory()
     fun! s:fern_hijack_directory() abort
       let path = expand('%:p')
-      if !isdirectory(path) | return | endif
-      Bwipeout %
-      exe printf('Fern %s', fnameescape(path))
+      if isdirectory(path)
+        Bwipeout %
+        exe printf('Fern %s', fnameescape(path))
+      endif
     endfun
 
   " Fix wrong size on alacritty on i3 ----------------------------------------------------
@@ -500,6 +507,8 @@ aug end
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
       nno <buffer><silent> g?    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+      nno <buffer><silent> [d    <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+      nno <buffer><silent> ]d    <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
       " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
       " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
