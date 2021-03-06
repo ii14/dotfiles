@@ -29,6 +29,7 @@
 - `polybar` (https://github.com/polybar/polybar/releases)
 - `redshift` (apt)
 - `rofi` (https://github.com/davatorium/rofi/releases)
+- `xbanish` (https://github.com/jcs/xbanish)
 - `xcape` (apt)
 - `xclip` (apt)
 - `xdotool` (apt)

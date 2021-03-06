@@ -145,7 +145,7 @@ $exec setbg
 $exec compton
 $exec xsetroot -cursor_name left_ptr
 $exec nm-applet
-# $exec volumeicon
+$exec xbanish
 
 bar {
     i3bar_command launch-polybar i3
