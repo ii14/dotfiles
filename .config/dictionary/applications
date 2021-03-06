@@ -12,6 +12,7 @@ matterhorn
 node
 nvim
 polybar             ~/.local/bin/X11/launch-polybar
+pulsemixer
 python
 python2
 python2.7
