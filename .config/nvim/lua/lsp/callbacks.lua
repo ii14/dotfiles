@@ -1,6 +1,6 @@
 local api = vim.api
 local util = vim.lsp.util
-local callbacks = vim.lsp.callbacks
+local callbacks = vim.lsp.handlers
 
 local find_qf_index = function(items)
   local fname = api.nvim_buf_get_name(api.nvim_get_current_buf())
