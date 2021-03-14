@@ -63,17 +63,17 @@ fun! qf#init()
   let b:qf_isLoc = l:loc_len > 0
   if !b:qf_isLoc
     wincmd J
-    let l:qf_len = len(getqflist())
-    if l:qf_len < 10 && match(getqflist({'title':1}).title, '^:Dispatch') == -1
-      exe 'resize ' . l:qf_len
-    endif
+    " let l:qf_len = len(getqflist())
+    " if l:qf_len < 10 && match(getqflist({'title':1}).title, '^:Dispatch') == -1
+    "   exe 'resize ' . l:qf_len
+    " endif
     nnoremap <buffer><nowait><silent> s :call qf#csplit()<CR>
     nnoremap <buffer><nowait><silent> v :call qf#cvsplit()<CR>
     nnoremap <buffer><nowait><silent> t :call qf#ctabsplit()<CR>
   else
-    if l:loc_len < 10 && match(getloclist(0, {'title':1}).title, '^:Dispatch') == -1
-      exe 'resize ' . l:loc_len
-    endif
+    " if l:loc_len < 10 && match(getloclist(0, {'title':1}).title, '^:Dispatch') == -1
+    "   exe 'resize ' . l:loc_len
+    " endif
     nnoremap <buffer><nowait><silent> s :call qf#lsplit()<CR>
     nnoremap <buffer><nowait><silent> v :call qf#lvsplit()<CR>
     nnoremap <buffer><nowait><silent> t :call qf#ltabsplit()<CR>

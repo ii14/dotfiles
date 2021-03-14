@@ -58,7 +58,8 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
-    Plug 'ii14/vim-dispatch'
+    Plug 'tpope/vim-dispatch'
+    " Plug 'radenling/vim-dispatch-neovim'
     " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
@@ -182,8 +183,11 @@ source ~/.config/nvim/term.vim
     let g:vim_markdown_conceal_code_blocks = 0
     au Vimrc TermOpen * ++nested IndentLinesDisable
 
-    let g:indent_blankline_char = '¦'
-    let g:indent_blankline_char_highlight = 'Comment'
+    " com! IndentLinesDisable IndentBlanklineDisable
+    " let g:indent_blankline_char = '¦'
+    " let g:indent_blankline_char_highlight = 'Comment'
+    " let g:indent_blankline_show_first_indent_level = v:false
+    " let g:indent_blankline_show_trailing_blankline_indent = v:false
 
   " peekaboo -----------------------------------------------------------------------------
     let g:peekaboo_window = 'vert bo 50 new'
@@ -298,6 +302,13 @@ source ~/.config/nvim/term.vim
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
+      com! -nargs=1 -complete=customlist,s:LspStartComp LspStart
+        \ call luaeval('require"lspconfig"[_A[1]].manager.try_add()', [<q-args>])
+      fun! s:LspStartComp(A, L, P)
+        return filter(luaeval('require"lspconfig".available_servers()'),
+          \ 'v:val =~ ''\V\^''.a:A')
+      endfun
+
       com! LspStop lua require('lsp/util').stop_clients()
       com! LspAction lua vim.lsp.buf.code_action()
       com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
@@ -342,8 +353,8 @@ aug Vimrc
     au TermOpen * setl nonumber norelativenumber
 
   " Make autowrite and autocompile SCSS --------------------------------------------------
-    au QuickFixCmdPre make update
-    au BufWritePost *.scss silent make
+    " au QuickFixCmdPre make update
+    " au BufWritePost *.scss silent make
 
   " Open quickfix window on grep ---------------------------------------------------------
     au QuickFixCmdPost  grep call timer_start(10, { -> execute('cwindow') })
