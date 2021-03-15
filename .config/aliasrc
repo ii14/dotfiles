@@ -6,6 +6,7 @@ alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME'
 
 # FLAGS ----------------------------------------------------------------------------------
 alias cp='cp -iv'
+alias rscp='rsync -avhP'
 alias mv='mv -iv'
 alias mkd='mkdir -p'
 alias df='df -h'
@@ -26,6 +27,13 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
+function .f {
+    list="$(pwd | sed 's#/#\n#g' | tac | awk 'NR > 1 {print NR-1 "\t" $0 "/"}')"
+    res="$(echo "$list" | fzf --reverse --height=$(($(echo "$list" | wc -l) + 2)))" \
+        || return 0
+    cd "$(printf '../%.0s' $(seq 1 $(echo "$res" | cut -f 1)))"
+}
+
 function mkcd {
     if (( ARGC != 1 )); then
         echo 'usage: mkcd <directory>' >&2
@@ -37,7 +45,15 @@ function mkcd {
 
 function dev {
     res="$(
-        fd --type d --hidden --follow --exclude '.git' . ~/dev \
+        fd -H -t d \
+                -E '.git' \
+                -E 'build' \
+                -E '.cache' \
+                -E '.clangd' \
+                -E 'zig-cache' \
+                -E 'CMakeFiles' \
+                -E '.mypy_cache' \
+                . ~/dev \
             | fzf --reverse --height=50%)" \
         && cd "$res"
 }
@@ -45,7 +61,7 @@ function dev {
 function pro {
     res="$(
         cd "${1:-.}" && \
-        fd -H -t d '^\.git$' . | sed 's#/\.git$##' \
+        fd -H -t d '^\.git$' . -x echo {//} \
             | fzf --reverse --height=50%)" \
         && cd "${1:-.}/$res"
 }
