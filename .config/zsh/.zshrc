@@ -146,9 +146,9 @@ bindkey '^w' my-backward-delete-word
 # Search backward for string ---------------------------------------------------- [Ctrl-R]
 bindkey '^r' history-incremental-search-backward
 
-# Jump between words ---------------------------------------------- [Alt-Left] [Alt-Right]
-bindkey '\e[1;3C' forward-word
-bindkey '\e[1;3D' backward-word
+# Jump between words -------------------------------------------- [Ctrl-Left] [Ctrl-Right]
+bindkey "${terminfo[kRIT5]}" forward-word
+bindkey "${terminfo[kLFT5]}" backward-word
 
 # Completion menu backwards -------------------------------------------------- [Shift-Tab]
 [[ "${terminfo[kcbt]}" != "" ]] && bindkey "${terminfo[kcbt]}" reverse-menu-complete
