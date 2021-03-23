@@ -45,6 +45,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'junegunn/fzf.vim'
     Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
+    Plug 'bogado/file-line'
 
   " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
@@ -64,6 +65,7 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
+    Plug 'Shougo/echodoc.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
@@ -189,6 +191,9 @@ source ~/.config/nvim/term.vim
     " let g:indent_blankline_show_first_indent_level = v:false
     " let g:indent_blankline_show_trailing_blankline_indent = v:false
 
+  " echodoc.vim --------------------------------------------------------------------------
+    let g:echodoc#enable_at_startup = 1
+
   " peekaboo -----------------------------------------------------------------------------
     let g:peekaboo_window = 'vert bo 50 new'
     let g:peekaboo_compact = 0
@@ -291,8 +296,12 @@ source ~/.config/nvim/term.vim
     endif
 
   " Redir --------------------------------------------------------------------------------
-    com! -nargs=1 -complete=command Redir
-      \ execute "tabnew | pu=execute(\'" . <q-args> . "\') | setl nomodified"
+    com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
+    fun! s:Redir(cmd)
+      tabnew
+      put=execute(a:cmd)
+      setl nomodified
+    endfun
 
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle let &mouse = (&mouse ==# '' ? 'a' : '')
@@ -418,6 +427,7 @@ aug end
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
     nno '; :Files<Space>
     nno <leader>h :History<CR>
+    nno <leader>b :Buffers<CR>
 
     nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t')."\<CR>"
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
