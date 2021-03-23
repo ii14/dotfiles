@@ -2,17 +2,9 @@ env:
   TERM: xterm-256color
 
 window:
-  #dimensions:
-  #  columns: 0
-  #  lines: 0
-
-  #position:
-  #  x: 0
-  #  y: 0
-
-  #padding:
-  #  x: 2
-  #  y: 2
+  #dimensions: { columns: 0, lines: 0 }
+  #position: { x: 0, y: 0 }
+  #padding: { x: 2, y: 2 }
   dynamic_padding: true
 
   #decorations: full
@@ -29,43 +21,28 @@ window:
   #history: 10000
   #multiplier: 3
 
-font:
 
-  normal:
-    family: tewi
-    style: Regular
-  bold:
-    family: tewi
-    style: Bold
-  italic:
-    family: tewi
-    style: Regular
-  bold_italic:
-    family: tewi
-    style: Bold
+fonts:
 
-  # normal:
-  #   family: JetBrainsMonoNL
-  #   style: Regular
-  # bold:
-  #   family: JetBrainsMonoNL
-  #   style: ExtraBold
-  # italic:
-  #   family: JetBrainsMonoNL
-  #   style: Italic
-  # bold_italic:
-  #   family: JetBrainsMonoNL
-  #   style: ExtraBoldItalic
+  tewi: &font_tewi
+    size:         6.5
+    normal:       { family: tewi, style: Regular }
+    bold:         { family: tewi, style: Bold }
+    italic:       { family: tewi, style: Regular }
+    bold_italic:  { family: tewi, style: Bold }
+    offset:       { x: 0, y: 0 }
+    glyph_offset: { x: 0, y: 0 }
 
-  size: 6.5
+  jetbrains: &font_jetbrains
+    size:         6.5
+    normal:       { family: JetBrainsMonoNL, style: Regular }
+    bold:         { family: JetBrainsMonoNL, style: ExtraBold }
+    italic:       { family: JetBrainsMonoNL, style: Italic }
+    bold_italic:  { family: JetBrainsMonoNL, style: ExtraBoldItalic }
+    offset:       { x: 0, y: 0 }
+    glyph_offset: { x: 0, y: 0 }
 
-  offset:
-    x: 0
-    y: 0
-
-  glyph_offset:
-    x: 0
-    y: 0
+font: *font_tewi
 
 # If `true`, bold text is drawn using the bright color variants.
 #draw_bold_text_with_bright_colors: false
