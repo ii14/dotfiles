@@ -122,8 +122,8 @@ alias sass='sassc'
 
 # edit script
 function es {
-    if (( ARGC != 1 )); then
-        echo 'usage: es <filename>' >&2
+    if (( ARGC < 1 )); then
+        echo 'usage: es <filename> [lang]' >&2
         return 1
     fi
     if [ -e "$1" ]; then
