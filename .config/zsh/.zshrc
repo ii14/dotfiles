@@ -95,6 +95,7 @@ setopt auto_cd                  # change directory by writing the directory name
 setopt notify                   # report job status immediately
 setopt no_flow_control          # disable flow control - Ctrl+S and Ctrl+Q keys
 setopt interactive_comments     # allow comments
+setopt noclobber                # >! or >| for existing files
 
 # History --------------------------------------------------------------------------------
 setopt append_history
