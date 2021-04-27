@@ -20,8 +20,9 @@
     aa = add --all
     df = diff
     dfs = diff --staged
-    br = branch
+    br = branch -v
     brs = branch -a
+    wt = worktree
     l = log --graph --abbrev-commit --decorate --format=tformat:'%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)' --all
     lt = !git --no-pager l -n 10
     l1 = !git --no-pager log -n 1
