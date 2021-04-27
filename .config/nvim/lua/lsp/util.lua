@@ -1,4 +1,4 @@
-local api = vim.api
+-- local api = vim.api
 local lsp = vim.lsp
 
 local M = {}
@@ -14,16 +14,19 @@ M.has_lsp = function()
   return false
 end
 
-M.on_attach = function()
+M.on_attach = function(client, bufnr)
   vim.cmd('setlocal signcolumn=yes')
   vim.cmd('doautocmd User LspAttach')
+  require 'lsp_signature'.on_attach(client, bufnr)
 end
 
-M.stop_clients = function()
-  vim.cmd('setlocal signcolumn=auto')
-  lsp.diagnostic.clear(api.nvim_get_current_buf())
-  lsp.stop_client(lsp.get_active_clients())
-end
+-- TODO: find a way to disable signcolumn when server stops
+-- M.stop_clients = function()
+--   vim.cmd('echomsg "ayy lmao"')
+--   vim.cmd('setlocal signcolumn=auto')
+--   lsp.diagnostic.clear(api.nvim_get_current_buf())
+--   lsp.stop_client(lsp.get_active_clients())
+-- end
 
 M.get_client_name = function()
   local clients = lsp.buf_get_clients()

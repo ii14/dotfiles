@@ -10,7 +10,7 @@ if !has('nvim-0.5.0')
 endif
 
 " let g:disable_lsp = 1
-" let g:disable_dap = 1
+let g:disable_dap = 1
 let g:disable_ts = 1
 
 aug Vimrc | au! | aug end
@@ -34,9 +34,12 @@ call plug#begin('~/.local/share/nvim/plugged')
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
+    Plug 'ayu-theme/ayu-vim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'Yggdroot/indentLine'
+    " Plug 'tjdevries/colorbuddy.vim'
+    " Plug 'Th3Whit3Wolf/onebuddy'
     " Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
     " Plug 'hoob3rt/lualine.nvim'
 
@@ -50,6 +53,11 @@ call plug#begin('~/.local/share/nvim/plugged')
   " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
+      Plug 'folke/lsp-trouble.nvim'
+      Plug 'kosayoda/nvim-lightbulb'
+      Plug 'ray-x/lsp_signature.nvim'
+      " Plug 'gfanto/fzf-lsp.nvim'
+      " Plug 'simrat39/symbols-outline.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
@@ -65,7 +73,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
-    Plug 'Shougo/echodoc.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
@@ -77,14 +84,15 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
     if !exists('g:disable_ts')
-      Plug 'nvim-treesitter/nvim-treesitter'
+      Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
       Plug 'nvim-treesitter/playground'
-      Plug 'vigoux/architext.nvim'
+      " Plug 'vigoux/architext.nvim'
     endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'vifm/vifm.vim'
+    Plug 'devinceble/Tortoise-Typing'
 
   " Custom -------------------------------------------------------------------------------
     Plug '~/.config/nvim/m/rc.vim'
@@ -95,6 +103,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 call plug#end()
 
 source ~/.config/nvim/functions.vim
+luafile ~/.config/nvim/lua/global.lua
 
 call PlugCheckMissing()
 
@@ -136,6 +145,12 @@ source ~/.config/nvim/term.vim
 
       " ~/.config/nvim/lua/lsp/init.lua
       lua require('lsp/init')
+
+      " nvim-lightbulb
+      call sign_define('LightBulbSign', {'text':'! ', 'texthl':'LspDiagnosticsSignHint'})
+      aug Vimrc
+        au CursorMoved,CursorMovedI * lua require 'nvim-lightbulb'.update_lightbulb()
+      aug end
     endif
 
   " DAP ----------------------------------------------------------------------------------
@@ -148,8 +163,9 @@ source ~/.config/nvim/term.vim
   " Treesitter ---------------------------------------------------------------------------
     if !exists('g:disable_ts')
       lua require'nvim-treesitter.configs'.setup {
-        \   incremental_selection = { enable = true },
-        \   textobjects = { enable = true },
+        \ highlight = { enable = true },
+        \ incremental_selection = { enable = true },
+        \ textobjects = { enable = true },
         \ }
     endif
 
@@ -180,6 +196,7 @@ source ~/.config/nvim/term.vim
   " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
     let g:indentLine_fileTypeExclude = ['man', 'fern', 'floggraph']
+    let g:indentLine_color_gui = '#4b5263'
     let g:vim_json_syntax_conceal = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
@@ -298,7 +315,7 @@ source ~/.config/nvim/term.vim
   " Redir --------------------------------------------------------------------------------
     com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
     fun! s:Redir(cmd)
-      tabnew
+      new
       put=execute(a:cmd)
       setl nomodified
     endfun
@@ -311,14 +328,6 @@ source ~/.config/nvim/term.vim
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      com! -nargs=1 -complete=customlist,s:LspStartComp LspStart
-        \ call luaeval('require"lspconfig"[_A[1]].manager.try_add()', [<q-args>])
-      fun! s:LspStartComp(A, L, P)
-        return filter(luaeval('require"lspconfig".available_servers()'),
-          \ 'v:val =~ ''\V\^''.a:A')
-      endfun
-
-      com! LspStop lua require('lsp/util').stop_clients()
       com! LspAction lua vim.lsp.buf.code_action()
       com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
 
@@ -329,6 +338,15 @@ source ~/.config/nvim/term.vim
       com! -range=0 LspFormat
         \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
     endif
+
+  " xdg-open -----------------------------------------------------------------------------
+    com! -nargs=? -complete=file Open call s:Open(<q-args>)
+    fun! s:Open(file)
+      let file = a:file ==# '' ? '%' : a:file
+      let cmd = 'xdg-open ' . shellescape(expand(file))
+      echo cmd
+      call system(cmd)
+    endfun
 
   " Grep populates quickfix, so make it silent -------------------------------------------
     call Cabbrev('gr',   'silent grep')
@@ -473,20 +491,28 @@ aug end
     vno <leader>n :norm!<Space>
     nno <leader>v ggVG
 
-  " Clipboard ----------------------------------------------------------------------------
-    nno <leader>p "+p
-    vno <leader>p "+p
-    nno <leader>P "+P
-    vno <leader>P "+P
-    nno <leader>y "+y
-    vno <leader>y "+y
-    nno <leader>Y "+y$
+  " Registers ----------------------------------------------------------------------------
+    vno zp  pgvy
+    vno zgp pgvy`]<Space>
+    nno <leader>y  "+y
+    nno <leader>Y  "+y$
+    nno <leader>p  "+p
+    nno <leader>P  "+P
+    nno <leader>gp "+gp
+    nno <leader>gP "+gP
+    vno <leader>y  "+y
+    vno <leader>p  "+p
+    vno <leader>P  "+P
+    vno <leader>gp "+gp
+    vno <leader>gP "+gP
     nno <leader>gv :let @+ = @"<CR>
+    nno <leader>gV :let @" = @+<CR>
 
   " Make ---------------------------------------------------------------------------------
     nno m<CR>    :up<CR>:Make<CR>
     nno m<Space> :up<CR>:Make<Space>
     nno m!       :up<CR>:Make!<CR>
+    nno m=       :Makeprg<CR>
 
   " Git ----------------------------------------------------------------------------------
     nno <leader>gs :Git<CR>
@@ -539,8 +565,9 @@ aug end
       nno <buffer><silent> <leader>lf :LspFormat<CR>
       vno <buffer><silent> <leader>lf :LspFormat<CR>
       nno <buffer><silent> <leader>la :LspAction<CR>
-      nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
+      " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
     endfun
+    nno <silent> <leader>ld :LspTroubleToggle<CR>
 
   " DAP ----------------------------------------------------------------------------------
     if !exists('g:disable_dap')

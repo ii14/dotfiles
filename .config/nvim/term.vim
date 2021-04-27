@@ -18,6 +18,7 @@ augroup Term
   " Disable insert mode after terminal process terminates.
   " 'nomodifiable' doesn't work, but maybe there is a better way to do it?
   autocmd TermClose * ++nested stopinsert | au TermEnter <buffer> stopinsert
+  autocmd FileType fzf tnoremap <nowait><buffer> <C-W> <C-W>
 augroup end
 
 tnoremap <silent> <C-W>.      <C-W>

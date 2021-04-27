@@ -8,7 +8,7 @@ let g:fzf_action = {
   \ }
 
 let g:fzf_layout = {
-  \ 'window': {'width': 0.9, 'height': 0.6, 'border': 'sharp'},
+  \ 'window': {'width': 0.9, 'height': 0.8, 'border': 'sharp'},
   \ }
 
 let g:fzf_colors = {

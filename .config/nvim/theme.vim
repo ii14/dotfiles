@@ -1,9 +1,15 @@
 set background=dark
-colorscheme onedark
 
 let g:lightline = {}
 
+" lua require('colorbuddy').colorscheme('onebuddy')
+colorscheme onedark
 let g:lightline.colorscheme = 'onedark'
+
+" let g:ayucolor = 'dark'
+" colorscheme ayu
+" let g:lightline.colorscheme = 'ayu_dark'
+
 
 " let g:lightline.separator    = {'left': '', 'right': ''}
 " let g:lightline.subseparator = {'left': '', 'right': ''}
@@ -26,6 +32,7 @@ let g:lightline.component_function = {
   \ 'filetype'     : 'LightlineFiletype',
   \ 'fugitive'     : 'LightlineFugitive',
   \ 'lsp'          : 'LightlineLsp',
+  \ 'diagnostics'  : 'LightlineDiagnostics',
   \ 'pro'          : 'LightlinePro',
   \ }
 
@@ -113,6 +120,22 @@ fun! LightlineLsp()
   catch
     return ''
   endtry
+endfun
+
+fun! LightlineDiagnostics()
+  if luaeval('vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+    return ''
+  endif
+  let e = luaeval('vim.lsp.diagnostic.get_count(0, "Error")')
+  let w = luaeval('vim.lsp.diagnostic.get_count(0, "Warning")')
+  let h = luaeval('vim.lsp.diagnostic.get_count(0, "Hint")')
+  let i = luaeval('vim.lsp.diagnostic.get_count(0, "Information")')
+  let list = []
+  if e > 0 | call add(list, 'E'.e) | endif
+  if w > 0 | call add(list, 'W'.w) | endif
+  if h > 0 | call add(list, 'H'.h) | endif
+  if i > 0 | call add(list, 'i'.i) | endif
+  return join(list, ' ')
 endfun
 
 fun! LightlinePro()

@@ -83,3 +83,30 @@ lspconfig.tsserver.setup{
 --     },
 --   },
 -- }
+
+lspconfig.zls.setup{
+  on_attach = on_attach,
+  cmd = {'/home/ms/repos/zls/zig-cache/bin/zls'},
+}
+
+-- lspconfig.kotlin_language_server.setup{
+--   on_attach = on_attach,
+--   root_dir = root_pattern("settings.gradle.kts"),
+-- }
+
+require('trouble').setup{
+  icons = false,
+  fold_open = "v",
+  fold_closed = ">",
+  signs = {
+    error = "E",
+    warning = "W",
+    hint = "H",
+    information = "i",
+  },
+}
+
+-- require('symbols-outline').setup{
+--   highlight_hovered_item = false,
+--   show_guides = true,
+-- }
