@@ -6,6 +6,8 @@
 [ -x "$HOME/.local/bin/X11/rofi-sshpass" ] \
     && export SUDO_ASKPASS="$HOME/.local/bin/X11/rofi-sshpass"
 
+xset r rate 330 25
+
 remapkeys &
 redshift &
 
