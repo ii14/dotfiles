@@ -17,6 +17,10 @@ PathAppend "/opt/cabal/bin"
 PathAppend "$XDG_DATA_HOME/cargo/bin"
 PathAppend "$XDG_DATA_HOME/gem/bin"
 PathAppend "$HOME/.luarocks/bin"
+PathAppend '/opt/nim-1.4.4/bin'
+PathAppend '/opt/kotlinc/bin'
+PathAppend '/opt/gradle-7.0/bin'
+PathAppend '/opt/kotlin-language-server/bin'
 unset PathAppend
 
 # APPLICATIONS ---------------------------------------------------------------------------
@@ -50,6 +54,8 @@ export WINEPREFIX="$XDG_DATA_HOME/wine"
 export NODE_REPL_HISTORY="$XDG_DATA_HOME/node_repl_history"
 export NVM_DIR="$XDG_DATA_HOME/nvm"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+export LEIN_HOME="$XDG_DATA_HOME/lein"
 
 # MISC -----------------------------------------------------------------------------------
 export LESS='-iMR'
@@ -63,7 +69,7 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export GROFF_NO_SGR=1
 export GODOCC_STYLE='dracula'
 
-[ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
+# [ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
 
 [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && exec startx
 
