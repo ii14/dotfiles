@@ -1,4 +1,5 @@
 ZSH_PLUGIN_PATH=~/.config/zsh/plugins
+[[ $(ps -ho comm $PPID) == 'mc' ]] && ZSH_MC=1
 
 # PROMPT /////////////////////////////////////////////////////////////////////////////////
 autoload -U colors && colors
@@ -48,7 +49,7 @@ function TRAPINT() {
 }
 
 # Prompt ---------------------------------------------------------------------------------
-if [[ "$TERM" == 'linux' ]]; then
+if [[ "$TERM" == 'linux' || -n "$ZSH_MC" ]]; then
     # no fancy prompt on linux tty
     PROMPT='%n@%m:%~$ '
 else
@@ -116,6 +117,7 @@ alias dh='dirs -v'
 
 
 # KEY BINDINGS ///////////////////////////////////////////////////////////////////////////
+if [[ -z $ZSH_MC ]]; then # mc fix
 export KEYTIMEOUT=1
 
 # Emacs key bindings with Vim normal mode ------------------------------------------ [Esc]
@@ -136,7 +138,7 @@ bindkey '^[[B'  down-line-or-beginning-search
 bindkey '^[OB'  down-line-or-beginning-search
 bindkey '^n'    down-line-or-beginning-search
 
-# Backward delete word ---------------------------------------------------------- [Ctrl-W]
+# Backward delete word ---------------------------------------------------------- [Ctrl+W]
 my-backward-delete-word() {
     local WORDCHARS=${WORDCHARS/\//}
     zle backward-delete-word
@@ -144,29 +146,38 @@ my-backward-delete-word() {
 zle -N my-backward-delete-word
 bindkey '^w' my-backward-delete-word
 
-# Search backward for string ---------------------------------------------------- [Ctrl-R]
+# Backward delete line ---------------------------------------------------------- [Ctrl+U]
+bindkey '^u' backward-kill-line
+
+# Backward/forward word/char ------------------------------------------ [{Ctrl,Alt}+{B,F}]
+bindkey '^b' backward-word
+bindkey '^f' forward-word
+bindkey '^[b' backward-char
+bindkey '^[f' forward-char
+
+# Jump between words ------------------------------------------------- [Ctrl+{Left,Right}]
+[[ "${terminfo[kLFT5]}" != "" ]] && bindkey "${terminfo[kLFT5]}" backward-word
+[[ "${terminfo[kRIT5]}" != "" ]] && bindkey "${terminfo[kRIT5]}" forward-word
+# bindkey '\e[1;5D' backward-word
+# bindkey '\e[1;5C' forward-word
+
+# Search backward for string ---------------------------------------------------- [Ctrl+R]
+# replaced by fzf
 bindkey '^r' history-incremental-search-backward
 
-# Jump between words -------------------------------------------- [Ctrl-Left] [Ctrl-Right]
-bindkey "${terminfo[kRIT5]}" forward-word
-bindkey "${terminfo[kLFT5]}" backward-word
-
-# Completion menu backwards -------------------------------------------------- [Shift-Tab]
+# Completion menu backwards -------------------------------------------------- [Shift+Tab]
 [[ "${terminfo[kcbt]}" != "" ]] && bindkey "${terminfo[kcbt]}" reverse-menu-complete
 
 # Go to beginning or end of line -------------------------------------------- [Home] [End]
 [[ "${terminfo[khome]}" != "" ]] && bindkey "${terminfo[khome]}" beginning-of-line
 [[ "${terminfo[kend]}" != "" ]] && bindkey "${terminfo[kend]}" end-of-line
 
-# One directory up --------------------------------------------------------------- [Alt-U]
-bindkey -s '\eu' 'cd ..^M'
-
-# Edit command line ------------------------------------------------------ [Ctrl-X,Ctrl-E]
+# Edit command line ------------------------------------------------------ [Ctrl+X,Ctrl+E]
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^x^e' edit-command-line
 
-# Completion menu vim movement ------------------------------------------ [Ctrl-{h,j,k,l}]
+# Completion menu vim movement ------------------------------------------ [Ctrl+{h,j,k,l}]
 # zmodload zsh/complist
 # bindkey -M menuselect '^k' up-line-or-history
 # bindkey -M menuselect '^p' up-line-or-history
@@ -182,7 +193,7 @@ bindkey '^x^e' edit-command-line
 
 bindkey '^y' accept-search
 
-# Switch between background and foreground -------------------------------------- [Ctrl-Z]
+# Switch between background and foreground -------------------------------------- [Ctrl+Z]
 function fg-bg() {
     if [[ $#BUFFER -eq 0 ]]; then
         fg
@@ -195,6 +206,8 @@ bindkey '^z' fg-bg
 
 # Expand "!" with space
 bindkey ' ' magic-space
+
+fi # mc fix
 
 
 # COMPLETION /////////////////////////////////////////////////////////////////////////////
@@ -258,7 +271,7 @@ fi
 # install fzf with ./install --xdg
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
-bindkey '^f' fzf-cd-widget
+bindkey '^g' fzf-cd-widget
 
 
 # SAFER RM ///////////////////////////////////////////////////////////////////////////////
@@ -292,5 +305,12 @@ hash -d pic="$(xdg-user-dir PICTURES)"
 hash -d vid="$(xdg-user-dir VIDEOS)"
 
 function hashcwd {
+    if [[ -z $1 ]]; then
+        echo 'Argument expected' >&2
+        return 1
+    fi
     hash -d "$1"="$PWD"
+    return $?
 }
+
+# [[ -s "$HOME/.xmake/profile" ]] && source "$HOME/.xmake/profile" # load xmake profile
