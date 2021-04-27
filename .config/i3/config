@@ -162,7 +162,7 @@ bar {
 # client.background       #282c34
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
 client.focused_inactive #5c6370 #4b5263 #ffffff #484e50   #4b5263
-client.unfocused        #333333 #282c34 #5c6370 #292d2e   #222222
+client.unfocused        #21252b #282c34 #5c6370 #292d2e   #1a1c22
 client.urgent           #e06c75 #be5046 #ffffff #be5046   #be5046
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #000000
