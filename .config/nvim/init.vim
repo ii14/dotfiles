@@ -328,6 +328,7 @@ source ~/.config/nvim/term.vim
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
+      com! LspStopClient lua require 'lsp/util'.stop_clients()
       com! LspAction lua vim.lsp.buf.code_action()
       com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
 
@@ -560,7 +561,7 @@ aug end
       " vno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
       " vno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
-      nno <buffer><silent> <leader>lS :LspStop<CR>
+      nno <buffer><silent> <leader>lS :LspStopClient<CR>
       nno <buffer><silent> <leader>ls :LspFind<CR>
       nno <buffer><silent> <leader>lf :LspFormat<CR>
       vno <buffer><silent> <leader>lf :LspFormat<CR>
