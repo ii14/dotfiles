@@ -1,0 +1,102 @@
+[global]
+    monitor = 0
+    follow = keyboard
+    geometry = "350x5-3+22"
+
+    progress_bar = true
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+
+    indicate_hidden = true
+    shrink = true
+    transparency = 20
+    notification_height = 2
+    separator_height = 2
+    separator_color = frame
+    padding = 6
+    horizontal_padding = 8
+    frame_width = 2
+    frame_color = "#5c6370"
+    sort = true
+    idle_threshold = 120
+    font = tewi 8
+    line_height = 0
+    markup = full
+
+    # The format of the message.  Possible variables are:
+    #   %a  appname
+    #   %s  summary
+    #   %b  body
+    #   %i  iconname (including its path)
+    #   %I  iconname (without its path)
+    #   %p  progress value if set ([  0%] to [100%]) or nothing
+    #   %n  progress value if set without any extra characters
+    #   %%  Literal %
+    # Markup is allowed
+    format = "<b>%s</b>: %p%b"
+
+    alignment = left
+    vertical_alignment = center
+
+    show_age_threshold = 60
+    word_wrap = true
+    ellipsize = middle
+    ignore_newline = false
+    stack_duplicates = true
+    hide_duplicate_count = true
+    show_indicators = true
+
+    icon_position = left
+    icon_path = /usr/share/icons/breeze-dark/status/16/:/usr/share/icons/breeze-dark/devices/16
+
+    sticky_history = true
+    history_length = 20
+
+    dmenu = /usr/local/bin/rofi -dmenu -p 'dunst:' -theme dmenu
+    browser = /usr/bin/firefox -new-tab
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    startup_notification = false
+    verbosity = mesg
+    corner_radius = 0
+    ignore_dbusclose = false
+    force_xinerama = false
+
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[experimental]
+    per_monitor_dpi = false
+
+[shortcuts]
+    close = ctrl+space
+    close_all = ctrl+shift+space
+    history = ctrl+grave
+    context = ctrl+shift+period
+
+[urgency_low]
+    background = "#282c34"
+    foreground = "#ffffff"
+	frame_color = "#5c6370"
+    highlight = "#61afef"
+    timeout = 5
+
+[urgency_normal]
+    background = "#282c34"
+    foreground = "#ffffff"
+	frame_color = "#61afef"
+    highlight = "#61afef"
+    timeout = 5
+
+[urgency_critical]
+    background = "#be5046"
+    foreground = "#ffffff"
+    frame_color = "#e06c75"
+    highlight = "#e06c75"
+    timeout = 0
+
+# vim: ft=cfg
