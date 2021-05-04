@@ -139,6 +139,10 @@ for_window  [class="cmus"]      focus
 
 for_window [class="quake-terminal"] move scratchpad, border pixel 1
 
+for_window [title="^Android Emulator"] floating enable
+for_window [class="^jetbrains" title="^win0$"] floating enable
+for_window [class="^jetbrains" title="^[\S]*\.[\S]* \([\S]*\)"] floating enable
+
 # INIT -----------------------------------------------------------------------------------
 $exec xss-lock --transfer-sleep-lock -- i3lock --nofork
 $exec setbg
@@ -146,6 +150,7 @@ $exec compton
 $exec xsetroot -cursor_name left_ptr
 $exec nm-applet
 $exec xbanish
+$exec dunst
 
 bar {
     i3bar_command launch-polybar i3
