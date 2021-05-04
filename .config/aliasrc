@@ -263,7 +263,7 @@ function ex {
         *.tar)
             tar -xvf "$1" ;;
         *.rar)
-            unrar xv "$1" ;;
+            unrar x "$1" ;;
         *.7z)
             7z x "$1" ;;
         *.zip)
