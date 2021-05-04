@@ -103,6 +103,7 @@ require('trouble').setup{
     warning = "W",
     hint = "H",
     information = "i",
+    other = "-",
   },
 }
 

@@ -29,7 +29,6 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'haya14busa/incsearch.vim'
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
-    Plug 'junegunn/vim-peekaboo'
     Plug 'mbbill/undotree'
 
   " Visual -------------------------------------------------------------------------------
@@ -187,9 +186,6 @@ source ~/.config/nvim/term.vim
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
     let g:autosplit_bt = ['help']
 
-  " Dispatch -----------------------------------------------------------------------------
-    " let g:dispatch_keep_focus = 1 " dispatch fork - keeps focus on failed build
-
   " incsearch.vim ------------------------------------------------------------------------
     let g:incsearch#auto_nohlsearch = 1
 
@@ -207,14 +203,6 @@ source ~/.config/nvim/term.vim
     " let g:indent_blankline_char_highlight = 'Comment'
     " let g:indent_blankline_show_first_indent_level = v:false
     " let g:indent_blankline_show_trailing_blankline_indent = v:false
-
-  " echodoc.vim --------------------------------------------------------------------------
-    let g:echodoc#enable_at_startup = 1
-
-  " peekaboo -----------------------------------------------------------------------------
-    let g:peekaboo_window = 'vert bo 50 new'
-    let g:peekaboo_compact = 0
-    let g:peekaboo_delay = 500
 
   " undotree -----------------------------------------------------------------------------
     let g:undotree_DiffAutoOpen = 0
@@ -549,6 +537,7 @@ aug end
       ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
       nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
       nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
+      " nno <buffer><silent> g]    <cmd>LspTroubleOpen lsp_references<CR>
       nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
