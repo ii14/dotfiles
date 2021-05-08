@@ -83,14 +83,14 @@
     foreground = "#ffffff"
 	frame_color = "#5c6370"
     highlight = "#61afef"
-    timeout = 5
+    timeout = 8
 
 [urgency_normal]
     background = "#282c34"
     foreground = "#ffffff"
 	frame_color = "#61afef"
     highlight = "#61afef"
-    timeout = 5
+    timeout = 8
 
 [urgency_critical]
     background = "#be5046"
