@@ -26,21 +26,17 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'tpope/vim-unimpaired'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
-    Plug 'haya14busa/incsearch.vim'
+    Plug 'romainl/vim-cool'
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
-    Plug 'mbbill/undotree'
+    Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
 
   " Visual -------------------------------------------------------------------------------
     Plug 'joshdick/onedark.vim'
-    Plug 'ayu-theme/ayu-vim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'Yggdroot/indentLine'
-    " Plug 'tjdevries/colorbuddy.vim'
-    " Plug 'Th3Whit3Wolf/onebuddy'
     " Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
-    " Plug 'hoob3rt/lualine.nvim'
 
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
@@ -61,14 +57,11 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
     Plug 'Shougo/neco-syntax'
-    " Plug '~/dev/vim/nvim-compe'
 
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
     Plug 'tpope/vim-dispatch'
-    " Plug 'radenling/vim-dispatch-neovim'
-    " Plug 'cdelledonne/vim-cmake'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
@@ -90,7 +83,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'vifm/vifm.vim'
+    Plug 'vifm/vifm.vim', {'on': 'Vifm'}
     Plug 'devinceble/Tortoise-Typing'
 
   " Custom -------------------------------------------------------------------------------
@@ -146,7 +139,7 @@ source ~/.config/nvim/term.vim
       lua require('lsp/init')
 
       " nvim-lightbulb
-      call sign_define('LightBulbSign', {'text':'! ', 'texthl':'LspDiagnosticsSignHint'})
+      call sign_define('LightBulbSign', {'text':'!', 'texthl':'LspDiagnosticsSignHint'})
       aug Vimrc
         au CursorMoved,CursorMovedI * lua require 'nvim-lightbulb'.update_lightbulb()
       aug end
@@ -185,9 +178,6 @@ source ~/.config/nvim/term.vim
   " autosplit.vim ------------------------------------------------------------------------
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
     let g:autosplit_bt = ['help']
-
-  " incsearch.vim ------------------------------------------------------------------------
-    let g:incsearch#auto_nohlsearch = 1
 
   " IndentLine ---------------------------------------------------------------------------
     let g:indentLine_bufTypeExclude = ['help', 'terminal']
@@ -337,6 +327,17 @@ source ~/.config/nvim/term.vim
       call system(cmd)
     endfun
 
+  " curl ---------------------------------------------------------------------------------
+    com! -nargs=+ Curl call s:Curl(<q-args>)
+    fun! s:Curl(url)
+      let cmd = 'curl '.shellescape(a:url)
+      echo cmd
+      new
+      exe 'read !'.cmd.' 2>/dev/null'
+      0
+      redraw
+    endfun
+
   " Grep populates quickfix, so make it silent -------------------------------------------
     call Cabbrev('gr',   'silent grep')
     call Cabbrev('gre',  'silent grep')
@@ -349,6 +350,7 @@ source ~/.config/nvim/term.vim
     call Cabbrev('man',  'Man')
     call Cabbrev('rc',   'Rc')
     call Cabbrev('vifm', 'Vifm')
+    call Cabbrev('hr',   'Hr')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -443,25 +445,20 @@ aug end
   " Search and Replace -------------------------------------------------------------------
     nno <leader>/ :Lines<CR>
     nno <leader>? :BLines<CR>
-    nmap <leader>s <Plug>(incsearch-nohl):%s/
-    vmap <leader>s <Plug>(incsearch-nohl):s/
-    nmap <leader>S <Plug>(incsearch-nohl):%S/
-    vmap <leader>S <Plug>(incsearch-nohl):S/
+    nno <leader>s :%s/
+    vno <leader>s :s/
+    nmap <leader>S :%S/
+    vmap <leader>S :S/
     nmap <leader>c z*cgn
     vmap <leader>c z*cgn
-    map /   <Plug>(incsearch-forward)
-    map ?   <Plug>(incsearch-backward)
-    map g/  <Plug>(incsearch-stay)
-    map n   <Plug>(incsearch-nohl-n)
-    map N   <Plug>(incsearch-nohl-N)
-    map *   <Plug>(incsearch-nohl)<Plug>(asterisk-*)
-    map g*  <Plug>(incsearch-nohl)<Plug>(asterisk-g*)
-    map #   <Plug>(incsearch-nohl)<Plug>(asterisk-#)
-    map g#  <Plug>(incsearch-nohl)<Plug>(asterisk-g#)
-    map z*  <Plug>(incsearch-nohl0)<Plug>(asterisk-z*)
-    map gz* <Plug>(incsearch-nohl0)<Plug>(asterisk-gz*)
-    map z#  <Plug>(incsearch-nohl0)<Plug>(asterisk-z#)
-    map gz# <Plug>(incsearch-nohl0)<Plug>(asterisk-gz#)
+    map *   <Plug>(asterisk-*)
+    map g*  <Plug>(asterisk-g*)
+    map #   <Plug>(asterisk-#)
+    map g#  <Plug>(asterisk-g#)
+    map z*  <Plug>(asterisk-z*)
+    map gz* <Plug>(asterisk-gz*)
+    map z#  <Plug>(asterisk-z#)
+    map gz# <Plug>(asterisk-gz#)
     nno <silent> <leader><CR> :let @/ = ''<CR>
 
   " Macros -------------------------------------------------------------------------------
@@ -494,8 +491,6 @@ aug end
     vno <leader>P  "+P
     vno <leader>gp "+gp
     vno <leader>gP "+gP
-    nno <leader>gv :let @+ = @"<CR>
-    nno <leader>gV :let @" = @+<CR>
 
   " Make ---------------------------------------------------------------------------------
     nno m<CR>    :up<CR>:Make<CR>

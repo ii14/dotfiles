@@ -17,12 +17,12 @@
 
 " TODO: accept args in :QMake
 
-command! QMake call s:Run()
+command! -nargs=* QMake call s:Run(<q-args>)
 
-fun! s:Format() abort
-  let bin  = get(g:, 'qmake#bin',  'qmake')
-  let dir  = get(g:, 'qmake#dir',  '')
-  let args = get(g:, 'qmake#args', '')
+fun! s:Format(args) abort
+  let bin  = get(g:, 'qmake#bin', 'qmake')
+  let dir  = get(g:, 'qmake#dir', '')
+  let args = a:args !=# '' ? a:args : get(g:, 'qmake#args', '')
   let post = get(g:, 'qmake#post', '')
 
   let cmd =
@@ -35,9 +35,11 @@ fun! s:Format() abort
   return cmd
 endfun
 
-fun! s:Run() abort
+fun! s:Run(args) abort
   if len(readdir(getcwd(), { n -> filereadable(n) && n =~ '.pro$' })) > 0
-    execute '!'.s:Format()
+    " let runner = exists(':Dispatch') ? 'Dispatch ' : '!'
+    " execute runner.s:Format(a:args)
+    execute '!'.s:Format(a:args)
   else
     echomsg 'QMake: Project file not found'
   endif

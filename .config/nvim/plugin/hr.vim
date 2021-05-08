@@ -1,11 +1,11 @@
 " Description: Fill the rest of the line with specified character. Useful for headings
-" Usage: :Fill [{character}]
+" Usage: :Hr [{character}]
 "         Fill from the end of line up to text width with {character}.
 "         If {character} is not specified, uses '-'.
 
-command! -nargs=? Fill call s:Fill(<q-args>)
+command! -nargs=? Hr call s:Hr(<q-args>)
 
-function! s:Fill(char)
+function! s:Hr(char)
   if strlen(a:char) > 1
     echohl ErrorMsg
     echo 'Expected zero or one character'

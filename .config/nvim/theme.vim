@@ -2,14 +2,8 @@ set background=dark
 
 let g:lightline = {}
 
-" lua require('colorbuddy').colorscheme('onebuddy')
 colorscheme onedark
 let g:lightline.colorscheme = 'onedark'
-
-" let g:ayucolor = 'dark'
-" colorscheme ayu
-" let g:lightline.colorscheme = 'ayu_dark'
-
 
 " let g:lightline.separator    = {'left': '', 'right': ''}
 " let g:lightline.subseparator = {'left': '', 'right': ''}
@@ -145,6 +139,7 @@ fun! LightlinePro()
   return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
 endfun
 
-aug au_theme | au!
+aug VimrcTheme
+  au!
   au BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
 aug end
