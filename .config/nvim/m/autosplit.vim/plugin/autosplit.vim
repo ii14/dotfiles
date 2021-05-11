@@ -1,11 +1,6 @@
 " Description: Open windows in vertical split, if there is enough space
 
-fun! s:NewSplit()
-  if (index(get(g:, 'autosplit_bt', []), &buftype) == -1 &&
-    \ index(get(g:, 'autosplit_ft', []), &filetype) == -1)
-    return
-  endif
-
+fun! autosplit#autopos()
   let wid = win_getid()
   let bufnr = bufnr()
   let prev = winnr('#')
@@ -16,7 +11,14 @@ fun! s:NewSplit()
   execute printf('%dwincmd q', win_id2win(wid))
 endfun
 
-augroup Autosplit
+fun! s:autocmd()
+  if (index(get(g:, 'autosplit_bt', []), &buftype) != -1 ||
+    \ index(get(g:, 'autosplit_ft', []), &filetype) != -1)
+    call autosplit#autopos()
+  endif
+endfun
+
+augroup autosplit
   autocmd!
-  autocmd WinNew * autocmd BufEnter * ++once call s:NewSplit()
+  autocmd WinNew * autocmd BufEnter * ++once call s:autocmd()
 augroup end

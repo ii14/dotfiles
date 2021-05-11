@@ -15,7 +15,7 @@ sign define LspDiagnosticsSignInformation text=i
 sign define LspDiagnosticsSignHint        text=H
 
 " nvim-lightbulb
-sign define LightBulbSign text=! texthl=LspDiagnosticsSignHint
+sign define LightBulbSign text=? texthl=LspDiagnosticsSignInformation
 
 " DAP
 sign define DapBreakpoint text=● texthl=ErrorMsg

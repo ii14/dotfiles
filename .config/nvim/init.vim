@@ -93,14 +93,13 @@ call plug#begin($VIMDATA.'/plugged')
     Plug 'vimwiki/vimwiki'
     Plug 'vifm/vifm.vim', {'on': 'Vifm'}
     Plug 'devinceble/Tortoise-Typing'
+    Plug 'tweekmonster/startuptime.vim'
 
   " Custom -------------------------------------------------------------------------------
     Plug $VIMCONFIG.'/m/rc.vim'
     Plug $VIMCONFIG.'/m/qf.vim'
     Plug $VIMCONFIG.'/m/qmake.vim'
     Plug $VIMCONFIG.'/m/autosplit.vim'
-
-    Plug 'tweekmonster/startuptime.vim'
 
 call plug#end()
 
@@ -308,7 +307,9 @@ source $VIMCONFIG/term.vim
     fun! s:Redir(cmd)
       new
       put=execute(a:cmd)
+      0delete
       setl nomodified
+      call autosplit#autopos()
     endfun
 
   " Toggle mouse -------------------------------------------------------------------------
@@ -347,8 +348,10 @@ source $VIMCONFIG/term.vim
       echo cmd
       new
       exe 'read !'.cmd.' 2>/dev/null'
-      0
+      0delete
+      setl nomodified
       redraw
+      call autosplit#autopos()
     endfun
 
   " Grep populates quickfix, so make it silent -------------------------------------------
@@ -368,6 +371,7 @@ source $VIMCONFIG/term.vim
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
+
   " Return to last edit position ---------------------------------------------------------
     au BufReadPost *
       \ if &ft !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
