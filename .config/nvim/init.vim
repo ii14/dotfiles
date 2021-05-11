@@ -153,7 +153,6 @@ source $VIMCONFIG/term.vim
       lua require('lsp/init')
 
       " nvim-lightbulb
-      call sign_define('LightBulbSign', {'text':'!', 'texthl':'LspDiagnosticsSignHint'})
       aug Vimrc
         au CursorMoved,CursorMovedI * lua require 'nvim-lightbulb'.update_lightbulb()
       aug end
