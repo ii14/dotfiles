@@ -365,6 +365,7 @@ source $VIMCONFIG/term.vim
     call Cabbrev('rc',   'Rc')
     call Cabbrev('vifm', 'Vifm')
     call Cabbrev('hr',   'Hr')
+    call Cabbrev('fzf',  'Files')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
 aug Vimrc
@@ -445,9 +446,22 @@ aug end
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
+    let g:shortcuts = {
+      \ '.': '.',
+      \ 'V': '$VIMRUNTIME',
+      \ 'c': '~/.config',
+      \ 'd': '~/dev',
+      \ 'e': '/etc',
+      \ 'm': '~/dev/mm',
+      \ 'p': '$VIMDATA/plugged',
+      \ 'r': '~/repos',
+      \ 'v': '$VIMCONFIG',
+      \ }
+
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
+    nno <silent> ', :call Menu('Files', get(g:, 'shortcuts', {}))<CR>
     nno '; :Files<Space>
     nno <leader>h :History<CR>
     nno <leader>b :Buffers<CR>
