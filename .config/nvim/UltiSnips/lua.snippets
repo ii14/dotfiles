@@ -1,0 +1,41 @@
+snippet fn "function"
+function ${1:func}($2)
+	$0
+end
+endsnippet
+
+snippet fi "inline function"
+function($1)
+	$0
+end
+endsnippet
+
+snippet re "require"
+require '$1'
+endsnippet
+
+snippet if "if"
+if $1 then
+	$0
+end
+endsnippet
+
+snippet pairs "pairs"
+for ${3:_}, ${2:_} in pairs($1) do
+	$0
+end
+endsnippet
+
+snippet ipairs "ipairs"
+for ${3:_}, ${2:_} in ipairs($1) do
+	$0
+end
+endsnippet
+
+snippet `p "parens" i
+($1)$0
+endsnippet
+
+snippet `b "brackets" i
+{$1}$0
+endsnippet

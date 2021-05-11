@@ -70,7 +70,7 @@ call plug#begin($VIMDATA.'/plugged')
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
     Plug 'tpope/vim-dispatch'
-    Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html']}
+    Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html', 'lua']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
     if !exists('g:disable_dap')
