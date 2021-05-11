@@ -46,10 +46,13 @@ endsnippet
 
 # TYPES ----------------------------------------------------------------------------------
 snippet s "struct definition"
-typedef struct ${1}
-{
+typedef struct ${1} {
 	${2}
 } $1;
+endsnippet
+
+snippet cp "char*" w
+char*
 endsnippet
 
 snippet cc "const char*" w
@@ -98,4 +101,35 @@ snippet `b "brackets" i
 {
 	$1
 }$0
+endsnippet
+
+# MALLOC AND FRIENDS ---------------------------------------------------------------------
+snippet malloc "malloc"
+${2:char}* ${1:var} = ($2*)malloc(sizeof($2));
+endsnippet
+
+snippet calloc "calloc"
+${2:char}* ${1:var} = ($2*)calloc($3, sizeof($2));
+endsnippet
+
+snippet realloc "realloc"
+${3:char}* r${1:var} = ($3*)realloc(${2:$1}, sizeof($3));
+endsnippet
+
+snippet in "if null"
+if (${1} == NULL) {
+    $0
+}
+endsnippet
+
+snippet as "assert"
+assert(${1});
+endsnippet
+
+snippet pf "printf"
+printf("${1}");
+endsnippet
+
+snippet fp "fprintf"
+printf(stderr, "${1}");
 endsnippet
