@@ -32,7 +32,11 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
 
   " Visual -------------------------------------------------------------------------------
-    Plug 'joshdick/onedark.vim'
+    if has('nvim-0.5.0')
+      Plug 'ii14/onedark.nvim'
+    else
+      Plug 'joshdick/onedark.vim'
+    endif
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'Yggdroot/indentLine'
@@ -92,6 +96,8 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug '~/.config/nvim/m/qmake.vim'
     Plug '~/.config/nvim/m/autosplit.vim'
 
+    Plug 'tweekmonster/startuptime.vim'
+
 call plug#end()
 
 source ~/.config/nvim/functions.vim
@@ -133,6 +139,10 @@ source ~/.config/nvim/term.vim
       aug Vimrc
         au User LspAttach call compe#setup(s:compe_lsp, 0)
         au User LspAttach call s:init_maps_lsp()
+        au BufWinEnter *
+          \ if has_key(b:, 'lsp_attached') |
+          \   let &l:signcolumn = b:lsp_attached ? 'yes' : 'auto' |
+          \ endif
       aug end
 
       " ~/.config/nvim/lua/lsp/init.lua

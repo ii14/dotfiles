@@ -1,30 +1,25 @@
-local lspconfig = require 'lspconfig'
 local util = require 'lsp/util'
+local m = util.m
+-- local lspconfig = require 'lspconfig'
+-- local root_pattern = lspconfig.util.root_pattern
 require 'lsp/callbacks'
 
-local on_attach = util.on_attach
--- local root_pattern = lspconfig.util.root_pattern
-
-
-lspconfig.clangd.setup{
-  on_attach = function(client, bufnr)
-    on_attach(client, bufnr)
+m.clangd{
+  on_attach = function()
     util.map('n', '<leader>a', ':ClangdSwitchSourceHeader<CR>')
     util.map('n', '<leader>A', ':vs | ClangdSwitchSourceHeader<CR>')
   end,
   cmd = {"clangd", "--background-index"},
 }
 
--- lspconfig.ccls.setup{
---   on_attach = on_attach;
+-- m.ccls{
 --   init_options = {
 --     highlight = { lsRanges = true };
---   };
---   root_dir = root_pattern("compile_commands.json");
+--   },
+--   root_dir = root_pattern("compile_commands.json"),
 -- }
 
-lspconfig.pyls.setup{
-  on_attach = on_attach,
+m.pyls{
   settings = {
     pyls = {
       plugins = {
@@ -35,14 +30,11 @@ lspconfig.pyls.setup{
   },
 }
 
-lspconfig.gopls.setup{
-  on_attach = on_attach,
-}
+m.gopls{}
 
 local sumneko_root_path = '/opt/lua-language-server'
 local sumneko_binary = sumneko_root_path..'/bin/Linux/lua-language-server'
-lspconfig.sumneko_lua.setup{
-  on_attach = on_attach,
+m.sumneko_lua{
   cmd = {sumneko_binary, '-E', sumneko_root_path .. '/main.lua'},
   settings = {
     Lua = {
@@ -51,7 +43,7 @@ lspconfig.sumneko_lua.setup{
         path = vim.split(package.path, ';'),
       },
       diagnostics = {
-        globals = {'vim'},
+        globals = {'vim', 'P', 'R'},
       },
       workspace = {
         library = {
@@ -63,20 +55,16 @@ lspconfig.sumneko_lua.setup{
   },
 }
 
-lspconfig.tsserver.setup{
-  on_attach = on_attach,
-}
+m.tsserver{}
 
--- lspconfig.denols.setup{
---   on_attach = on_attach,
+-- m.denols{
 --   -- cmd = {'deno', 'lsp', '-L', 'debug'},
 --   init_options = {
 --     config = "./tsconfig.json",
 --   },
 -- }
 
--- lspconfig.solargraph.setup{
---   on_attach = on_attach,
+-- m.solargraph{
 --   settings = {
 --     solargraph = {
 --       diagnostics = true,
@@ -84,13 +72,11 @@ lspconfig.tsserver.setup{
 --   },
 -- }
 
-lspconfig.zls.setup{
-  on_attach = on_attach,
+m.zls{
   cmd = {'/home/ms/repos/zls/zig-cache/bin/zls'},
 }
 
--- lspconfig.kotlin_language_server.setup{
---   on_attach = on_attach,
+-- m.kotlin_language_server{
 --   root_dir = root_pattern("settings.gradle.kts"),
 -- }
 
