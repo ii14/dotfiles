@@ -3,6 +3,10 @@ let maplocalleader = ' '
 set textwidth=90
 set termguicolors
 
+let $VIMDATA = stdpath('data')
+let $VIMCACHE = stdpath('cache')
+let $VIMCONFIG = stdpath('config')
+
 if !has('nvim-0.5.0')
   let g:disable_lsp = 1
   let g:disable_dap = 1
@@ -16,7 +20,7 @@ let g:disable_ts = 1
 aug Vimrc | au! | aug end
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin($VIMDATA.'/plugged')
 
   " Editing ------------------------------------------------------------------------------
     Plug 'tpope/vim-surround'
@@ -91,28 +95,28 @@ call plug#begin('~/.local/share/nvim/plugged')
     Plug 'devinceble/Tortoise-Typing'
 
   " Custom -------------------------------------------------------------------------------
-    Plug '~/.config/nvim/m/rc.vim'
-    Plug '~/.config/nvim/m/qf.vim'
-    Plug '~/.config/nvim/m/qmake.vim'
-    Plug '~/.config/nvim/m/autosplit.vim'
+    Plug $VIMCONFIG.'/m/rc.vim'
+    Plug $VIMCONFIG.'/m/qf.vim'
+    Plug $VIMCONFIG.'/m/qmake.vim'
+    Plug $VIMCONFIG.'/m/autosplit.vim'
 
     Plug 'tweekmonster/startuptime.vim'
 
 call plug#end()
 
-source ~/.config/nvim/functions.vim
-luafile ~/.config/nvim/lua/global.lua
+source $VIMCONFIG/functions.vim
+luafile $VIMCONFIG/lua/global.lua
 
 call PlugCheckMissing()
 
-source ~/.config/nvim/term.vim
+source $VIMCONFIG/term.vim
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
-    source ~/.config/nvim/theme.vim
+    source $VIMCONFIG/theme.vim
 
   " fzf ----------------------------------------------------------------------------------
-    source ~/.config/nvim/fzf.vim
+    source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
     let g:compe = {'source': {
@@ -260,9 +264,9 @@ source ~/.config/nvim/term.vim
     set hidden                                " don't close buffers
     set noswapfile                            " disable swap files
     set undofile                              " persistent undo history
-    set directory=~/.cache/nvim/swap          " swap files
-    set backupdir=~/.cache/nvim/backup        " backup files
-    set undodir=~/.cache/nvim/undo            " undo files
+    set directory=$VIMCACHE/swap              " swap files
+    set backupdir=$VIMCACHE/backup            " backup files
+    set undodir=$VIMCACHE/undo                " undo files
 
   " Grep ---------------------------------------------------------------------------------
     if executable('rg')
