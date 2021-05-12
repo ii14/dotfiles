@@ -449,7 +449,7 @@ aug end
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
-    let g:shortcuts = {
+    let g:places = {
       \ '.': '.',
       \ 'V': '$VIMRUNTIME',
       \ 'c': '~/.config',
@@ -464,7 +464,7 @@ aug end
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
-    nno <silent> ', :call Menu('Files', get(g:, 'shortcuts', {}))<CR>
+    nno <silent> ', :call Menu('Files', get(g:, 'places', {}))<CR>
     nno '; :Files<Space>
     nno <leader>h :History<CR>
     nno <leader>b :Buffers<CR>

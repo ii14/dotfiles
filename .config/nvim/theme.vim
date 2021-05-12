@@ -5,9 +5,6 @@ let g:lightline = {}
 colorscheme onedark
 let g:lightline.colorscheme = 'onedark'
 
-" let g:lightline.separator    = {'left': '', 'right': ''}
-" let g:lightline.subseparator = {'left': '', 'right': ''}
-
 let g:lightline.active = {
   \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro'], ['filename']],
   \ 'right' : [['lineinfo'], ['percent'], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
@@ -59,6 +56,10 @@ fun! LightlineFilename()
     catch
       return ''
     endtry
+  endif
+
+  if &bt ==# 'terminal'
+    return '['.expand('%').'] '.b:term_title
   endif
 
   if &ft ==# 'scratch'
