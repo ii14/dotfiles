@@ -27,7 +27,7 @@ call plug#begin($VIMDATA.'/plugged')
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
-    Plug 'tpope/vim-unimpaired'
+    " Plug 'tpope/vim-unimpaired'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
     Plug 'romainl/vim-cool'
@@ -56,7 +56,7 @@ call plug#begin($VIMDATA.'/plugged')
   " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
-      Plug 'folke/lsp-trouble.nvim'
+      Plug 'folke/trouble.nvim'
       Plug 'kosayoda/nvim-lightbulb'
       Plug 'ray-x/lsp_signature.nvim'
       " Plug 'gfanto/fzf-lsp.nvim'
@@ -118,6 +118,23 @@ source $VIMCONFIG/term.vim
     source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
+    " let g:loaded_compe_buffer = 1
+    " let g:loaded_compe_calc = 1
+    let g:loaded_compe_emoji = 1
+    let g:loaded_compe_luasnip = 1
+    " let g:loaded_compe_nvim_lsp = 1
+    let g:loaded_compe_nvim_lua = 1
+    let g:loaded_compe_omni = 1
+    " let g:loaded_compe_path = 1
+    let g:loaded_compe_snippets_nvim = 1
+    let g:loaded_compe_spell = 1
+    let g:loaded_compe_tags = 1
+    let g:loaded_compe_treesitter = 1
+    " let g:loaded_compe_ultisnips = 1
+    let g:loaded_compe_vim_lsc = 1
+    let g:loaded_compe_vim_lsp = 1
+    let g:loaded_compe_vsnip = 1
+
     let g:compe = {'source': {
       \ 'path': v:true,
       \ 'calc': v:true,
@@ -302,16 +319,6 @@ source $VIMCONFIG/term.vim
       call Cabbrev('b', 'B')
     endif
 
-  " Redir --------------------------------------------------------------------------------
-    com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
-    fun! s:Redir(cmd)
-      new
-      put=execute(a:cmd)
-      0delete
-      setl nomodified
-      call autosplit#autopos()
-    endfun
-
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle let &mouse = (&mouse ==# '' ? 'a' : '')
 
@@ -331,6 +338,16 @@ source $VIMCONFIG/term.vim
       com! -range=0 LspFormat
         \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
     endif
+
+  " Redir --------------------------------------------------------------------------------
+    com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
+    fun! s:Redir(cmd)
+      new
+      put=execute(a:cmd)
+      1,2delete
+      setl nomodified
+      call autosplit#autopos()
+    endfun
 
   " xdg-open -----------------------------------------------------------------------------
     com! -nargs=? -complete=file Open call s:Open(<q-args>)
@@ -502,6 +519,15 @@ aug end
     nno <silent> qg :call qf#toggle()<CR>
     nno <silent> qo :call qf#show()<CR>
     nno <silent> qc :cclose<CR>
+
+    nno <silent> [q :cprev<CR>
+    nno <silent> ]q :cnext<CR>
+    nno <silent> [Q :cfirst<CR>
+    nno <silent> ]Q :clast<CR>
+    nno <silent> [l :lprev<CR>
+    nno <silent> ]l :lnext<CR>
+    nno <silent> [L :lfirst<CR>
+    nno <silent> ]L :llast<CR>
 
   " Misc ---------------------------------------------------------------------------------
     vno <leader>t :Tabularize /

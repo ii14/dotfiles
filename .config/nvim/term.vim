@@ -60,6 +60,7 @@ function! s:SetupTerm(termid) abort
   tnoremap <buffer><silent> <F4> <cmd>call <SID>NewTerm(4)<CR>
   execute 'autocmd TermClose <buffer> ++nested call s:TermClose('.a:termid.')'
   set nobuflisted
+  set signcolumn=no
 endfunction
 
 function! s:GetWindow() abort
