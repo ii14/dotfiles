@@ -3,7 +3,7 @@ P = function(v)
   return v
 end
 
-R = function(package)
-  package.loaded[package] = nil
-  return require(package)
+R = function(p)
+  package.loaded[p] = nil
+  return require(p)
 end

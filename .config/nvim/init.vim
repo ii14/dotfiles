@@ -71,7 +71,7 @@ call plug#begin($VIMDATA.'/plugged')
     Plug 'rbong/vim-flog'
     Plug 'tpope/vim-dispatch'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html', 'lua']}
-    Plug 'ii14/exrc.vim'
+    Plug 'ii14/exrc.vim', {'branch': 'single_command'}
     Plug 'ii14/pro.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
@@ -159,10 +159,7 @@ source $VIMCONFIG/term.vim
       aug Vimrc
         au User LspAttach call compe#setup(s:compe_lsp, 0)
         au User LspAttach call s:init_maps_lsp()
-        au BufWinEnter *
-          \ if has_key(b:, 'lsp_attached') |
-          \   let &l:signcolumn = b:lsp_attached ? 'yes' : 'auto' |
-          \ endif
+        au BufWinEnter * let &l:signcolumn = get(b:, 'lsp_attached', 0) ? 'yes' : 'auto'
       aug end
 
       " ~/.config/nvim/lua/lsp/init.lua
@@ -200,7 +197,7 @@ source $VIMCONFIG/term.vim
   " exrc.vim -----------------------------------------------------------------------------
     let exrc#names = ['.exrc']
     aug Vimrc
-      au BufWritePost .exrc ++nested ExrcTrust
+      au BufWritePost .exrc ++nested Exrc trust
       au SourcePost .exrc silent Pro!
     aug end
 
