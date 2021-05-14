@@ -54,7 +54,7 @@ fun! s:Strip()
 endfun
 
 fun! s:StripAu()
-  if s:mode == 1 || (s:mode == 2 && index(s:blacklist, &ft) < 0)
+  if &modifiable && (s:mode == 1 || (s:mode == 2 && index(s:blacklist, &ft) < 0))
     call s:Strip()
   endif
 endfun
