@@ -63,6 +63,7 @@ call plug#begin($VIMDATA.'/plugged')
       " Plug 'simrat39/symbols-outline.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
+    " Plug '~/dev/vim/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
     Plug 'Shougo/neco-syntax'
 
@@ -104,7 +105,7 @@ call plug#begin($VIMDATA.'/plugged')
 call plug#end()
 
 source $VIMCONFIG/functions.vim
-luafile $VIMCONFIG/lua/global.lua
+lua require 'm.global'
 
 call PlugCheckMissing()
 
@@ -163,7 +164,7 @@ source $VIMCONFIG/term.vim
       aug end
 
       " ~/.config/nvim/lua/lsp/init.lua
-      lua require('lsp/init')
+      lua require('m.lsp')
 
       " nvim-lightbulb
       aug Vimrc
@@ -173,9 +174,9 @@ source $VIMCONFIG/term.vim
 
   " DAP ----------------------------------------------------------------------------------
     if !exists('g:disable_dap')
-      lua require('debugger')
+      lua require('m.debug')
       com! -complete=file -nargs=* DebugC
-        \ lua require('debugger').start_c_debugger({<f-args>}, 'gdb')
+        \ lua require('m.debug').start_c_debugger({<f-args>}, 'gdb')
     endif
 
   " Treesitter ---------------------------------------------------------------------------
@@ -324,7 +325,7 @@ source $VIMCONFIG/term.vim
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      com! LspStopClient lua require 'lsp/util'.stop_clients()
+      com! LspStopClient lua require 'm.lsp.util'.stop_clients()
       com! LspAction lua vim.lsp.buf.code_action()
       com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
 

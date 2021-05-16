@@ -111,7 +111,7 @@ endfun
 
 fun! LightlineLsp()
   try
-    return luaeval("require('lsp/util').get_client_name()")
+    return luaeval("require('m.lsp.util').get_client_name()")
   catch
     return ''
   endtry

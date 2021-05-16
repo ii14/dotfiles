@@ -1,8 +1,8 @@
-local util = require 'lsp/util'
+local util = require 'm.lsp.util'
 local m = util.m
 -- local lspconfig = require 'lspconfig'
 -- local root_pattern = lspconfig.util.root_pattern
-require 'lsp/callbacks'
+require 'm.lsp.callbacks'
 
 m.clangd{
   on_attach = function()
