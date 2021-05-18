@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 options="screen\narea\nwindow"
-selected="$(echo -e "$options" | rofi -p 'screenshot' -dmenu -theme dmenu)"
+selected="$(echo "$options" | rofi -p 'screenshot' -dmenu -theme dmenu)"
 
 directory=$(xdg-user-dir PICTURES) || directory="$HOME"
 directory="$directory/screenshot"

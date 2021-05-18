@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 manpage=$( \
     apropos -s '' . | \
@@ -10,4 +10,5 @@ manpage=$( \
 
 [ -z "$manpage" ] && exit 1
 
+# shellcheck disable=SC2086
 exec "$TERMINAL" -t "man: $manpage" -e man $manpage

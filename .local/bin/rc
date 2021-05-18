@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 optfile="$HOME/.config/dictionary/rc"
 query_mode=1
@@ -19,7 +19,7 @@ print_help() {
 
 run() {
     if [ "$query_mode" -ne 0 ]; then
-        cd "$(dirname "$1")"
+        cd "$(dirname "$1")" || die 'directory does not exist'
         exec "$EDITOR" "$1"
     else
         echo "$1"
@@ -52,7 +52,8 @@ fi
 if [ "$1" = '-i' ] || [ "$1" = '--interactive' ]; then
     opts=$(dictionary --keys "$optfile")
     (echo "$opts" | awk '{ print NR ") " $0 }') >&2
-    read -rp "Select: " x
+    printf 'Select: '
+    read -r x
     if (echo "$x" | grep -e '[[:digit:]]\+') >/dev/null; then
         match="$(echo "$opts" | awk "NR == $x { print \$0; exit }")"
         [ -z "$match" ] && die 'Option not found'

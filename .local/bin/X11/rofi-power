@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 options="logout\nswitch user\nsuspend\nreboot\nshutdown\ncancel"
 style='* { color-accent: @color-red; } #element { padding: 3px 16px; }'
-selected="$(echo -e "$options" | rofi -p 'powermenu' -dmenu -theme dmenu -theme-str "$style")"
+selected="$(echo "$options" | rofi -p 'powermenu' -dmenu -theme dmenu -theme-str "$style")"
 case $selected in
 
 'logout')
@@ -15,7 +15,7 @@ case $selected in
         --type=method_call \
         --print-reply \
         --dest=org.freedesktop.DisplayManager \
-        $XDG_SEAT_PATH \
+        "$XDG_SEAT_PATH" \
         org.freedesktop.DisplayManager.Seat.SwitchToGreeter
     ;;
 

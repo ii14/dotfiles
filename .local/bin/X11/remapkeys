@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Set CapsLock to Ctrl and Esc
 setxkbmap -option ctrl:nocaps

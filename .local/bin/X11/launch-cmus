@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 wid=$(xdotool search --class 'cmus')
 if [ -z "$wid" ]; then
     exec alacritty --class 'Alacritty,cmus' -e cmus

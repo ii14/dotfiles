@@ -16,43 +16,45 @@ Usage() {
     Log '    yt l              -- logs'
 }
 
-if [[ -z "$1" ]]; then
+if [ -z "$1" ]; then
     if [ -t 1 ]; then
-        read -rp '> ' url
+        printf '> '
+        read -r url
     else
         url="$(xclip -sel clipboard -o)"
         url="$(echo "$url" | rofi -dmenu -p 'play in mpv?' -theme dmenu-yt)" || exit 0
     fi
-elif [[ "$1" = '--help' ]]; then
+elif [ "$1" = '--help' ]; then
     Usage
     exit 0
-elif [[ "$1" = 'l' ]]; then
-    [[ ! -f "$log_all" ]] && exit 0
-    [[ -z "$2" ]] && lines=25 || lines="$2"
+elif [ "$1" = 'l' ]; then
+    [ ! -f "$log_all" ] && exit 0
+    [ -z "$2" ] && lines=25 || lines="$2"
     tail -n "$lines" "$log_all"
     exit 0
-elif [[ "$1" = 'f' ]]; then
-    [[ -z "$2" ]] \
+elif [ "$1" = 'f' ]; then
+    [ -z "$2" ] \
         && path='.' \
         || path="$2"
     url="$(fd "$path" -t f -e 'mp4' -e 'mkv' -e 'webm' | fzf --height=50% --reverse)"
-    [[ -z "$url" ]] && exit 1
+    [ -z "$url" ] && exit 1
 else
     url="$1"
 fi
 
-if [ -t 1 ] && [[ "$url" = 'c' ]]; then
+if [ -t 1 ] && [ "$url" = 'c' ]; then
     url="$(xclip -sel clipboard -o)"
     Log "clipboard?: $url (ctrl+c/enter)"
-    read -rsn1
+    read -r
 fi
 
-if [[ -z "$url" ]]; then
+if [ -z "$url" ]; then
     Log 'no url'
     exit 1
 fi
 
-if echo -n "$url" | grep -Eo '^[-_A-Za-z0-9]{11}$' &>/dev/null; then
+# TODO: $> is not supported in POSIX shell
+if echo "$url" | grep -Eo '^[-_A-Za-z0-9]{11}$' &>/dev/null; then
     Log 'prepending "ytdl://"'
     url="ytdl://$url"
 fi
@@ -63,11 +65,12 @@ mkdir -p /tmp/yt
 
 (
     tmp_log="$(mktemp --tmpdir="$tmp_dir")"
+    # shellcheck disable=SC2129
     echo '----------' >> "$tmp_log"
     echo "mpv \"$url\"" >> "$tmp_log"
     mpv --pause "$url" &>> "$tmp_log"
     code=$?
-    if [[ "$code" -ne 0 ]]; then
+    if [ "$code" -ne 0 ]; then
         Log "mpv returned $code"
         notify-send yt "mpv returned $code"
         echo "mpv returned $code" >> "$tmp_log"
@@ -77,5 +80,6 @@ mkdir -p /tmp/yt
 ) &
 
 Log "pid: $!"
+# TODO: disown is not supported in POSIX shell
 disown
 exit 0

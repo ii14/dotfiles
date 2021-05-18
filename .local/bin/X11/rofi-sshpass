@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/bin/sh
 rofi -p "$1" -dmenu -password -theme dmenu-prompt
