@@ -74,11 +74,15 @@ else
     # set terminal window title
     if [[ -v SSH_CONNECTION ]]; then
         _set_title() {
-            (echo -ne "\033]0;$USER@$HOST:$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
+            local _title
+            [[ -n $TITLE ]] && _title="${TITLE}: " || _title=''
+            (echo -ne "\033]0;$_title$USER@$HOST:$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
         }
     else
         _set_title() {
-            (echo -ne "\033]0;$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
+            local _title
+            [[ -n $TITLE ]] && _title="${TITLE}: " || _title=''
+            (echo -ne "\033]0;$_title$(dirs -p | head -n 1) - zsh\007") 2>/dev/null
         }
     fi
     precmd_functions+=(_set_title)
@@ -291,7 +295,7 @@ function rm {
         echo 'Operation cancelled.'
         return 1
     fi
-    command rm -v $@
+    command rm -v "$@"
     return $?
 }
 
