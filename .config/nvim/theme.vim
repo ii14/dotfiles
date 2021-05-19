@@ -2,6 +2,7 @@ set background=dark
 
 let g:lightline = {}
 
+let g:onedark_terminal_italics = 1
 colorscheme onedark
 let g:lightline.colorscheme = 'onedark'
 
