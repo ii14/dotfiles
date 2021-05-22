@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# edit script
+
+if [ "$#" -lt 1 ]; then
+    echo "usage: $(basename "$0") <filename> [language]" >&2
+    exit 1
+fi
+
+if [ -e "$1" ]; then
+    if [ ! -f "$1" ]; then
+        echo "not a regular file" >&2
+        exit 1
+    fi
+else
+    if [ -z "$2" ]; then
+        printf '#!/usr/bin/env bash\nset -eo pipefail\n' > "$1"
+    else
+        printf '#!/usr/bin/env %s\n' "$2" > "$1"
+    fi
+    chmod +x "$1"
+fi
+
+exec "$EDITOR" "$1"

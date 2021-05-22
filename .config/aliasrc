@@ -130,28 +130,6 @@ function objd {
 alias py='python3.8'
 alias sass='sassc'
 
-# edit script
-function es {
-    if (( ARGC < 1 )); then
-        echo 'usage: es <filename> [lang]' >&2
-        return 1
-    fi
-    if [ -e "$1" ]; then
-        if [ ! -f "$1" ]; then
-            echo 'File exists, but is not a regular file' >&2
-            return 1
-        fi
-    else
-        if [ -z "$2" ]; then
-            echo -e "#!/usr/bin/env bash\nset -eo pipefail\n" > "$1"
-        else
-            echo -e "#!/usr/bin/env $2\n" > "$1"
-        fi
-        chmod +x "$1"
-    fi
-    "$EDITOR" "$1"
-}
-
 # A/V ------------------------------------------------------------------------------------
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffplay='ffplay -hide_banner'
