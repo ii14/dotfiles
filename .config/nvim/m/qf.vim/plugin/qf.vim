@@ -50,14 +50,16 @@ fun! qf#init()
   nnoremap <buffer><nowait><silent> o <CR><C-W>p
 
   let b:last_win = winnr('#')
-  au WinEnter <buffer> ++nested
-    \ if &ft ==# 'qf' |
-    \   let b:last_win = winnr('#') |
-    \ endif
-  au WinClosed <buffer> ++nested
-    \ if &ft ==# 'qf' |
-    \   exe b:last_win.'wincmd w' |
-    \ endif
+  aug au_quickfix
+    au WinEnter <buffer> ++nested
+      \ if &ft ==# 'qf' |
+      \   let b:last_win = winnr('#') |
+      \ endif
+    au WinClosed <buffer> ++nested
+      \ if &ft ==# 'qf' |
+      \   exe b:last_win.'wincmd w' |
+      \ endif
+  aug end
 
   let l:loc_len = len(getloclist(0))
   let b:qf_isLoc = l:loc_len > 0
@@ -122,6 +124,7 @@ fun! qf#ltabsplit()
   exe l.'ll'
 endfun
 
-aug au_quickfix | au!
+aug au_quickfix
+  au!
   au FileType qf call qf#init()
 aug end

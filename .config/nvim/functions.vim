@@ -50,17 +50,17 @@ fun! Menu(cmd, opts)
   endif
   echo ':'.a:cmd
 
-  let ch = nr2char(getchar())
+  let ch = getchar()
   redraw
 
-  if ch ==# nr2char(27) " Escape key
+  if ch == 0 || ch == 27 " Escape key
     return
-  elseif ch ==# nr2char(13) " Enter key
+  elseif ch == 13 " Enter key
     execute a:cmd
-  elseif ch ==# ' '
+  elseif ch == 32 " Space key
     call feedkeys(':'.a:cmd.' ', 'n')
-  elseif has_key(opts, ch)
-    execute a:cmd.' ' . opts[ch]
+  elseif has_key(opts, nr2char(ch))
+    execute a:cmd.' '.opts[nr2char(ch)]
   else
     echohl ErrorMsg
     echomsg 'Option does not exist'

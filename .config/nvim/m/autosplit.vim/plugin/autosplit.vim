@@ -20,5 +20,5 @@ endfun
 
 augroup autosplit
   autocmd!
-  autocmd WinNew * autocmd BufEnter * ++once call s:autocmd()
+  autocmd WinNew * autocmd autosplit BufEnter * ++once call s:autocmd()
 augroup end

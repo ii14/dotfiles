@@ -2,7 +2,7 @@ augroup Term
   autocmd!
   " Disable insert mode after terminal process terminates.
   " 'nomodifiable' doesn't work, but maybe there is a better way to do it?
-  autocmd TermClose * ++nested stopinsert | au TermEnter <buffer> stopinsert
+  autocmd TermClose * ++nested stopinsert | au Term TermEnter <buffer> stopinsert
 augroup end
 
 tnoremap <S-PageUp>   <C-\><C-N><C-B>

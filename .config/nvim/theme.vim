@@ -1,9 +1,17 @@
+set termguicolors
 set background=dark
 
 let g:lightline = {}
 
 let g:onedark_terminal_italics = 1
 colorscheme onedark
+
+" TODO: move to lua
+" lua require 'm.theme.statusline'.init()
+" lua require 'm.theme.bufferline'.init()
+" set showtabline=2
+" finish
+
 let g:lightline.colorscheme = 'onedark'
 
 let g:lightline.active = {
@@ -38,12 +46,6 @@ let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
 fun! LightlineMode()
-  if &ft ==# 'fern'
-    return 'Fern'
-  endif
-  if &bt ==# 'quickfix'
-    return get(b:, 'qf_isLoc', 1) ? 'Location' : 'QuickFix'
-  endif
   return winwidth(0) < 50 ? '' : lightline#mode()
 endfun
 
@@ -51,30 +53,33 @@ fun! LightlineFilename()
   if &ft ==# 'fern'
     " fern internals, can potentially break
     try
-      return (len($HOME) > 1 && match(b:fern.root._path, $HOME) == 0)
-        \ ? '~'.b:fern.root._path[len($HOME):]
-        \ : b:fern.root._path
+      return '[Fern] '.fnamemodify(b:fern.root._path, ':~')
     catch
-      return ''
+      return '[Fern]'
     endtry
   endif
 
   if &bt ==# 'terminal'
-    return '['.expand('%').'] '.b:term_title
+    let fname = substitute(expand('%'), 'term://.*//\(\d*\):\(.*\)', '\1:\2', '')
+    return '['.fname.'] '.b:term_title
   endif
 
   if &ft ==# 'scratch'
-    return 'Scratch'
+    return '[Scratch]'
   endif
 
   if &ft ==# 'dap-repl'
-    return 'Debugger'
+    return '[Debugger]'
+  endif
+
+  if &ft ==# 'Trouble'
+    return '[Trouble]'
   endif
 
   if &bt ==# 'quickfix'
     return get(b:, 'qf_isLoc', 1)
-      \ ? getloclist(0, {'title':1}).title
-      \ : getqflist({'title':1}).title
+      \ ? '[Location] '.getloclist(0, {'title':1}).title
+      \ : '[Quickfix] '.getqflist({'title':1}).title
   endif
 
   let fname = expand('%:t')
@@ -86,15 +91,11 @@ endfun
 
 fun! LightlineFileformat()
   return winwidth(0) > 70
-    \ && &ft !=# 'fern'
-    \ && &bt !=# 'quickfix'
     \ && &ff !=# 'unix' ? &ff : ''
 endfun
 
 fun! LightlineFileencoding()
   return winwidth(0) > 70
-    \ && &ft !=# 'fern'
-    \ && &bt !=# 'quickfix'
     \ && &fenc !=# 'utf-8' ? &fenc : ''
 endfun
 

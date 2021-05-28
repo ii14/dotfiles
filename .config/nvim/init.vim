@@ -1,26 +1,26 @@
-let mapleader      = ' '
-let maplocalleader = ' '
-set textwidth=90
-set termguicolors
-
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
 let $VIMCONFIG = stdpath('config')
+let $VIMPLUGINS = $VIMDATA.'/plugged'
 
-if !has('nvim-0.5.0')
-  let g:disable_lsp = 1
-  let g:disable_dap = 1
-  let g:disable_ts = 1
+if v:progname ==# 'vi'
+  source $VIMCONFIG/minimal.vim
+  finish
 endif
 
 " let g:disable_lsp = 1
 let g:disable_dap = 1
 let g:disable_ts = 1
 
+let mapleader = ' '
 aug Vimrc | au! | aug end
+lua require 'm.global'
+lua require 'm.fold'
+source $VIMCONFIG/functions.vim
+source $VIMCONFIG/term.vim
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
-call plug#begin($VIMDATA.'/plugged')
+  call plug#begin($VIMPLUGINS)
 
   " Editing ------------------------------------------------------------------------------
     Plug 'tpope/vim-surround'
@@ -72,11 +72,12 @@ call plug#begin($VIMDATA.'/plugged')
     Plug 'rbong/vim-flog'
     Plug 'tpope/vim-dispatch'
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html', 'lua']}
-    Plug 'ii14/exrc.vim', {'branch': 'single_command'}
+    Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
+    " Plug 'junegunn/vader.vim'
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -102,14 +103,8 @@ call plug#begin($VIMDATA.'/plugged')
     Plug $VIMCONFIG.'/m/qmake.vim'
     Plug $VIMCONFIG.'/m/autosplit.vim'
 
-call plug#end()
-
-source $VIMCONFIG/functions.vim
-lua require 'm.global'
-
-call PlugCheckMissing()
-
-source $VIMCONFIG/term.vim
+  call plug#end()
+  call PlugCheckMissing()
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   " Theme --------------------------------------------------------------------------------
@@ -119,23 +114,6 @@ source $VIMCONFIG/term.vim
     source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
-    " let g:loaded_compe_buffer = 1
-    " let g:loaded_compe_calc = 1
-    let g:loaded_compe_emoji = 1
-    let g:loaded_compe_luasnip = 1
-    " let g:loaded_compe_nvim_lsp = 1
-    let g:loaded_compe_nvim_lua = 1
-    let g:loaded_compe_omni = 1
-    " let g:loaded_compe_path = 1
-    let g:loaded_compe_snippets_nvim = 1
-    let g:loaded_compe_spell = 1
-    let g:loaded_compe_tags = 1
-    let g:loaded_compe_treesitter = 1
-    " let g:loaded_compe_ultisnips = 1
-    let g:loaded_compe_vim_lsc = 1
-    let g:loaded_compe_vim_lsp = 1
-    let g:loaded_compe_vsnip = 1
-
     let g:compe = {'source': {
       \ 'path': v:true,
       \ 'calc': v:true,
@@ -163,8 +141,8 @@ source $VIMCONFIG/term.vim
         au BufWinEnter * let &l:signcolumn = get(b:, 'lsp_attached', 0) ? 'yes' : 'auto'
       aug end
 
-      " ~/.config/nvim/lua/lsp/init.lua
-      lua require('m.lsp')
+      " ~/.config/nvim/lua/m/lsp/init.lua
+      lua require 'm.lsp'
 
       " nvim-lightbulb
       aug Vimrc
@@ -174,9 +152,9 @@ source $VIMCONFIG/term.vim
 
   " DAP ----------------------------------------------------------------------------------
     if !exists('g:disable_dap')
-      lua require('m.debug')
+      lua require 'm.debug'
       com! -complete=file -nargs=* DebugC
-        \ lua require('m.debug').start_c_debugger({<f-args>}, 'gdb')
+        \ lua require 'm.debug'.start_c_debugger({<f-args>}, 'gdb')
     endif
 
   " Treesitter ---------------------------------------------------------------------------
@@ -198,7 +176,7 @@ source $VIMCONFIG/term.vim
   " exrc.vim -----------------------------------------------------------------------------
     let exrc#names = ['.exrc']
     aug Vimrc
-      au BufWritePost .exrc ++nested Exrc trust
+      au BufWritePost .exrc ++nested ExrcTrust
       au SourcePost .exrc silent Pro!
     aug end
 
@@ -245,6 +223,7 @@ source $VIMCONFIG/term.vim
     set pumblend=10 winblend=10               " pseudo transparency
 
   " Editing ------------------------------------------------------------------------------
+    set textwidth=90
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1                           " keep near lines visible when scrolling
@@ -383,9 +362,10 @@ source $VIMCONFIG/term.vim
     call Cabbrev('vifm', 'Vifm')
     call Cabbrev('hr',   'Hr')
     call Cabbrev('fzf',  'Files')
+    call Cabbrev('vres', 'vert res')
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
-aug Vimrc
+  aug Vimrc
 
   " Return to last edit position ---------------------------------------------------------
     au BufReadPost *
@@ -402,10 +382,6 @@ aug Vimrc
 
   " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber
-
-  " Make autowrite and autocompile SCSS --------------------------------------------------
-    " au QuickFixCmdPre make update
-    " au BufWritePost *.scss silent make
 
   " Open quickfix window on grep ---------------------------------------------------------
     au QuickFixCmdPost  grep call timer_start(10, { -> execute('cwindow') })
@@ -424,10 +400,13 @@ aug Vimrc
       endif
     endfun
 
-  " Fix wrong size on alacritty on i3 ----------------------------------------------------
+  " Workarounds --------------------------------------------------------------------------
+    " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
     au VimEnter * silent exec "!kill -s SIGWINCH $PPID"
+    " Fix user command string highlighting (https://github.com/vim/vim/issues/6587)
+    au Syntax vim syn match vimUsrCmd '^\s*\zs\u\%(\w*\)\@>(\@!'
 
-aug end
+  aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
   " Override defaults --------------------------------------------------------------------
@@ -446,7 +425,7 @@ aug end
     nno gV `[v`]
     vno < <gv
     vno > >gv
-    nno S i<CR><ESC>^mwgk:silent! s/\v +$//<CR>:noh<CR>`w
+    nno S i<CR><ESC>gk:sil! keepp s/\v +$//<CR>:noh<CR>gj^
     nno <C-E> 3<C-E>
     nno <C-Y> 3<C-Y>
     no Q <Nop>
@@ -471,7 +450,7 @@ aug end
       \ 'd': '~/dev',
       \ 'e': '/etc',
       \ 'm': '~/dev/mm',
-      \ 'p': '$VIMDATA/plugged',
+      \ 'p': '$VIMPLUGINS',
       \ 'r': '~/repos',
       \ 'v': '$VIMCONFIG',
       \ }
@@ -479,7 +458,7 @@ aug end
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
-    nno <silent> ', :call Menu('Files', get(g:, 'places', {}))<CR>
+    nno <silent> ', :call Menu('Files', g:places)<CR>
     nno '; :Files<Space>
     nno <leader>h :History<CR>
     nno <leader>b :Buffers<CR>
@@ -572,11 +551,14 @@ aug end
       \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
-    cno <expr> <C-R><C-D> BufDirectory()
     cno <C-J> <Down>
     cno <C-K> <Up>
-    cno <C-,> <C-Left>
-    cno <C-.> <C-Right>
+    cno <C-A> <Home>
+    cno <C-B> <C-Left>
+    cno <expr><C-F> getcmdline() !=# '' ? '<C-Right>' : '<C-F>'
+    cno <expr><C-R><C-D> BufDirectory()
+    cno <C-X><C-A> <C-A>
+    cno <C-R><C-K> <C-K>
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
@@ -621,3 +603,5 @@ aug end
       nno <silent> <leader>dr :lua require'dap'.repl.open()<CR>
       nno <silent> <leader>dl :lua require'dap'.repl.run_last()<CR>
     endif
+
+" vim:tw=90:ts=2:sts=2:sw=2:et:
