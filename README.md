@@ -33,7 +33,7 @@
 - `xcape` (apt)
 - `xclip` (apt)
 - `xdotool` (apt)
-- `xwallpaper` (https://github.com/stoeckmann/xwallpaper)
+- `feh` (apt)
 
 ### Dev
 - `cmake` (https://cmake.org/install/)
