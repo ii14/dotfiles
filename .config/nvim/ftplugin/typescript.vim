@@ -1,0 +1,1 @@
+setl makeprg=make
