@@ -1,0 +1,35 @@
+let mapleader = ' '
+
+set surround
+set commentary
+set highlightedyank
+
+set number relativenumber
+set ignorecase smartcase
+set incsearch
+set scrolloff=1
+
+nno <C-N> gt
+nno <C-P> gT
+
+nno <C-H> <C-W>h
+nno <C-J> <C-W>j
+nno <C-K> <C-W>k
+nno <C-L> <C-W>l
+
+nno <leader>c *Ncgn
+nno <leader>s :%s/
+vno <leader>s :s/
+
+nno S i<CR><ESC>gk:sil! keepp s/\v +$//<CR>:noh<CR>gj^
+
+nmap gR <Action>(RenameElement)
+nmap g] <Action>(GotoSymbol)
+nmap <leader>f <Action>(GotoFile)
+
+nmap ]q <Action>(GotoNextError)
+nmap [q <Action>(GotoPreviousError)
+
+nmap m<CR> <Action>(MakeGradleProject)
+nmap mr <Action>(Run)
+nmap ms <Action>(RunDashboard.Stop)
