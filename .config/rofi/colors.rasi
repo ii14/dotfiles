@@ -28,17 +28,17 @@
     text-font      : "tewi 8";
     text-font-bold : "tewi Bold 8";
 
-    padding-all  : 3px 6px;
-    padding-v    : 3px 0;
+    padding-all  : 2px 6px;
+    padding-v    : 2px 0;
     padding-h    : 0 6px;
     padding-l    : 0 6px 0 0;
     padding-r    : 0 0 0 6px;
-    padding-t    : 3px 0 0 0;
-    padding-b    : 0 0 3px 0;
-    padding-no-l : 3px 6px 3px 0;
-    padding-no-r : 3px 0 3px 6px;
-    padding-no-t : 0 6px 3px 6px;
-    padding-no-b : 3px 6px 0 6px;
+    padding-t    : 2px 0 0 0;
+    padding-b    : 0 0 2px 0;
+    padding-no-l : 2px 6px 2px 0;
+    padding-no-r : 2px 0 2px 6px;
+    padding-no-t : 0 6px 2px 6px;
+    padding-no-b : 2px 6px 0 6px;
 
     background-color : @color-bg;
     text-color       : @color-fg;

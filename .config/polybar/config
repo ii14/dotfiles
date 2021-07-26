@@ -22,7 +22,7 @@ modules-center =
 modules-right = pulseaudio wlan eth battery temperature memory cpu date powermenu
 
 width = 100%
-height = 19
+height = 17
 fixed-center = true
 
 line-size = 1
