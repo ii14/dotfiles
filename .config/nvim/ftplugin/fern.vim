@@ -35,7 +35,7 @@ nmap <buffer><nowait> <C-C> <Plug>(fern-action-cancel)
 nnoremap <buffer><nowait><silent> q :call <SID>fern_close()<CR>
 fun! <SID>fern_close()
   if fern#internal#drawer#is_drawer()
-    q
+    close
   else
     let bufnr = bufnr()
     Bdelete!

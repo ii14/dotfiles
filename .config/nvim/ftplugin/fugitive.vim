@@ -1,3 +1,3 @@
 setl nobuflisted
 setl colorcolumn=
-nnoremap <buffer><nowait><silent> q :q<CR>
+nnoremap <buffer><nowait><silent> q :close<CR>
