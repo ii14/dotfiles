@@ -1,7 +1,8 @@
 #!/bin/sh
 wid=$(xdotool search --class 'cmus')
 if [ -z "$wid" ]; then
-    exec alacritty --class 'Alacritty,cmus' -e cmus
+    directory=$(xdg-user-dir MUSIC) || directory="$HOME"
+    exec alacritty --class 'Alacritty,cmus' --working-directory "$directory" -e cmus
 else
     exec xdotool windowactivate "$wid"
 fi
