@@ -10,12 +10,10 @@ endif
 
 " let g:disable_lsp = 1
 let g:disable_dap = 1
-let g:disable_ts = 1
 
 let mapleader = ' '
 aug Vimrc | au! | aug end
 lua require 'm.global'
-lua require 'm.fold'
 source $VIMCONFIG/functions.vim
 source $VIMCONFIG/term.vim
 
@@ -27,13 +25,13 @@ source $VIMCONFIG/term.vim
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
-    " Plug 'tpope/vim-unimpaired'
     Plug 'wellle/targets.vim'
     Plug 'haya14busa/vim-asterisk'
     Plug 'romainl/vim-cool'
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
     Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
+    Plug 'stefandtw/quickfix-reflector.vim'
 
   " Visual -------------------------------------------------------------------------------
     if has('nvim-0.5.0')
@@ -85,11 +83,6 @@ source $VIMCONFIG/term.vim
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
-    if !exists('g:disable_ts')
-      Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-      Plug 'nvim-treesitter/playground'
-      " Plug 'vigoux/architext.nvim'
-    endif
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
@@ -102,15 +95,13 @@ source $VIMCONFIG/term.vim
     Plug $VIMCONFIG.'/m/qf.vim'
     Plug $VIMCONFIG.'/m/qmake.vim'
     Plug $VIMCONFIG.'/m/autosplit.vim'
+    Plug $VIMCONFIG.'/m/drawer.nvim'
 
   call plug#end()
   call PlugCheckMissing()
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
-  " Theme --------------------------------------------------------------------------------
     source $VIMCONFIG/theme.vim
-
-  " fzf ----------------------------------------------------------------------------------
     source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
@@ -141,7 +132,7 @@ source $VIMCONFIG/term.vim
         au BufWinEnter * let &l:signcolumn = get(b:, 'lsp_attached', 0) ? 'yes' : 'auto'
       aug end
 
-      " ~/.config/nvim/lua/m/lsp/init.lua
+      " $VIMCONFIG/lua/m/lsp/init.lua
       lua require 'm.lsp'
 
       " nvim-lightbulb
@@ -155,15 +146,6 @@ source $VIMCONFIG/term.vim
       lua require 'm.debug'
       com! -complete=file -nargs=* DebugC
         \ lua require 'm.debug'.start_c_debugger({<f-args>}, 'gdb')
-    endif
-
-  " Treesitter ---------------------------------------------------------------------------
-    if !exists('g:disable_ts')
-      lua require'nvim-treesitter.configs'.setup {
-        \ highlight = { enable = true },
-        \ incremental_selection = { enable = true },
-        \ textobjects = { enable = true },
-        \ }
     endif
 
   " Fern ---------------------------------------------------------------------------------
@@ -192,12 +174,6 @@ source $VIMCONFIG/term.vim
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_conceal_code_blocks = 0
     au Vimrc TermOpen * ++nested IndentLinesDisable
-
-    " com! IndentLinesDisable IndentBlanklineDisable
-    " let g:indent_blankline_char = '¦'
-    " let g:indent_blankline_char_highlight = 'Comment'
-    " let g:indent_blankline_show_first_indent_level = v:false
-    " let g:indent_blankline_show_trailing_blankline_indent = v:false
 
   " undotree -----------------------------------------------------------------------------
     let g:undotree_DiffAutoOpen = 0
@@ -262,15 +238,15 @@ source $VIMCONFIG/term.vim
 
   " Grep ---------------------------------------------------------------------------------
     if executable('rg')
-      set grepformat=%f:%l:%m
+      set grepformat=%f:%l:%c:%m
       let &grepprg = 'rg --vimgrep' . (&smartcase ? ' --smart-case' : '')
     elseif executable('ag')
-      set grepformat=%f:%l:%m
+      set grepformat=%f:%l:%c:%m
       let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
     endif
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
-  " See ~/.config/nvim/plugin for more command definitions
+  " See $VIMCONFIG/plugin for more command definitions
 
   " :bd doesn't close window, :bq closes the window --------------------------------------
     if index(g:plugs_order, 'vim-bbye') != -1
@@ -305,13 +281,14 @@ source $VIMCONFIG/term.vim
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       com! LspStopClient lua require 'm.lsp.util'.stop_clients()
-      com! LspAction lua vim.lsp.buf.code_action()
       com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
 
+      " TODO: add proper range handling
+      com! -range=0 LspAction
+        \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_code_action()' : 'code_action()')
       com! -nargs=? LspFind
         \ call luaeval('vim.lsp.buf.workspace_symbol(_A)',
         \ <q-args> is# '' ? v:null : <q-args>)
-
       com! -range=0 LspFormat
         \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
     endif
@@ -413,10 +390,10 @@ source $VIMCONFIG/term.vim
     nno 0 ^
     nno ^ 0
     nno Y y$
-    nno j gj
-    vno j gj
-    nno k gk
-    vno k gk
+    nno <expr> j v:count ? 'j' : 'gj'
+    vno <expr> j v:count ? 'j' : 'gj'
+    nno <expr> k v:count ? 'k' : 'gk'
+    vno <expr> k v:count ? 'k' : 'gk'
     nno gj j
     vno gj j
     nno gk k
@@ -443,22 +420,23 @@ source $VIMCONFIG/term.vim
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
-    let g:places = {
-      \ '.': '.',
-      \ 'V': '$VIMRUNTIME',
-      \ 'c': '~/.config',
-      \ 'd': '~/dev',
-      \ 'e': '/etc',
-      \ 'm': '~/dev/mm',
-      \ 'p': '$VIMPLUGINS',
-      \ 'r': '~/repos',
-      \ 'v': '$VIMCONFIG',
-      \ }
+    let g:bookmarks = [
+      \ ['V', '$VIMRUNTIME'],
+      \ ['e', '/etc'],
+      \ ['p', '$VIMPLUGINS'],
+      \ ['v', '$VIMCONFIG'],
+      \ ['b', '~/.local/bin'],
+      \ ['c', '~/.config'],
+      \ ['r', '~/repos'],
+      \ ['m', '~/dev/mm'],
+      \ ['d', '~/dev'],
+      \ ['.', '.'],
+      \ ]
 
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
-    nno <silent> ', :call Menu('Files', g:places)<CR>
+    nno <silent> ', :call Menu('Files', g:bookmarks)<CR>
     nno '; :Files<Space>
     nno <leader>h :History<CR>
     nno <leader>b :Buffers<CR>
@@ -487,7 +465,6 @@ source $VIMCONFIG/term.vim
     nno <silent> <leader><CR> :let @/ = ''<CR>
 
   " Macros -------------------------------------------------------------------------------
-    no q <Nop>
     no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
     nno <leader>q q
 
@@ -547,8 +524,7 @@ source $VIMCONFIG/term.vim
     nno <leader>on :LineNumbersToggle<CR>
     nno <leader>oc :ColorizerToggle<CR>
     nno <leader>om :MouseToggle<CR>
-    nno <silent> <leader>r :call fzf#run(fzf#wrap(
-      \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
+    nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
     cno <C-J> <Down>
@@ -559,6 +535,18 @@ source $VIMCONFIG/term.vim
     cno <expr><C-R><C-D> BufDirectory()
     cno <C-X><C-A> <C-A>
     cno <C-R><C-K> <C-K>
+
+  " Insert -------------------------------------------------------------------------------
+    ino <C-A> <Home>
+    ino <C-E> <End>
+    ino <C-F> <C-Right>
+    ino <C-B> <C-Left>
+    ino <C-G>o     ()<C-G>U<Left>
+    ino <C-G><C-O> ()<C-G>U<Left>
+    ino <C-G>b     {<CR>}<Esc>O
+    ino <C-G><C-B> {<CR>}<Esc>O
+    ino <C-G>h     ""<C-G>U<Left>
+    ino <C-G><C-H> ""<C-G>U<Left>
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
@@ -576,6 +564,8 @@ source $VIMCONFIG/term.vim
       nno <buffer><silent> g?    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
       nno <buffer><silent> [d    <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
       nno <buffer><silent> ]d    <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+      nno <buffer><silent> [D    <cmd>lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
+      nno <buffer><silent> ]D    <cmd>lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
 
       " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
       " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
