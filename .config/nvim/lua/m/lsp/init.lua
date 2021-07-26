@@ -26,7 +26,7 @@ setup.clangd{
 
 setup.pylsp{
   settings = {
-    pyls = {
+    pylsp = {
       plugins = {
         mccabe = { enabled = false },
         -- pycodestyle = { enabled = false },
