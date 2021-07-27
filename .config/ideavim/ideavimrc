@@ -21,6 +21,7 @@ nno <leader>c *Ncgn
 nno <leader>s :%s/
 vno <leader>s :s/
 
+nno Y y$
 nno S i<CR><ESC>gk:sil! keepp s/\v +$//<CR>:noh<CR>gj^
 
 nmap gR <Action>(RenameElement)
