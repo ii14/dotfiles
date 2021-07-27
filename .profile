@@ -68,9 +68,3 @@ export LESS_TERMCAP_se=$'\e[0m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export GROFF_NO_SGR=1
 export GODOCC_STYLE='dracula'
-
-# [ -f "$HOME/.secrets" ] && . "$HOME/.secrets"
-
-[ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && exec startx
-
-# [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"
