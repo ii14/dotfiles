@@ -33,4 +33,4 @@ nmap [q <Action>(GotoPreviousError)
 
 nmap m<CR> <Action>(MakeGradleProject)
 nmap mr <Action>(Run)
-nmap ms <Action>(RunDashboard.Stop)
+nmap ms <Action>(Stop)
