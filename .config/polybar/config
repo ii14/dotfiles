@@ -38,6 +38,8 @@ tray-padding = 1
 
 cursor-click = pointer
 
+monitor = ${env:MONITOR:}
+
 [bar/bspwm]
 inherit = bar/default
 modules-left = bspwm xwindow
