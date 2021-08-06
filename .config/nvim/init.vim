@@ -380,8 +380,6 @@ source $VIMCONFIG/term.vim
   " Workarounds --------------------------------------------------------------------------
     " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
     au VimEnter * silent exec "!kill -s SIGWINCH $PPID"
-    " Fix user command string highlighting (https://github.com/vim/vim/issues/6587)
-    au Syntax vim syn match vimUsrCmd '^\s*\zs\u\%(\w*\)\@>(\@!'
 
   aug end
 
