@@ -41,8 +41,7 @@ source $VIMCONFIG/term.vim
     endif
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
-    Plug 'Yggdroot/indentLine'
-    " Plug 'lukas-reineke/indent-blankline.nvim', {'branch': 'lua'}
+    Plug 'lukas-reineke/indent-blankline.nvim'
 
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
@@ -156,7 +155,7 @@ source $VIMCONFIG/term.vim
     let g:fern#disable_default_mappings = 1
 
   " exrc.vim -----------------------------------------------------------------------------
-    let exrc#names = ['.exrc']
+    let g:exrc#names = ['.exrc']
     aug Vimrc
       au BufWritePost .exrc ++nested ExrcTrust
       au SourcePost .exrc silent Pro!
@@ -166,14 +165,15 @@ source $VIMCONFIG/term.vim
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
     let g:autosplit_bt = ['help']
 
-  " IndentLine ---------------------------------------------------------------------------
-    let g:indentLine_bufTypeExclude = ['help', 'terminal']
-    let g:indentLine_fileTypeExclude = ['man', 'fern', 'floggraph']
-    let g:indentLine_color_gui = '#4b5263'
-    let g:vim_json_syntax_conceal = 0
-    let g:vim_markdown_conceal = 0
-    let g:vim_markdown_conceal_code_blocks = 0
-    au Vimrc TermOpen * ++nested IndentLinesDisable
+  " indent-blankline ---------------------------------------------------------------------
+    let g:indent_blankline_buftype_exclude = ['help', 'terminal']
+    let g:indent_blankline_filetype_exclude = ['man', 'fern', 'floggraph']
+    let g:indent_blankline_show_first_indent_level = v:false
+    let g:indent_blankline_show_trailing_blankline_indent = v:false
+    let g:indent_blankline_char = '¦'
+    hi IndentBlanklineChar guifg=#4B5263 gui=nocombine
+    hi link IndentBlanklineSpaceChar          IndentBlanklineChar
+    hi link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
 
   " undotree -----------------------------------------------------------------------------
     let g:undotree_DiffAutoOpen = 0
@@ -402,7 +402,7 @@ source $VIMCONFIG/term.vim
     nno gV `[v`]
     vno < <gv
     vno > >gv
-    nno S i<CR><ESC>gk:sil! keepp s/\v +$//<CR>:noh<CR>gj^
+    nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
     nno <C-E> 3<C-E>
     nno <C-Y> 3<C-Y>
     no Q <Nop>
@@ -520,10 +520,11 @@ source $VIMCONFIG/term.vim
 
   " Options ------------------------------------------------------------------------------
     nno <leader>ow :set wrap!<CR>
-    nno <leader>oi :IndentLinesToggle<CR>
+    nno <leader>oi :IndentBlanklineToggle<CR>
     nno <leader>on :LineNumbersToggle<CR>
     nno <leader>oc :ColorizerToggle<CR>
     nno <leader>om :MouseToggle<CR>
+    nno <leader>os :set ignorecase!<CR>
     nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
