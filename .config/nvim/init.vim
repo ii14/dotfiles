@@ -278,6 +278,9 @@ source $VIMCONFIG/term.vim
   " Set option prompt --------------------------------------------------------------------
     com! Makeprg Set makeprg
 
+  " Execute vim script lines -------------------------------------------------------------
+    com! -range -bar Execute execute join(getline(<line1>, <line2>), "\n")
+
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       com! LspStopClient lua require 'm.lsp.util'.stop_clients()
