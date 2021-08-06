@@ -113,6 +113,7 @@ HISTFILE=~/.cache/zsh/history
 
 # Directory stack ------------------------------------------------------------------------
 setopt auto_pushd               # automatically push previous directory to the stack
+setopt pushd_ignore_dups        # ignore duplicates in directory stack
 setopt pushd_minus              # swap + and -
 setopt pushd_silent             # silend pushd and popd
 setopt pushd_to_home            # pushd defaults to $HOME
@@ -160,10 +161,10 @@ bindkey '^[b' backward-char
 bindkey '^[f' forward-char
 
 # Jump between words ------------------------------------------------- [Ctrl+{Left,Right}]
-[[ "${terminfo[kLFT5]}" != "" ]] && bindkey "${terminfo[kLFT5]}" backward-word
-[[ "${terminfo[kRIT5]}" != "" ]] && bindkey "${terminfo[kRIT5]}" forward-word
-# bindkey '\e[1;5D' backward-word
-# bindkey '\e[1;5C' forward-word
+# [[ "${terminfo[kLFT5]}" != "" ]] && bindkey "${terminfo[kLFT5]}" backward-word
+# [[ "${terminfo[kRIT5]}" != "" ]] && bindkey "${terminfo[kRIT5]}" forward-word
+bindkey '\e[1;5D' backward-word
+bindkey '\e[1;5C' forward-word
 
 # Search backward for string ---------------------------------------------------- [Ctrl+R]
 # replaced by fzf
