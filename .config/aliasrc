@@ -3,6 +3,7 @@
 alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
 alias path='echo -e ${PATH//:/\\n}'
 alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME'
+alias d=disown
 
 # FLAGS ----------------------------------------------------------------------------------
 alias cp='cp -iv'
@@ -152,7 +153,7 @@ alias vim-install='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#
 alias vim-update='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugUpdate'
 alias vimclean='vim -u NORC --clean "+syntax off"'
 alias :q='exit'
-alias :e='vim'
+[ -v NVIM_LISTEN_ADDRESS ] && alias :e='nvr' || alias :e='vim'
 
 # GIT ------------------------------------------------------------------------------------
 function g {
@@ -295,3 +296,7 @@ function exl {
             ;;
     esac
 }
+
+if [ "$TERM" = 'xterm-kitty' ]; then
+    alias icat='kitty icat --align=left'
+fi
