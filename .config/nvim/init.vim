@@ -11,6 +11,19 @@ endif
 " let g:disable_lsp = 1
 let g:disable_dap = 1
 
+let g:bookmarks = [
+  \ ['V', '$VIMRUNTIME'],
+  \ ['e', '/etc'],
+  \ ['p', '$VIMPLUGINS'],
+  \ ['v', '$VIMCONFIG'],
+  \ ['b', '~/.local/bin'],
+  \ ['c', '~/.config'],
+  \ ['r', '~/repos'],
+  \ ['m', '~/dev/mm'],
+  \ ['d', '~/dev'],
+  \ ['.', '.'],
+  \ ]
+
 let mapleader = ' '
 aug Vimrc | au! | aug end
 lua require 'm.global'
@@ -60,7 +73,6 @@ source $VIMCONFIG/term.vim
       " Plug 'simrat39/symbols-outline.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
-    " Plug '~/dev/vim/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
     Plug 'Shougo/neco-syntax'
 
@@ -74,7 +86,6 @@ source $VIMCONFIG/term.vim
     if !exists('g:disable_dap')
       Plug 'mfussenegger/nvim-dap'
     endif
-    " Plug 'junegunn/vader.vim'
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -93,8 +104,10 @@ source $VIMCONFIG/term.vim
     Plug $VIMCONFIG.'/m/rc.vim'
     Plug $VIMCONFIG.'/m/qf.vim'
     Plug $VIMCONFIG.'/m/qmake.vim'
-    Plug $VIMCONFIG.'/m/autosplit.vim'
     Plug $VIMCONFIG.'/m/drawer.nvim'
+
+    " Plug '~/dev/vim/bufjump.vim'
+    " nno <C-S> :call bufjump#select()<CR>
 
   call plug#end()
   call PlugCheckMissing()
@@ -112,10 +125,6 @@ source $VIMCONFIG/term.vim
       \ 'ultisnips': v:true,
       \ }}
 
-    ino <silent><expr> <C-Space> compe#complete()
-    ino <silent><expr> <CR>      compe#confirm('<CR>')
-    ino <silent><expr> <C-E>     compe#close('<C-E>')
-
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       let s:compe_lsp = {'source': {
@@ -128,11 +137,14 @@ source $VIMCONFIG/term.vim
       aug Vimrc
         au User LspAttach call compe#setup(s:compe_lsp, 0)
         au User LspAttach call s:init_maps_lsp()
+        au User LspAttach source $VIMCONFIG/lsp.vim
         au BufWinEnter * let &l:signcolumn = get(b:, 'lsp_attached', 0) ? 'yes' : 'auto'
       aug end
 
       " $VIMCONFIG/lua/m/lsp/init.lua
       lua require 'm.lsp'
+
+      com! LspStopClient lua require 'm.lsp.util'.stop_clients()
 
       " nvim-lightbulb
       aug Vimrc
@@ -157,7 +169,7 @@ source $VIMCONFIG/term.vim
   " exrc.vim -----------------------------------------------------------------------------
     let g:exrc#names = ['.exrc']
     aug Vimrc
-      au BufWritePost .exrc ++nested ExrcTrust
+      au BufWritePost .exrc ++nested silent ExrcTrust
       au SourcePost .exrc silent Pro!
     aug end
 
@@ -182,11 +194,12 @@ source $VIMCONFIG/term.vim
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
+    let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
     set number relativenumber                 " line numbers
-    set nowrap
+    set nowrap                                " don't wrap text
     set colorcolumn=+1                        " text width ruler
     set lazyredraw                            " don't redraw while executing macros
     set title titlelen=45                     " set vim window title
@@ -203,11 +216,14 @@ source $VIMCONFIG/term.vim
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1                           " keep near lines visible when scrolling
+    set sidescrolloff=3                       " same but when scrolling horizontally
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
     set linebreak breakindent                 " visual wrap on whitespace, follow indentation
     set diffopt+=iwhite                       " ignore whitespace in diff
     set diffopt+=vertical                     " start diff as a vertical split
+    set nojoinspaces                          " join lines with one space instead of two
+    set gdefault                              " use g flag by default in substitutions
 
   " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces
@@ -275,27 +291,6 @@ source $VIMCONFIG/term.vim
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle let &mouse = (&mouse ==# '' ? 'a' : '')
 
-  " Set option prompt --------------------------------------------------------------------
-    com! Makeprg Set makeprg
-
-  " Execute vim script lines -------------------------------------------------------------
-    com! -range -bar Execute execute join(getline(<line1>, <line2>), "\n")
-
-  " LSP ----------------------------------------------------------------------------------
-    if !exists('g:disable_lsp')
-      com! LspStopClient lua require 'm.lsp.util'.stop_clients()
-      com! LspDiagnostics lua vim.lsp.diagnostic.set_loclist()
-
-      " TODO: add proper range handling
-      com! -range=0 LspAction
-        \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_code_action()' : 'code_action()')
-      com! -nargs=? LspFind
-        \ call luaeval('vim.lsp.buf.workspace_symbol(_A)',
-        \ <q-args> is# '' ? v:null : <q-args>)
-      com! -range=0 LspFormat
-        \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
-    endif
-
   " Redir --------------------------------------------------------------------------------
     com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
     fun! s:Redir(cmd)
@@ -303,7 +298,7 @@ source $VIMCONFIG/term.vim
       put=execute(a:cmd)
       1,2delete
       setl nomodified
-      call autosplit#autopos()
+      call Autosplit()
     endfun
 
   " xdg-open -----------------------------------------------------------------------------
@@ -325,7 +320,7 @@ source $VIMCONFIG/term.vim
       0delete
       setl nomodified
       redraw
-      call autosplit#autopos()
+      call Autosplit()
     endfun
 
   " Grep populates quickfix, so make it silent -------------------------------------------
@@ -392,22 +387,19 @@ source $VIMCONFIG/term.vim
     nno ^ 0
     nno Y y$
     nno <expr> j v:count ? 'j' : 'gj'
-    vno <expr> j v:count ? 'j' : 'gj'
+    xno <expr> j v:count ? 'j' : 'gj'
     nno <expr> k v:count ? 'k' : 'gk'
-    vno <expr> k v:count ? 'k' : 'gk'
-    nno gj j
-    vno gj j
-    nno gk k
-    vno gk k
-    vno . :norm .<CR>
+    xno <expr> k v:count ? 'k' : 'gk'
+    nno <expr> gj v:count ? 'gj' : 'j'
+    xno <expr> gj v:count ? 'gj' : 'j'
+    nno <expr> gk v:count ? 'gk' : 'k'
+    xno <expr> gk v:count ? 'gk' : 'k'
     nno gV `[v`]
-    vno < <gv
-    vno > >gv
+    xno < <gv
+    xno > >gv
     nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
-    nno <C-E> 3<C-E>
-    nno <C-Y> 3<C-Y>
-    no Q <Nop>
     nno q: :
+    no Q <Nop>
 
   " Windows ------------------------------------------------------------------------------
     nno <C-H> <C-W>h
@@ -421,19 +413,6 @@ source $VIMCONFIG/term.vim
     nno <silent> <C-P> :bp<CR>
 
   " Files --------------------------------------------------------------------------------
-    let g:bookmarks = [
-      \ ['V', '$VIMRUNTIME'],
-      \ ['e', '/etc'],
-      \ ['p', '$VIMPLUGINS'],
-      \ ['v', '$VIMCONFIG'],
-      \ ['b', '~/.local/bin'],
-      \ ['c', '~/.config'],
-      \ ['r', '~/repos'],
-      \ ['m', '~/dev/mm'],
-      \ ['d', '~/dev'],
-      \ ['.', '.'],
-      \ ]
-
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
@@ -450,11 +429,11 @@ source $VIMCONFIG/term.vim
     nno <leader>/ :Lines<CR>
     nno <leader>? :BLines<CR>
     nno <leader>s :%s/
-    vno <leader>s :s/
+    xno <leader>s :s/
     nmap <leader>S :%S/
-    vmap <leader>S :S/
+    xmap <leader>S :S/
     nmap <leader>c z*cgn
-    vmap <leader>c z*cgn
+    xmap <leader>c z*cgn
     map *   <Plug>(asterisk-*)
     map g*  <Plug>(asterisk-g*)
     map #   <Plug>(asterisk-#)
@@ -485,30 +464,30 @@ source $VIMCONFIG/term.vim
     nno <silent> ]L :llast<CR>
 
   " Misc ---------------------------------------------------------------------------------
-    vno <leader>t :Tabularize /
-    vno <leader>n :norm!<Space>
+    xno <leader>t :Tabularize /
+    xno <leader>n :norm!<Space>
     nno <leader>v ggVG
 
   " Registers ----------------------------------------------------------------------------
-    vno zp  pgvy
-    vno zgp pgvy`]<Space>
+    xno zp  pgvy
+    xno zgp pgvy`]<Space>
     nno <leader>y  "+y
     nno <leader>Y  "+y$
     nno <leader>p  "+p
     nno <leader>P  "+P
     nno <leader>gp "+gp
     nno <leader>gP "+gP
-    vno <leader>y  "+y
-    vno <leader>p  "+p
-    vno <leader>P  "+P
-    vno <leader>gp "+gp
-    vno <leader>gP "+gP
+    xno <leader>y  "+y
+    xno <leader>p  "+p
+    xno <leader>P  "+P
+    xno <leader>gp "+gp
+    xno <leader>gP "+gP
 
   " Make ---------------------------------------------------------------------------------
     nno m<CR>    :up<CR>:Make<CR>
     nno m<Space> :up<CR>:Make<Space>
     nno m!       :up<CR>:Make!<CR>
-    nno m=       :Makeprg<CR>
+    nno m=       :Set makeprg<CR>
 
   " Git ----------------------------------------------------------------------------------
     nno <leader>gs :Git<CR>
@@ -534,21 +513,28 @@ source $VIMCONFIG/term.vim
     cno <C-A> <Home>
     cno <C-B> <C-Left>
     cno <expr><C-F> getcmdline() !=# '' ? '<C-Right>' : '<C-F>'
-    cno <expr><C-R><C-D> BufDirectory()
+    cno <C-R><C-D> <C-R>=BufDirectory()<CR>
     cno <C-X><C-A> <C-A>
     cno <C-R><C-K> <C-K>
 
   " Insert -------------------------------------------------------------------------------
+    " Emacs
     ino <C-A> <Home>
     ino <C-E> <End>
-    ino <C-F> <C-Right>
-    ino <C-B> <C-Left>
+    " TODO: shift/ctrl left/right suck, reimplement to work just like on the commandline
+    ino <C-B> <S-Left>
+    ino <C-F> <S-Right>
+
+    " Completion
+    ino <silent><expr> <C-Space> compe#complete()
+    ino <silent><expr> <CR>      compe#confirm('<CR>')
+    ino <silent><expr> <C-E>     compe#close('<End>')
+
+    " Snippets
     ino <C-G>o     ()<C-G>U<Left>
     ino <C-G><C-O> ()<C-G>U<Left>
     ino <C-G>b     {<CR>}<Esc>O
     ino <C-G><C-B> {<CR>}<Esc>O
-    ino <C-G>h     ""<C-G>U<Left>
-    ino <C-G><C-H> ""<C-G>U<Left>
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
@@ -571,13 +557,13 @@ source $VIMCONFIG/term.vim
 
       " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
       " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
-      " vno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
-      " vno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
+      " xno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
+      " xno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
       nno <buffer><silent> <leader>lS :LspStopClient<CR>
       nno <buffer><silent> <leader>ls :LspFind<CR>
       nno <buffer><silent> <leader>lf :LspFormat<CR>
-      vno <buffer><silent> <leader>lf :LspFormat<CR>
+      xno <buffer><silent> <leader>lf :LspFormat<CR>
       nno <buffer><silent> <leader>la :LspAction<CR>
       " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
     endfun

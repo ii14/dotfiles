@@ -7,8 +7,11 @@ let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ }
 
+" let g:fzf_layout = {
+"   \ 'window': {'width': 0.9, 'height': 0.8, 'border': 'sharp'},
+"   \ }
 let g:fzf_layout = {
-  \ 'window': {'width': 0.9, 'height': 0.8, 'border': 'sharp'},
+  \ 'window': {'width': 1, 'height': 0.4, 'yoffset': 1, 'border': 'none'}
   \ }
 
 let g:fzf_colors = {

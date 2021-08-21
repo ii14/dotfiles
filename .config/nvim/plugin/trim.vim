@@ -44,7 +44,7 @@ endfun
 fun! s:Completion(ArgLead, CmdLine, CursorPos)
   return filter(
     \ ['auto', 'enable', 'disable'],
-    \ 'v:val =~ ''\V\^''.a:ArgLead')
+    \ 'stridx(v:val, a:ArgLead) == 0')
 endfun
 
 fun! s:Trim()
