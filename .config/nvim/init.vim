@@ -101,9 +101,7 @@ source $VIMCONFIG/term.vim
     Plug 'tweekmonster/startuptime.vim'
 
   " Custom -------------------------------------------------------------------------------
-    Plug $VIMCONFIG.'/m/rc.vim'
     Plug $VIMCONFIG.'/m/qf.vim'
-    Plug $VIMCONFIG.'/m/qmake.vim'
     Plug $VIMCONFIG.'/m/drawer.nvim'
 
     " Plug '~/dev/vim/bufjump.vim'
