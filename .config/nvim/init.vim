@@ -9,7 +9,6 @@ if v:progname ==# 'vi'
 endif
 
 " let g:disable_lsp = 1
-let g:disable_dap = 1
 
 let g:bookmarks = [
   \ ['V', '$VIMRUNTIME'],
@@ -47,11 +46,7 @@ source $VIMCONFIG/term.vim
     Plug 'stefandtw/quickfix-reflector.vim'
 
   " Visual -------------------------------------------------------------------------------
-    if has('nvim-0.5.0')
-      Plug 'ii14/onedark.nvim'
-    else
-      Plug 'joshdick/onedark.vim'
-    endif
+    Plug 'ii14/onedark.nvim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'lukas-reineke/indent-blankline.nvim'
@@ -69,8 +64,6 @@ source $VIMCONFIG/term.vim
       Plug 'folke/trouble.nvim'
       Plug 'kosayoda/nvim-lightbulb'
       Plug 'ray-x/lsp_signature.nvim'
-      " Plug 'gfanto/fzf-lsp.nvim'
-      " Plug 'simrat39/symbols-outline.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
@@ -83,9 +76,6 @@ source $VIMCONFIG/term.vim
     Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html', 'lua']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
-    if !exists('g:disable_dap')
-      Plug 'mfussenegger/nvim-dap'
-    endif
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -103,6 +93,7 @@ source $VIMCONFIG/term.vim
   " Custom -------------------------------------------------------------------------------
     Plug $VIMCONFIG.'/m/qf.vim'
     Plug $VIMCONFIG.'/m/drawer.nvim'
+    Plug $VIMCONFIG.'/m/termdebug'
 
     " Plug '~/dev/vim/bufjump.vim'
     " nno <C-S> :call bufjump#select()<CR>
@@ -150,13 +141,6 @@ source $VIMCONFIG/term.vim
       aug end
     endif
 
-  " DAP ----------------------------------------------------------------------------------
-    if !exists('g:disable_dap')
-      lua require 'm.debug'
-      com! -complete=file -nargs=* DebugC
-        \ lua require 'm.debug'.start_c_debugger({<f-args>}, 'gdb')
-    endif
-
   " Fern ---------------------------------------------------------------------------------
     let g:loaded_netrw             = 1 " disable netrw
     let g:loaded_netrwPlugin       = 1
@@ -194,6 +178,9 @@ source $VIMCONFIG/term.vim
     let g:vimwiki_key_mappings = {'global': 0}
     let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
+  " termdebug ----------------------------------------------------------------------------
+    let g:termdebug_wide = 1
+
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
     set number relativenumber                 " line numbers
@@ -207,14 +194,13 @@ source $VIMCONFIG/term.vim
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=1000                        " highlight only the first 1000 columns
-    set pumblend=10 winblend=10               " pseudo transparency
+    set pumblend=13 winblend=13               " pseudo transparency
 
   " Editing ------------------------------------------------------------------------------
     set textwidth=90
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
-    set scrolloff=1                           " keep near lines visible when scrolling
-    set sidescrolloff=3                       " same but when scrolling horizontally
+    set scrolloff=1 sidescrolloff=3           " keep near lines visible when scrolling
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
     set linebreak breakindent                 " visual wrap on whitespace, follow indentation
@@ -225,7 +211,7 @@ source $VIMCONFIG/term.vim
 
   " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces
-    set shiftwidth=4 tabstop=4 softtabstop=4  " tab width
+    set shiftwidth=4 softtabstop=4 tabstop=8  " tab width
     set shiftround                            " follow tab grid
     set smartindent                           " smarter auto indentation
     set foldlevel=999                         " unfold everything by default
@@ -347,14 +333,14 @@ source $VIMCONFIG/term.vim
       \ endif
 
   " Cursor line highlighting -------------------------------------------------------------
-    au VimEnter,WinEnter,BufWinEnter,TermLeave * setl cursorline
-    au WinLeave,TermEnter * setl nocursorline
+    au VimEnter,WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl cursorline | endif
+    au WinLeave,TermEnter * if &bt !=# 'terminal' | setl nocursorline | endif
 
   " Highlight yanked text ----------------------------------------------------------------
     au TextYankPost * silent! lua vim.highlight.on_yank()
 
   " Terminal -----------------------------------------------------------------------------
-    au TermOpen * setl nonumber norelativenumber
+    au TermOpen * setl nonumber norelativenumber nocursorline
 
   " Open quickfix window on grep ---------------------------------------------------------
     au QuickFixCmdPost  grep call timer_start(10, { -> execute('cwindow') })
@@ -566,18 +552,5 @@ source $VIMCONFIG/term.vim
       " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
     endfun
     nno <silent> <leader>ld :LspTroubleToggle<CR>
-
-  " DAP ----------------------------------------------------------------------------------
-    if !exists('g:disable_dap')
-      nno <leader>d<Space>    :DebugC<Space>
-      nno <leader>d<CR>       :DebugC<CR>
-      nno <silent> <leader>dc :lua require'dap'.continue()<CR>
-      nno <silent> <leader>dn :lua require'dap'.step_over()<CR>
-      nno <silent> <leader>di :lua require'dap'.step_into()<CR>
-      nno <silent> <leader>do :lua require'dap'.step_out()<CR>
-      nno <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>
-      nno <silent> <leader>dr :lua require'dap'.repl.open()<CR>
-      nno <silent> <leader>dl :lua require'dap'.repl.run_last()<CR>
-    endif
 
 " vim:tw=90:ts=2:sts=2:sw=2:et:

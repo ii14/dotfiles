@@ -59,17 +59,12 @@ fun! LightlineFilename()
     endtry
   endif
 
+  if &ft ==# 'termdebug'
+    return '[GDB]'
+  endif
+
   if &bt ==# 'terminal'
-    let fname = substitute(expand('%'), 'term://.*//\(\d*\):\(.*\)', '\1:\2', '')
-    return '['.fname.'] '.b:term_title
-  endif
-
-  if &ft ==# 'scratch'
-    return '[Scratch]'
-  endif
-
-  if &ft ==# 'dap-repl'
-    return '[Debugger]'
+    return '[term:'.b:terminal_job_pid.'] '.b:term_title
   endif
 
   if &ft ==# 'Trouble'
@@ -84,9 +79,9 @@ fun! LightlineFilename()
 
   let fname = expand('%:t')
   return
-    \ (&ro ? ' ' : '') .
+    \ (&ro ? '[-] ' : '') .
     \ (fname ==# '' ? '[No Name]' : fname) .
-    \ (&mod ? ' +' : '')
+    \ (&mod ? ' [+]' : '')
 endfun
 
 fun! LightlineFileformat()
