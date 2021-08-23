@@ -248,12 +248,12 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/).pyc'
 zstyle ':completion:*:*:*:users' ignored-patterns \
-    _apt avahi avahi-autoipd backup bin colord cups-pk-helper daemon \
-    dnsmasq games geoclue gnats hplip irc kernoops libvirt-dnsmasq \
-    libvirt-qemu lightdm list lp mail man messagebus mosquitto mpd \
-    news nobody postgres proxy pulse rtkit saned sddm sshd sync sys \
-    syslog systemd-network systemd-resolve timidity usbmux uucp uuidd \
-    whoopsie www-data
+    _apt _rpc avahi avahi-autoipd backup bin colord cups-pk-helper daemon dnsmasq \
+    games geoclue gitlab-runner gnats hplip irc jicofo jvb kernoops libvirt-dnsmasq \
+    libvirt-qemu lightdm list lp mail man messagebus mosquitto mpd news nobody postgres \
+    prosody proxy pulse rtkit saned sddm sshd sync sys syslog systemd-coredump \
+    systemd-network systemd-resolve systemd-timesync tcpdump timidity tss turnserver \
+    usbmux uucp uuidd whoopsie www-data
 
 if [ -r $HOME/.ssh/known_hosts ]; then
     _ssh_hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*})
