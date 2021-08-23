@@ -3,12 +3,17 @@ let $VIMCACHE = stdpath('cache')
 let $VIMCONFIG = stdpath('config')
 let $VIMPLUGINS = $VIMDATA.'/plugged'
 
-if v:progname ==# 'vi'
+let mapleader = ' '
+aug Vimrc | au! | aug end
+
+if index(['vi', 'view'], v:progname) != -1
   source $VIMCONFIG/minimal.vim
   finish
 endif
 
-" let g:disable_lsp = 1
+lua require 'm.global'
+source $VIMCONFIG/functions.vim
+source $VIMCONFIG/term.vim
 
 let g:bookmarks = [
   \ ['V', '$VIMRUNTIME'],
@@ -22,12 +27,6 @@ let g:bookmarks = [
   \ ['d', '~/dev'],
   \ ['.', '.'],
   \ ]
-
-let mapleader = ' '
-aug Vimrc | au! | aug end
-lua require 'm.global'
-source $VIMCONFIG/functions.vim
-source $VIMCONFIG/term.vim
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
   call plug#begin($VIMPLUGINS)
@@ -515,9 +514,9 @@ source $VIMCONFIG/term.vim
     ino <C-F> <S-Right>
 
     " Completion
-    ino <silent><expr> <C-Space> compe#complete()
-    ino <silent><expr> <CR>      compe#confirm('<CR>')
-    ino <silent><expr> <C-E>     compe#close('<End>')
+    ino <silent><expr> <C-X><C-X> compe#complete()
+    ino <silent><expr> <CR>       compe#confirm('<CR>')
+    ino <silent><expr> <C-E>      compe#close('<End>')
 
     " Snippets
     ino <C-G>o     ()<C-G>U<Left>
