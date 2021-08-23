@@ -20,8 +20,7 @@ function M.getterm(id)
     vim.api.nvim_buf_set_keymap(0, 't', '<F4>', [[<cmd>lua require"drawer".term(4)<CR>]], { silent = true })
     vim.api.nvim_buf_set_keymap(0, 't', '<F5>', [[<cmd>lua require"drawer".qf()<CR>]], { silent = true })
 
-    vim.cmd('stopinsert')
-    vim.schedule(function() vim.cmd('startinsert') end)
+    vim.cmd('startinsert')
     return 0
   end
 
@@ -31,8 +30,7 @@ function M.getterm(id)
   end
 
   vim.cmd(bufnr..'b')
-  vim.cmd('stopinsert')
-  vim.schedule(function() vim.cmd('startinsert') end)
+  vim.cmd('startinsert')
   return 1
 end
 

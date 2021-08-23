@@ -181,6 +181,9 @@ source $VIMCONFIG/term.vim
   " termdebug ----------------------------------------------------------------------------
     let g:termdebug_wide = 1
 
+  " quickfix-reflector.vim ---------------------------------------------------------------
+    let g:qf_modifiable = 0
+
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
     set number relativenumber                 " line numbers
@@ -343,11 +346,13 @@ source $VIMCONFIG/term.vim
     au TermOpen * setl nonumber norelativenumber nocursorline
 
   " Open quickfix window on grep ---------------------------------------------------------
-    au QuickFixCmdPost  grep call timer_start(10, { -> execute('cwindow') })
-    au QuickFixCmdPost lgrep call timer_start(10, { -> execute('lwindow') })
+    au QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
+      \ call timer_start(10, { -> execute('cwindow') })
+    au QuickFixCmdPost lgrep,lgrepadd,lvimgrep,lhelpgrep
+      \ call timer_start(10, { -> execute('lwindow') })
 
   " Auto close quickfix, if it's the last buffer -----------------------------------------
-    au WinEnter * if winnr('$') == 1 && &bt ==# 'quickfix' | q | endif
+    au WinEnter * if winnr('$') == 1 && &bt ==# 'quickfix' | q! | endif
 
   " Open directories in fern -------------------------------------------------------------
     au BufEnter * ++nested call s:fern_hijack_directory()
