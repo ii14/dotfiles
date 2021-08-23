@@ -32,7 +32,7 @@ let g:bookmarks = [
   call plug#begin($VIMPLUGINS)
 
   " Editing ------------------------------------------------------------------------------
-    Plug 'tpope/vim-surround'
+    Plug 'ii14/vim-surround'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
