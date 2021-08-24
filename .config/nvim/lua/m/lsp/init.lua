@@ -4,11 +4,16 @@ local setup = util.setup
 -- local root_pattern = lspconfig.util.root_pattern
 require 'm.lsp.callbacks'
 
-require 'lsp_signature'.setup({
+require 'lsp_signature'.setup{
   bind = true,
+  max_width = 80,
+  max_height = 12,
+  hint_enable = false,
   hint_prefix = '',
   handler_opts = { border = 'none' },
-})
+  toggle_key = '<C-K>',
+  doc_lines = 2,
+}
 
 setup.clangd{
   cmd = {"clangd", "--background-index"},

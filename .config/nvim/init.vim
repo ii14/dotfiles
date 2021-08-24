@@ -530,10 +530,9 @@ let g:bookmarks = [
       nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
       nno <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
       nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-      ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
+      " ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
       nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
       nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
-      " nno <buffer><silent> g]    <cmd>LspTroubleOpen lsp_references<CR>
       nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
       nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
       nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>

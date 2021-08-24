@@ -37,24 +37,26 @@ end
 -- don't switch back from quickfix to previous window
 callbacks['textDocument/references'] = function(_, _, result)
   if not result or vim.tbl_isempty(result) then
-    print('LSP: No location found')
+    print('LSP: No references found')
     return nil
   end
   set_qflist(util.locations_to_items(result))
   vim.cmd('copen')
 end
 
-local symbol_callback = function(_, _, result, _, bufnr)
-  if not result or vim.tbl_isempty(result) then
-    print('LSP: No symbol found')
-    return nil
+local symbol_callback = function(entity)
+  return function(_, _, result, _, bufnr)
+    if not result or vim.tbl_isempty(result) then
+      print('LSP: No '..entity..' found')
+      return nil
+    end
+    set_qflist(util.symbols_to_items(result, bufnr))
+    vim.cmd('copen')
   end
-  set_qflist(util.symbols_to_items(result, bufnr))
-  vim.cmd('copen')
 end
 
-callbacks['textDocument/documentSymbol'] = symbol_callback
-callbacks['workspace/symbol']            = symbol_callback
+callbacks['textDocument/documentSymbol'] = symbol_callback('document symbols')
+callbacks['workspace/symbol']            = symbol_callback('symbols')
 
 local location_callback = function(_, _, result)
   if result == nil or vim.tbl_isempty(result) then

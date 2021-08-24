@@ -59,8 +59,6 @@ local on_attach = vim.schedule_wrap(function(client, bufnr)
 
   vim.g.lsp_event = { bufnr = bufnr }
   vim.cmd('doautocmd User LspAttach')
-
-  require 'lsp_signature'.on_attach(client, bufnr)
 end)
 
 M.stop_clients = function()
