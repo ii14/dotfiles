@@ -513,23 +513,28 @@ let g:bookmarks = [
     ino <C-B> <S-Left>
     ino <C-F> <S-Right>
 
+    " Snippets
+    imap <C-G>o     ()<C-G>U<Left>
+    imap <C-G><C-O> ()<C-G>U<Left>
+    imap <C-G>b     {<CR>}<Esc>O
+    imap <C-G><C-B> {<CR>}<Esc>O
+
     " Completion
     ino <silent><expr> <C-X><C-X> compe#complete()
     ino <silent><expr> <CR>       compe#confirm('<CR>')
     ino <silent><expr> <C-E>      compe#close('<End>')
 
-    " Snippets
-    ino <C-G>o     ()<C-G>U<Left>
-    ino <C-G><C-O> ()<C-G>U<Left>
-    ino <C-G>b     {<CR>}<Esc>O
-    ino <C-G><C-B> {<CR>}<Esc>O
-
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
+      " close completion on '({' and let lsp_signature take over:
+      ino <silent> ( <cmd>lua require 'compe'._close()<CR>(
+      ino <silent> { <cmd>lua require 'compe'._close()<CR>{
+
       nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
       nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
       nno <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
       nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+      " handled by lsp_signature:
       " ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
       nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
       nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
@@ -541,11 +546,6 @@ let g:bookmarks = [
       nno <buffer><silent> ]d    <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
       nno <buffer><silent> [D    <cmd>lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
       nno <buffer><silent> ]D    <cmd>lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
-
-      " nno <buffer><silent> gww   <cmd>lua vim.lsp.buf.formatting()<CR>
-      " nno <buffer><silent> gqq   <cmd>lua vim.lsp.buf.formatting()<CR>
-      " xno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
-      " xno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
       nno <buffer><silent> <leader>lS :LspStopClient<CR>
       nno <buffer><silent> <leader>ls :LspFind<CR>

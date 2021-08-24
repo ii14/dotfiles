@@ -4,17 +4,6 @@ local setup = util.setup
 -- local root_pattern = lspconfig.util.root_pattern
 require 'm.lsp.callbacks'
 
-require 'lsp_signature'.setup{
-  bind = true,
-  max_width = 80,
-  max_height = 12,
-  hint_enable = false,
-  hint_prefix = '',
-  handler_opts = { border = 'none' },
-  toggle_key = '<C-K>',
-  doc_lines = 2,
-}
-
 setup.clangd{
   cmd = {"clangd", "--background-index"},
   on_attach = function()
@@ -97,7 +86,7 @@ setup.zls{
 --   root_dir = root_pattern("settings.gradle.kts"),
 -- }
 
-require('trouble').setup{
+require 'trouble'.setup{
   icons = false,
   fold_open = "v",
   fold_closed = ">",
@@ -110,7 +99,13 @@ require('trouble').setup{
   },
 }
 
--- require('symbols-outline').setup{
---   highlight_hovered_item = false,
---   show_guides = true,
--- }
+require 'lsp_signature'.setup{
+  bind = true,
+  max_width = 80,
+  max_height = 12,
+  hint_enable = false,
+  hint_prefix = '',
+  handler_opts = { border = 'none' },
+  toggle_key = '<C-K>',
+  doc_lines = 2,
+}
