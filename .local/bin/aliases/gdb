@@ -1,0 +1,8 @@
+#!/bin/sh
+bin="$(get-alias gdb)" || exit 127
+config="${XDG_CONFIG_HOME:-$HOME/.config}/gdb/init"
+if [ -f "$config" ]; then
+    exec "$bin" -quiet -nh -x "$config" "$@"
+else
+    exec "$bin" -quiet -nh "$@"
+fi

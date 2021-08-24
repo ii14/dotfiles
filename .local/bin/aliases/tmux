@@ -1,0 +1,8 @@
+#!/bin/sh
+bin="$(get-alias tmux)" || exit 127
+config="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/tmux.conf"
+if [ -f "$config" ]; then
+    exec "$bin" -f "$config" "$@"
+else
+    exec "$bin" "$@"
+fi

@@ -1,0 +1,10 @@
+#!/bin/sh
+die() { echo "$@" 1>&2; exit 127; }
+[ -z "$1" ] && die "get-alias: usage: get-alias <progname>"
+path="$(dirname "$(realpath "$0")")"
+[ -z "$path" ] && die "get-alias: could not get script path"
+PATH="$(echo "$PATH" | tr ":" "\n" | grep -Fxv "$path" | paste -sd:)"
+bin="$(which "$1")" || die "get-alias: could not find '$1' command"
+[ -z "$bin" ] && die "get-alias: could not find '$1' command"
+echo "$bin"
+exit 0

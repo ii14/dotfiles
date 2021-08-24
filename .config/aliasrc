@@ -17,7 +17,6 @@ alias cal='ncal -b3'
 alias bc='bc -q'
 alias mount='mount -v'
 alias umount='umount -v'
-alias wget='wget --hsts-file ~/.cache/wget-hsts'
 alias zathura='zathura --fork'
 
 # CD -------------------------------------------------------------------------------------
@@ -115,7 +114,6 @@ alias g++='g++ -Wall -Wextra -Wshadow'
 alias gcc='gcc -Wall -Wextra -Wshadow -pedantic'
 alias clang++='clang++ -Wall -Wextra -Wpedantic'
 alias clang='clang -Wall -Wextra -Wpedantic'
-alias gdb='gdb -quiet'
 alias demangle='c++filt -t'
 
 function objd {

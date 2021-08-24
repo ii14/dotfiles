@@ -9,6 +9,8 @@ export XDG_DATA_HOME="$HOME/.local/share"
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
+[ -d "$HOME/.local/bin/aliases" ] && PATH="$HOME/.local/bin/aliases:$PATH"
+
 PathAppend() { [ -d "$1" ] && PATH="$PATH:$1"; }
 PathAppend "/usr/local/go/bin"
 PathAppend "$XDG_DATA_HOME/go/bin"

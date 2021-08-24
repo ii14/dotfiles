@@ -1,0 +1,3 @@
+#!/bin/sh
+bin="$(get-alias wget)" || exit 127
+exec "$bin" --hsts-file "${XDG_CACHE_HOME:-$HOME/.cache}/wget-hsts"
