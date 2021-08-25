@@ -2,16 +2,17 @@ adom
 alsamixer
 bash
 bc
-cmus                ~/.local/bin/X11/launch-cmus
+cmus                launch-cmus
 dash
 fish
 htop
 irb
-man                 ~/.local/bin/X11/rofi-man
+man                 rofi-man
 matterhorn
+newsboat
 node
 nvim
-polybar             ~/.local/bin/X11/launch-polybar
+polybar             launch-polybar
 pulsemixer
 python
 python2

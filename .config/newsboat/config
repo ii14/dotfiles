@@ -1,0 +1,44 @@
+auto-reload yes
+reload-time 30
+
+bind-key j down
+bind-key k up
+bind-key j next articlelist
+bind-key k prev articlelist
+bind-key J next-feed articlelist
+bind-key K prev-feed articlelist
+bind-key G end
+bind-key g home
+bind-key d pagedown
+bind-key u pageup
+bind-key l open
+bind-key h quit
+bind-key a toggle-article-read
+bind-key n next-unread
+bind-key N prev-unread
+bind-key D pb-download
+bind-key U show-urls
+bind-key x pb-delete
+
+text-width 80
+datetime-format "%Y-%m-%d %R"
+
+color listnormal        default default
+color listnormal_unread green default bold
+color listfocus         white black
+color listfocus_unread  white black bold
+color info green default
+color article default default
+
+highlight all "---.*---" yellow
+highlight feedlist ".*(0/0))" black
+highlight article "(^Feed:.*|^Author:.*|^Link:.*|^Links:.*|^Date:.*)" white default
+highlight article "(^Title:.*)" white default bold
+highlight article "https?://[^ ]+" blue default underline
+highlight article "^(Title):.*$" blue default
+highlight article "\\[[0-9][0-9]*\\]" yellow default
+highlight article "\\[image\\ [0-9]+\\]" yellow default
+highlight article "\\[embedded flash: [0-9][0-9]*\\]" yellow default
+highlight article ":.*\\(link\\)$" yellow default
+highlight article ":.*\\(image\\)$" yellow default
+highlight article ":.*\\(embedded flash\\)$" yellow default
