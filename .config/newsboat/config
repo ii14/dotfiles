@@ -20,7 +20,7 @@ bind-key D pb-download
 bind-key U show-urls
 bind-key x pb-delete
 
-text-width 80
+text-width 100
 datetime-format "%Y-%m-%d %R"
 
 color listnormal        default default
