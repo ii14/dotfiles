@@ -121,7 +121,8 @@ function objd {
         echo 'usage: objd <file>' >&2
         return 1
     fi
-    objdump -drwC --no-show-raw-insn -M intel "$1" | vim - -c 'setf asm | set nomodified'
+    objdump -drwC -M intel "$1" | vim - -c 'setf asm | set nomodified'
+    # objdump -drwC --no-show-raw-insn -M intel "$1" | vim - -c 'setf asm | set nomodified'
     # objdump -drwC --no-show-raw-insn -M intel "$1" | bat -l asm
 }
 
