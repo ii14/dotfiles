@@ -1,8 +1,8 @@
-local M = {}
+local Qf = {}
 
-function M.qf()
+function Qf.qf()
   local winid = (function()
-    local tabnr = vim.fn.tabpagenr()
+    local tabnr = vim.api.nvim_get_current_tabpage()
     for _, win in ipairs(vim.fn.getwininfo()) do
       if win.tabnr == tabnr and win.quickfix == 1 and win.loclist == 0 then
         return win.winid
@@ -19,4 +19,4 @@ function M.qf()
   end
 end
 
-return M
+return Qf

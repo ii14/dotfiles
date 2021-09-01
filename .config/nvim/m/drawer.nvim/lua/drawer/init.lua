@@ -1,9 +1,17 @@
-local M = {}
+local Drawer = {}
+
+local POSITIONS = {
+  h = 'H', H = 'H',
+  j = 'J', J = 'J',
+  k = 'K', K = 'K',
+  l = 'L', L = 'L',
+}
 
 local height = 12
+local position = 'J'
 
 local function findwin()
-  local tabnr = vim.fn.tabpagenr()
+  local tabnr = vim.api.nvim_get_current_tabpage()
   for _, win in ipairs(vim.fn.getwininfo()) do
     if win.tabnr == tabnr and win.variables.drawer ~= nil then
       return win.winid
@@ -12,18 +20,20 @@ local function findwin()
   return 0
 end
 
-function M.setupwin()
-  vim.cmd('wincmd J')
-  vim.api.nvim_win_set_height(0, height)
+function Drawer.setupwin()
+  vim.cmd('wincmd '..position)
+  if position == 'J' or position == 'K' then
+    vim.api.nvim_win_set_height(0, height)
+  end
   vim.cmd('setl winfixheight')
   vim.api.nvim_win_set_var(0, 'drawer', true)
 end
 
-function M.getwin()
+function Drawer.getwin()
   local winid = findwin()
   if winid == 0 then
     vim.cmd('vsplit')
-    M.setupwin()
+    Drawer.setupwin()
     return 0
   elseif winid ~= vim.api.nvim_get_current_win() then
     vim.api.nvim_set_current_win(winid)
@@ -33,35 +43,51 @@ function M.getwin()
   end
 end
 
-function M.resize(h)
+function Drawer.resize(h)
   height = h
+  if position == 'J' or position == 'K' then
+    local winid = findwin()
+    if winid ~= 0 then
+      vim.api.nvim_win_set_height(winid, height)
+    end
+  end
+end
+
+function Drawer.move(pos)
+  if POSITIONS[pos] == nil then return end
+  position = POSITIONS[pos]
   local winid = findwin()
-  if winid ~= 0 then
+  if winid == 0 then return end
+  local win = vim.fn.win_id2win(winid)
+  if win == 0 then return end
+  vim.cmd(win..'wincmd '..position)
+  if position == 'J' or position == 'K' then
     vim.api.nvim_win_set_height(winid, height)
   end
 end
 
-function M._bufwinenter()
+function Drawer._bufwinenter()
   local bufnr = vim.api.nvim_get_current_buf()
-  if vim.fn.getbufvar(bufnr, '&buftype') == 'quickfix' then
+  local buftype = vim.api.nvim_buf_get_option(bufnr, 'buftype')
+  if buftype == 'quickfix' then
     -- close other drawer windows
-    local tabnr = vim.fn.tabpagenr()
+    local tabnr = vim.api.nvim_get_current_tabpage()
     local winid = vim.api.nvim_get_current_win()
     for _, win in ipairs(vim.fn.getwininfo()) do
       if win.tabnr == tabnr and win.winid ~= winid and win.variables.drawer ~= nil then
         vim.api.nvim_win_close(win.winid, false)
       end
     end
-    M.setupwin()
+    Drawer.setupwin()
   end
 end
 
-function M.term(id)
-  require'drawer.term'.term(id)
+function Drawer.term(id)
+  require 'drawer.term'.term(id)
 end
 
-function M.qf()
-  require'drawer.qf'.qf()
+function Drawer.qf()
+  require 'drawer.qf'.qf()
 end
 
-return M
+return Drawer

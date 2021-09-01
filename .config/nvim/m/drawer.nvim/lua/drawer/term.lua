@@ -1,10 +1,14 @@
-local drawer = require 'drawer'
+local Drawer = require 'drawer'
 
-local M = {}
+local Term = {}
 
 local terms = {}
 
-function M.getterm(id)
+local function tmap(lhs, rhs)
+  vim.api.nvim_buf_set_keymap(0, 't', lhs, rhs, { silent = true })
+end
+
+function Term.getterm(id)
   if terms[id] == nil then
     vim.cmd('enew')
     local title = 'Term '..id
@@ -14,11 +18,11 @@ function M.getterm(id)
     vim.cmd('setl nobuflisted signcolumn=no')
     terms[id] = vim.api.nvim_get_current_buf()
 
-    vim.api.nvim_buf_set_keymap(0, 't', '<F1>', [[<cmd>lua require"drawer".term(1)<CR>]], { silent = true })
-    vim.api.nvim_buf_set_keymap(0, 't', '<F2>', [[<cmd>lua require"drawer".term(2)<CR>]], { silent = true })
-    vim.api.nvim_buf_set_keymap(0, 't', '<F3>', [[<cmd>lua require"drawer".term(3)<CR>]], { silent = true })
-    vim.api.nvim_buf_set_keymap(0, 't', '<F4>', [[<cmd>lua require"drawer".term(4)<CR>]], { silent = true })
-    vim.api.nvim_buf_set_keymap(0, 't', '<F5>', [[<cmd>lua require"drawer".qf()<CR>]], { silent = true })
+    tmap('<F1>', [[<cmd>lua require"drawer".term(1)<CR>]])
+    tmap('<F2>', [[<cmd>lua require"drawer".term(2)<CR>]])
+    tmap('<F3>', [[<cmd>lua require"drawer".term(3)<CR>]])
+    tmap('<F4>', [[<cmd>lua require"drawer".term(4)<CR>]])
+    tmap('<F5>', [[<cmd>lua require"drawer".qf()<CR>]])
 
     vim.cmd('startinsert')
     return 0
@@ -34,15 +38,15 @@ function M.getterm(id)
   return 1
 end
 
-function M.term(id)
-  local a = drawer.getwin()
-  local b = M.getterm(id)
+function Term.term(id)
+  local a = Drawer.getwin()
+  local b = Term.getterm(id)
   if a == 2 and b == 2 then
     vim.cmd('close')
   end
 end
 
-function M._termclose(id)
+function Term._termclose(id)
   local bufnr = terms[id]
   if bufnr ~= nil then
     pcall(vim.cmd, bufnr..'bdelete!')
@@ -50,4 +54,4 @@ function M._termclose(id)
   end
 end
 
-return M
+return Term
