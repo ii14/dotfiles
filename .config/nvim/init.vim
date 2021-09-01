@@ -6,9 +6,13 @@ let $VIMPLUGINS = $VIMDATA.'/plugged'
 let mapleader = ' '
 aug Vimrc | au! | aug end
 
-if index(['vi', 'view'], v:progname) != -1
+if v:progname ==# 'vi'
   source $VIMCONFIG/minimal.vim
   finish
+endif
+
+if exists('$VIMNOLSP')
+  let g:disable_lsp = 1
 endif
 
 lua require 'm.global'
@@ -20,6 +24,7 @@ let g:bookmarks = [
   \ ['e', '/etc'],
   \ ['p', '$VIMPLUGINS'],
   \ ['v', '$VIMCONFIG'],
+  \ ['s', '~/.local/share'],
   \ ['b', '~/.local/bin'],
   \ ['c', '~/.config'],
   \ ['r', '~/repos'],
@@ -86,7 +91,6 @@ let g:bookmarks = [
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
     Plug 'vifm/vifm.vim', {'on': 'Vifm'}
-    Plug 'devinceble/Tortoise-Typing'
     Plug 'tweekmonster/startuptime.vim'
 
   " Custom -------------------------------------------------------------------------------
@@ -94,11 +98,12 @@ let g:bookmarks = [
     Plug $VIMCONFIG.'/m/drawer.nvim'
     Plug $VIMCONFIG.'/m/termdebug'
 
-    " Plug '~/dev/vim/bufjump.vim'
-    " nno <C-S> :call bufjump#select()<CR>
+    Plug 'lewis6991/impatient.nvim'
 
   call plug#end()
   call PlugCheckMissing()
+
+  lua require 'impatient'
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
     source $VIMCONFIG/theme.vim
@@ -176,6 +181,9 @@ let g:bookmarks = [
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}
     let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+
+  " targets.vim --------------------------------------------------------------------------
+    let g:targets_aiAI = 'aIAi'
 
   " termdebug ----------------------------------------------------------------------------
     let g:termdebug_wide = 1
@@ -277,38 +285,6 @@ let g:bookmarks = [
   " Toggle mouse -------------------------------------------------------------------------
     com! MouseToggle let &mouse = (&mouse ==# '' ? 'a' : '')
 
-  " Redir --------------------------------------------------------------------------------
-    com! -nargs=+ -complete=command Redir call s:Redir(<q-args>)
-    fun! s:Redir(cmd)
-      new
-      put=execute(a:cmd)
-      1,2delete
-      setl nomodified
-      call Autosplit()
-    endfun
-
-  " xdg-open -----------------------------------------------------------------------------
-    com! -nargs=? -complete=file Open call s:Open(<q-args>)
-    fun! s:Open(file)
-      let file = a:file ==# '' ? '%' : a:file
-      let cmd = 'xdg-open ' . shellescape(expand(file))
-      echo cmd
-      call system(cmd)
-    endfun
-
-  " curl ---------------------------------------------------------------------------------
-    com! -nargs=+ Curl call s:Curl(<q-args>)
-    fun! s:Curl(url)
-      let cmd = 'curl '.shellescape(a:url)
-      echo cmd
-      new
-      exe 'read !'.cmd.' 2>/dev/null'
-      0delete
-      setl nomodified
-      redraw
-      call Autosplit()
-    endfun
-
   " Grep populates quickfix, so make it silent -------------------------------------------
     call Cabbrev('gr',   'silent grep')
     call Cabbrev('gre',  'silent grep')
@@ -404,24 +380,15 @@ let g:bookmarks = [
     nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
       \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
     nno <silent><expr> <leader>F ':Files '.BufDirectory()."\<CR>"
-    nno <silent> ', :call Menu('Files', g:bookmarks)<CR>
-    nno '; :Files<Space>
+    nno '; :call Menu('Files', g:bookmarks)<CR>
     nno <leader>h :History<CR>
-    nno <leader>b :Buffers<CR>
+    nno <leader><leader> :Buffers<CR>
 
     nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t')."\<CR>"
     nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
   " Search and Replace -------------------------------------------------------------------
-    nno <leader>/ :Lines<CR>
-    nno <leader>? :BLines<CR>
-    nno <leader>s :%s/
-    xno <leader>s :s/
-    nmap <leader>S :%S/
-    xmap <leader>S :S/
-    nmap <leader>c z*cgn
-    xmap <leader>c z*cgn
     map *   <Plug>(asterisk-*)
     map g*  <Plug>(asterisk-g*)
     map #   <Plug>(asterisk-#)
@@ -430,6 +397,8 @@ let g:bookmarks = [
     map gz* <Plug>(asterisk-gz*)
     map z#  <Plug>(asterisk-z#)
     map gz# <Plug>(asterisk-gz#)
+    nmap <leader>c z*cgn
+    xmap <leader>c z*cgn
     nno <silent> <leader><CR> :let @/ = ''<CR>
 
   " Macros -------------------------------------------------------------------------------
@@ -453,7 +422,6 @@ let g:bookmarks = [
 
   " Misc ---------------------------------------------------------------------------------
     xno <leader>t :Tabularize /
-    xno <leader>n :norm!<Space>
     nno <leader>v ggVG
 
   " Registers ----------------------------------------------------------------------------
@@ -496,8 +464,10 @@ let g:bookmarks = [
     nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 
   " Command ------------------------------------------------------------------------------
-    cno <C-J> <Down>
-    cno <C-K> <Up>
+    cno <expr> <C-K> wildmenumode() ? '<C-P>' : '<Up>'
+    cno <expr> <C-J> wildmenumode() ? '<C-N>' : '<Down>'
+    cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
+    cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
     cno <C-A> <Home>
     cno <C-B> <C-Left>
     cno <expr><C-F> getcmdline() !=# '' ? '<C-Right>' : '<C-F>'
@@ -518,34 +488,36 @@ let g:bookmarks = [
     imap <C-G><C-O> ()<C-G>U<Left>
     imap <C-G>b     {<CR>}<Esc>O
     imap <C-G><C-B> {<CR>}<Esc>O
+    imap <C-G>i     ""<C-G>U<Left>
+    imap <C-G><C-I> ""<C-G>U<Left>
+    imap <C-G>a     <><C-G>U<Left>
+    imap <C-G><C-A> <><C-G>U<Left>
 
     " Completion
     ino <silent><expr> <C-X><C-X> compe#complete()
     ino <silent><expr> <CR>       compe#confirm('<CR>')
+    ino <silent><expr> <C-Y>      compe#confirm('<C-Y>')
     ino <silent><expr> <C-E>      compe#close('<End>')
 
   " LSP ----------------------------------------------------------------------------------
     fun! s:init_maps_lsp()
-      " close completion on '({' and let lsp_signature take over:
-      ino <silent> ( <cmd>lua require 'compe'._close()<CR>(
-      ino <silent> { <cmd>lua require 'compe'._close()<CR>{
-
-      nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
-      nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-      nno <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-      nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+      nno <buffer><silent> <C-]> :lua vim.lsp.buf.definition()<CR>
+      nno <buffer><silent> K     :lua vim.lsp.buf.hover()<CR>
+      nno <buffer><silent> gd    :lua vim.lsp.buf.declaration()<CR>
+      nno <buffer><silent> gD    :lua vim.lsp.buf.implementation()<CR>
       " handled by lsp_signature:
       " ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
-      nno <buffer><silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-      nno <buffer><silent> g]    <cmd>lua vim.lsp.buf.references()<CR>
-      nno <buffer><silent> gR    <cmd>lua vim.lsp.buf.rename()<CR>
-      nno <buffer><silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-      nno <buffer><silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-      nno <buffer><silent> g?    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-      nno <buffer><silent> [d    <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-      nno <buffer><silent> ]d    <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-      nno <buffer><silent> [D    <cmd>lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
-      nno <buffer><silent> ]D    <cmd>lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
+      nno <buffer><silent> 1gD   :lua vim.lsp.buf.type_definition()<CR>
+      nno <buffer><silent> g]    :lua vim.lsp.buf.references()<CR>
+      nno <buffer><silent> gR    :lua vim.lsp.buf.rename()<CR>
+      nno <buffer><silent> g0    :lua vim.lsp.buf.document_symbol()<CR>
+      nno <buffer><silent> gW    :lua vim.lsp.buf.workspace_symbol()<CR>
+      nno <buffer><silent> g?    :lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+
+      nno <buffer><silent> ]d    :lua vim.lsp.diagnostic.goto_next()<CR>
+      nno <buffer><silent> [d    :lua vim.lsp.diagnostic.goto_prev()<CR>
+      nno <buffer><silent> ]D    :lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
+      nno <buffer><silent> [D    :lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
 
       nno <buffer><silent> <leader>lS :LspStopClient<CR>
       nno <buffer><silent> <leader>ls :LspFind<CR>
@@ -553,7 +525,22 @@ let g:bookmarks = [
       xno <buffer><silent> <leader>lf :LspFormat<CR>
       nno <buffer><silent> <leader>la :LspAction<CR>
       " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
+
+      " close completion on '({' and let lsp_signature take over:
+      ino <silent> ( <cmd>lua require 'compe'._close()<CR>(
+      ino <silent> { <cmd>lua require 'compe'._close()<CR>{
     endfun
     nno <silent> <leader>ld :LspTroubleToggle<CR>
+
+  " Termdebug ----------------------------------------------------------------------------
+    nno <leader>dr :Run<CR>
+    nno <leader>dS :Stop<CR>
+    nno <leader>ds :Step<CR>
+    nno <leader>do :Over<CR>
+    nno <leader>df :Finish<CR>
+    nno <leader>dc :Continue<CR>
+    nno <leader>db :Break<CR>
+    nno <leader>dB :Clear<CR>
+    nno <leader>de :Eval<CR>
 
 " vim:tw=90:ts=2:sts=2:sw=2:et:

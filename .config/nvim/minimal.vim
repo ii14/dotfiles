@@ -1,13 +1,5 @@
 set noloadplugins
 
-if v:progname ==# 'view'
-  set readonly
-  augroup Vimrc
-    autocmd!
-    autocmd BufRead * set readonly
-  augroup end
-endif
-
 call plug#begin($VIMPLUGINS)
 Plug 'ii14/onedark.nvim'
 call plug#end()
