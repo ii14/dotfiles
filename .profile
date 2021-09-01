@@ -19,10 +19,6 @@ PathAppend "/opt/cabal/bin"
 PathAppend "$XDG_DATA_HOME/cargo/bin"
 PathAppend "$XDG_DATA_HOME/gem/bin"
 PathAppend "$HOME/.luarocks/bin"
-PathAppend '/opt/nim-1.4.4/bin'
-PathAppend '/opt/kotlinc/bin'
-PathAppend '/opt/gradle-7.0/bin'
-PathAppend '/opt/kotlin-language-server/bin'
 unset PathAppend
 
 # APPLICATIONS ---------------------------------------------------------------------------
