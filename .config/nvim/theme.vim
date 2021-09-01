@@ -32,7 +32,6 @@ let g:lightline.component_function = {
   \ 'filetype'     : 'LightlineFiletype',
   \ 'fugitive'     : 'LightlineFugitive',
   \ 'lsp'          : 'LightlineLsp',
-  \ 'diagnostics'  : 'LightlineDiagnostics',
   \ 'pro'          : 'LightlinePro',
   \ }
 
@@ -50,28 +49,28 @@ fun! LightlineMode()
 endfun
 
 fun! LightlineFilename()
-  if &ft ==# 'fern'
+  if &filetype ==# 'fern'
     " fern internals, can potentially break
     try
-      return '[Fern] '.fnamemodify(b:fern.root._path, ':~')
+      return fnamemodify(b:fern.root._path, ':~')
     catch
       return '[Fern]'
     endtry
   endif
 
-  if &ft ==# 'termdebug'
+  if &filetype ==# 'termdebug'
     return '[GDB]'
   endif
 
-  if &bt ==# 'terminal'
+  if &buftype ==# 'terminal'
     return '[term:'.b:terminal_job_pid.'] '.b:term_title
   endif
 
-  if &ft ==# 'Trouble'
+  if &filetype ==# 'Trouble'
     return '[Trouble]'
   endif
 
-  if &bt ==# 'quickfix'
+  if &buftype ==# 'quickfix'
     return get(b:, 'qf_isLoc', 1)
       \ ? '[Location] '.getloclist(0, {'title':1}).title
       \ : '[Quickfix] '.getqflist({'title':1}).title
@@ -79,29 +78,29 @@ fun! LightlineFilename()
 
   let fname = expand('%:t')
   return
-    \ (&ro ? '[-] ' : '') .
+    \ (&readonly ? '[-] ' : '') .
     \ (fname ==# '' ? '[No Name]' : fname) .
-    \ (&mod ? ' [+]' : '')
+    \ (&modified ? ' [+]' : '')
 endfun
 
 fun! LightlineFileformat()
   return winwidth(0) > 70
-    \ && &ff !=# 'unix' ? &ff : ''
+    \ && &fileformat !=# 'unix' ? &fileformat : ''
 endfun
 
 fun! LightlineFileencoding()
   return winwidth(0) > 70
-    \ && &fenc !=# 'utf-8' ? &fenc : ''
+    \ && &fileencoding !=# 'utf-8' ? &fileencoding : ''
 endfun
 
 fun! LightlineFiletype()
-  return winwidth(0) > 49 ? (&ft !=# '' ? &ft : 'no ft') : ''
+  return winwidth(0) > 49 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfun
 
 fun! LightlineFugitive()
   return winwidth(0) > 70
-    \ && &ft !=# 'fern'
-    \ && &ft !=# 'qf'
+    \ && &filetype !=# 'fern'
+    \ && &filetype !=# 'qf'
     \ && exists('*FugitiveHead')
     \ ? FugitiveHead() : ''
 endfun
@@ -114,24 +113,8 @@ fun! LightlineLsp()
   endtry
 endfun
 
-fun! LightlineDiagnostics()
-  if luaeval('vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-    return ''
-  endif
-  let e = luaeval('vim.lsp.diagnostic.get_count(0, "Error")')
-  let w = luaeval('vim.lsp.diagnostic.get_count(0, "Warning")')
-  let h = luaeval('vim.lsp.diagnostic.get_count(0, "Hint")')
-  let i = luaeval('vim.lsp.diagnostic.get_count(0, "Information")')
-  let list = []
-  if e > 0 | call add(list, 'E'.e) | endif
-  if w > 0 | call add(list, 'W'.w) | endif
-  if h > 0 | call add(list, 'H'.h) | endif
-  if i > 0 | call add(list, 'i'.i) | endif
-  return join(list, ' ')
-endfun
-
 fun! LightlinePro()
-  if &ft ==# 'fern' || &ft ==# 'qf'
+  if &filetype ==# 'fern' || &filetype ==# 'qf'
     return ''
   endif
   return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
