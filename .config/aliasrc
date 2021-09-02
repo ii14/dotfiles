@@ -1,9 +1,14 @@
 #!/bin/zsh
 
-alias reload="echo 'Reloading ${SHELL}...'; exec $SHELL -l"
+alias reload="echo 'Reloading ${SHELL}...'; exec '$SHELL' -l"
 alias path='echo -e ${PATH//:/\\n}'
 alias dot='/usr/bin/git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME'
-alias d=disown
+
+# SHORTCUTS ------------------------------------------------------------------------------
+alias j='jobs'
+alias d='disown'
+alias m='make'
+alias xo='xdg-open'
 
 # FLAGS ----------------------------------------------------------------------------------
 alias cp='cp -iv'
@@ -13,7 +18,9 @@ alias mkd='mkdir -p'
 alias df='df -h'
 alias du='du -h'
 alias dmesg='dmesg -T'
-alias cal='ncal -b3'
+alias cal='LC_ALL=C ncal -Mb3'
+alias lcal='ncal -Mb3'
+alias dt='date "+%Y-%m-%d %H:%M:%S"'
 alias bc='bc -q'
 alias mount='mount -v'
 alias umount='umount -v'
@@ -69,10 +76,10 @@ function pro {
 alias mm='pro ~/dev/mm'
 
 # LS -------------------------------------------------------------------------------------
-alias ls='ls -hN --color=auto --group-directories-first'
-alias l='ls -Av --color=auto --group-directories-first'
-alias ll='ls -l --color=auto --group-directories-first'
-alias la='ls -lAv --color=auto --group-directories-first'
+alias ls='ls -hNv --color=auto --group-directories-first'
+alias l='ls -A'
+alias ll='ls -l'
+alias la='ls -lA'
 alias lad='ls -d .*(/)'
 alias lsa='ls -a .*(.)'
 alias lsx='ls -l *(*)'
@@ -82,16 +89,8 @@ alias lsd='ls -d *(/)'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+alias rgrep='rgrep --color=auto'
 alias diff='diff --color=auto'
-
-# SHORTCUTS ------------------------------------------------------------------------------
-alias ka='killall'
-alias c='clear'
-alias h='history'
-alias j='jobs'
-alias m='make'
-alias rr='ranger'
-alias xo='xdg-open'
 
 # XCLIP ----------------------------------------------------------------------------------
 alias setclip='xclip -sel clipboard -i'
@@ -109,12 +108,11 @@ function ta {
     fi
 }
 
-# DEV: CPP -------------------------------------------------------------------------------
+# DEV ------------------------------------------------------------------------------------
 alias g++='g++ -Wall -Wextra -Wshadow'
 alias gcc='gcc -Wall -Wextra -Wshadow -pedantic'
-alias clang++='clang++ -Wall -Wextra -Wpedantic'
-alias clang='clang -Wall -Wextra -Wpedantic'
 alias demangle='c++filt -t'
+alias py='python3.8'
 
 function objd {
     if [[ $# -ne 1 ]]; then
@@ -122,13 +120,7 @@ function objd {
         return 1
     fi
     objdump -drwC -M intel "$1" | vim - -c 'setf asm | set nomodified'
-    # objdump -drwC --no-show-raw-insn -M intel "$1" | vim - -c 'setf asm | set nomodified'
-    # objdump -drwC --no-show-raw-insn -M intel "$1" | bat -l asm
 }
-
-# DEV: OTHER -----------------------------------------------------------------------------
-alias py='python3.8'
-alias sass='sassc'
 
 # A/V ------------------------------------------------------------------------------------
 alias ffmpeg='ffmpeg -hide_banner'
@@ -202,8 +194,8 @@ alias ag='sudo apt-get'
 alias ai='sudo apt-get install'
 alias ar='sudo apt-get remove'
 alias au='sudo apt-get update'
+alias ac='apt-cache'
 alias as='apt-cache search'
-alias asn='apt-cache search --names-only'
 alias ad='apt-cache depends'
 alias adr='apt-cache rdepends'
 
