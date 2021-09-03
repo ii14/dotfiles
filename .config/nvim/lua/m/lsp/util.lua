@@ -1,23 +1,24 @@
-local api = vim.api
-local lsp = vim.lsp
 local lspconfig = require 'lspconfig'
 local util = require 'lspconfig/util'
 
 local M = {}
 
-M.map = function(type, key, value)
-  vim.api.nvim_buf_set_keymap(0, type, key, value, {noremap = true, silent = true});
+local default_opts = { noremap = true, silent = true }
+
+M.map = function(mode, lhs, rhs, opts)
+  opts = vim.tbl_extend('force', default_opts, opts or {})
+  vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, opts);
 end
 
 M.is_attached = function(bufnr)
-  for _, _ in pairs(lsp.buf_get_clients(bufnr or 0)) do
+  for _, _ in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return true
   end
   return false
 end
 
 M.get_client_name = function(bufnr)
-  for _, client in pairs(lsp.buf_get_clients(bufnr or 0)) do
+  for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return client.name
   end
   return ''
@@ -30,17 +31,17 @@ local on_init = function(client)
 end
 
 local on_exit = vim.schedule_wrap(function(_, _, id)
-  for _, bufnr in pairs(clients[id]) do
+  for _, bufnr in ipairs(clients[id]) do
     if not M.is_attached(bufnr) then
-      api.nvim_buf_set_var(bufnr, 'lsp_attached', false)
+      vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', false)
 
       for _, win in pairs(vim.fn.getwininfo()) do
         if win.bufnr == bufnr then
-          api.nvim_win_set_option(win.winid, 'signcolumn', 'auto')
+          vim.api.nvim_win_set_option(win.winid, 'signcolumn', 'auto')
         end
       end
 
-      vim.g.lsp_event = { bufnr = bufnr }
+      vim.g.lsp_event = { event = 'detach', bufnr = bufnr }
       vim.cmd('doautocmd User LspDetach')
     end
   end
@@ -49,22 +50,17 @@ end)
 
 local on_attach = vim.schedule_wrap(function(client, bufnr)
   table.insert(clients[client.id], bufnr)
-  api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
+  vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
 
   for _, win in pairs(vim.fn.getwininfo()) do
     if win.bufnr == bufnr then
-      api.nvim_win_set_option(win.winid, 'signcolumn', 'yes')
+      vim.api.nvim_win_set_option(win.winid, 'signcolumn', 'yes')
     end
   end
 
-  vim.g.lsp_event = { bufnr = bufnr }
+  vim.g.lsp_event = { event = 'attach', bufnr = bufnr }
   vim.cmd('doautocmd User LspAttach')
 end)
-
-M.stop_clients = function()
-  -- lsp.diagnostic.clear(api.nvim_get_current_buf())
-  lsp.stop_client(lsp.get_active_clients())
-end
 
 local header_to_source = {
   ['h']   = 'c',

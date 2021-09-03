@@ -44,11 +44,11 @@ let g:lightline#bufferline#unnamed   = '[No Name]'
 let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
-fun! LightlineMode()
+function! LightlineMode()
   return winwidth(0) < 50 ? '' : lightline#mode()
-endfun
+endfunction
 
-fun! LightlineFilename()
+function! LightlineFilename()
   if &filetype ==# 'fern'
     " fern internals, can potentially break
     try
@@ -81,46 +81,46 @@ fun! LightlineFilename()
     \ (&readonly ? '[-] ' : '') .
     \ (fname ==# '' ? '[No Name]' : fname) .
     \ (&modified ? ' [+]' : '')
-endfun
+endfunction
 
-fun! LightlineFileformat()
+function! LightlineFileformat()
   return winwidth(0) > 70
     \ && &fileformat !=# 'unix' ? &fileformat : ''
-endfun
+endfunction
 
-fun! LightlineFileencoding()
+function! LightlineFileencoding()
   return winwidth(0) > 70
     \ && &fileencoding !=# 'utf-8' ? &fileencoding : ''
-endfun
+endfunction
 
-fun! LightlineFiletype()
+function! LightlineFiletype()
   return winwidth(0) > 49 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfun
+endfunction
 
-fun! LightlineFugitive()
+function! LightlineFugitive()
   return winwidth(0) > 70
     \ && &filetype !=# 'fern'
     \ && &filetype !=# 'qf'
     \ && exists('*FugitiveHead')
     \ ? FugitiveHead() : ''
-endfun
+endfunction
 
-fun! LightlineLsp()
+function! LightlineLsp()
   try
     return luaeval("require('m.lsp.util').get_client_name()")
   catch
     return ''
   endtry
-endfun
+endfunction
 
-fun! LightlinePro()
+function! LightlinePro()
   if &filetype ==# 'fern' || &filetype ==# 'qf'
     return ''
   endif
   return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
-endfun
+endfunction
 
-aug VimrcTheme
-  au!
-  au BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
-aug end
+augroup VimrcTheme
+  autocmd!
+  autocmd BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
+augroup end

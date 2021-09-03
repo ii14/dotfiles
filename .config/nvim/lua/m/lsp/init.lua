@@ -4,7 +4,7 @@ local setup = util.setup
 -- local root_pattern = lspconfig.util.root_pattern
 require 'm.lsp.callbacks'
 
-setup.clangd{
+setup.clangd {
   cmd = {"clangd", "--background-index"},
   on_attach = function()
     util.map('n', '<leader>a', ':ClangdSwitchSourceHeader<CR>')
@@ -17,14 +17,14 @@ setup.clangd{
   },
 }
 
--- setup.ccls{
+-- setup.ccls {
 --   init_options = {
 --     highlight = { lsRanges = true };
 --   },
 --   root_dir = root_pattern("compile_commands.json"),
 -- }
 
-setup.pylsp{
+setup.pylsp {
   settings = {
     pylsp = {
       plugins = {
@@ -35,11 +35,9 @@ setup.pylsp{
   },
 }
 
-setup.gopls{}
-
 local sumneko_root_path = '/opt/lua-language-server'
 local sumneko_binary = sumneko_root_path..'/bin/Linux/lua-language-server'
-setup.sumneko_lua{
+setup.sumneko_lua {
   cmd = {sumneko_binary, '-E', sumneko_root_path .. '/main.lua'},
   settings = {
     Lua = {
@@ -61,32 +59,15 @@ setup.sumneko_lua{
   },
 }
 
-setup.tsserver{}
+setup.tsserver {}
 
--- setup.denols{
---   -- cmd = {'deno', 'lsp', '-L', 'debug'},
---   init_options = {
---     config = "./tsconfig.json",
---   },
+setup.gopls {}
+
+-- setup.zls {
+--   cmd = {'/home/ms/repos/zls/zig-cache/bin/zls'},
 -- }
 
--- setup.solargraph{
---   settings = {
---     solargraph = {
---       diagnostics = true,
---     },
---   },
--- }
-
-setup.zls{
-  cmd = {'/home/ms/repos/zls/zig-cache/bin/zls'},
-}
-
--- setup.kotlin_language_server{
---   root_dir = root_pattern("settings.gradle.kts"),
--- }
-
-require 'trouble'.setup{
+require 'trouble'.setup {
   icons = false,
   fold_open = "v",
   fold_closed = ">",
@@ -99,7 +80,7 @@ require 'trouble'.setup{
   },
 }
 
-require 'lsp_signature'.setup{
+require 'lsp_signature'.setup {
   bind = true,
   max_width = 80,
   max_height = 12,

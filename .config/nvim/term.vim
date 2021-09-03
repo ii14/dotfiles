@@ -8,9 +8,7 @@ augroup end
 tnoremap <S-PageUp>   <C-\><C-N><C-B>
 tnoremap <S-PageDown> <C-\><C-N><C-F>
 
-
 " Vim terminal key bindings --------------------------------------------------------------
-
 function! s:TermEnter(_)
   if getbufvar(bufnr(), 'term_insert', 0)
     startinsert
@@ -18,7 +16,7 @@ function! s:TermEnter(_)
   endif
 endfunction
 
-function! <SID>TermExec(cmd)
+function! s:TermExec(cmd)
   let b:term_insert = 1
   execute a:cmd
 endfunction

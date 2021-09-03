@@ -1,5 +1,8 @@
-let $FZF_DEFAULT_OPTS =
-  \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle --pointer=" "'
+let $FZF_DEFAULT_OPTS = join([
+  \ '--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle',
+  \ '--pointer=" "',
+  \ '--marker="*"',
+  \ ], ' ')
 
 let g:fzf_action = {
   \ 'ctrl-s': 'split',
@@ -7,9 +10,6 @@ let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ }
 
-" let g:fzf_layout = {
-"   \ 'window': {'width': 0.9, 'height': 0.8, 'border': 'sharp'},
-"   \ }
 let g:fzf_layout = {
   \ 'window': {'width': 1, 'height': 0.45, 'yoffset': 1, 'border': 'none'}
   \ }
