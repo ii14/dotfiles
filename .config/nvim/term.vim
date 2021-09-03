@@ -39,6 +39,7 @@ tnoremap <silent> <C-W><C-H>  <cmd>call <SID>TermExec('wincmd h')<CR>
 tnoremap <silent> <C-W><C-J>  <cmd>call <SID>TermExec('wincmd j')<CR>
 tnoremap <silent> <C-W><C-K>  <cmd>call <SID>TermExec('wincmd k')<CR>
 tnoremap <silent> <C-W><C-L>  <cmd>call <SID>TermExec('wincmd l')<CR>
+tnoremap <silent> <C-W><C-P>  <cmd>call <SID>TermExec('wincmd p')<CR>
 tnoremap <silent> <C-W>gt     <cmd>call <SID>TermExec('tabn')<CR>
 tnoremap <silent> <C-W>gT     <cmd>call <SID>TermExec('tabp')<CR>
 tnoremap <expr>   <C-W><C-R>  '<C-\><C-N>"'.nr2char(getchar()).'pi'
