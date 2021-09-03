@@ -93,6 +93,7 @@ let g:bookmarks = [
     Plug 'vifm/vifm.vim', {'on': 'Vifm'}
     Plug 'tweekmonster/startuptime.vim'
     Plug 'lewis6991/impatient.nvim'
+    Plug 'kizza/actionmenu.nvim'
 
   " Custom -------------------------------------------------------------------------------
     Plug $VIMCONFIG.'/m/qf.vim'
@@ -389,6 +390,8 @@ let g:bookmarks = [
     nno <silent> g- :Fern . -drawer -reveal=%<CR>
 
   " Search and Replace -------------------------------------------------------------------
+    nno n nzz
+    nno N Nzz
     map *   <Plug>(asterisk-*)
     map g*  <Plug>(asterisk-g*)
     map #   <Plug>(asterisk-#)

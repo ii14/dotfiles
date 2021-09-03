@@ -22,17 +22,23 @@ nno <buffer><silent> g]    :lua vim.lsp.buf.references()<CR>
 nno <buffer><silent> gR    :lua vim.lsp.buf.rename()<CR>
 nno <buffer><silent> g0    :lua vim.lsp.buf.document_symbol()<CR>
 nno <buffer><silent> gW    :lua vim.lsp.buf.workspace_symbol()<CR>
-nno <buffer><silent> g?    :lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 
+nno <buffer><silent> g?    :lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 nno <buffer><silent> ]d    :lua vim.lsp.diagnostic.goto_next()<CR>
 nno <buffer><silent> [d    :lua vim.lsp.diagnostic.goto_prev()<CR>
 nno <buffer><silent> ]D    :lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
 nno <buffer><silent> [D    :lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
 
+nno <buffer><silent> ga    :lua vim.lsp.buf.code_action()<CR>
+xno <buffer><silent> ga    :<C-U>lua vim.lsp.buf.range_code_action()<CR>
+
+xno <buffer><silent> gw    :<C-U>lua vim.lsp.buf.range_formatting()<CR>
+xno <buffer><silent> gq    :<C-U>lua vim.lsp.buf.range_formatting()<CR>
+
 nno <buffer><silent> <leader>lS :LspStop<CR>
 nno <buffer><silent> <leader>ls :LspFind<CR>
 nno <buffer><silent> <leader>lf :LspFormat<CR>
-xno <buffer><silent> <leader>lf :LspFormat<CR>
+xno <buffer><silent> <leader>lf :<C-U>LspFormat<CR>
 nno <buffer><silent> <leader>la :LspAction<CR>
 " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
 

@@ -2,6 +2,8 @@ local api = vim.api
 local util = vim.lsp.util
 local callbacks = vim.lsp.handlers
 
+local M = {}
+
 local find_qf_index = function(items)
   local fname = api.nvim_buf_get_name(api.nvim_get_current_buf())
   local linenr = api.nvim_win_get_cursor(0)[1]
@@ -78,3 +80,49 @@ callbacks['textDocument/declaration']    = location_callback
 callbacks['textDocument/definition']     = location_callback
 callbacks['textDocument/typeDefinition'] = location_callback
 callbacks['textDocument/implementation'] = location_callback
+
+local last_actions = nil
+
+callbacks['textDocument/codeAction'] = function(_, _, actions)
+  if actions == nil or vim.tbl_isempty(actions) then
+    print('LSP: No code actions available')
+    return
+  end
+
+  last_actions = actions
+  local choices = {}
+  for _, action in ipairs(actions) do
+    local title = action.title:gsub('\r\n', '\\r\\n')
+    title = title:gsub('\n', '\\n')
+    table.insert(choices, title)
+  end
+
+  -- this callback with a global variable kinda sucks,
+  -- it would be nicer if we could pass a closure.
+  vim.fn['actionmenu#open'](choices,
+    [[v:lua.require'm.lsp.callbacks'.code_action_callback]])
+end
+
+function M.code_action_callback(index, _)
+  if last_actions == nil then return end
+  if type(index) ~= 'number' or index < 0 or index >= #last_actions then
+    last_actions = nil
+    return
+  end
+
+  local action = last_actions[index + 1]
+  last_actions = nil
+
+  if action.edit or type(action.command) == "table" then
+    if action.edit then
+      util.apply_workspace_edit(action.edit)
+    end
+    if type(action.command) == "table" then
+      vim.lsp.buf.execute_command(action.command)
+    end
+  else
+    vim.lsp.buf.execute_command(action)
+  end
+end
+
+return M
