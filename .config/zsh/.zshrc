@@ -23,6 +23,10 @@ if [[ -f $ZSH_PLUGIN_PATH/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]
 fi
 
 
+[[ -f $ZSH_PLUGIN_PATH/zsh-vimode-visual/zsh-vimode-visual.plugin.zsh ]] \
+    && source $ZSH_PLUGIN_PATH/zsh-vimode-visual/zsh-vimode-visual.plugin.zsh
+
+
 # install fzf with ./install --xdg
 FZF_DEFAULT_OPTS='--bind=ctrl-a:select-all,ctrl-u:page-up,ctrl-d:page-down,ctrl-space:toggle'
 if command -v fd >/dev/null 2>&1; then

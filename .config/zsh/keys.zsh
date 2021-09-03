@@ -9,50 +9,34 @@ bindkey -e
 bindkey -r '^j'
 bindkey -rM vicmd '^j'
 
+WORDCHARS=${WORDCHARS//[\/=]/}
+
+# Backward/forward word/char [{Ctrl,Alt}+{B,F}]
+bindkey '^b' emacs-backward-word
+bindkey '^f' emacs-forward-word
+bindkey '^[b' backward-char
+bindkey '^[f' forward-char
+
+# Backward delete {word,line} [Ctrl+{W,U}]
+bindkey '^w' backward-delete-word
+bindkey '^u' backward-kill-line
+
 # Filter history [Up] [Down]
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
+bindkey '^p'    up-line-or-beginning-search
 bindkey '^[[A'  up-line-or-beginning-search
 bindkey '^[OA'  up-line-or-beginning-search
-bindkey '^p'    up-line-or-beginning-search
+bindkey '^n'    down-line-or-beginning-search
 bindkey '^[[B'  down-line-or-beginning-search
 bindkey '^[OB'  down-line-or-beginning-search
-bindkey '^n'    down-line-or-beginning-search
 
-# Backward delete word [Ctrl+W]
-my-backward-delete-word() {
-    local WORDCHARS=${WORDCHARS/\//}
-    zle backward-delete-word
-}
-zle -N my-backward-delete-word
-bindkey '^w' my-backward-delete-word
-
-# Backward delete line [Ctrl+U]
-bindkey '^u' backward-kill-line
-
-# Backward/forward word/char [{Ctrl,Alt}+{B,F}]
-bindkey '^b' backward-word
-bindkey '^f' forward-word
-bindkey '^[b' backward-char
-bindkey '^[f' forward-char
-
-# Jump between words [Ctrl+{Left,Right}]
-# [[ "${terminfo[kLFT5]}" != "" ]] && bindkey "${terminfo[kLFT5]}" backward-word
-# [[ "${terminfo[kRIT5]}" != "" ]] && bindkey "${terminfo[kRIT5]}" forward-word
-bindkey '\e[1;5D' backward-word
-bindkey '\e[1;5C' forward-word
-
-# Search backward for string [Ctrl+R]
-# replaced by fzf
+# Search backward for string [Ctrl+R] (NOTE: replaced by fzf)
 bindkey '^r' history-incremental-search-backward
 
 # Completion menu backwards [Shift+Tab]
 [[ "${terminfo[kcbt]}" != "" ]] && bindkey "${terminfo[kcbt]}" reverse-menu-complete
-
-# Go to beginning or end of line [Home] [End]
-[[ "${terminfo[khome]}" != "" ]] && bindkey "${terminfo[khome]}" beginning-of-line
-[[ "${terminfo[kend]}" != "" ]] && bindkey "${terminfo[kend]}" end-of-line
 
 # Edit command line [Ctrl+X,Ctrl+E]
 autoload -U edit-command-line

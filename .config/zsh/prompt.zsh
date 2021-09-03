@@ -29,7 +29,12 @@ fi
 PROMPT_COLOR=2
 
 function zle-keymap-select {
-    PROMPT_COLOR="${${KEYMAP/vicmd/4}/(main|viins)/2}"
+    case $KEYMAP in
+        main|viins)  PROMPT_COLOR=2 ;;
+        vicmd)       PROMPT_COLOR=4 ;;
+        vivis|vivli) PROMPT_COLOR=5 ;;
+        *)           PROMPT_COLOR=2 ;;
+    esac
     zle reset-prompt
 }
 zle -N zle-keymap-select

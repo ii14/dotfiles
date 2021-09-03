@@ -3,6 +3,7 @@
 plugins=(
     'woefe/git-prompt.zsh'
     'zsh-users/zsh-syntax-highlighting'
+    'b4b4r07/zsh-vimode-visual'
 )
 
 plugdir="$ZDOTDIR/plugins"
