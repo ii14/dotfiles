@@ -24,6 +24,11 @@ let g:lightline.tabline = {
   \ 'right' : [[]],
   \ }
 
+let g:lightline.component = {
+  \ 'percent' : '%{%!LightlineIsFernDrawer() ? "%3p%%" : ""%}',
+  \ 'lineinfo': '%{%!LightlineIsFernDrawer() ? "%3l:%-2c" : ""%}',
+  \ }
+
 let g:lightline.component_function = {
   \ 'mode'         : 'LightlineMode',
   \ 'filename'     : 'LightlineFilename',
@@ -118,6 +123,14 @@ function! LightlinePro()
     return ''
   endif
   return winwidth(0) > 70 && exists('*pro#selected') ? pro#selected() : ''
+endfunction
+
+function! LightlineIsFernDrawer()
+  try
+    return &filetype ==# 'fern' && fern#internal#drawer#is_drawer()
+  catch
+    return v:false
+  endtry
 endfunction
 
 augroup VimrcTheme

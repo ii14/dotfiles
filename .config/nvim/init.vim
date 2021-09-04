@@ -107,6 +107,8 @@ let g:bookmarks = [
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/theme.vim
+  hi NormalDarker guibg=#21252C guifg=#ABB2BF
+
   source $VIMCONFIG/fzf.vim
   source $VIMCONFIG/term.vim
 
@@ -153,6 +155,7 @@ let g:bookmarks = [
     let g:fern#renderer#default#collapsed_symbol = '> '
     let g:fern#renderer#default#expanded_symbol = 'v '
     let g:fern#renderer#default#leaf_symbol = '¦ '
+    let g:fern#hide_cursor = 1
     hi link FernRootText     String
     hi link FernRootSymbol   String
     hi link FernMarkedLine   WarningMsg
@@ -362,6 +365,7 @@ let g:bookmarks = [
     xno > >gv
     " Split line, opposite of J
     nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
+    nno g: :%
     nno q: :
     nno Q <Nop>
 
