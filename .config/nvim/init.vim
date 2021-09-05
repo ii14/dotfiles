@@ -129,7 +129,7 @@ let g:bookmarks = [
 
       aug Vimrc
         au User LspAttach source $VIMCONFIG/lsp.vim
-        au CursorMoved,CursorMovedI * lua require 'nvim-lightbulb'.update_lightbulb()
+        au CursorMoved * lua require 'nvim-lightbulb'.update_lightbulb()
         au BufWinEnter * call s:lsp_update_signcolumn()
       aug end
 
@@ -224,7 +224,7 @@ let g:bookmarks = [
     set textwidth=90
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
-    set scrolloff=1 sidescrolloff=3           " keep near lines visible when scrolling
+    set scrolloff=1 sidescrolloff=1           " keep near lines visible when scrolling
     set mouse=a                               " mouse support
     set splitbelow splitright                 " sane splits
     set linebreak breakindent                 " visual wrap on whitespace, follow indentation

@@ -1,12 +1,17 @@
+" no plugins
 set noloadplugins
 
-call plug#begin($VIMPLUGINS)
-Plug 'ii14/onedark.nvim'
-call plug#end()
+" no syntax. enable with ':syn on' if necessary
+filetype off
+syntax off
 
-set termguicolors
-let g:onedark_terminal_italics = 1
-colorscheme onedark
+" theme, but no plugin manager
+if isdirectory($VIMPLUGINS..'/onedark.nvim')
+  set termguicolors
+  let g:onedark_terminal_italics = 1
+  set rtp+=$VIMPLUGINS/onedark.nvim
+  colorscheme onedark
+endif
 
 " Visual
 " set number relativenumber                 " line numbers
@@ -16,17 +21,17 @@ set lazyredraw                            " don't redraw while executing macros
 set title titlelen=45                     " set vim window title
 set titlestring=nvim:\ %F
 set shortmess+=I                          " no intro message
-set noshowmode                            " redundant mode message
+" set noshowmode                            " redundant mode message
 set list                                  " show non-printable characters
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 set synmaxcol=1000                        " highlight only the first 1000 columns
-set pumblend=13 winblend=13               " pseudo transparency
+" set pumblend=13 winblend=13               " pseudo transparency
 
 " Editing
 " set textwidth=90
 set history=1000                          " command history size
 set virtualedit=block                     " move cursor anywhere in visual block mode
-set scrolloff=1 sidescrolloff=3           " keep near lines visible when scrolling
+set scrolloff=1 sidescrolloff=1           " keep near lines visible when scrolling
 set mouse=a                               " mouse support
 set splitbelow splitright                 " sane splits
 set linebreak breakindent                 " visual wrap on whitespace, follow indentation
@@ -57,6 +62,10 @@ set completeopt-=preview                  " no preview window
 " Buffers
 set hidden                                " don't close buffers
 set noswapfile                            " disable swap files
+" TODO: undofile can slow down startup time dramatically.
+"       not the best idea to have it be disabled here, and enabled in normal config.
+"       research the topic, maybe there is some way of removing older undo blocks
+"       when undofile exceeds certain size.
 set undofile                              " persistent undo history
 set directory=$VIMCACHE/swap              " swap files
 set backupdir=$VIMCACHE/backup            " backup files
