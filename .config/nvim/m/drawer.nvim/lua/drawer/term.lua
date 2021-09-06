@@ -12,11 +12,14 @@ function Term.getterm(id)
   if terms[id] == nil then
     vim.cmd('enew')
     local title = 'Term '..id
-    vim.fn.termopen(vim.o.shell, { env = { TITLE = title } })
+    local job = vim.fn.termopen(vim.o.shell, { env = { TITLE = title } })
     vim.api.nvim_buf_set_var(0, 'term_title', title)
     vim.cmd('autocmd TermClose <buffer> ++nested lua require"drawer.term"._termclose('..id..')')
     vim.cmd('setl nobuflisted signcolumn=no')
-    terms[id] = vim.api.nvim_get_current_buf()
+    terms[id] = {
+      bufnr = vim.api.nvim_get_current_buf(),
+      job = job,
+    }
 
     tmap('<F1>', [[<cmd>lua require"drawer".term(1)<CR>]])
     tmap('<F2>', [[<cmd>lua require"drawer".term(2)<CR>]])
@@ -28,7 +31,7 @@ function Term.getterm(id)
     return 0
   end
 
-  local bufnr = terms[id]
+  local bufnr = terms[id].bufnr
   if bufnr == vim.api.nvim_get_current_buf() then
     return 2
   end
@@ -46,10 +49,16 @@ function Term.term(id)
   end
 end
 
+function Term.send(id, keys)
+  local term = terms[id]
+  if term == nil then return end
+  vim.fn.chansend(term.job, vim.api.nvim_replace_termcodes(keys, true, false, true))
+end
+
 function Term._termclose(id)
-  local bufnr = terms[id]
-  if bufnr ~= nil then
-    pcall(vim.cmd, bufnr..'bdelete!')
+  local term = terms[id]
+  if term ~= nil then
+    pcall(vim.cmd, term.bufnr..'bdelete!')
     terms[id] = nil
   end
 end
