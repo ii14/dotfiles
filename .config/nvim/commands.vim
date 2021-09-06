@@ -1,4 +1,4 @@
-" See $VIMCONFIG/autoload/m.vim for command implementations
+" See $VIMCONFIG/autoload/m/command.vim for command implementations
 " See $VIMCONFIG/plugin/ for more command definitions
 
 " :bd doesn't close window, :bq closes the window ----------------------------------------
@@ -23,20 +23,20 @@ command! -count=4 -bang T
   \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
 
 " Fill the rest of the line with character -----------------------------------------------
-command! -nargs=? Hr call m#hr(<q-args>)
+command! -nargs=? Hr call m#command#hr(<q-args>)
 call Cabbrev('hr', 'Hr')
 
 " :redir to a new buffer -----------------------------------------------------------------
-command! -nargs=+ -complete=command Redir call m#redir(<q-args>)
+command! -nargs=+ -complete=command Redir call m#command#redir(<q-args>)
 
 " :set with prompt -----------------------------------------------------------------------
-command! -nargs=1 -complete=option Set call m#set(<q-args>)
+command! -nargs=1 -complete=option Set call m#command#set(<q-args>)
 
 " Rename current file --------------------------------------------------------------------
-command! RenameFile call m#rename_file()
+command! RenameFile call m#command#rename_file()
 
 " xdg-open -------------------------------------------------------------------------------
-command! -nargs=? -complete=file Open call m#open(<q-args>)
+command! -nargs=? -complete=file Open call m#command#open(<q-args>)
 
 " ctags ----------------------------------------------------------------------------------
 if executable('ctags')

@@ -198,6 +198,6 @@ nno <leader>ow :set wrap!<bar>set wrap?<CR>
 nno <leader>oW :set wrapscan!<bar>set wrapscan?<CR>
 nno <leader>os :set ignorecase!<bar>set ignorecase?<CR>
 nno <leader>om :let &mouse = (&mouse ==# '' ? 'a' : '')<bar>set mouse?<CR>
-nno <leader>on :call m#toggle_line_numbers()<CR>
+nno <leader>on :call m#command#toggle_line_numbers()<CR>
 nno <leader>oi :IndentBlanklineToggle<CR>
 nno <leader>oc :ColorizerToggle<CR>
