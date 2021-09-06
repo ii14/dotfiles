@@ -80,6 +80,7 @@ fun! s:Run(path, bang) abort
 endfun
 
 
+finish
 " TODO: everything below is work in progress. filtering files from output
 
 fun! s:Match(line, inc, exc) abort

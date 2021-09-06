@@ -3,6 +3,17 @@ let $VIMCACHE = stdpath('cache')
 let $VIMCONFIG = stdpath('config')
 let $VIMPLUGINS = $VIMDATA.'/plugged'
 
+" KEY MAPPINGS    $VIMCONFIG/maps.vim
+" LSP CONFIG      $VIMCONFIG/lua/m/lsp/init.lua
+" LSP BUFFER      $VIMCONFIG/lsp.vim
+" TERMINAL        $VIMCONFIG/term.vim
+" FZF             $VIMCONFIG/fzf.vim
+" FERN            $VIMCONFIG/ftplugin/fern.vim
+" GREP            $VIMCONFIG/grep.vim
+" THEME           $VIMCONFIG/theme.vim
+" COMMANDS        $VIMCONFIG/plugin/
+" SNIPPETS        $VIMCONFIG/UltiSnips/
+
 let mapleader = ' '
 aug Vimrc | au! | aug end
 
@@ -41,6 +52,7 @@ let g:bookmarks = [
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
     Plug 'wellle/targets.vim'
+    Plug 'tommcdo/vim-exchange'
     Plug 'haya14busa/vim-asterisk'
     Plug 'romainl/vim-cool'
     Plug 'godlygeek/tabular'
@@ -107,8 +119,8 @@ let g:bookmarks = [
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/theme.vim
+  " TODO: move highlights elsewhere
   hi NormalDarker guibg=#21252C guifg=#ABB2BF
-
   source $VIMCONFIG/fzf.vim
   source $VIMCONFIG/term.vim
 
@@ -156,14 +168,25 @@ let g:bookmarks = [
     let g:fern#renderer#default#expanded_symbol = 'v '
     let g:fern#renderer#default#leaf_symbol = '¦ '
     let g:fern#hide_cursor = 1
+
     hi link FernRootText     String
     hi link FernRootSymbol   String
     hi link FernMarkedLine   WarningMsg
     hi link FernMarkedText   WarningMsg
     hi link FernLeafSymbol   LineNr
     hi link FernBranchSymbol Comment
+
+    fun! s:fern_hijack_directory() abort
+      let l:path = expand('%:p')
+      if isdirectory(l:path)
+        let l:bufnr = bufnr()
+        execute printf('keepjumps keepalt Fern %s', fnameescape(l:path))
+        execute printf('bwipeout %d', l:bufnr)
+      endif
+    endfun
+
     aug Vimrc
-      au BufEnter * ++nested call m#fern_hijack_directory()
+      au BufEnter * ++nested call s:fern_hijack_directory()
     aug end
 
   " indent-blankline ---------------------------------------------------------------------
@@ -172,6 +195,7 @@ let g:bookmarks = [
     let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
+
     hi IndentBlanklineChar guifg=#4B5263 gui=nocombine
     hi link IndentBlanklineSpaceChar          IndentBlanklineChar
     hi link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
@@ -261,16 +285,11 @@ let g:bookmarks = [
     set undodir=$VIMCACHE/undo                " undo files
 
   " Grep ---------------------------------------------------------------------------------
-    if executable('rg')
-      set grepformat=%f:%l:%c:%m
-      let &grepprg = 'rg --vimgrep' . (&smartcase ? ' --smart-case' : '')
-    elseif executable('ag')
-      set grepformat=%f:%l:%c:%m
-      let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
-    endif
+    source $VIMCONFIG/grep.vim
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
-  " See $VIMCONFIG/plugin for more command definitions
+  " See $VIMCONFIG/autoload/m.vim for command implementations
+  " See $VIMCONFIG/plugin/ for more command definitions
 
   " :bd doesn't close window, :bq closes the window --------------------------------------
     com! -nargs=? -bang -complete=buffer Bq
@@ -280,10 +299,6 @@ let g:bookmarks = [
     call Cabbrev('bd', 'Bd')
     call Cabbrev('bw', 'Bw')
 
-  " Shortcuts ----------------------------------------------------------------------------
-    com! Wiki VimwikiIndex
-    com! Vimrc edit $MYVIMRC
-
   " Use fzf for help and buffers ---------------------------------------------------------
     com! -nargs=? -complete=help H
       \ if <q-args> ==# '' | Helptags | else | h <args> | endif
@@ -292,17 +307,48 @@ let g:bookmarks = [
     call Cabbrev('h', 'H')
     call Cabbrev('b', 'B')
 
-  " Grep populates quickfix, so make it silent -------------------------------------------
-    call Cabbrev('gr',   'silent grep')
-    call Cabbrev('gre',  'silent grep')
-    call Cabbrev('grep', 'silent grep')
+  " Set tab width. 4 by default, ! is noet -----------------------------------------------
+    com! -count=4 -bang T
+      \ setl ts=<count> sts=<count> sw=<count> |
+      \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
 
-  " Some abbreviations -------------------------------------------------------------------
+  " Fill the rest of the line with character ---------------------------------------------
+    com! -nargs=? Hr call m#hr(<q-args>)
+    call Cabbrev('hr', 'Hr')
+
+  " :redir to a new buffer ---------------------------------------------------------------
+    com! -nargs=+ -complete=command Redir call m#redir(<q-args>)
+
+  " :set with prompt ---------------------------------------------------------------------
+    com! -nargs=1 -complete=option Set call m#set(<q-args>)
+
+  " Rename current file ------------------------------------------------------------------
+    com! RenameFile call m#rename_file()
+
+  " xdg-open -----------------------------------------------------------------------------
+    com! -nargs=? -complete=file Open call m#open(<q-args>)
+
+  " ctags --------------------------------------------------------------------------------
+    if executable('ctags')
+      com! Ctags !ctags -R .
+    endif
+    if executable('qmltags') " https://github.com/pylipp/qtilities
+      com! Qmltags !qmltags
+    endif
+
+  " Lightweight git blame ----------------------------------------------------------------
+    com! -nargs=? -range GB echo join(systemlist("git -C " . shellescape(expand('%:p:h'))
+      \ . " blame -L <line1>,<line2> <args> -- " . expand('%:t')), "\n")
+
+  " Shortcuts ----------------------------------------------------------------------------
+    com! Wiki VimwikiIndex
+    com! Vimrc edit $MYVIMRC
+
+  " Lowercase commands -------------------------------------------------------------------
     call Cabbrev('git',  'Git')
     call Cabbrev('rg',   'Rg')
     call Cabbrev('man',  'Man')
     call Cabbrev('rc',   'Rc')
-    call Cabbrev('hr',   'Hr')
     call Cabbrev('trim', 'Trim')
     call Cabbrev('fzf',  'Files')
     call Cabbrev('fern', 'Fern')
@@ -319,20 +365,20 @@ let g:bookmarks = [
       \ endif
 
   " Cursor line highlighting -------------------------------------------------------------
-    au VimEnter,WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl cursorline | endif
-    au WinLeave,TermEnter * if &bt !=# 'terminal' | setl nocursorline | endif
+    au WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl   cursorline | endif
+    au WinLeave             * if &bt !=# 'terminal' | setl nocursorline | endif
 
   " Terminal -----------------------------------------------------------------------------
-    au TermOpen * setl nonumber norelativenumber nocursorline
+    au TermOpen * setl nonumber norelativenumber nocursorline signcolumn=auto
 
   " Highlight yanked text ----------------------------------------------------------------
     au TextYankPost * silent! lua vim.highlight.on_yank()
 
   " Open quickfix window on grep ---------------------------------------------------------
     au QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
-      \ call timer_start(10, { -> execute('cwindow') })
+      \ call timer_start(10, {-> execute('cwindow')})
     au QuickFixCmdPost lgrep,lgrepadd,lvimgrep,lhelpgrep
-      \ call timer_start(10, { -> execute('lwindow') })
+      \ call timer_start(10, {-> execute('lwindow')})
 
   " Auto close quickfix, if it's the last buffer -----------------------------------------
     au WinEnter * if winnr('$') == 1 && &bt ==# 'quickfix' | q! | endif
@@ -344,207 +390,6 @@ let g:bookmarks = [
   aug end
 
 " KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
-  " Override defaults --------------------------------------------------------------------
-    nno 0 ^
-    nno ^ 0
-    " Yank to the end of the line
-    nno Y y$
-    " Reverse {j,k} and {gj,gk}, unless count is given
-    nno <expr> j v:count ? 'j' : 'gj'
-    xno <expr> j v:count ? 'j' : 'gj'
-    nno <expr> k v:count ? 'k' : 'gk'
-    xno <expr> k v:count ? 'k' : 'gk'
-    nno <expr> gj v:count ? 'gj' : 'j'
-    xno <expr> gj v:count ? 'gj' : 'j'
-    nno <expr> gk v:count ? 'gk' : 'k'
-    xno <expr> gk v:count ? 'gk' : 'k'
-    " Select last yanked or modified text
-    nno gV `[v`]
-    " Don't leave visual mode when changing indentation
-    xno < <gv
-    xno > >gv
-    " Split line, opposite of J
-    nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
-    nno g: :%
-    nno q: :
-    nno Q <Nop>
-
-  " Windows ------------------------------------------------------------------------------
-    nno <C-H> <C-W>h
-    nno <C-J> <C-W>j
-    nno <C-K> <C-W>k
-    nno <C-L> <C-W>l
-    nno <leader>w <C-W>
-
-  " Buffers ------------------------------------------------------------------------------
-    nno <silent> <C-N> :bn<CR>
-    nno <silent> <C-P> :bp<CR>
-
-  " Files --------------------------------------------------------------------------------
-    " fzf
-    nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
-      \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
-    nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
-    nno '; :call m#menu('Files', g:bookmarks)<CR>
-    nno <leader>h :History<CR>
-    nno <leader><leader> :Buffers<CR>
-    " Fern
-    nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t')."\<CR>"
-    nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
-    nno <silent> g- :Fern . -drawer -reveal=%<CR>
-
-  " Search and Replace -------------------------------------------------------------------
-    nno n nzz
-    nno N Nzz
-    map *   <Plug>(asterisk-*)
-    map g*  <Plug>(asterisk-g*)
-    map #   <Plug>(asterisk-#)
-    map g#  <Plug>(asterisk-g#)
-    map z*  <Plug>(asterisk-z*)
-    map gz* <Plug>(asterisk-gz*)
-    map z#  <Plug>(asterisk-z#)
-    map gz# <Plug>(asterisk-gz#)
-    nmap <leader>c z*cgn
-    xmap <leader>c z*cgn
-    nno <silent> <leader><CR> :let @/ = ''<CR>
-
-  " Macros -------------------------------------------------------------------------------
-    no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
-    nno <leader>q q
-
-  " Quickfix -----------------------------------------------------------------------------
-    nno <silent> qq :call qf#open()<CR>
-    nno <silent> qg :call qf#toggle()<CR>
-    nno <silent> qo :call qf#show()<CR>
-    nno <silent> qc :cclose<CR>
-    " Unimpaired mappings
-    nno <silent> [q :cprev<CR>
-    nno <silent> ]q :cnext<CR>
-    nno <silent> [Q :cfirst<CR>
-    nno <silent> ]Q :clast<CR>
-    nno <silent> [l :lprev<CR>
-    nno <silent> ]l :lnext<CR>
-    nno <silent> [L :lfirst<CR>
-    nno <silent> ]L :llast<CR>
-
-  " Registers ----------------------------------------------------------------------------
-    " Paste and keep register in visual mode
-    xno zp  pgvy
-    xno zgp pgvy`]<Space>
-    " System clipboard
-    nno <leader>y  "+y
-    nno <leader>Y  "+y$
-    nno <leader>p  "+p
-    nno <leader>P  "+P
-    nno <leader>gp "+gp
-    nno <leader>gP "+gP
-    xno <leader>y  "+y
-    xno <leader>p  "+p
-    xno <leader>P  "+P
-    xno <leader>gp "+gp
-    xno <leader>gP "+gP
-
-  " Make ---------------------------------------------------------------------------------
-    nno m<CR>    :up<CR>:Make<CR>
-    nno m<Space> :up<CR>:Make<Space>
-    nno m!       :up<CR>:Make!<CR>
-    nno m=       :Set makeprg<CR>
-
-  " Git ----------------------------------------------------------------------------------
-    nno <leader>gs :Git<CR>
-    nno <leader>gl :Flog<CR>
-    nno <leader>gb :Git blame<CR>
-    nno <leader>ga :Gwrite<CR>
-    nno <leader>gd :Gvdiffsplit!<CR>
-    nno <leader>g2 :diffget //2<CR>
-    nno <leader>g3 :diffget //3<CR>
-
-  " Misc ---------------------------------------------------------------------------------
-    nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
-    xno <leader>t :Tabularize /
-    nno <leader>v ggVG
-
-  " LSP ----------------------------------------------------------------------------------
-    " LSP buffer local mappings in $VIMCONFIG/lsp.vim
-    nno <silent> <leader>ld :LspTroubleToggle<CR>
-
-  " Termdebug ----------------------------------------------------------------------------
-    nno <leader>dr :Run<CR>
-    nno <leader>dS :Stop<CR>
-    nno <leader>ds :Step<CR>
-    nno <leader>do :Over<CR>
-    nno <leader>df :Finish<CR>
-    nno <leader>dc :Continue<CR>
-    nno <leader>db :Break<CR>
-    nno <leader>dB :Clear<CR>
-    nno <leader>de :Eval<CR>
-
-  " Insert -------------------------------------------------------------------------------
-    " Emacs
-    ino <C-A> <Home>
-    ino <C-E> <End>
-    ino <C-F> <cmd>call m#bf#iforward()<CR>
-    ino <C-B> <cmd>call m#bf#ibackward()<CR>
-    " Complete i_CTRL-G_{H,J,K,L} mappings
-    ino <C-G>h     <Left>
-    ino <C-G><C-H> <Left>
-    ino <C-G>l     <Right>
-    ino <C-G><C-L> <Right>
-    " Completion
-    ino <expr> <C-X><C-X> compe#complete()
-    ino <expr> <CR>       compe#confirm('<CR>')
-    ino <expr> <C-Y>      compe#confirm('<C-Y>')
-    ino <expr> <C-E>      compe#close('<End>')
-    " Snippets
-    imap <C-G>o     ()<C-G>U<Left>
-    imap <C-G><C-O> ()<C-G>U<Left>
-    imap <C-G>b     {<CR>}<Esc>O
-    imap <C-G><C-B> {<CR>}<Esc>O
-    imap <C-G>a     <><C-G>U<Left>
-    imap <C-G><C-A> <><C-G>U<Left>
-    imap <C-G>i     ""<C-G>U<Left>
-    imap <C-G><C-I> ""<C-G>U<Left>
-
-  " Command ------------------------------------------------------------------------------
-    cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
-    cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
-    cno <expr> <C-K> wildmenumode() ? '<C-P>' : '<Up>'
-    cno <expr> <C-J> wildmenumode() ? '<C-N>' : '<Down>'
-    " Emacs
-    cno <C-A> <Home>
-    cno <expr> <C-F> getcmdline() !=# '' ? '<C-R>=m#bf#cforward()<CR>' : '<C-F>'
-    cno <C-B> <C-R>=m#bf#cbackward()<CR>
-    " Insert stuff
-    cno <C-R><C-D> <C-R>=m#bufdir()<CR>
-    cno <C-R><C-K> <C-K>
-    cno <C-X><C-A> <C-A>
-    " Remap c_CTRL-{G,T} to free up CTRL-G mapping
-    cno <C-G>n     <C-G>
-    cno <C-G><C-N> <C-G>
-    cno <C-G>p     <C-T>
-    cno <C-G><C-P> <C-T>
-    " Move one character left and right, consistent with insert mode
-    cno <C-G>h     <Left>
-    cno <C-G><C-H> <Left>
-    cno <C-G>l     <Right>
-    cno <C-G><C-L> <Right>
-    " Snippets
-    cmap <C-G>o     ()<Left>
-    cmap <C-G><C-O> ()<Left>
-    cmap <C-G>b     {}<Left>
-    cmap <C-G><C-B> {}<Left>
-    cmap <C-G>a     <><Left>
-    cmap <C-G><C-A> <><Left>
-    cmap <C-G>i     ""<Left>
-    cmap <C-G><C-I> ""<Left>
-
-  " Options ------------------------------------------------------------------------------
-    nno <leader>ow :set wrap!<bar>set wrap?<CR>
-    nno <leader>oW :set wrapscan!<bar>set wrapscan?<CR>
-    nno <leader>os :set ignorecase!<bar>set ignorecase?<CR>
-    nno <leader>om :let &mouse = (&mouse ==# '' ? 'a' : '')<bar>set mouse?<CR>
-    nno <leader>oi :IndentBlanklineToggle<CR>
-    nno <leader>on :LineNumbersToggle<CR>
-    nno <leader>oc :ColorizerToggle<CR>
+  source $VIMCONFIG/maps.vim
 
 " vim:tw=90:ts=2:sts=2:sw=2:et:
