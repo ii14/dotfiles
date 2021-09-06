@@ -4,6 +4,7 @@ let $VIMCONFIG = stdpath('config')
 let $VIMPLUGINS = $VIMDATA.'/plugged'
 
 " KEY MAPPINGS    $VIMCONFIG/maps.vim
+" COMMANDS        $VIMCONFIG/commands.vim
 " LSP CONFIG      $VIMCONFIG/lua/m/lsp/init.lua
 " LSP BUFFER      $VIMCONFIG/lsp.vim
 " TERMINAL        $VIMCONFIG/term.vim
@@ -11,7 +12,6 @@ let $VIMPLUGINS = $VIMDATA.'/plugged'
 " FERN            $VIMCONFIG/ftplugin/fern.vim
 " GREP            $VIMCONFIG/grep.vim
 " THEME           $VIMCONFIG/theme.vim
-" COMMANDS        $VIMCONFIG/plugin/
 " SNIPPETS        $VIMCONFIG/UltiSnips/
 
 let mapleader = ' '
@@ -288,72 +288,7 @@ let g:bookmarks = [
     source $VIMCONFIG/grep.vim
 
 " COMMANDS ///////////////////////////////////////////////////////////////////////////////
-  " See $VIMCONFIG/autoload/m.vim for command implementations
-  " See $VIMCONFIG/plugin/ for more command definitions
-
-  " :bd doesn't close window, :bq closes the window --------------------------------------
-    com! -nargs=? -bang -complete=buffer Bq
-      \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
-      \ | bd! | else | bd<bang> <args> | endif
-    call Cabbrev('bq', 'Bq')
-    call Cabbrev('bd', 'Bd')
-    call Cabbrev('bw', 'Bw')
-
-  " Use fzf for help and buffers ---------------------------------------------------------
-    com! -nargs=? -complete=help H
-      \ if <q-args> ==# '' | Helptags | else | h <args> | endif
-    com! -nargs=? -bang -complete=buffer B
-      \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
-    call Cabbrev('h', 'H')
-    call Cabbrev('b', 'B')
-
-  " Set tab width. 4 by default, ! is noet -----------------------------------------------
-    com! -count=4 -bang T
-      \ setl ts=<count> sts=<count> sw=<count> |
-      \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
-
-  " Fill the rest of the line with character ---------------------------------------------
-    com! -nargs=? Hr call m#hr(<q-args>)
-    call Cabbrev('hr', 'Hr')
-
-  " :redir to a new buffer ---------------------------------------------------------------
-    com! -nargs=+ -complete=command Redir call m#redir(<q-args>)
-
-  " :set with prompt ---------------------------------------------------------------------
-    com! -nargs=1 -complete=option Set call m#set(<q-args>)
-
-  " Rename current file ------------------------------------------------------------------
-    com! RenameFile call m#rename_file()
-
-  " xdg-open -----------------------------------------------------------------------------
-    com! -nargs=? -complete=file Open call m#open(<q-args>)
-
-  " ctags --------------------------------------------------------------------------------
-    if executable('ctags')
-      com! Ctags !ctags -R .
-    endif
-    if executable('qmltags') " https://github.com/pylipp/qtilities
-      com! Qmltags !qmltags
-    endif
-
-  " Lightweight git blame ----------------------------------------------------------------
-    com! -nargs=? -range GB echo join(systemlist("git -C " . shellescape(expand('%:p:h'))
-      \ . " blame -L <line1>,<line2> <args> -- " . expand('%:t')), "\n")
-
-  " Shortcuts ----------------------------------------------------------------------------
-    com! Wiki VimwikiIndex
-    com! Vimrc edit $MYVIMRC
-
-  " Lowercase commands -------------------------------------------------------------------
-    call Cabbrev('git',  'Git')
-    call Cabbrev('rg',   'Rg')
-    call Cabbrev('man',  'Man')
-    call Cabbrev('rc',   'Rc')
-    call Cabbrev('trim', 'Trim')
-    call Cabbrev('fzf',  'Files')
-    call Cabbrev('fern', 'Fern')
-    call Cabbrev('vifm', 'Vifm')
-    call Cabbrev('vres', 'vert res')
+  source $VIMCONFIG/commands.vim
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
   aug Vimrc
