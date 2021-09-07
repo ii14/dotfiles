@@ -165,11 +165,23 @@ bar {
     i3bar_command launch-polybar i3
 }
 
+# bindsym $mod+g mode "annotate", $exec gromit-mpx --toggle
+# mode "annotate" {
+#     bindsym Escape $exec gromit-mpx --toggle, mode "default"
+#     bindsym $mod+g $exec gromit-mpx --toggle, mode "default"
+#     bindsym q $exec gromit-mpx --quit, mode "default"
+
+#     bindsym t $exec gromit-mpx --toggle
+#     bindsym c $exec gromit-mpx --clear
+#     bindsym u $exec gromit-mpx --undo
+#     bindsym r $exec gromit-mpx --redo
+# }
+
 # COLORS ---------------------------------------------------------------------------------
 #      class            border  backgr. text    indicator child_border
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
-client.focused_inactive #5c6370 #4b5263 #ffffff #484e50   #4b5263
-client.unfocused        #21252b #282c34 #5c6370 #292d2e   #1a1c22
+client.focused_inactive #4b5263 #3e4452 #ffffff #484e50   #3e4452
+client.unfocused        #1a1c22 #21252c #5c6370 #292d2e   #1a1c22
 client.urgent           #e06c75 #be5046 #ffffff #be5046   #be5046
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #000000
