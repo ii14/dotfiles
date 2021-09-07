@@ -69,7 +69,7 @@ nno <leader>q q
 
 " QUICKFIX ///////////////////////////////////////////////////////////////////////////////
 nno <silent> qq :call qf#open()<CR>
-nno <silent> qg :call qf#toggle()<CR>
+nno <silent> qt :call qf#toggle()<CR>
 nno <silent> qo :call qf#show()<CR>
 nno <silent> qc :cclose<CR>
 " Unimpaired mappings
@@ -159,6 +159,8 @@ imap <C-G>a     <><C-G>U<Left>
 imap <C-G><C-A> <><C-G>U<Left>
 imap <C-G>i     ""<C-G>U<Left>
 imap <C-G><C-I> ""<C-G>U<Left>
+ino <C-R><C-D> <C-R>=m#bufdir()<CR>
+ino <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 
 " COMMAND ////////////////////////////////////////////////////////////////////////////////
 cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
@@ -171,6 +173,7 @@ cno <expr> <C-F> getcmdline() !=# '' ? '<C-R>=m#bf#cforward()<CR>' : '<C-F>'
 cno <C-B> <C-R>=m#bf#cbackward()<CR>
 " Insert stuff
 cno <C-R><C-D> <C-R>=m#bufdir()<CR>
+cno <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 cno <C-R><C-K> <C-K>
 cno <C-X><C-A> <C-A>
 " Remap c_CTRL-{G,T} to free up CTRL-G mapping

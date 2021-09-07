@@ -14,7 +14,13 @@ fun! s:hasqf()
 endfun
 
 fun! s:qfvisible()
-  return !empty(filter(getwininfo(), {_, win -> win.tabnr == tabpagenr() && win.quickfix && !win.loclist}))
+  let tabnr = tabpagenr()
+  for win in getwininfo()
+    if win.tabnr == tabnr && win.quickfix && !win.loclist
+      return v:true
+    endif
+  endfor
+  return v:false
 endfun
 
 fun! qf#open()
@@ -44,45 +50,17 @@ fun! qf#toggle()
   endif
 endfun
 
-fun! qf#cvsplit()
+fun! qf#cexec(cmd)
   let l = line('.')
   wincmd p
-  wincmd v
+  exe a:cmd
   exe l.'cc'
 endfun
 
-fun! qf#csplit()
+fun! qf#lexec(cmd)
   let l = line('.')
   wincmd p
-  wincmd s
-  exe l.'cc'
-endfun
-
-fun! qf#ctabsplit()
-  let l = line('.')
-  wincmd p
-  tab split
-  exe l.'cc'
-endfun
-
-fun! qf#lvsplit()
-  let l = line('.')
-  wincmd p
-  wincmd v
-  exe l.'ll'
-endfun
-
-fun! qf#lsplit()
-  let l = line('.')
-  wincmd p
-  wincmd s
-  exe l.'ll'
-endfun
-
-fun! qf#ltabsplit()
-  let l = line('.')
-  wincmd p
-  tab split
+  exe a:cmd
   exe l.'ll'
 endfun
 

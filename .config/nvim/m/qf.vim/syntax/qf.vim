@@ -1,16 +1,14 @@
-finish
-
 if exists('b:current_syntax')
   finish
 endif
 
-syn match	qfFileName "^[^:]*" nextgroup=qfSeparator
-syn match	qfSeparator ":" nextgroup=qfLineNr contained
-syn match	qfLineNr "[^:]*" contained contains=qfError
-syn match	qfError "error" contained
+syn match qfFileName  "^[^|]*" nextgroup=qfSeparator
+syn match qfSeparator "|" nextgroup=qfLineNr contained
+syn match qfLineNr    "[^|]*" contained contains=qfError
+syn match qfError     "error" contained
 
-hi def link qfFileName Directory
-hi def link qfLineNr Typedef
-hi def link qfError Error
+hi def link qfFileName  Directory
+hi def link qfLineNr    String
+hi def link qfError     Error
 
 let b:current_syntax = 'qf'

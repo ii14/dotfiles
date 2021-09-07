@@ -35,26 +35,26 @@ setup.pylsp {
   },
 }
 
-local sumneko_root_path = '/opt/lua-language-server'
-local sumneko_binary = sumneko_root_path..'/bin/Linux/lua-language-server'
 setup.sumneko_lua {
-  cmd = {sumneko_binary, '-E', sumneko_root_path .. '/main.lua'},
+  cmd = (function()
+    -- local root = vim.fn.expand('$HOME')..'/repos/lua-language-server'
+    local root = '/opt/lua-language-server'
+    return { root..'/bin/Linux/lua-language-server', '-E', root .. '/main.lua' }
+  end)(),
   settings = {
     Lua = {
       runtime = {
         version = 'LuaJIT',
-        path = vim.split(package.path, ';'),
+        path = (function()
+          local runtime_path = vim.split(package.path, ';')
+          table.insert(runtime_path, "lua/?.lua")
+          table.insert(runtime_path, "lua/?/init.lua")
+          return runtime_path
+        end)(),
       },
-      diagnostics = {
-        globals = {'vim', 'P', 'R'},
-      },
-      workspace = {
-        library = {
-          [vim.fn.expand("$VIMRUNTIME/lua/")] = true,
-          [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-          [vim.fn.expand("$VIMCONFIG/lua")] = true,
-        },
-      },
+      diagnostics = { globals = {'vim'} },
+      workspace = { library = vim.api.nvim_get_runtime_file("lua/", true) },
+      telemetry = { enable = false },
     },
   },
 }

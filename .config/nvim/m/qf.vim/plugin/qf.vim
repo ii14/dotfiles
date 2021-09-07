@@ -1,7 +1,5 @@
-com! QF call qf#open()
-
-aug Quickfix
-  au!
-aug end
+augroup Quickfix
+  autocmd!
+augroup end
 
 " set quickfixtextfunc=qf#textfunc

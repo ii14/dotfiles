@@ -34,13 +34,7 @@ local on_exit = vim.schedule_wrap(function(_, _, id)
   for _, bufnr in ipairs(clients[id]) do
     if not M.is_attached(bufnr) then
       vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', false)
-
-      for _, win in pairs(vim.fn.getwininfo()) do
-        if win.bufnr == bufnr then
-          vim.api.nvim_win_set_option(win.winid, 'signcolumn', 'auto')
-        end
-      end
-
+      vim.fn.setbufvar(bufnr, '&signcolumn', 'auto')
       vim.g.lsp_event = { event = 'detach', bufnr = bufnr }
       vim.cmd('doautocmd User LspDetach')
     end
@@ -51,13 +45,7 @@ end)
 local on_attach = vim.schedule_wrap(function(client, bufnr)
   table.insert(clients[client.id], bufnr)
   vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
-
-  for _, win in pairs(vim.fn.getwininfo()) do
-    if win.bufnr == bufnr then
-      vim.api.nvim_win_set_option(win.winid, 'signcolumn', 'yes')
-    end
-  end
-
+  vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')
   vim.g.lsp_event = { event = 'attach', bufnr = bufnr }
   vim.cmd('doautocmd User LspAttach')
 end)

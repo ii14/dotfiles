@@ -1,8 +1,8 @@
-augroup Term
+augroup VimrcTerm
   autocmd!
   " Disable insert mode after terminal process terminates.
   " 'nomodifiable' doesn't work, but maybe there is a better way to do it?
-  autocmd TermClose * ++nested stopinsert | au Term TermEnter <buffer> stopinsert
+  autocmd TermClose * ++nested stopinsert | au VimrcTerm TermEnter <buffer> stopinsert
 augroup end
 
 tnoremap <S-PageUp>   <C-\><C-N><C-B>
@@ -21,7 +21,7 @@ function! s:TermExec(cmd)
   execute a:cmd
 endfunction
 
-augroup Term
+augroup VimrcTerm
   autocmd CmdlineLeave,WinEnter,BufWinEnter * call timer_start(0, function('s:TermEnter'), {})
 augroup end
 

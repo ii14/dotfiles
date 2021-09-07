@@ -115,7 +115,7 @@ let g:bookmarks = [
   call plug#end()
   call PlugCheckMissing()
 
-  lua require 'impatient'
+  lua pcall(require, 'impatient')
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/theme.vim
@@ -142,18 +142,19 @@ let g:bookmarks = [
       aug Vimrc
         au User LspAttach source $VIMCONFIG/lsp.vim
         au CursorMoved * lua require 'nvim-lightbulb'.update_lightbulb()
-        au BufWinEnter * call s:lsp_update_signcolumn()
+        au TabEnter * call s:lsp_update_tab()
       aug end
 
-      fun! s:lsp_update_signcolumn()
-        if exists('b:lsp_attached')
-          if b:lsp_attached
-            setl signcolumn=yes
-          else
-            setl signcolumn=auto
-            unlet! b:lsp_attached
+      fun! s:lsp_update_tab()
+        let tabnr = tabpagenr()
+        for win in getwininfo()
+          if win.tabnr == tabnr
+            let attached = getbufvar(win.bufnr, 'lsp_attached', 0)
+            if type(attached) == v:t_bool
+              call setbufvar(win.bufnr, '&signcolumn', attached ? 'yes' : 'auto')
+            endif
           endif
-        endif
+        endfor
       endfun
     endif
 

@@ -36,10 +36,10 @@ xno <buffer><silent> gw    :<C-U>lua vim.lsp.buf.range_formatting()<CR>
 xno <buffer><silent> gq    :<C-U>lua vim.lsp.buf.range_formatting()<CR>
 
 nno <buffer><silent> <leader>lS :LspStop<CR>
-nno <buffer><silent> <leader>ls :LspFind<CR>
-nno <buffer><silent> <leader>lf :LspFormat<CR>
-xno <buffer><silent> <leader>lf :<C-U>LspFormat<CR>
-nno <buffer><silent> <leader>la :LspAction<CR>
+" nno <buffer><silent> <leader>ls :LspFind<CR>
+" nno <buffer><silent> <leader>lf :LspFormat<CR>
+" xno <buffer><silent> <leader>lf :<C-U>LspFormat<CR>
+" nno <buffer><silent> <leader>la :LspAction<CR>
 " nno <buffer><silent> <leader>ld :LspDiagnostics<CR>
 
 " close completion on '({' and let lsp_signature take over:
@@ -47,12 +47,12 @@ ino <buffer><silent> ( <cmd>lua require 'compe'._close()<CR>(
 ino <buffer><silent> { <cmd>lua require 'compe'._close()<CR>{
 
 " Commands -------------------------------------------------------------------------------
-com! -bar -buffer LspDiagnostics
-  \ lua vim.lsp.diagnostic.set_loclist()
-" TODO: add proper range handling
-com! -bar -buffer -range=0 LspAction
-  \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_code_action()' : 'code_action()')
-com! -bar -buffer -range=0 LspFormat
-  \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
-com! -bar -buffer -nargs=? LspFind
-  \ call luaeval('vim.lsp.buf.workspace_symbol(_A)', <q-args> is# '' ? v:null : <q-args>)
+" com! -bar -buffer LspDiagnostics
+"   \ lua vim.lsp.diagnostic.set_loclist()
+" " TODO: add proper range handling
+" com! -bar -buffer -range=0 LspAction
+"   \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_code_action()' : 'code_action()')
+" com! -bar -buffer -range=0 LspFormat
+"   \ exe 'lua vim.lsp.buf.'.(<count> ? 'range_formatting()' : 'formatting()')
+" com! -bar -buffer -nargs=? LspFind
+"   \ call luaeval('vim.lsp.buf.workspace_symbol(_A)', <q-args> is# '' ? v:null : <q-args>)
