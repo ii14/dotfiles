@@ -3,6 +3,8 @@ let mapleader = ' '
 set surround
 set commentary
 set highlightedyank
+set argtextobj
+set exchange
 
 set number relativenumber
 set ignorecase smartcase
