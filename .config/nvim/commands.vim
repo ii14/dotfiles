@@ -64,3 +64,7 @@ call Cabbrev('fzf',  'Files')
 call Cabbrev('fern', 'Fern')
 call Cabbrev('vifm', 'Vifm')
 call Cabbrev('vres', 'vert res')
+
+" Synstack -------------------------------------------------------------------------------
+command! Synstack
+  \ echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ' > ')

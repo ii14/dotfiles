@@ -1,6 +1,3 @@
-setl formatoptions-=o
-setl formatoptions-=r
-
 let s:sid = expand('<SID>')
 let &l:include = '\v<((do|load)file|require)[^''"]*[''"]\zs[^''"]+'
 let &l:includeexpr = s:sid . 'LuaInclude(v:fname)'
