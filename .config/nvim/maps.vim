@@ -44,9 +44,9 @@ nno '; :call m#menu('Files', g:bookmarks)<CR>
 nno <leader>h :History<CR>
 nno <leader><leader> :Buffers<CR>
 " Fern
-nno <silent><expr> - ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t')."\<CR>"
-nno <silent> _ :Fern . -drawer -toggle -reveal=%<CR>
-nno <silent> g- :Fern . -drawer -reveal=%<CR>
+nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
+nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
+nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 
 " SEARCH AND REPLACE /////////////////////////////////////////////////////////////////////
 nno n nzz
@@ -145,22 +145,35 @@ ino <C-G>h     <Left>
 ino <C-G><C-H> <Left>
 ino <C-G>l     <Right>
 ino <C-G><C-L> <Right>
+" Insert stuff
+ino <C-R><C-D> <C-R>=m#bufdir()<CR>
+ino <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 " Completion
 ino <expr> <C-X><C-X> compe#complete()
 ino <expr> <CR>       compe#confirm('<CR>')
 ino <expr> <C-Y>      compe#confirm('<C-Y>')
-ino <expr> <C-E>      compe#close('<End>')
+" ino <expr> <C-E>      compe#close('<End>')
+ino <expr> <C-E>      <SID>i_ctrl_e()
+function! s:i_ctrl_e() abort
+  if mode()[0] ==# 'i' && pumvisible()
+    if complete_info(['selected']).selected != -1
+      return "\<C-e>\<C-r>=luaeval('require\"compe\"._close()')\<CR>"
+    else
+      return "\<C-e>\<C-r>=luaeval('require\"compe\"._close()')\<CR>\<End>"
+    endif
+  endif
+  return "\<End>"
+endfunction
 " Snippets
+ino <C-G><CR> <CR><C-O>O
 imap <C-G>o     ()<C-G>U<Left>
 imap <C-G><C-O> ()<C-G>U<Left>
-imap <C-G>b     {<CR>}<Esc>O
-imap <C-G><C-B> {<CR>}<Esc>O
+imap <C-G>b     {}<C-G>U<Left>
+imap <C-G><C-B> {}<C-G>U<Left>
 imap <C-G>a     <><C-G>U<Left>
 imap <C-G><C-A> <><C-G>U<Left>
 imap <C-G>i     ""<C-G>U<Left>
 imap <C-G><C-I> ""<C-G>U<Left>
-ino <C-R><C-D> <C-R>=m#bufdir()<CR>
-ino <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 
 " COMMAND ////////////////////////////////////////////////////////////////////////////////
 cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
@@ -195,6 +208,10 @@ cmap <C-G>a     <><Left>
 cmap <C-G><C-A> <><Left>
 cmap <C-G>i     ""<Left>
 cmap <C-G><C-I> ""<Left>
+cmap <C-G>g     \(\)<Left><Left>
+cmap <C-G><C-G> \(\)<Left><Left>
+cmap <C-G>w     \<\><Left><Left>
+cmap <C-G><C-W> \<\><Left><Left>
 
 " OPTIONS ////////////////////////////////////////////////////////////////////////////////
 nno <leader>ow :set wrap!<bar>set wrap?<CR>
