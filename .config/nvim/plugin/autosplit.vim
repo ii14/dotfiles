@@ -1,8 +1,3 @@
-if exists('g:loaded_autosplit')
-  finish
-endif
-let g:loaded_autosplit = 1
-
 " Description: Open windows in vertical split, if there is enough space
 
 " NOTE: This might not work for every (n)vim version because of past bugs.
@@ -12,6 +7,8 @@ let g:loaded_autosplit = 1
 "       win_splitmove(), because only some time ago it was fixed.
 "
 "       I'm not sure which patch fixed it.
+
+let s:wininfo = []
 
 fun! Autosplit()
   let prev = winnr('#')
@@ -48,13 +45,30 @@ fun! s:clear_augroup(aug)
   execute 'augroup!' a:aug
 endfun
 
-fun! s:autocmd()
-  let aug = 'autosplit_'.win_getid()
+fun! s:autocmd() abort
+  let winid = win_getid()
+  let tabnr = tabpagenr()
+  " win_splitmove() triggers WinNew event.
+  " confirm that we are actually in a new window.
+  for win in s:wininfo
+    if win.winid == winid && win.tabnr == tabnr
+      let s:wininfo = getwininfo()
+      return
+    endif
+  endfor
+  let s:wininfo = getwininfo()
+
+  let aug = 'autosplit_'.winid
   execute 'augroup' aug
     autocmd!
+    " for some reason this autocmd won't get assigned to this
+    " augroup unless augroup is passed explicitly
     execute 'autocmd' aug s:autocmd_inner
   augroup end
-  call timer_start(500, { -> s:clear_augroup(aug) })
+  " if we didn't hit BufEnter right away, this is just a normal :split
+  " or :vsplit. clear the autocmd so it won't unexpectedly move the split
+  " in the future when we change the buffer with :bn or :bp.
+  call timer_start(100, { -> s:clear_augroup(aug) })
 endfun
 
 augroup autosplit
