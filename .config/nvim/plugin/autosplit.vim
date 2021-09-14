@@ -8,19 +8,26 @@
 "
 "       I'm not sure which patch fixed it.
 
-let s:wininfo = []
+if exists('g:autosplit_loaded')
+  finish
+endif
+let g:autosplit_loaded = 1
 
-fun! Autosplit()
+let s:textwidth = get(g:, 'autosplit_textwidth', 80)
+let s:wininfo = []
+let s:timer = 0
+
+fun! Autosplit() abort
   let prev = winnr('#')
   " if prev is 0 it's probably new tab. invalid anyways
   if prev == 0 | return | endif
 
-  let twprev = getwinvar(winnr(), '&textwidth', 80)
-  let twcurr = getwinvar(prev,    '&textwidth', 80)
+  let twprev = getwinvar(winnr(), '&textwidth', s:textwidth)
+  let twcurr = getwinvar(prev,    '&textwidth', s:textwidth)
 
   " &textwidth in vim defaults to nothing, nvim defaults to zero
-  if twprev == 0 | let twprev = 80 | endif
-  if twcurr == 0 | let twcurr = 80 | endif
+  if twprev == 0 | let twprev = s:textwidth | endif
+  if twcurr == 0 | let twcurr = s:textwidth | endif
 
   " this check is not perfect, it doesn't take into account that
   " there already might be another vertical split and after :wincmd =
@@ -30,22 +37,10 @@ fun! Autosplit()
   let vert = winwidth(prev) >= twcurr + twprev
 
   call win_splitmove(win_getid(), win_getid(prev), {'vertical': vert})
+  wincmd =
 endfun
 
-let s:autocmd_inner = 'BufEnter * ++once ' . join([
-  \ 'if (index(get(g:, "autosplit_bt", []), &buftype) != -1 ||',
-  \ 'index(get(g:, "autosplit_ft", []), &filetype) != -1) |',
-  \ 'call Autosplit() | endif',
-  \ ])
-
-fun! s:clear_augroup(aug)
-  execute 'augroup' a:aug
-    autocmd!
-  augroup end
-  execute 'augroup!' a:aug
-endfun
-
-fun! s:autocmd() abort
+fun! s:winnew() abort
   let winid = win_getid()
   let tabnr = tabpagenr()
   " win_splitmove() triggers WinNew event.
@@ -58,20 +53,25 @@ fun! s:autocmd() abort
   endfor
   let s:wininfo = getwininfo()
 
-  let aug = 'autosplit_'.winid
-  execute 'augroup' aug
+  if s:timer != 0 | call timer_stop(s:timer) | endif
+
+  augroup autosplit_bufenter
     autocmd!
-    " for some reason this autocmd won't get assigned to this
-    " augroup unless augroup is passed explicitly
-    execute 'autocmd' aug s:autocmd_inner
+    autocmd BufEnter * ++once
+      \ if (index(get(g:, "autosplit_bt", []), &buftype) != -1 ||
+      \     index(get(g:, "autosplit_ft", []), &filetype) != -1) |
+      \   call Autosplit() |
+      \ endif
   augroup end
+
   " if we didn't hit BufEnter right away, this is just a normal :split
   " or :vsplit. clear the autocmd so it won't unexpectedly move the split
   " in the future when we change the buffer with :bn or :bp.
-  call timer_start(100, { -> s:clear_augroup(aug) })
+  let s:timer = timer_start(100,
+    \ {-> execute('augroup autosplit_bufenter | autocmd! | augroup end')})
 endfun
 
-augroup autosplit
+augroup autosplit_winnew
   autocmd!
-  autocmd WinNew * call s:autocmd()
+  autocmd WinNew * call s:winnew()
 augroup end

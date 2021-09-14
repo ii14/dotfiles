@@ -178,8 +178,6 @@ imap <C-G><C-I> ""<C-G>U<Left>
 " COMMAND ////////////////////////////////////////////////////////////////////////////////
 cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
 cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
-cno <expr> <C-K> wildmenumode() ? '<C-P>' : '<Up>'
-cno <expr> <C-J> wildmenumode() ? '<C-N>' : '<Down>'
 " Emacs
 cno <C-A> <Home>
 cno <expr> <C-F> getcmdline() !=# '' ? '<C-R>=m#bf#cforward()<CR>' : '<C-F>'
@@ -187,7 +185,6 @@ cno <C-B> <C-R>=m#bf#cbackward()<CR>
 " Insert stuff
 cno <C-R><C-D> <C-R>=m#bufdir()<CR>
 cno <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
-cno <C-R><C-K> <C-K>
 cno <C-X><C-A> <C-A>
 " Remap c_CTRL-{G,T} to free up CTRL-G mapping
 cno <C-G>n     <C-G>
