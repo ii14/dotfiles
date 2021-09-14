@@ -21,7 +21,7 @@ let g:lightline.active = {
 
 let g:lightline.tabline = {
   \ 'left'  : [['buffers']],
-  \ 'right' : [[]],
+  \ 'right' : [['tab']],
   \ }
 
 let g:lightline.component = {
@@ -38,6 +38,7 @@ let g:lightline.component_function = {
   \ 'fugitive'     : 'LightlineFugitive',
   \ 'lsp'          : 'LightlineLsp',
   \ 'pro'          : 'LightlinePro',
+  \ 'tab'          : 'LightlineTab',
   \ }
 
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -131,6 +132,10 @@ function! LightlineIsFernDrawer()
   catch
     return v:false
   endtry
+endfunction
+
+function! LightlineTab()
+  return (tabpagenr('$') <= 1) ? '' : (tabpagenr() .. '/' .. tabpagenr('$'))
 endfunction
 
 augroup VimrcTheme

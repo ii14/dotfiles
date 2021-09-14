@@ -29,7 +29,7 @@ nno <C-H> <C-W>h
 nno <C-J> <C-W>j
 nno <C-K> <C-W>k
 nno <C-L> <C-W>l
-nno <leader>w <C-W>
+nmap <leader>w <C-W>
 
 " BUFFERS ////////////////////////////////////////////////////////////////////////////////
 nno <silent> <C-N> :bn<CR>
