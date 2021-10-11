@@ -38,10 +38,22 @@ bindkey '^r' history-incremental-search-backward
 # Completion menu backwards [Shift+Tab]
 [[ "${terminfo[kcbt]}" != "" ]] && bindkey "${terminfo[kcbt]}" reverse-menu-complete
 
-# Edit command line [Ctrl+X,Ctrl+E]
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey '^x^e' edit-command-line
+# Edit command line [Ctrl+X,Ctrl+X]
+function my-edit-command-line {
+    () {
+        exec < /dev/tty
+        setopt localoptions nomultibyte noksharrays
+        (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
+        integer byteoffset=$(( $#PREBUFFER + $#LBUFFER + 1 ))
+        # assumes vi is a minimal configuration of (n)vim
+        vi -c "normal! ${byteoffset}go" -- $1
+        (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
+        print -Rz - "$(<$1)"
+    } =(<<<"$PREBUFFER$BUFFER")
+    zle send-break
+}
+zle -N my-edit-command-line
+bindkey '^x^x' my-edit-command-line
 
 # Completion menu vim movement [Ctrl+{h,j,k,l}]
 # zmodload zsh/complist
@@ -60,9 +72,10 @@ bindkey '^x^e' edit-command-line
 bindkey '^y' accept-search
 
 # Switch between background and foreground [Ctrl+Z]
-function fg-bg() {
+function fg-bg {
     if [[ $#BUFFER -eq 0 ]]; then
-        fg
+        BUFFER=fg
+        zle accept-line
     else
         zle push-input
     fi

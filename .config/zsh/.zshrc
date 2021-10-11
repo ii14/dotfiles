@@ -1,6 +1,3 @@
-# TODO: remove
-[ -d "$HOME/.local/bin/aliases" ] && PATH="$HOME/.local/bin/aliases:$PATH"
-
 ZSH_PLUGIN_PATH="$ZDOTDIR/plugins"
 
 [[ $(ps -ho comm $PPID) == 'mc' ]] && ZSH_MC=1

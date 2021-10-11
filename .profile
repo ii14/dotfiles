@@ -1,9 +1,11 @@
+# shellcheck shell=sh disable=SC1090
 [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
 # XDG SPECS ------------------------------------------------------------------------------
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/var"
 
 # PATH -----------------------------------------------------------------------------------
 [ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
@@ -18,7 +20,7 @@ PathAppend "/opt/ghc/bin"
 PathAppend "/opt/cabal/bin"
 PathAppend "$XDG_DATA_HOME/cargo/bin"
 PathAppend "$XDG_DATA_HOME/gem/bin"
-PathAppend "$HOME/.luarocks/bin"
+PathAppend "$HOME/.config/luarocks/bin"
 unset PathAppend
 
 # APPLICATIONS ---------------------------------------------------------------------------

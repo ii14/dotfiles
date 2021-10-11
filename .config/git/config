@@ -16,14 +16,20 @@
 [alias]
     st = status
     ci = commit --verbose
+    cia = commit --verbose --amend
     co = checkout
+    com = checkout master
     aa = add --all
     df = diff
     dfs = diff --staged
-    br = branch -v
-    brs = branch -a
+    br = branch -vv
+    brs = branch -vva
     wt = worktree
-    l = log --graph --abbrev-commit --decorate --format=tformat:'%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)' --all
+    l = log --graph --abbrev-commit --decorate --format=line --all
     lt = !git --no-pager l -n 10
     l1 = !git --no-pager log -n 1
     np = !git --no-pager
+    root = rev-parse --show-toplevel
+
+[pretty]
+    line = '%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)'
