@@ -32,4 +32,4 @@
     root = rev-parse --show-toplevel
 
 [pretty]
-    line = '%C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)'
+    line = %C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)
