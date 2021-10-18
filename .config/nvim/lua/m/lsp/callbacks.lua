@@ -37,7 +37,7 @@ end
 
 -- select line under cursor on quickfix list
 -- don't switch back from quickfix to previous window
-callbacks['textDocument/references'] = function(_, _, result)
+callbacks['textDocument/references'] = function(_, result)
   if not result or vim.tbl_isempty(result) then
     print('LSP: No references found')
     return nil
@@ -47,12 +47,12 @@ callbacks['textDocument/references'] = function(_, _, result)
 end
 
 local symbol_callback = function(entity)
-  return function(_, _, result, _, bufnr)
+  return function(_, result, context)
     if not result or vim.tbl_isempty(result) then
       print('LSP: No '..entity..' found')
       return nil
     end
-    set_qflist(util.symbols_to_items(result, bufnr))
+    set_qflist(util.symbols_to_items(result, context.bufnr))
     vim.cmd('copen')
   end
 end
@@ -60,7 +60,7 @@ end
 callbacks['textDocument/documentSymbol'] = symbol_callback('document symbols')
 callbacks['workspace/symbol']            = symbol_callback('symbols')
 
-local location_callback = function(_, _, result)
+local location_callback = function(_, result)
   if result == nil or vim.tbl_isempty(result) then
     print('LSP: No location found')
     return nil
@@ -83,7 +83,7 @@ callbacks['textDocument/implementation'] = location_callback
 
 local last_actions = nil
 
-callbacks['textDocument/codeAction'] = function(_, _, actions)
+callbacks['textDocument/codeAction'] = function(_, actions)
   if actions == nil or vim.tbl_isempty(actions) then
     print('LSP: No code actions available')
     return

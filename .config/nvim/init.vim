@@ -1,8 +1,3 @@
-let $VIMDATA = stdpath('data')
-let $VIMCACHE = stdpath('cache')
-let $VIMCONFIG = stdpath('config')
-let $VIMPLUGINS = $VIMDATA.'/plugged'
-
 " KEY MAPPINGS    $VIMCONFIG/maps.vim
 " COMMANDS        $VIMCONFIG/commands.vim
 " LSP CONFIG      $VIMCONFIG/lua/m/lsp/init.lua
@@ -12,9 +7,15 @@ let $VIMPLUGINS = $VIMDATA.'/plugged'
 " FERN            $VIMCONFIG/ftplugin/fern.vim
 " GREP            $VIMCONFIG/grep.vim
 " THEME           $VIMCONFIG/theme.vim
+" HIGHLIGHTING    $VIMCONFIG/after/plugin/color.vim
 " SNIPPETS        $VIMCONFIG/UltiSnips/
 
-let mapleader = ' '
+let $VIMDATA = stdpath('data')
+let $VIMCACHE = stdpath('cache')
+let $VIMCONFIG = stdpath('config')
+let $VIMPLUGINS = $VIMDATA.'/plugged'
+
+let g:mapleader = ' '
 aug Vimrc | au! | aug end
 
 if v:progname ==# 'vi'
@@ -26,10 +27,10 @@ if exists('$VIMNOLSP')
   let g:disable_lsp = 1
 endif
 
-lua require 'm.global'
-source $VIMCONFIG/functions.vim
-
 let g:bookmarks = [
+  \ ['w', '<working directory>', 'Files .'],
+  \ ['f', '<buffer directory>', 'exe "Files "..m#bufdir()'],
+  \ ['g', '<git files>', 'GFiles'],
   \ ['V', '$VIMRUNTIME'],
   \ ['e', '/etc'],
   \ ['p', '$VIMPLUGINS'],
@@ -40,7 +41,7 @@ let g:bookmarks = [
   \ ['r', '~/repos'],
   \ ['m', '~/dev/mm'],
   \ ['d', '~/dev'],
-  \ ['.', '.'],
+  \ ['h', '~'],
   \ ]
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +49,8 @@ let g:bookmarks = [
 
   " Editing ------------------------------------------------------------------------------
     Plug 'ii14/vim-surround'
-    Plug 'tpope/vim-commentary'
+    " Plug 'tpope/vim-commentary'
+    Plug 'numToStr/Comment.nvim'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
     Plug 'wellle/targets.vim'
@@ -77,9 +79,10 @@ let g:bookmarks = [
   " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
+      Plug 'nvim-lua/plenary.nvim'
+      Plug 'jose-elias-alvarez/null-ls.nvim'
       Plug 'folke/trouble.nvim'
       Plug 'kosayoda/nvim-lightbulb'
-      Plug 'ray-x/lsp_signature.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
@@ -99,30 +102,43 @@ let g:bookmarks = [
     Plug 'PotatoesMaster/i3-vim-syntax'
     Plug 'CantoroMC/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
+    Plug 'milisims/nvim-luaref'
 
   " Misc ---------------------------------------------------------------------------------
     Plug 'vimwiki/vimwiki'
-    Plug 'vifm/vifm.vim', {'on': 'Vifm'}
-    Plug 'tweekmonster/startuptime.vim'
-    Plug 'lewis6991/impatient.nvim'
     Plug 'kizza/actionmenu.nvim'
 
   " Custom -------------------------------------------------------------------------------
-    Plug $VIMCONFIG.'/m/qf.vim'
-    Plug $VIMCONFIG.'/m/drawer.nvim'
-    Plug $VIMCONFIG.'/m/termdebug'
+    Plug $VIMCONFIG..'/m/qf.vim'
+    Plug $VIMCONFIG..'/m/drawer.nvim'
+    Plug $VIMCONFIG..'/m/termdebug'
+
+  " Performance --------------------------------------------------------------------------
+    Plug 'tweekmonster/startuptime.vim'
+    Plug 'lewis6991/impatient.nvim'
+    Plug 'nathom/filetype.nvim'
+    let g:did_load_filetypes = 1
 
   call plug#end()
-  call PlugCheckMissing()
 
-  lua pcall(require, 'impatient')
+  " Check missing plugins
+  let s:missing_plugs = len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  if s:missing_plugs
+    if input((s:missing_plugs == 1
+      \ ? '1 plugin is missing'
+      \ : s:missing_plugs..' plugins are missing')..'. Install? [y/n]: ')
+      \ =~? '\v\cy%[es]$'
+      PlugInstall
+    endif
+  endif
+  unlet! s:missing_plugs
+
+  lua require 'impatient'
+  lua require 'm.global'
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/theme.vim
-  " TODO: move highlights elsewhere
-  hi NormalDarker guibg=#21252C guifg=#ABB2BF
   source $VIMCONFIG/fzf.vim
-  source $VIMCONFIG/term.vim
 
   " Completion ---------------------------------------------------------------------------
     let g:compe = {'source': {
@@ -136,26 +152,12 @@ let g:bookmarks = [
 
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
-      " $VIMCONFIG/lua/m/lsp/init.lua
       lua require 'm.lsp'
-
       aug Vimrc
         au User LspAttach source $VIMCONFIG/lsp.vim
         au CursorMoved * lua require 'nvim-lightbulb'.update_lightbulb()
-        au TabEnter * call s:lsp_update_tab()
+        au TabEnter * call m#lsp_update_tab()
       aug end
-
-      fun! s:lsp_update_tab()
-        let tabnr = tabpagenr()
-        for win in getwininfo()
-          if win.tabnr == tabnr
-            let attached = getbufvar(win.bufnr, 'lsp_attached', 0)
-            if type(attached) == v:t_bool
-              call setbufvar(win.bufnr, '&signcolumn', attached ? 'yes' : 'auto')
-            endif
-          endif
-        endfor
-      endfun
     endif
 
   " Fern ---------------------------------------------------------------------------------
@@ -170,13 +172,6 @@ let g:bookmarks = [
     let g:fern#renderer#default#leaf_symbol = '¦ '
     let g:fern#hide_cursor = 1
 
-    hi link FernRootText     String
-    hi link FernRootSymbol   String
-    hi link FernMarkedLine   WarningMsg
-    hi link FernMarkedText   WarningMsg
-    hi link FernLeafSymbol   LineNr
-    hi link FernBranchSymbol Comment
-
     fun! s:fern_hijack_directory() abort
       let l:path = expand('%:p')
       if isdirectory(l:path)
@@ -190,16 +185,19 @@ let g:bookmarks = [
       au BufEnter * ++nested call s:fern_hijack_directory()
     aug end
 
+  " UltiSnips ----------------------------------------------------------------------------
+    let g:UltiSnipsJumpForwardTrigger  = "\<C-F>"
+    let g:UltiSnipsJumpBackwardTrigger = "\<C-B>"
+
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
-    let g:indent_blankline_filetype_exclude = ['man', 'fern', 'floggraph']
+    let g:indent_blankline_filetype_exclude = ['man', 'fern', 'floggraph', 'fugitive', 'gitcommit']
     let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
 
-    hi IndentBlanklineChar guifg=#4B5263 gui=nocombine
-    hi link IndentBlanklineSpaceChar          IndentBlanklineChar
-    hi link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
+  " comment.nvim -------------------------------------------------------------------------
+    lua require 'Comment'.setup{ ignore = '^$' }
 
   " exrc.vim -----------------------------------------------------------------------------
     let g:exrc#names = ['.exrc']
@@ -250,7 +248,7 @@ let g:bookmarks = [
     set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1 sidescrolloff=1           " keep near lines visible when scrolling
-    set mouse=a                               " mouse support
+    set mouse=nvi                             " mouse support
     set splitbelow splitright                 " sane splits
     set linebreak breakindent                 " visual wrap on whitespace, follow indentation
     set diffopt+=iwhite                       " ignore whitespace in diff
@@ -265,11 +263,12 @@ let g:bookmarks = [
     set smartindent                           " smarter auto indentation
     set foldlevel=999                         " unfold everything by default
     set foldmethod=indent                     " folding based on indentation
+    set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation
 
   " Search and Autocompletion ------------------------------------------------------------
     set path+=**
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
-    set inccommand=nosplit                    " sed preview
+    set inccommand=nosplit                    " :substitute live preview
     set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
     set shortmess+=c                          " silent completion
     set pumheight=25                          " autocompletion popup height
@@ -279,33 +278,29 @@ let g:bookmarks = [
 
   " Buffers ------------------------------------------------------------------------------
     set hidden                                " don't close buffers
-    set noswapfile                            " disable swap files
     set undofile                              " persistent undo history
-    set directory=$VIMCACHE/swap              " swap files
-    set backupdir=$VIMCACHE/backup            " backup files
-    set undodir=$VIMCACHE/undo                " undo files
+    set noswapfile                            " disable swap files
 
-  " Grep ---------------------------------------------------------------------------------
-    source $VIMCONFIG/grep.vim
-
-" COMMANDS ///////////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/commands.vim
+  source $VIMCONFIG/grep.vim
+  source $VIMCONFIG/term.vim
+  source $VIMCONFIG/maps.vim
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
   aug Vimrc
 
   " Return to last edit position ---------------------------------------------------------
     au BufReadPost *
-      \ if &ft !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+      \ if index(['gitcommit', 'fugitive'], &filetype) == -1 &&
+      \   line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal! g`\"" |
       \ endif
 
-  " Cursor line highlighting -------------------------------------------------------------
+  " Gutter and cursor line ---------------------------------------------------------------
     au WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl   cursorline | endif
     au WinLeave             * if &bt !=# 'terminal' | setl nocursorline | endif
-
-  " Terminal -----------------------------------------------------------------------------
     au TermOpen * setl nonumber norelativenumber nocursorline signcolumn=auto
+    au CmdwinEnter * setl nonumber norelativenumber
 
   " Highlight yanked text ----------------------------------------------------------------
     au TextYankPost * silent! lua vim.highlight.on_yank()
@@ -317,7 +312,7 @@ let g:bookmarks = [
       \ call timer_start(10, {-> execute('lwindow')})
 
   " Auto close quickfix, if it's the last buffer -----------------------------------------
-    au WinEnter * if winnr('$') == 1 && &bt ==# 'quickfix' | q! | endif
+    au WinEnter * if winnr('$') == 1 && &buftype ==# 'quickfix' | q! | endif
 
   " Workarounds --------------------------------------------------------------------------
     " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
@@ -325,7 +320,4 @@ let g:bookmarks = [
 
   aug end
 
-" KEY MAPPINGS ///////////////////////////////////////////////////////////////////////////
-  source $VIMCONFIG/maps.vim
-
-" vim:tw=90:ts=2:sts=2:sw=2:et:
+" vim: tw=90 ts=2 sts=2 sw=2 et

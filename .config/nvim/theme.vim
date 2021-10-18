@@ -1,16 +1,9 @@
 set termguicolors
-set background=dark
 
 let g:lightline = {}
 
 let g:onedark_terminal_italics = 1
 colorscheme onedark
-
-" TODO: move to lua
-" lua require 'm.theme.statusline'.init()
-" lua require 'm.theme.bufferline'.init()
-" set showtabline=2
-" finish
 
 let g:lightline.colorscheme = 'onedark'
 
@@ -69,7 +62,7 @@ function! LightlineFilename()
   endif
 
   if &buftype ==# 'terminal'
-    return '[term:'.b:terminal_job_pid.'] '.b:term_title
+    return '[Term] '.b:term_title
   endif
 
   if &filetype ==# 'Trouble'
@@ -78,14 +71,14 @@ function! LightlineFilename()
 
   if &buftype ==# 'quickfix'
     return get(b:, 'qf_isLoc', 1)
-      \ ? '[Location] '.getloclist(0, {'title':1}).title
-      \ : '[Quickfix] '.getqflist({'title':1}).title
+      \ ? '[Location] '..getloclist(0, {'title':1}).title
+      \ : '[Quickfix] '..getqflist({'title':1}).title
   endif
 
   let fname = expand('%:t')
   return
-    \ (&readonly ? '[-] ' : '') .
-    \ (fname ==# '' ? '[No Name]' : fname) .
+    \ (&readonly ? '[-] ' : '') ..
+    \ (fname ==# '' ? '[No Name]' : fname) ..
     \ (&modified ? ' [+]' : '')
 endfunction
 

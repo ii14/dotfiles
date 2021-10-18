@@ -61,21 +61,18 @@ set completeopt-=preview                  " no preview window
 
 " Buffers
 set hidden                                " don't close buffers
-set noswapfile                            " disable swap files
 " TODO: undofile can slow down startup time dramatically.
 "       not the best idea to have it be disabled here, and enabled in normal config.
 "       research the topic, maybe there is some way of removing older undo blocks
 "       when undofile exceeds certain size.
 set undofile                              " persistent undo history
-set directory=$VIMCACHE/swap              " swap files
-set backupdir=$VIMCACHE/backup            " backup files
-set undodir=$VIMCACHE/undo                " undo files
+set noswapfile                            " disable swap files
 
 " Grep
 if executable('rg')
-  set grepformat=%f:%l:%c:%m
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
   let &grepprg = 'rg --vimgrep' . (&smartcase ? ' --smart-case' : '')
 elseif executable('ag')
-  set grepformat=%f:%l:%c:%m
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
   let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
 endif

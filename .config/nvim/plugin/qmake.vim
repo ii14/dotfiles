@@ -1,46 +1,62 @@
 " Description: Run qmake
-" Usage: :QMake
+" Usage:
+"   :QMake[!] [args]  - with ! overrides default arguments.
 " Configuration:
-"
-"     g:qmake#bin
-"         Path to qmake binary.
-"         Default: 'qmake'
-"
-"     g:qmake#dir
-"         Build directory.
-"
-"     g:qmake#args
-"         QMake arguments.
-"
-"     g:qmake#post
-"         Post hook.
+"   All variables have a global (g:) and tab-local variant (t:).
+"     g:qmake_bin     - Path to qmake binary. Default: 'qmake'
+"     g:qmake_dir     - Build directory.
+"     g:qmake_args    - Default arguments.
+"     g:qmake_post    - Post hook.
 
-" TODO: accept args in :QMake
+command! -bar -bang -nargs=* QMake call s:run(<q-args>, <bang>0)
 
-command! -nargs=* QMake call s:Run(<q-args>)
+function! s:error(msg)
+  echohl ErrorMsg
+  echomsg 'QMake:' a:msg
+  echohl None
+endfunction
 
-fun! s:Format(args) abort
-  let bin  = get(g:, 'qmake#bin', 'qmake')
-  let dir  = get(g:, 'qmake#dir', '')
-  let args = a:args !=# '' ? a:args : get(g:, 'qmake#args', '')
-  let post = get(g:, 'qmake#post', '')
-
-  let cmd =
-    \ (dir !=# '' && dir !=# '.' ? 'mkdir -p '.dir.' && cd '.dir.' && ' : '')
-    \ . bin
-    \ . (args !=# '' ? ' '.args : '')
-    \ . ' '.getcwd()
-    \ . (post !=# '' ? ' && '.post : '')
-
-  return cmd
-endfun
-
-fun! s:Run(args) abort
-  if len(readdir(getcwd(), { n -> filereadable(n) && n =~ '.pro$' })) > 0
-    " let runner = exists(':Dispatch') ? 'Dispatch ' : '!'
-    " execute runner.s:Format(a:args)
-    execute '!'.s:Format(a:args)
+function! s:get(name, ...) abort
+  if has_key(t:, a:name)
+    return get(t:, a:name)
+  elseif has_key(g:, a:name)
+    return get(g:, a:name)
   else
-    echomsg 'QMake: Project file not found'
+    return a:0 ? a:1 : ''
   endif
-endfun
+endfunction
+
+function! s:run(args, bang) abort
+  if empty(readdir(getcwd(), { n -> filereadable(n) && n =~? '\M.pro$' }))
+    call s:error('project file not found')
+    return
+  endif
+
+  let l:dir = s:get('qmake_dir')
+  if l:dir !=# '' && l:dir !=# '.'
+    if !mkdir(l:dir, 'p')
+      call s:error('could not create build directory: '..l:dir)
+      return
+    endif
+  endif
+
+  let l:cmd = [s:get('qmake_bin', 'qmake')]
+  if !a:bang
+    call add(l:cmd, s:get('qmake_args'))
+  else
+  call add(l:cmd, a:args)
+  call add(l:cmd, getcwd())
+  let l:cmd = '!'..join(l:cmd)
+  echomsg l:cmd
+  execute l:cmd
+  if v:shell_error != 0
+    call s:error('qmake failed with code '..v:shell_error)
+    return
+  endif
+
+  let l:post = s:get('qmake_post')
+  if l:post !=# ''
+    echomsg l:post
+    execute l:post
+  endif
+endfunction

@@ -46,7 +46,12 @@ local on_attach = vim.schedule_wrap(function(client, bufnr)
   table.insert(clients[client.id], bufnr)
   vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
   vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')
-  vim.g.lsp_event = { event = 'attach', bufnr = bufnr }
+  vim.g.lsp_event = {
+    event = 'attach',
+    bufnr = bufnr,
+    client_id = client.id,
+    client_name = client.name,
+  }
   vim.cmd('doautocmd User LspAttach')
 end)
 
@@ -66,7 +71,7 @@ local header_to_source = {
 function M.switch_source_header(bufnr)
   bufnr = util.validate_bufnr(bufnr)
   local params = { uri = vim.uri_from_bufnr(bufnr) }
-  vim.lsp.buf_request(bufnr, 'textDocument/switchSourceHeader', params, function(err, _, result)
+  vim.lsp.buf_request(bufnr, 'textDocument/switchSourceHeader', params, function(err, result)
     if err then error(tostring(err)) end
     if result then
       vim.api.nvim_command('edit ' .. vim.uri_to_fname(result))

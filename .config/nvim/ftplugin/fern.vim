@@ -39,6 +39,9 @@ nmap <buffer><nowait> ff    <Plug>(fern-action-fzf-files)
 nmap <buffer><nowait> fd    <Plug>(fern-action-fzf-dirs)
 nmap <buffer><nowait> fa    <Plug>(fern-action-fzf-both)
 
+nno  <buffer><nowait> ? ?
+nmap <buffer><nowait> g? <Plug>(fern-action-help)
+
 nno <buffer><nowait><silent> q :call <SID>fern_close()<CR>
 function! s:fern_close()
   if fern#internal#drawer#is_drawer()
@@ -46,7 +49,7 @@ function! s:fern_close()
   else
     let bufnr = bufnr()
     Bdelete!
-    exe 'bwipeout ' . bufnr
+    exe 'bwipeout' bufnr
   endif
 endfunction
 

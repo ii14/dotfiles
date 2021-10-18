@@ -1,6 +1,11 @@
 " See $VIMCONFIG/autoload/m/command.vim for command implementations
 " See $VIMCONFIG/plugin/ for more command definitions
 
+function! Cabbrev(lhs, rhs)
+  exe printf("cnorea <expr>%s (getcmdtype()==#':'&&getcmdline()==#'%s')?'%s':'%s'",
+    \ a:lhs, a:lhs, a:rhs, a:lhs)
+endfunction
+
 " :bd doesn't close window, :bq closes the window ----------------------------------------
 command! -nargs=? -bang -complete=buffer Bq
   \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
@@ -37,6 +42,7 @@ command! RenameFile call m#command#rename_file()
 
 " xdg-open -------------------------------------------------------------------------------
 command! -nargs=? -complete=file Open call m#command#open(<q-args>)
+call Cabbrev('open', 'Open')
 
 " ctags ----------------------------------------------------------------------------------
 if executable('ctags')
@@ -47,8 +53,9 @@ if executable('qmltags') " https://github.com/pylipp/qtilities
 endif
 
 " Lightweight git blame ------------------------------------------------------------------
-command! -nargs=? -range GB echo join(systemlist("git -C " . shellescape(expand('%:p:h'))
-  \ . " blame -L <line1>,<line2> <args> -- " . expand('%:t')), "\n")
+command! -nargs=? -range GB
+  \ echo join(systemlist("git -C " . shellescape(expand('%:p:h'))
+  \ .. " blame -L <line1>,<line2> <args> -- " . expand('%:t')), "\n")
 
 " Shortcuts ------------------------------------------------------------------------------
 command! Wiki VimwikiIndex
@@ -59,12 +66,19 @@ call Cabbrev('git',  'Git')
 call Cabbrev('rg',   'Rg')
 call Cabbrev('man',  'Man')
 call Cabbrev('rc',   'Rc')
+call Cabbrev('rcd',  'Rcd')
 call Cabbrev('trim', 'Trim')
 call Cabbrev('fzf',  'Files')
 call Cabbrev('fern', 'Fern')
-call Cabbrev('vifm', 'Vifm')
 call Cabbrev('vres', 'vert res')
 
 " Synstack -------------------------------------------------------------------------------
 command! Synstack
   \ echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ' > ')
+
+" Fix typos ------------------------------------------------------------------------------
+command! -bang Q q<bang>
+command! -bang Qa qa<bang>
+command! -bang QA qa<bang>
+
+" vim: tw=90 ts=2 sts=2 sw=2 et

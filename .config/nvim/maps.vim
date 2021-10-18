@@ -1,4 +1,4 @@
-" OVERRIDE DEFAULTS //////////////////////////////////////////////////////////////////////
+" OVERRIDE DEFAULTS ----------------------------------------------------------------------
 " Swap 0 and ^
 nno 0 ^
 nno ^ 0
@@ -24,23 +24,23 @@ nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
 nno q: :
 nno Q <Nop>
 
-" WINDOWS ////////////////////////////////////////////////////////////////////////////////
+" WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
 nno <C-J> <C-W>j
 nno <C-K> <C-W>k
 nno <C-L> <C-W>l
 nmap <leader>w <C-W>
 
-" BUFFERS ////////////////////////////////////////////////////////////////////////////////
+" BUFFERS --------------------------------------------------------------------------------
 nno <silent> <C-N> :bn<CR>
 nno <silent> <C-P> :bp<CR>
 
-" FILES //////////////////////////////////////////////////////////////////////////////////
+" FILES ----------------------------------------------------------------------------------
 " fzf
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
-nno '; :call m#menu('Files', g:bookmarks)<CR>
+nno <leader>; :lua require'm.menus'.bookmarks()<CR>
 nno <leader>h :History<CR>
 nno <leader><leader> :Buffers<CR>
 " Fern
@@ -48,9 +48,7 @@ nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<
 nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 
-" SEARCH AND REPLACE /////////////////////////////////////////////////////////////////////
-nno n nzz
-nno N Nzz
+" SEARCH AND REPLACE ---------------------------------------------------------------------
 map *   <Plug>(asterisk-*)
 map g*  <Plug>(asterisk-g*)
 map #   <Plug>(asterisk-#)
@@ -63,11 +61,11 @@ nmap <leader>c z*cgn
 xmap <leader>c z*cgn
 nno <silent> <leader><CR> :let @/ = ''<CR>
 
-" MACROS /////////////////////////////////////////////////////////////////////////////////
+" MACROS ---------------------------------------------------------------------------------
 no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
 nno <leader>q q
 
-" QUICKFIX ///////////////////////////////////////////////////////////////////////////////
+" QUICKFIX -------------------------------------------------------------------------------
 nno <silent> qq :call qf#open()<CR>
 nno <silent> qt :call qf#toggle()<CR>
 nno <silent> qo :call qf#show()<CR>
@@ -82,7 +80,7 @@ nno <silent> ]l :lnext<CR>
 nno <silent> [L :lfirst<CR>
 nno <silent> ]L :llast<CR>
 
-" REGISTERS //////////////////////////////////////////////////////////////////////////////
+" REGISTERS ------------------------------------------------------------------------------
 " Paste and keep register in visual mode
 xno zp  pgvy
 xno zgp pgvy`]<Space>
@@ -99,13 +97,7 @@ xno <leader>P  "+P
 xno <leader>gp "+gp
 xno <leader>gP "+gP
 
-" MAKE ///////////////////////////////////////////////////////////////////////////////////
-nno m<CR>    :up<CR>:Make<CR>
-nno m<Space> :up<CR>:Make<Space>
-nno m!       :up<CR>:Make!<CR>
-nno m=       :Set makeprg<CR>
-
-" GIT ////////////////////////////////////////////////////////////////////////////////////
+" GIT ------------------------------------------------------------------------------------
 nno <leader>gs :Git<CR>
 nno <leader>gl :Flog<CR>
 nno <leader>gb :Git blame<CR>
@@ -114,16 +106,18 @@ nno <leader>gd :Gvdiffsplit!<CR>
 nno <leader>g2 :diffget //2<CR>
 nno <leader>g3 :diffget //3<CR>
 
-" MISC ///////////////////////////////////////////////////////////////////////////////////
-nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
-xno <leader>t :Tabularize /
+" MISC -----------------------------------------------------------------------------------
 nno <leader>v ggVG
+nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
+nno <leader>o :lua require'm.menus'.options()<CR>
+xno <leader>t :Tabularize /
+nno m= :Set makeprg<CR>
 
-" LSP ////////////////////////////////////////////////////////////////////////////////////
+" LSP ------------------------------------------------------------------------------------
 " LSP buffer local mappings in $VIMCONFIG/lsp.vim
-nno <silent> <leader>ld :LspTroubleToggle<CR>
+nno <silent> <leader>ld :TroubleToggle<CR>
 
-" TERMDEBUG //////////////////////////////////////////////////////////////////////////////
+" TERMDEBUG ------------------------------------------------------------------------------
 nno <leader>dr :Run<CR>
 nno <leader>dS :Stop<CR>
 nno <leader>ds :Step<CR>
@@ -134,7 +128,7 @@ nno <leader>db :Break<CR>
 nno <leader>dB :Clear<CR>
 nno <leader>de :Eval<CR>
 
-" INSERT /////////////////////////////////////////////////////////////////////////////////
+" INSERT ---------------------------------------------------------------------------------
 " Emacs
 ino <C-A> <Home>
 ino <C-E> <End>
@@ -175,7 +169,7 @@ imap <C-G><C-A> <><C-G>U<Left>
 imap <C-G>i     ""<C-G>U<Left>
 imap <C-G><C-I> ""<C-G>U<Left>
 
-" COMMAND ////////////////////////////////////////////////////////////////////////////////
+" COMMAND --------------------------------------------------------------------------------
 cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
 cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
 " Emacs
@@ -209,12 +203,7 @@ cmap <C-G>g     \(\)<Left><Left>
 cmap <C-G><C-G> \(\)<Left><Left>
 cmap <C-G>w     \<\><Left><Left>
 cmap <C-G><C-W> \<\><Left><Left>
+" Last command with bang
+nno !: :<Up>!
 
-" OPTIONS ////////////////////////////////////////////////////////////////////////////////
-nno <leader>ow :set wrap!<bar>set wrap?<CR>
-nno <leader>oW :set wrapscan!<bar>set wrapscan?<CR>
-nno <leader>os :set ignorecase!<bar>set ignorecase?<CR>
-nno <leader>om :let &mouse = (&mouse ==# '' ? 'a' : '')<bar>set mouse?<CR>
-nno <leader>on :call m#command#toggle_line_numbers()<CR>
-nno <leader>oi :IndentBlanklineToggle<CR>
-nno <leader>oc :ColorizerToggle<CR>
+" vim: tw=90 ts=2 sts=2 sw=2 et

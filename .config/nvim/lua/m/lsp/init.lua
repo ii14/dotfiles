@@ -17,13 +17,6 @@ setup.clangd {
   },
 }
 
--- setup.ccls {
---   init_options = {
---     highlight = { lsRanges = true };
---   },
---   root_dir = root_pattern("compile_commands.json"),
--- }
-
 setup.pylsp {
   settings = {
     pylsp = {
@@ -37,8 +30,8 @@ setup.pylsp {
 
 setup.sumneko_lua {
   cmd = (function()
-    -- local root = vim.fn.expand('$HOME')..'/repos/lua-language-server'
-    local root = '/opt/lua-language-server'
+    local root = vim.fn.expand('$HOME')..'/repos/lua-language-server'
+    -- local root = '/opt/lua-language-server'
     return { root..'/bin/Linux/lua-language-server', '-E', root .. '/main.lua' }
   end)(),
   settings = {
@@ -63,9 +56,15 @@ setup.tsserver {}
 
 setup.gopls {}
 
--- setup.zls {
---   cmd = {'/home/ms/repos/zls/zig-cache/bin/zls'},
--- }
+local null_ls = require 'null-ls'
+null_ls.config {
+  sources = {
+    null_ls.builtins.diagnostics.shellcheck.with {
+      diagnostics_format = "[#{c}] #{m}",
+    },
+  },
+}
+setup['null-ls']{}
 
 require 'trouble'.setup {
   icons = false,
@@ -78,15 +77,4 @@ require 'trouble'.setup {
     information = "i",
     other = "-",
   },
-}
-
-require 'lsp_signature'.setup {
-  bind = true,
-  max_width = 80,
-  max_height = 12,
-  hint_enable = false,
-  hint_prefix = '',
-  handler_opts = { border = 'none' },
-  toggle_key = '<C-K>',
-  doc_lines = 2,
 }

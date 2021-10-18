@@ -80,9 +80,7 @@ endfunction
 " xdg-open -------------------------------------------------------------------------------
 function! m#command#open(file)
   let file = a:file ==# '' ? '%' : a:file
-  let cmd = 'xdg-open ' . shellescape(expand(file))
-  echo cmd
-  call system(cmd)
+  call system(['xdg-open', expand(file)])
 endfunction
 
 " Toggle line numbers --------------------------------------------------------------------

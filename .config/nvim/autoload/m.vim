@@ -1,53 +1,18 @@
 " Current buffer directory ---------------------------------------------------------------
-function! m#bufdir()
-  let d = expand('%:h')
-  return (d ==# '' ? './' : d.'/')
-endfunction
-
-" Create a menu --------------------------------------------------------------------------
-function! m#menu(cmd, opts) abort
-  let l:opts = a:opts
-  let l:t = type(l:opts)
-  if (l:t != v:t_dict && l:t != v:t_list) || empty(l:opts)
-    echohl WarningMsg
-    echo '  No options available'
-    echohl None
-    let l:opts = []
+function! m#bufdir() abort
+  if &buftype ==# 'terminal'
+    try
+      let d = systemlist(['pwdx', b:terminal_job_pid])
+      if v:shell_error != 0 | return './' | endif
+      let d = fnamemodify(matchlist(d[0], '\v^\d+: (.+)$')[1], ':~:.')
+      return (d ==# '' ? './' : d[-1:] ==# '/' ? d : d..'/')
+    catch
+      return './'
+    endtry
   else
-    if l:t == v:t_dict
-      let l:opts = items(l:opts)
-    endif
-    for [l:key, l:file] in l:opts
-      call nvim_echo([
-        \ [' [', 'LineNr'],
-        \ [l:key,  'WarningMsg'],
-        \ ['] ', 'LineNr'],
-        \ [l:file, 'None'],
-        \ ], v:false, {})
-    endfor
+    let d = expand('%:h')
   endif
-  echo ':'.a:cmd
-
-  let l:ch = getchar()
-  redraw
-
-  if l:ch == 0 || l:ch == 27 " Escape key
-    return
-  elseif l:ch == 13 " Enter key
-    execute a:cmd
-  elseif l:ch == 32 " Space key
-    call feedkeys(':'.a:cmd.' ', 'n')
-  else
-    for [l:key, l:file] in l:opts
-      if l:key ==# nr2char(l:ch)
-        execute a:cmd.' '.l:file
-        return
-      endif
-    endfor
-    echohl ErrorMsg
-    echomsg 'Option does not exist'
-    echohl None
-  endif
+  return (d ==# '' ? './' : d..'/')
 endfunction
 
 " lua includeexpr ------------------------------------------------------------------------
@@ -66,3 +31,16 @@ function! m#lua_include(fname) abort
   endfor
   return a:fname
 endfunction
+
+" LSP - Update tab -----------------------------------------------------------------------
+fun! m#lsp_update_tab() abort
+  let l:tabnr = tabpagenr()
+  for l:win in getwininfo()
+    if l:win.tabnr == l:tabnr
+      let l:attached = getbufvar(l:win.bufnr, 'lsp_attached', 0)
+      if type(l:attached) == v:t_bool
+        call setbufvar(l:win.bufnr, '&signcolumn', l:attached ? 'yes' : 'auto')
+      endif
+    endif
+  endfor
+endfun

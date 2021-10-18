@@ -61,7 +61,7 @@ function dev {
                 -E 'CMakeFiles' \
                 -E '.mypy_cache' \
                 . ~/dev \
-            | fzf --reverse --height=50%)" \
+            | fzf --prompt='~/dev/' --reverse --height=50%)" \
         && cd "$res"
 }
 
@@ -128,6 +128,8 @@ alias ffplay='ffplay -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias ytdl='youtube-dl'
 alias ytdlu='pip install --upgrade youtube-dl'
+alias ytdlp='yt-dlp'
+alias ytdlpu='pip install --upgrade yt-dlp'
 alias ytmp3='youtube-dl -x -f bestaudio/best'
 function ytls {
     if (( ARGC < 1 )); then
@@ -144,7 +146,7 @@ alias vim-install='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#
 alias vim-update='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugUpdate'
 alias vimclean='vim -u NORC --clean "+syntax off"'
 alias :q='exit'
-[ -v NVIM_LISTEN_ADDRESS ] && alias :e='nvr' || alias :e='vim'
+[ -v NVIM_LISTEN_ADDRESS ] && alias vim='vim -u $VIMCONFIG/remote.vim -i NONE --headless'
 
 # GIT ------------------------------------------------------------------------------------
 function g {

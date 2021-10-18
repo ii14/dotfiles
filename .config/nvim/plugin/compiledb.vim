@@ -30,46 +30,46 @@ let s:has_jq = executable('jq')
 
 " TODO: async?
 fun! s:Run(path, bang) abort
-  let output = getcwd().'/compile_commands.json'
+  let output = getcwd()..'/compile_commands.json'
 
   if a:path !=# ''
     if a:bang
       let g:compiledb_path = a:path
     endif
-    let cmd = '(cd '.a:path.' && compiledb -o '.output.' -n make)'
+    let cmd = '(cd '..a:path..' && compiledb -o '..output..' -n make)'
   elseif exists('g:compiledb_path')
-    let cmd = '(cd '.g:compiledb_path.' && compiledb -o '.output.' -n make)'
+    let cmd = '(cd '..g:compiledb_path..' && compiledb -o '..output..' -n make)'
   else
-    let cmd = '(compiledb -o '.output.' -n make)'
+    let cmd = '(compiledb -o '..output..' -n make)'
   endif
 
   if exists('g:compiledb_post')
-    let cmd = cmd.' && '.g:compiledb_post
+    let cmd = cmd..' && '..g:compiledb_post
   endif
 
   echohl WarningMsg
-  echomsg 'Compiledb: '.cmd
+  echomsg 'Compiledb: '..cmd
   echohl None
 
   let res = system(cmd)
   if v:shell_error != 0
-    throw 'Compiledb: compiledb failed with code '.v:shell_error.': '.res
+    throw 'Compiledb: compiledb failed with code '..v:shell_error..': '..res
   endif
 
   if s:has_jq
     let res = system(['jq', '.|length', output])
     if v:shell_error != 0
-      throw 'Compiledb: jq failed with code '.v:shell_error.': '.res
+      throw 'Compiledb: jq failed with code '..v:shell_error..': '..res
     endif
 
     let rules = matchstr(res, '\V\d\+')
     if rules ==# ''
-      throw 'Compiledb: jq failed to parse output: '.res
+      throw 'Compiledb: jq failed to parse output: '..res
     endif
 
     redraw
     echohl Function
-    echomsg 'Compiledb: compile_commands.json generated '.rules.' rules'
+    echomsg 'Compiledb: compile_commands.json generated '..rules..' rules'
     echohl None
   else
     redraw

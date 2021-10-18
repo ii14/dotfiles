@@ -45,6 +45,7 @@ function Term.term(id)
   local a = Drawer.getwin()
   local b = Term.getterm(id)
   if a == 2 and b == 2 then
+    vim.cmd('stopinsert')
     vim.cmd('close')
   end
 end
