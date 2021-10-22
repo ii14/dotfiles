@@ -1,0 +1,33 @@
+TARGET   = main
+SOURCES  = main.cpp
+CXXFLAGS = -std=c++17 -Wall -Wextra -g
+INCLUDE  =
+LDFLAGS  =
+BUILDDIR ?= build
+
+OBJS     = $(addprefix ./$(BUILDDIR)/,$(SOURCES:.cpp=.o))
+DEPS     = $(OBJS:.o=.d)
+
+all: ./$(BUILDDIR)/$(TARGET)
+
+./$(BUILDDIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c -MMD -o $@ $<
+
+./$(BUILDDIR)/$(TARGET): $(OBJS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -o ./$(BUILDDIR)/$(TARGET) $(OBJS) $(LDFLAGS)
+
+-include $(DEPS)
+
+.PHONY: all clean info
+
+clean:
+	@rm -rvf ./$(BUILDDIR)
+
+info:
+	@echo "[*] Target:       $(TARGET)"
+	@echo "[*] Sources:      $(SOURCES)"
+	@echo "[*] Build dir:    $(BUILDDIR)"
+	@echo "[*] Objects:      $(OBJS)"
+	@echo "[*] Dependencies: $(DEPS)"
