@@ -23,18 +23,18 @@ endfun
 fun! s:run(args) abort
   if a:args !~# '\v^[a-z0-9 ]*$'
     echohl ErrorMsg
-    echomsg 'Lipsum: invalid arguments'
+    echomsg 'Lorem: invalid arguments'
     echohl None
     return
   endif
   let res = systemlist('curl https://loripsum.net/api/'.join(split(a:args), '/').' 2>/dev/null')
   if v:shell_error != 0
     echohl ErrorMsg
-    echomsg 'Lipsum: curl failed with code '.v:shell_error
+    echomsg 'Lorem: curl failed with code '.v:shell_error
     echohl None
     return
   endif
   call append(line('.'), res)
 endfun
 
-com! -bar -nargs=* -complete=customlist,s:comp Lipsum call s:run(<q-args>)
+com! -bar -nargs=* -complete=customlist,s:comp Lorem call s:run(<q-args>)
