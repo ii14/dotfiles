@@ -34,12 +34,14 @@ nno <buffer><silent> <leader>lS :LspStop<CR>
 ino <buffer><silent> ( <cmd>lua require 'compe'._close()<CR>(
 ino <buffer><silent> { <cmd>lua require 'compe'._close()<CR>{
 
+setl omnifunc=v:lua.vim.lsp.omnifunc
+
 " Completion -----------------------------------------------------------------------------
 let s:compe = {'source': {
   \ 'path': v:true,
   \ 'calc': v:true,
   \ 'nvim_lsp': v:true,
-  \ 'ultisnips': v:true,
+  \ 'luasnip': v:true,
   \ }}
 
 call compe#setup(s:compe, 0)

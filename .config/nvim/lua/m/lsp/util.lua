@@ -108,18 +108,18 @@ local function wrap(a, b)
   end
 end
 
-local mt = {}
-function mt:__index(k)
-  if lspconfig[k] == nil then
-    error('config does not exist: '..k)
+M.setup = setmetatable({}, {
+  __index = function(_, k)
+    if lspconfig[k] == nil then
+      error('config does not exist: '..k)
+    end
+    return function(args)
+      args.on_attach = wrap(on_attach, args.on_attach)
+      args.on_init = wrap(on_init, args.on_init)
+      args.on_exit = wrap(on_exit, args.on_exit)
+      lspconfig[k].setup(args)
+    end
   end
-  return function(args)
-    args.on_attach = wrap(on_attach, args.on_attach)
-    args.on_init = wrap(on_init, args.on_init)
-    args.on_exit = wrap(on_exit, args.on_exit)
-    lspconfig[k].setup(args)
-  end
-end
-M.setup = setmetatable({}, mt)
+})
 
 return M

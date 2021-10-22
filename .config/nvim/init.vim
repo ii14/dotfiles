@@ -7,8 +7,8 @@
 " FERN            $VIMCONFIG/ftplugin/fern.vim
 " GREP            $VIMCONFIG/grep.vim
 " THEME           $VIMCONFIG/theme.vim
-" HIGHLIGHTING    $VIMCONFIG/after/plugin/color.vim
-" SNIPPETS        $VIMCONFIG/UltiSnips/
+" HIGHLIGHTING    $VIMCONFIG/after/plugin/colors.vim
+" SNIPPETS        $VIMCONFIG/lua/m/snippets/init.lua
 
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
@@ -49,7 +49,6 @@ let g:bookmarks = [
 
   " Editing ------------------------------------------------------------------------------
     Plug 'ii14/vim-surround'
-    " Plug 'tpope/vim-commentary'
     Plug 'numToStr/Comment.nvim'
     Plug 'tpope/vim-repeat'
     Plug 'tpope/vim-abolish'
@@ -87,12 +86,12 @@ let g:bookmarks = [
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
     Plug 'Shougo/neco-syntax'
+    Plug 'L3MON4D3/LuaSnip'
 
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
     Plug 'tpope/vim-dispatch'
-    Plug 'SirVer/ultisnips', {'for': ['c', 'cpp', 'make', 'css', 'html', 'lua']}
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
 
@@ -146,7 +145,7 @@ let g:bookmarks = [
       \ 'calc': v:true,
       \ 'buffer': v:true,
       \ 'necosyntax': v:true,
-      \ 'ultisnips': v:true,
+      \ 'luasnip': v:true,
       \ }}
     " LSP buffer local config in $VIMCONFIG/lsp.vim
 
@@ -159,6 +158,9 @@ let g:bookmarks = [
         au TabEnter * call m#lsp_update_tab()
       aug end
     endif
+
+  " Snippets -----------------------------------------------------------------------------
+    lua require 'm.snippets'
 
   " Fern ---------------------------------------------------------------------------------
     let g:loaded_netrw = 1
@@ -184,10 +186,6 @@ let g:bookmarks = [
     aug Vimrc
       au BufEnter * ++nested call s:fern_hijack_directory()
     aug end
-
-  " UltiSnips ----------------------------------------------------------------------------
-    let g:UltiSnipsJumpForwardTrigger  = "\<C-F>"
-    let g:UltiSnipsJumpBackwardTrigger = "\<C-B>"
 
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
@@ -284,7 +282,7 @@ let g:bookmarks = [
   source $VIMCONFIG/commands.vim
   source $VIMCONFIG/grep.vim
   source $VIMCONFIG/term.vim
-  source $VIMCONFIG/maps.vim
+  source $VIMCONFIG/keymaps.vim
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
   aug Vimrc

@@ -57,6 +57,7 @@ map z*  <Plug>(asterisk-z*)
 map gz* <Plug>(asterisk-gz*)
 map z#  <Plug>(asterisk-z#)
 map gz# <Plug>(asterisk-gz#)
+nmap c*        z*cgn
 nmap <leader>c z*cgn
 xmap <leader>c z*cgn
 nno <silent> <leader><CR> :let @/ = ''<CR>
