@@ -1,9 +1,12 @@
+" THEME ////////////////////////////////////*theme*///////////////////////////////////////
+
 set termguicolors
 
 let g:lightline = {}
 
 let g:onedark_terminal_italics = 1
 colorscheme onedark
+" |colors| Color overrides
 
 let g:lightline.colorscheme = 'onedark'
 
@@ -135,3 +138,5 @@ augroup VimrcTheme
   autocmd!
   autocmd BufWritePost,TextChanged,TextChangedI,WinClosed * call lightline#update()
 augroup end
+
+" vim: tw=90 ts=2 sts=2 sw=2 et

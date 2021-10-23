@@ -1,3 +1,5 @@
+-- LSP CALLBACKS ///////////////////////////*lsp-callbacks*///////////////////////////////
+
 local api = vim.api
 local util = vim.lsp.util
 local callbacks = vim.lsp.handlers
@@ -126,3 +128,5 @@ function M.code_action_callback(index, _)
 end
 
 return M
+
+-- vim: tw=90 ts=2 sts=2 sw=2 et

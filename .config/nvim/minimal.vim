@@ -1,3 +1,5 @@
+" MINIMAL //////////////////////////////////*minimal*/////////////////////////////////////
+
 " no plugins
 set noloadplugins
 
@@ -14,18 +16,13 @@ if isdirectory($VIMPLUGINS..'/onedark.nvim')
 endif
 
 " Visual
-" set number relativenumber                 " line numbers
-" set nowrap                                " don't wrap text
-" set colorcolumn=+1                        " text width ruler
 set lazyredraw                            " don't redraw while executing macros
 set title titlelen=45                     " set vim window title
 set titlestring=nvim:\ %F
 set shortmess+=I                          " no intro message
-" set noshowmode                            " redundant mode message
 set list                                  " show non-printable characters
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 set synmaxcol=1000                        " highlight only the first 1000 columns
-" set pumblend=13 winblend=13               " pseudo transparency
 
 " Editing
 " set textwidth=90
@@ -76,3 +73,5 @@ elseif executable('ag')
   set grepformat=%f:%l:%c:%m,%f:%l:%m
   let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
 endif
+
+" vim: tw=90 ts=2 sts=2 sw=2 et

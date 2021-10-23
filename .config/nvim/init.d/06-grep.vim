@@ -1,3 +1,5 @@
+" GREP /////////////////////////////////////*grep*////////////////////////////////////////
+
 augroup VimrcGrep
   autocmd!
 augroup end
@@ -49,3 +51,5 @@ augroup VimrcGrep
   autocmd QuickFixCmdPost cgetexpr cwindow
   autocmd QuickFixCmdPost lgetexpr lwindow
 augroup end
+
+" vim: tw=90 ts=2 sts=2 sw=2 et

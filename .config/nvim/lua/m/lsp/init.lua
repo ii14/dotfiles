@@ -1,9 +1,12 @@
+-- LSP CONFIG //////////////////////////////*lsp*/////////////////////////////////////////
+
 local util = require 'm.lsp.util'
 local setup = util.setup
 -- local lspconfig = require 'lspconfig'
 -- local root_pattern = lspconfig.util.root_pattern
 require 'm.lsp.callbacks'
 
+-- Language servers ------------------------*lsp-servers*---------------------------------
 setup.clangd {
   cmd = {"clangd", "--background-index"},
   on_attach = function()
@@ -56,6 +59,7 @@ setup.tsserver {}
 
 setup.gopls {}
 
+-- null-ls ---------------------------------*lsp-null-ls*---------------------------------
 local null_ls = require 'null-ls'
 null_ls.config {
   sources = {
@@ -66,6 +70,7 @@ null_ls.config {
 }
 setup['null-ls']{}
 
+-- Trouble ---------------------------------*lsp-trouble*---------------------------------
 require 'trouble'.setup {
   icons = false,
   fold_open = "v",
@@ -78,3 +83,5 @@ require 'trouble'.setup {
     other = "-",
   },
 }
+
+-- vim: tw=90 ts=2 sts=2 sw=2 et

@@ -1,3 +1,5 @@
+" COMMANDS /////////////////////////////////*commands*////////////////////////////////////
+
 " See $VIMCONFIG/autoload/m/command.vim for command implementations
 " See $VIMCONFIG/plugin/ for more command definitions
 
@@ -61,7 +63,7 @@ command! -nargs=? -range GB
 command! Wiki VimwikiIndex
 command! Vimrc edit $MYVIMRC
 
-" Lowercase commands ---------------------------------------------------------------------
+" Lowercase commands -----------------------*commands-lowercase*--------------------------
 call Cabbrev('git',  'Git')
 call Cabbrev('rg',   'Rg')
 call Cabbrev('man',  'Man')

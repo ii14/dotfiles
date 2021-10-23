@@ -1,6 +1,6 @@
-" LSP BUFFER LOCAL SETTINGS
+" LSP BUFFER ///////////////////////////////*buffer-lsp*//////////////////////////////////
 
-" Key mappings ---------------------------------------------------------------------------
+" Key mappings -----------------------------*buffer-lsp-keymap*---------------------------
 nno <buffer><silent> g? <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 nno <buffer><silent> ]d <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 nno <buffer><silent> [d <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
@@ -11,7 +11,8 @@ if g:lsp_event.client_name ==# 'null-ls'
   finish
 endif
 
-nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nno <buffer><silent> <C-]> <cmd>if !vtags#jump()<bar>call luaeval('vim.lsp.buf.definition()')<bar>endif<CR>
+" nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
 nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nno <buffer><silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
 nno <buffer><silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
@@ -36,7 +37,7 @@ ino <buffer><silent> { <cmd>lua require 'compe'._close()<CR>{
 
 setl omnifunc=v:lua.vim.lsp.omnifunc
 
-" Completion -----------------------------------------------------------------------------
+" Completion -------------------------------*buffer-lsp-completion*-----------------------
 let s:compe = {'source': {
   \ 'path': v:true,
   \ 'calc': v:true,

@@ -1,4 +1,6 @@
-" OVERRIDE DEFAULTS ----------------------------------------------------------------------
+" KEY MAPPINGS /////////////////////////////*keymap*//////////////////////////////////////
+
+" OVERRIDE DEFAULTS ------------------------*keymap-overrides*----------------------------
 " Swap 0 and ^
 nno 0 ^
 nno ^ 0
@@ -24,31 +26,33 @@ nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
 nno q: :
 nno Q <Nop>
 
-" WINDOWS --------------------------------------------------------------------------------
+" WINDOWS ----------------------------------*keymap-windows*------------------------------
 nno <C-H> <C-W>h
 nno <C-J> <C-W>j
 nno <C-K> <C-W>k
 nno <C-L> <C-W>l
 nmap <leader>w <C-W>
 
-" BUFFERS --------------------------------------------------------------------------------
+" BUFFERS ----------------------------------*keymap-buffers*------------------------------
 nno <silent> <C-N> :bn<CR>
 nno <silent> <C-P> :bp<CR>
 
-" FILES ----------------------------------------------------------------------------------
-" fzf
+" FILES ------------------------------------*keymap-files*--------------------------------
+" *keymap-fzf*
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
 nno <leader>; :lua require'm.menus'.bookmarks()<CR>
 nno <leader>h :History<CR>
 nno <leader><leader> :Buffers<CR>
-" Fern
+nno <leader>t :Tags<CR>
+" *keymap-fern*
 nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
 nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 
-" SEARCH AND REPLACE ---------------------------------------------------------------------
+" SEARCH AND REPLACE -----------------------*keymap-search-replace*-----------------------
+" *keymap-asterisk*
 map *   <Plug>(asterisk-*)
 map g*  <Plug>(asterisk-g*)
 map #   <Plug>(asterisk-#)
@@ -62,11 +66,11 @@ nmap <leader>c z*cgn
 xmap <leader>c z*cgn
 nno <silent> <leader><CR> :let @/ = ''<CR>
 
-" MACROS ---------------------------------------------------------------------------------
+" MACROS -----------------------------------*keymap-macros*-------------------------------
 no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
 nno <leader>q q
 
-" QUICKFIX -------------------------------------------------------------------------------
+" QUICKFIX ---------------------------------*keymap-quickfix*-----------------------------
 nno <silent> qq :call qf#open()<CR>
 nno <silent> qt :call qf#toggle()<CR>
 nno <silent> qo :call qf#show()<CR>
@@ -81,7 +85,7 @@ nno <silent> ]l :lnext<CR>
 nno <silent> [L :lfirst<CR>
 nno <silent> ]L :llast<CR>
 
-" REGISTERS ------------------------------------------------------------------------------
+" REGISTERS --------------------------------*keymap-registers*----------------------------
 " Paste and keep register in visual mode
 xno zp  pgvy
 xno zgp pgvy`]<Space>
@@ -98,7 +102,7 @@ xno <leader>P  "+P
 xno <leader>gp "+gp
 xno <leader>gP "+gP
 
-" GIT ------------------------------------------------------------------------------------
+" GIT --------------------------------------*keymap-git*----------------------------------
 nno <leader>gs :Git<CR>
 nno <leader>gl :Flog<CR>
 nno <leader>gb :Git blame<CR>
@@ -107,18 +111,19 @@ nno <leader>gd :Gvdiffsplit!<CR>
 nno <leader>g2 :diffget //2<CR>
 nno <leader>g3 :diffget //3<CR>
 
-" MISC -----------------------------------------------------------------------------------
+" MISC -------------------------------------*keymap-misc*---------------------------------
 nno <leader>v ggVG
 nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 nno <leader>o :lua require'm.menus'.options()<CR>
 xno <leader>t :Tabularize /
 nno m= :Set makeprg<CR>
+nno <expr><silent> <C-]> vtags#can_jump() ? '<cmd>VtagsJump<CR>' : '<C-]>'
 
-" LSP ------------------------------------------------------------------------------------
-" LSP buffer local mappings in $VIMCONFIG/lsp.vim
+" LSP --------------------------------------*keymap-lsp*----------------------------------
+" |buffer-lsp-keymap| LSP buffer config
 nno <silent> <leader>ld :TroubleToggle<CR>
 
-" TERMDEBUG ------------------------------------------------------------------------------
+" TERMDEBUG --------------------------------*keymap-termdebug*----------------------------
 nno <leader>dr :Run<CR>
 nno <leader>dS :Stop<CR>
 nno <leader>ds :Step<CR>
@@ -129,7 +134,7 @@ nno <leader>db :Break<CR>
 nno <leader>dB :Clear<CR>
 nno <leader>de :Eval<CR>
 
-" INSERT ---------------------------------------------------------------------------------
+" INSERT -----------------------------------*keymap-insert*-------------------------------
 " Emacs
 ino <C-A> <Home>
 ino <C-E> <End>
@@ -170,7 +175,7 @@ imap <C-G><C-A> <><C-G>U<Left>
 imap <C-G>i     ""<C-G>U<Left>
 imap <C-G><C-I> ""<C-G>U<Left>
 
-" COMMAND --------------------------------------------------------------------------------
+" COMMAND ----------------------------------*keymap-command*------------------------------
 cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
 cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
 " Emacs

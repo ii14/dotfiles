@@ -1,3 +1,5 @@
+" FERN BUFFER //////////////////////////////*buffer-fern*/////////////////////////////////
+
 setl nonumber norelativenumber
 setl textwidth=0
 
@@ -57,3 +59,5 @@ nno <buffer> <C-H> <C-W>h
 nno <buffer> <C-L> <C-W>l
 nno <buffer> <C-K> <C-W>k
 nno <buffer> <C-J> <C-W>j
+
+" vim: tw=90 ts=2 sts=2 sw=2 et

@@ -1,3 +1,5 @@
+" TERMINAL EMULATOR ////////////////////////*terminal*////////////////////////////////////
+
 augroup VimrcTerm
   autocmd!
   " Disable insert mode after terminal process terminates.
