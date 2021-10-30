@@ -1,11 +1,11 @@
 " LSP BUFFER LOCAL SETTINGS
 
 " Key mappings ---------------------------------------------------------------------------
-nno <buffer><silent> g? <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-nno <buffer><silent> ]d <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nno <buffer><silent> [d <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nno <buffer><silent> ]D <cmd>lua vim.lsp.diagnostic.goto_prev({cursor_position={0,0}})<CR>
-nno <buffer><silent> [D <cmd>lua vim.lsp.diagnostic.goto_next({cursor_position={0,0}})<CR>
+nno <buffer><silent> g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
+nno <buffer><silent> ]d <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
+nno <buffer><silent> [d <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
+nno <buffer><silent> ]D <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
+nno <buffer><silent> [D <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
 
 if g:lsp_event.client_name ==# 'null-ls'
   finish

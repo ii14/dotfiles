@@ -141,8 +141,8 @@ ino <C-G><C-H> <Left>
 ino <C-G>l     <Right>
 ino <C-G><C-L> <Right>
 " Insert stuff
-ino <C-R><C-D> <C-R>=m#bufdir()<CR>
-ino <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
+ino <silent> <C-R><C-D> <C-R>=m#bufdir()<CR>
+ino <silent> <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 " Completion
 ino <expr> <C-X><C-X> compe#complete()
 ino <expr> <CR>       compe#confirm('<CR>')
@@ -159,15 +159,11 @@ function! s:i_ctrl_e() abort
   endif
   return "\<End>"
 endfunction
-" Snippets
+" Pairs
 ino <C-G><CR> <CR><C-O>O
-imap <C-G>o     ()<C-G>U<Left>
 imap <C-G><C-O> ()<C-G>U<Left>
-imap <C-G>b     {}<C-G>U<Left>
 imap <C-G><C-B> {}<C-G>U<Left>
-imap <C-G>a     <><C-G>U<Left>
 imap <C-G><C-A> <><C-G>U<Left>
-imap <C-G>i     ""<C-G>U<Left>
 imap <C-G><C-I> ""<C-G>U<Left>
 
 " COMMAND --------------------------------------------------------------------------------
@@ -191,18 +187,12 @@ cno <C-G>h     <Left>
 cno <C-G><C-H> <Left>
 cno <C-G>l     <Right>
 cno <C-G><C-L> <Right>
-" Snippets
-cmap <C-G>o     ()<Left>
+" Pairs
 cmap <C-G><C-O> ()<Left>
-cmap <C-G>b     {}<Left>
 cmap <C-G><C-B> {}<Left>
-cmap <C-G>a     <><Left>
 cmap <C-G><C-A> <><Left>
-cmap <C-G>i     ""<Left>
 cmap <C-G><C-I> ""<Left>
-cmap <C-G>g     \(\)<Left><Left>
 cmap <C-G><C-G> \(\)<Left><Left>
-cmap <C-G>w     \<\><Left><Left>
 cmap <C-G><C-W> \<\><Left><Left>
 " Last command with bang
 nno !: :<Up>!

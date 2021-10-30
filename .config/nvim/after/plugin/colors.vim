@@ -17,11 +17,5 @@ hi! IndentBlanklineChar guifg=#4B5263 gui=nocombine
 hi! link IndentBlanklineSpaceChar IndentBlanklineChar
 hi! link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
 
-" nvim-lsp
-sign define LspDiagnosticsSignError       text=E
-sign define LspDiagnosticsSignWarning     text=W
-sign define LspDiagnosticsSignInformation text=i
-sign define LspDiagnosticsSignHint        text=H
-
 " nvim-lightbulb
 sign define LightBulbSign text=! texthl=Number

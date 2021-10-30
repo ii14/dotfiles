@@ -110,7 +110,6 @@ let g:bookmarks = [
   " Custom -------------------------------------------------------------------------------
     Plug $VIMCONFIG..'/m/qf.vim'
     Plug $VIMCONFIG..'/m/drawer.nvim'
-    Plug $VIMCONFIG..'/m/termdebug'
 
   " Performance --------------------------------------------------------------------------
     Plug 'tweekmonster/startuptime.vim'

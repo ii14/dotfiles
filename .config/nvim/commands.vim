@@ -81,4 +81,30 @@ command! -bang Q q<bang>
 command! -bang Qa qa<bang>
 command! -bang QA qa<bang>
 
+" Lazy loaded termdebug ------------------------------------------------------------------
+if !exists(':Termdebug')
+  command! -nargs=* -complete=file -bang Termdebug
+    \ packadd termdebug | Termdebug<bang> <args>
+  command! -nargs=+ -complete=file -bang TermdebugCommand
+    \ packadd termdebug | TermdebugCommand<bang> <args>
+  autocmd SourcePre $VIMRUNTIME/pack/dist/opt/termdebug/plugin/termdebug.vim ++once
+    \ delcommand Termdebug | delcommand TermdebugCommand
+endif
+
+" Scratch buffer -------------------------------------------------------------------------
+command! -nargs=? -bar -complete=filetype Scratch call s:Scratch(<q-args>)
+function! s:Scratch(filetype)
+  new
+  setl buftype=nofile
+  if !empty(a:filetype)
+    let &l:filetype = a:filetype
+  endif
+  call nvim_buf_set_name(0, '[Scratch]')
+  resize 15
+endfunction
+call Cabbrev('scra', 'Scratch')
+call Cabbrev('scrat', 'Scratch')
+call Cabbrev('scratc', 'Scratch')
+call Cabbrev('scratch', 'Scratch')
+
 " vim: tw=90 ts=2 sts=2 sw=2 et
