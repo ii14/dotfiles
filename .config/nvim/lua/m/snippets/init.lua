@@ -9,12 +9,15 @@ require('luasnip.config').set_config {
 }
 
 local lookup = {
-  c    = 'm.snippets.c',
-  cpp  = 'm.snippets.cpp',
-  css  = 'm.snippets.css',
-  html = 'm.snippets.html',
-  lua  = 'm.snippets.lua',
-  make = 'm.snippets.make',
+  c          = 'm.snippets.c',
+  cpp        = 'm.snippets.cpp',
+  css        = 'm.snippets.css',
+  html       = 'm.snippets.html',
+  lua        = 'm.snippets.lua',
+  make       = 'm.snippets.make',
+  javascript = 'm.snippets.js',
+  typescript = 'm.snippets.js',
+  go         = 'm.snippets.go',
 }
 
 function M.require_format(filetype)

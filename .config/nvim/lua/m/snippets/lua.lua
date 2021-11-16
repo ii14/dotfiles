@@ -33,13 +33,13 @@ ls.snippets.lua = {
   },
 
   snip{
-    name='pairs', trig='pairs',
+    name='pairs', trig='ps',
     t'for ', i(2, '_'), t', ', i(3, '_'), t' in pairs(', i(1), t{') do', '\t'}, i(0),
     t{'', 'end'},
   },
 
   snip{
-    name='ipairs', trig='ipairs',
+    name='ipairs', trig='ips',
     t'for ', i(2, '_'), t', ', i(3, '_'), t' in ipairs(', i(1), t{') do', '\t'}, i(0),
     t{'', 'end'},
   },
