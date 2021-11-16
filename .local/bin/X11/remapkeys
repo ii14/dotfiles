@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Set CapsLock to Ctrl and Esc
-setxkbmap -option ctrl:nocaps
+# Set CapsLock to Ctrl and Esc, both Shift to CapsLock
+setxkbmap -option ctrl:nocaps -option shift:both_capslock
 xcape -e 'Control_L=Escape' -t 150
 
 # Thinkpad T420
