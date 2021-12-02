@@ -2,7 +2,7 @@ font pango:tewi 8
 
 set $mod Mod4
 
-set $exec exec --no-startup-id
+set $exec exec --no-startup-id exec
 
 # LAUNCH ---------------------------------------------------------------------------------
 bindsym $mod+Return         $exec i3-sensible-terminal
