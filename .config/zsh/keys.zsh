@@ -6,8 +6,8 @@ KEYTIMEOUT=1
 bindkey -e
 # bindkey '^x\e' vi-cmd-mode
 # bindkey -M vicmd '\e' vi-add-next
-bindkey -r '^j'
-bindkey -rM vicmd '^j'
+# bindkey -r '^j'
+# bindkey -rM vicmd '^j'
 
 WORDCHARS=${WORDCHARS//[\/=]/}
 
