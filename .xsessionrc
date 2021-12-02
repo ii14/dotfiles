@@ -25,3 +25,5 @@ case "$DESKTOP_SESSION" in
         ;;
 
 esac
+
+# vim: ft=sh
