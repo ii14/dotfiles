@@ -1,26 +1,21 @@
 " See $VIMCONFIG/autoload/m/command.vim for command implementations
 " See $VIMCONFIG/plugin/ for more command definitions
 
-function! Cabbrev(lhs, rhs)
-  exe printf("cnorea <expr>%s (getcmdtype()==#':'&&getcmdline()==#'%s')?'%s':'%s'",
-    \ a:lhs, a:lhs, a:rhs, a:lhs)
-endfunction
-
 " :bd doesn't close window, :bq closes the window ----------------------------------------
 command! -nargs=? -bang -complete=buffer Bq
   \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
   \ | bd! | else | bd<bang> <args> | endif
-call Cabbrev('bq', 'Bq')
-call Cabbrev('bd', 'Bd')
-call Cabbrev('bw', 'Bw')
+call m#util#cabbrev('bq', 'Bq')
+call m#util#cabbrev('bd', 'Bd')
+call m#util#cabbrev('bw', 'Bw')
 
 " Use fzf for help and buffers -----------------------------------------------------------
 command! -nargs=? -complete=help H
   \ if <q-args> ==# '' | Helptags | else | h <args> | endif
 command! -nargs=? -bang -complete=buffer B
   \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
-call Cabbrev('h', 'H')
-call Cabbrev('b', 'B')
+call m#util#cabbrev('h', 'H')
+call m#util#cabbrev('b', 'B')
 
 " Set tab width. 4 by default, ! is noet -------------------------------------------------
 command! -count=4 -bang T
@@ -29,7 +24,7 @@ command! -count=4 -bang T
 
 " Fill the rest of the line with character -----------------------------------------------
 command! -nargs=? Hr call m#command#hr(<q-args>)
-call Cabbrev('hr', 'Hr')
+call m#util#cabbrev('hr', 'Hr')
 
 " :redir to a new buffer -----------------------------------------------------------------
 command! -nargs=+ -complete=command Redir call m#command#redir(<q-args>)
@@ -42,7 +37,7 @@ command! RenameFile call m#command#rename_file()
 
 " xdg-open -------------------------------------------------------------------------------
 command! -nargs=? -complete=file Open call m#command#open(<q-args>)
-call Cabbrev('open', 'Open')
+call m#util#cabbrev('open', 'Open')
 
 " ctags ----------------------------------------------------------------------------------
 if executable('ctags')
@@ -62,15 +57,15 @@ command! Wiki VimwikiIndex
 command! Vimrc edit $MYVIMRC
 
 " Lowercase commands ---------------------------------------------------------------------
-call Cabbrev('git',  'Git')
-call Cabbrev('rg',   'Rg')
-call Cabbrev('man',  'Man')
-call Cabbrev('rc',   'Rc')
-call Cabbrev('rcd',  'Rcd')
-call Cabbrev('trim', 'Trim')
-call Cabbrev('fzf',  'Files')
-call Cabbrev('fern', 'Fern')
-call Cabbrev('vres', 'vert res')
+call m#util#cabbrev('git',  'Git')
+call m#util#cabbrev('rg',   'Rg')
+call m#util#cabbrev('man',  'Man')
+call m#util#cabbrev('rc',   'Rc')
+call m#util#cabbrev('rcd',  'Rcd')
+call m#util#cabbrev('trim', 'Trim')
+call m#util#cabbrev('fzf',  'Files')
+call m#util#cabbrev('fern', 'Fern')
+call m#util#cabbrev('vres', 'vert res')
 
 " Synstack -------------------------------------------------------------------------------
 command! Synstack
@@ -91,6 +86,14 @@ if !exists(':Termdebug')
     \ delcommand Termdebug | delcommand TermdebugCommand
 endif
 
+" Lazy loaded cfilter --------------------------------------------------------------------
+if !exists("loaded_cfilter")
+  command! -nargs=+ -bang Cfilter packadd cfilter | Cfilter<bang> <args>
+  command! -nargs=+ -bang Lfilter packadd cfilter | Lfilter<bang> <args>
+  autocmd SourcePre $VIMRUNTIME/pack/dist/opt/cfilter/plugin/cfilter.vim ++once
+    \ delcommand Cfilter | delcommand Lfilter
+endif
+
 " Scratch buffer -------------------------------------------------------------------------
 command! -nargs=? -bar -complete=filetype Scratch call s:Scratch(<q-args>)
 function! s:Scratch(filetype)
@@ -102,9 +105,9 @@ function! s:Scratch(filetype)
   call nvim_buf_set_name(0, '[Scratch]')
   resize 15
 endfunction
-call Cabbrev('scra', 'Scratch')
-call Cabbrev('scrat', 'Scratch')
-call Cabbrev('scratc', 'Scratch')
-call Cabbrev('scratch', 'Scratch')
+call m#util#cabbrev('scra', 'Scratch')
+call m#util#cabbrev('scrat', 'Scratch')
+call m#util#cabbrev('scratc', 'Scratch')
+call m#util#cabbrev('scratch', 'Scratch')
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

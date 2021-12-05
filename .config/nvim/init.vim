@@ -60,9 +60,11 @@ let g:bookmarks = [
     Plug 'ii14/vim-bbye'
     Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
     Plug 'stefandtw/quickfix-reflector.vim'
+    Plug 'wellle/visual-split.vim'
 
   " Visual -------------------------------------------------------------------------------
     Plug 'ii14/onedark.nvim'
+    " Plug 'CantoroMC/ayu-nvim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'lukas-reineke/indent-blankline.nvim'
@@ -78,6 +80,7 @@ let g:bookmarks = [
   " Autocompletion -----------------------------------------------------------------------
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
+      Plug 'ii14/lsp-command'
       Plug 'nvim-lua/plenary.nvim'
       Plug 'jose-elias-alvarez/null-ls.nvim'
       Plug 'folke/trouble.nvim'
@@ -118,20 +121,9 @@ let g:bookmarks = [
     let g:did_load_filetypes = 1
 
   call plug#end()
+  call m#util#check_missing_plugs()
 
-  " Check missing plugins
-  let s:missing_plugs = len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-  if s:missing_plugs
-    if input((s:missing_plugs == 1
-      \ ? '1 plugin is missing'
-      \ : s:missing_plugs..' plugins are missing')..'. Install? [y/n]: ')
-      \ =~? '\v\cy%[es]$'
-      PlugInstall
-    endif
-  endif
-  unlet! s:missing_plugs
-
-  lua require 'impatient'
+  lua pcall(require, 'impatient')
   lua require 'm.global'
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
@@ -167,23 +159,13 @@ let g:bookmarks = [
     let g:loaded_netrwSettings = 1
     let g:loaded_netrwFileHandlers = 1
     let g:fern#disable_default_mappings = 1
-    let g:fern#drawer_width = 32
+    let g:fern#drawer_width = 31
     let g:fern#renderer#default#collapsed_symbol = '> '
     let g:fern#renderer#default#expanded_symbol = 'v '
     let g:fern#renderer#default#leaf_symbol = '¦ '
     let g:fern#hide_cursor = 1
-
-    fun! s:fern_hijack_directory() abort
-      let l:path = expand('%:p')
-      if isdirectory(l:path)
-        let l:bufnr = bufnr()
-        execute printf('keepjumps keepalt Fern %s', fnameescape(l:path))
-        execute printf('bwipeout %d', l:bufnr)
-      endif
-    endfun
-
     aug Vimrc
-      au BufEnter * ++nested call s:fern_hijack_directory()
+      au BufEnter * ++nested call m#util#fern_hijack_directory()
     aug end
 
   " indent-blankline ---------------------------------------------------------------------
@@ -200,7 +182,7 @@ let g:bookmarks = [
     let g:exrc#names = ['.exrc']
     aug Vimrc
       au BufWritePost .exrc ++nested silent ExrcTrust
-      au SourcePost .exrc silent Pro!
+      au VimEnter * ++once au Vimrc SourcePost .exrc silent Pro!
     aug end
 
   " autosplit.vim ------------------------------------------------------------------------

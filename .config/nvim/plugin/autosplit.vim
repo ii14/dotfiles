@@ -37,7 +37,7 @@ fun! Autosplit() abort
   let vert = winwidth(prev) >= twcurr + twprev
 
   call win_splitmove(win_getid(), win_getid(prev), {'vertical': vert})
-  wincmd =
+  " wincmd =
 endfun
 
 fun! s:winnew() abort

@@ -66,6 +66,10 @@ null_ls.config {
 }
 setup['null-ls']{}
 
+vim.diagnostic.config {
+  severity_sort = true,
+}
+
 require 'trouble'.setup {
   icons = false,
   fold_open = "v",

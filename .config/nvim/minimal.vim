@@ -76,3 +76,73 @@ elseif executable('ag')
   set grepformat=%f:%l:%c:%m,%f:%l:%m
   let &grepprg = 'ag --vimgrep' . (&smartcase ? ' --smart-case' : '')
 endif
+
+
+" OVERRIDE DEFAULTS
+" Swap 0 and ^
+nno 0 ^
+nno ^ 0
+" Yank to the end of the line
+nno Y y$
+" Reverse {j,k} and {gj,gk}, unless count is given
+nno <expr> j v:count ? 'j' : 'gj'
+xno <expr> j v:count ? 'j' : 'gj'
+nno <expr> k v:count ? 'k' : 'gk'
+xno <expr> k v:count ? 'k' : 'gk'
+nno <expr> gj v:count ? 'gj' : 'j'
+xno <expr> gj v:count ? 'gj' : 'j'
+nno <expr> gk v:count ? 'gk' : 'k'
+xno <expr> gk v:count ? 'gk' : 'k'
+" Select last yanked or modified text
+nno gV `[v`]
+" Don't leave visual mode when changing indentation
+xno < <gv
+xno > >gv
+" Split line, opposite of J
+nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
+" Get rid of annoying stuff
+nno q: :
+nno Q <Nop>
+
+" WINDOWS
+nno <C-H> <C-W>h
+nno <C-J> <C-W>j
+nno <C-K> <C-W>k
+nno <C-L> <C-W>l
+nmap <leader>w <C-W>
+
+" BUFFERS
+nno <silent> <C-N> :bn<CR>
+nno <silent> <C-P> :bp<CR>
+nno <leader><leader> :ls<CR>:b
+
+" QUICKFIX
+nno <silent> [q :cprev<CR>
+nno <silent> ]q :cnext<CR>
+nno <silent> [Q :cfirst<CR>
+nno <silent> ]Q :clast<CR>
+nno <silent> [l :lprev<CR>
+nno <silent> ]l :lnext<CR>
+nno <silent> [L :lfirst<CR>
+nno <silent> ]L :llast<CR>
+
+" REGISTERS
+" Paste and keep register in visual mode
+xno zp  pgvy
+xno zgp pgvy`]<Space>
+" System clipboard
+nno <leader>y  "+y
+nno <leader>Y  "+y$
+nno <leader>p  "+p
+nno <leader>P  "+P
+nno <leader>gp "+gp
+nno <leader>gP "+gP
+xno <leader>y  "+y
+xno <leader>p  "+p
+xno <leader>P  "+P
+xno <leader>gp "+gp
+xno <leader>gP "+gP
+
+" COMMAND
+cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
+cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'

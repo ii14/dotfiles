@@ -4,8 +4,11 @@ let g:lightline = {}
 
 let g:onedark_terminal_italics = 1
 colorscheme onedark
-
 let g:lightline.colorscheme = 'onedark'
+
+" let g:ayu_avoid_italics = v:true
+" colorscheme ayu
+" let g:lightline.colorscheme = 'ayu_dark'
 
 let g:lightline.active = {
   \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro'], ['filename']],

@@ -41,7 +41,6 @@ function M.bookmarks()
         return
       end
     end
-    echo {{'Option does not exist', 'WarningMsg'}}
   end
 end
 
@@ -82,7 +81,6 @@ function M.options()
         return
       end
     end
-    echo {{'Option does not exist', 'WarningMsg'}}
   end
 end
 

@@ -1,19 +1,26 @@
 " Current buffer directory ---------------------------------------------------------------
-function! m#bufdir() abort
-  if &buftype ==# 'terminal'
-    try
-      let d = systemlist(['pwdx', b:terminal_job_pid])
-      if v:shell_error != 0 | return './' | endif
-      let d = fnamemodify(matchlist(d[0], '\v^\d+: (.+)$')[1], ':~:.')
-      return (d ==# '' ? './' : d[-1:] ==# '/' ? d : d..'/')
-    catch
-      return './'
-    endtry
-  else
+if executable('pwdx')
+  function! m#bufdir() abort
+    if &buftype ==# 'terminal'
+      try
+        let d = systemlist(['pwdx', b:terminal_job_pid])
+        if v:shell_error != 0 | return './' | endif
+        let d = fnamemodify(matchlist(d[0], '\v^\d+: (.+)$')[1], ':~:.')
+        return (d ==# '' ? './' : d[-1:] ==# '/' ? d : d..'/')
+      catch
+        return './'
+      endtry
+    else
+      let d = expand('%:h')
+    endif
+    return (d ==# '' ? './' : d..'/')
+  endfunction
+else
+  function! m#bufdir() abort
     let d = expand('%:h')
-  endif
-  return (d ==# '' ? './' : d..'/')
-endfunction
+    return (d ==# '' ? './' : d..'/')
+  endfunction
+endif
 
 " lua includeexpr ------------------------------------------------------------------------
 function! m#lua_include(fname) abort

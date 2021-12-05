@@ -23,6 +23,14 @@ nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
 " Get rid of annoying stuff
 nno q: :
 nno Q <Nop>
+" Horizontal scrolling
+let s:hscroll = 8
+function! s:hscroll(t) abort
+  if v:count | let s:hscroll = v:count | endif
+  return "\<Esc>"..s:hscroll..a:t
+endfunction
+nno <expr> zh <SID>hscroll('zh')
+nno <expr> zl <SID>hscroll('zl')
 
 " WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
@@ -34,15 +42,17 @@ nmap <leader>w <C-W>
 " BUFFERS --------------------------------------------------------------------------------
 nno <silent> <C-N> :bn<CR>
 nno <silent> <C-P> :bp<CR>
+nno <silent> <C-B> :Buffers<CR>
+nno <silent> <leader><leader> :Buffers<CR>
 
 " FILES ----------------------------------------------------------------------------------
 " fzf
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
+nno <C-F>     :lua require'm.menus'.bookmarks()<CR>
 nno <leader>; :lua require'm.menus'.bookmarks()<CR>
 nno <leader>h :History<CR>
-nno <leader><leader> :Buffers<CR>
 " Fern
 nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
 nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
@@ -117,6 +127,11 @@ nno m= :Set makeprg<CR>
 " LSP ------------------------------------------------------------------------------------
 " LSP buffer local mappings in $VIMCONFIG/lsp.vim
 nno <silent> <leader>ld :TroubleToggle<CR>
+nno <buffer><silent> g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
+nno <buffer><silent> ]g <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
+nno <buffer><silent> [g <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
+nno <buffer><silent> ]G <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
+nno <buffer><silent> [G <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
 
 " TERMDEBUG ------------------------------------------------------------------------------
 nno <leader>dr :Run<CR>
