@@ -86,6 +86,7 @@ bindsym $mod+n            workspace next
 bindsym $mod+bracketright workspace next
 bindsym $mod+i            workspace back_and_forth
 bindsym $mod+Tab          workspace back_and_forth
+bindsym $mod+Shift+Tab    focus output right
 
 # move window to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
