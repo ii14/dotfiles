@@ -57,4 +57,5 @@
 - `scrot` (apt)
 - `sxiv` (https://github.com/muennich/sxiv)
 - `youtube-dl` (pip)
+- `yt-dlp` (pip)
 - `zathura` (apt)

@@ -25,6 +25,7 @@ alias bc='bc -q'
 alias mount='mount -v'
 alias umount='umount -v'
 alias zathura='zathura --fork'
+alias mpv='mpv --force-window'
 
 # CD -------------------------------------------------------------------------------------
 alias cd..='cd ..'
@@ -136,7 +137,7 @@ function ytls {
         echo 'usage: ytls <playlist/channel>' >&2
         return 1
     fi
-    youtube-dl --ignore-config -j "$1" \
+    yt-dlp --ignore-config -j "$1" \
         | jq -r '(.id + " :: " + .uploader + " :: " + .title)'
 }
 
@@ -146,6 +147,13 @@ alias vim-install='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#
 alias vim-update='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugUpdate'
 alias vimclean='vim -u NORC --clean "+syntax off"'
 alias :q='exit'
+function :h {
+    if ((ARGC == 0)); then
+        vim '+Helptags'
+    elif ((ARGC == 1)); then
+        vim "+h $1 | only"
+    fi
+}
 [ -v NVIM_LISTEN_ADDRESS ] && alias vim='vim -u $VIMCONFIG/remote.vim -i NONE --headless'
 
 # GIT ------------------------------------------------------------------------------------
@@ -291,5 +299,6 @@ function exl {
 }
 
 if [ "$TERM" = 'xterm-kitty' ]; then
+    alias ssh='TERM=xterm-256color ssh'
     alias icat='kitty icat --align=left'
 fi
