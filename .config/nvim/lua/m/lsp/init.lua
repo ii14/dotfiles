@@ -81,4 +81,5 @@ require 'trouble'.setup {
     information = "i",
     other = "-",
   },
+  padding = false,
 }
