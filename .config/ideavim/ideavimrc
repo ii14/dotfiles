@@ -32,6 +32,8 @@ nmap <leader>f <Action>(GotoFile)
 
 nmap ]q <Action>(GotoNextError)
 nmap [q <Action>(GotoPreviousError)
+nmap g? <Action>(ShowErrorDescription)
+nmap ga <Action>(ShowIntentionActions)
 
 nmap m<CR> <Action>(MakeGradleProject)
 nmap mr <Action>(Run)
