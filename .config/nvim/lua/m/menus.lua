@@ -27,11 +27,11 @@ function M.bookmarks()
   local ch = vim.fn.getchar()
   vim.cmd('redraw')
 
-  if ch == 0 or ch == 27 then
+  if ch == 0 or ch == 27 --[[<Esc>]] then
     return
-  elseif ch == 13 then
+  elseif ch == 13 --[[<CR>]] then
     vim.cmd('Files')
-  elseif ch == 32 then
+  elseif ch == 32 --[[<Space>]] then
     vim.api.nvim_feedkeys(':Files ', 'n', false)
   else
     ch = vim.fn.nr2char(ch)
