@@ -7,6 +7,8 @@ nno <buffer><silent> [d <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
 nno <buffer><silent> ]D <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
 nno <buffer><silent> [D <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
 
+nno <buffer><silent> <leader>lS :Lsp stop<CR>
+
 if g:lsp_event.client_name ==# 'null-ls'
   finish
 endif
@@ -27,8 +29,6 @@ xno <buffer><silent> ga    <cmd>lua vim.lsp.buf.range_code_action()<CR>
 
 xno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 xno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
-
-nno <buffer><silent> <leader>lS :LspStop<CR>
 
 " end completion on '({'
 ino <buffer><silent> ( <cmd>lua require 'compe'._close()<CR>(

@@ -84,7 +84,6 @@ let g:bookmarks = [
       Plug 'nvim-lua/plenary.nvim'
       Plug 'jose-elias-alvarez/null-ls.nvim'
       Plug 'folke/trouble.nvim'
-      Plug 'kosayoda/nvim-lightbulb'
     endif
     Plug 'hrsh7th/nvim-compe'
     Plug 'tamago324/compe-necosyntax'
@@ -145,7 +144,7 @@ let g:bookmarks = [
       lua require 'm.lsp'
       aug Vimrc
         au User LspAttach source $VIMCONFIG/lsp.vim
-        au CursorMoved * lua require 'nvim-lightbulb'.update_lightbulb()
+        au CursorMoved * lua require 'm.lsp.lightbulb'.update()
         au TabEnter * call m#lsp_update_tab()
       aug end
     endif
