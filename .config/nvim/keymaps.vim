@@ -13,6 +13,32 @@ nno <expr> gj v:count ? 'gj' : 'j'
 xno <expr> gj v:count ? 'gj' : 'j'
 nno <expr> gk v:count ? 'gk' : 'k'
 xno <expr> gk v:count ? 'gk' : 'k'
+" Horizontal scrolling
+let s:hscroll = 8
+function! s:hscroll(t) abort
+  if v:count
+    let s:hscroll = v:count
+    return a:t
+  endif
+  return s:hscroll..a:t
+endfunction
+nno <expr> zh <SID>hscroll('zh')
+xno <expr> zh <SID>hscroll('zh')
+nno <expr> zl <SID>hscroll('zl')
+xno <expr> zl <SID>hscroll('zl')
+" Vertical scrolling
+let s:vscroll = 1
+function! s:vscroll(t) abort
+  if v:count
+    let s:vscroll = v:count
+    return a:t
+  endif
+  return s:vscroll..a:t
+endfunction
+nno <expr> <C-E> <SID>vscroll('<C-E>')
+xno <expr> <C-E> <SID>vscroll('<C-E>')
+nno <expr> <C-Y> <SID>vscroll('<C-Y>')
+xno <expr> <C-Y> <SID>vscroll('<C-Y>')
 " Select last yanked or modified text
 nno gV `[v`]
 " Don't leave visual mode when changing indentation
@@ -23,14 +49,6 @@ nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
 " Get rid of annoying stuff
 nno q: :
 nno Q <Nop>
-" Horizontal scrolling
-let s:hscroll = 8
-function! s:hscroll(t) abort
-  if v:count | let s:hscroll = v:count | endif
-  return "\<Esc>"..s:hscroll..a:t
-endfunction
-nno <expr> zh <SID>hscroll('zh')
-nno <expr> zl <SID>hscroll('zl')
 
 " WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
@@ -123,6 +141,7 @@ nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 
 nno <leader>o :lua require'm.menus'.options()<CR>
 xno <leader>t :Tabularize /
 nno m= :Set makeprg<CR>
+nno <silent> zI :IndentBlanklineRefresh<CR>
 
 " LSP ------------------------------------------------------------------------------------
 " LSP buffer local mappings in $VIMCONFIG/lsp.vim
