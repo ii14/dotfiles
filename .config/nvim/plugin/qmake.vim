@@ -43,7 +43,7 @@ function! s:run(args, bang) abort
   let l:cmd = [s:get('qmake_bin', 'qmake')]
   if !a:bang
     call add(l:cmd, s:get('qmake_args'))
-  else
+  endif
   call add(l:cmd, a:args)
   call add(l:cmd, getcwd())
   let l:cmd = '!'..join(l:cmd)
