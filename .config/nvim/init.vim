@@ -59,7 +59,6 @@ let g:bookmarks = [
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
     Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
-    Plug 'stefandtw/quickfix-reflector.vim'
     Plug 'wellle/visual-split.vim'
 
   " Visual -------------------------------------------------------------------------------
@@ -93,6 +92,7 @@ let g:bookmarks = [
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
+    Plug 'lewis6991/gitsigns.nvim'
     Plug 'tpope/vim-dispatch'
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
@@ -114,13 +114,12 @@ let g:bookmarks = [
     Plug $VIMCONFIG..'/m/drawer.nvim'
 
   " Performance --------------------------------------------------------------------------
-    Plug 'tweekmonster/startuptime.vim'
+    Plug 'tweekmonster/startuptime.vim', {'on': 'StartupTime'}
     Plug 'lewis6991/impatient.nvim'
     Plug 'nathom/filetype.nvim'
-    let g:did_load_filetypes = 1
 
   call plug#end()
-  call m#util#check_missing_plugs()
+  call m#check_missing_plugs()
 
   lua pcall(require, 'impatient')
   lua require 'm.global'
@@ -144,7 +143,6 @@ let g:bookmarks = [
       lua require 'm.lsp'
       aug Vimrc
         au User LspAttach source $VIMCONFIG/lsp.vim
-        au CursorMoved * lua require 'm.lsp.lightbulb'.update()
         au TabEnter * call m#lsp_update_tab()
       aug end
     endif
@@ -164,18 +162,28 @@ let g:bookmarks = [
     let g:fern#renderer#default#leaf_symbol = '¦ '
     let g:fern#hide_cursor = 1
     aug Vimrc
-      au BufEnter * ++nested call m#util#fern_hijack_directory()
+      au BufEnter * ++nested call m#fern_hijack_directory()
     aug end
 
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
     let g:indent_blankline_filetype_exclude = ['man', 'fern', 'floggraph', 'fugitive', 'gitcommit']
-    let g:indent_blankline_show_first_indent_level = v:false
+    " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
 
   " comment.nvim -------------------------------------------------------------------------
     lua require 'Comment'.setup{ ignore = '^$' }
+
+  " filetype.nvim ------------------------------------------------------------------------
+    lua require 'filetype'.setup{ overrides = {
+      \   extensions = {
+      \     pro = 'qmake',
+      \   },
+      \ }}
+
+  " gitsigns -----------------------------------------------------------------------------
+    lua require 'gitsigns'.setup{}
 
   " exrc.vim -----------------------------------------------------------------------------
     let g:exrc#names = ['.exrc']
@@ -244,7 +252,7 @@ let g:bookmarks = [
     set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation
 
   " Search and Autocompletion ------------------------------------------------------------
-    set path+=**
+    " set path+=**
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
     set inccommand=nosplit                    " :substitute live preview
     set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__

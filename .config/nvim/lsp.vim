@@ -30,6 +30,10 @@ xno <buffer><silent> ga    <cmd>lua vim.lsp.buf.range_code_action()<CR>
 xno <buffer><silent> gw    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 xno <buffer><silent> gq    <cmd>lua vim.lsp.buf.range_formatting()<CR>
 
+if g:lsp_event.client_name ==# 'clangd'
+  nno <buffer><silent> <leader>a :ClangdSwitchSourceHeader<CR>
+endif
+
 " end completion on '({'
 ino <buffer><silent> ( <cmd>lua require 'compe'._close()<CR>(
 ino <buffer><silent> { <cmd>lua require 'compe'._close()<CR>{

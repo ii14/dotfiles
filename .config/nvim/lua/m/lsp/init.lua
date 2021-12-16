@@ -1,14 +1,9 @@
 local util = require 'm.lsp.util'
 local setup = util.setup
--- local lspconfig = require 'lspconfig'
--- local root_pattern = lspconfig.util.root_pattern
 require 'm.lsp.callbacks'
 
 setup.clangd {
   cmd = {"clangd", "--background-index"},
-  on_attach = function()
-    util.map('n', '<leader>a', ':ClangdSwitchSourceHeader<CR>')
-  end,
   commands = {
     ClangdSwitchSourceHeader = {
       function() util.switch_source_header(0) end,
@@ -32,7 +27,7 @@ setup.sumneko_lua {
   cmd = (function()
     local root = vim.fn.expand('$HOME')..'/repos/lua-language-server'
     -- local root = '/opt/lua-language-server'
-    return { root..'/bin/Linux/lua-language-server', '-E', root .. '/main.lua' }
+    return { root..'/bin/Linux/lua-language-server', '-E', root..'/main.lua' }
   end)(),
   settings = {
     Lua = {
@@ -56,19 +51,24 @@ setup.tsserver {}
 
 setup.gopls {}
 
-local null_ls = require 'null-ls'
-null_ls.config {
-  sources = {
-    null_ls.builtins.diagnostics.shellcheck.with {
-      diagnostics_format = "[#{c}] #{m}",
+do
+  local null_ls = require 'null-ls'
+  local diagnostics = null_ls.builtins.diagnostics
+  null_ls.setup {
+    sources = {
+      diagnostics.shellcheck.with{ diagnostics_format="[#{c}] #{m}" },
+      diagnostics.qmllint.with{ args={"$FILENAME"} },
+      diagnostics.php,
     },
-  },
-}
-setup['null-ls']{}
+  }
+end
+
 
 vim.diagnostic.config {
   severity_sort = true,
 }
+
+require 'm.lsp.lightbulb'
 
 require 'trouble'.setup {
   icons = false,

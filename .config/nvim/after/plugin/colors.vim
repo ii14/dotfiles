@@ -18,4 +18,8 @@ hi! link IndentBlanklineSpaceChar IndentBlanklineChar
 hi! link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
 
 " nvim-lightbulb
-sign define LightBulbSign text=! texthl=Number
+sign define LightBulbSign text=? texthl=Number
+
+hi! link LspReferenceText Visual
+hi! link LspReferenceRead Visual
+hi! link LspReferenceWrite Visual

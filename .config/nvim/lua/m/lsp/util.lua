@@ -3,13 +3,6 @@ local util = require 'lspconfig/util'
 
 local M = {}
 
-local default_opts = { noremap = true, silent = true }
-
-M.map = function(mode, lhs, rhs, opts)
-  opts = vim.tbl_extend('force', default_opts, opts or {})
-  vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, opts);
-end
-
 M.is_attached = function(bufnr)
   for _, _ in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return true
@@ -43,6 +36,9 @@ local on_exit = vim.schedule_wrap(function(_, _, id)
 end)
 
 local on_attach = vim.schedule_wrap(function(client, bufnr)
+  if not clients[client.id] then
+    clients[client.id] = {}
+  end
   table.insert(clients[client.id], bufnr)
   vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
   vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')

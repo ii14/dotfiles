@@ -79,8 +79,8 @@ endfunction
 
 " xdg-open -------------------------------------------------------------------------------
 function! m#command#open(file)
-  let file = a:file ==# '' ? '%' : a:file
-  call system(['xdg-open', expand(file)])
+  let file = a:file ==# '' ? expand('%') : expand(a:file)
+  call system(['xdg-open', file])
 endfunction
 
 " Toggle line numbers --------------------------------------------------------------------

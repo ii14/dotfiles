@@ -5,17 +5,17 @@
 command! -nargs=? -bang -complete=buffer Bq
   \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
   \ | bd! | else | bd<bang> <args> | endif
-call m#util#cabbrev('bq', 'Bq')
-call m#util#cabbrev('bd', 'Bd')
-call m#util#cabbrev('bw', 'Bw')
+call m#cabbrev('bq', 'Bq')
+call m#cabbrev('bd', 'Bd')
+call m#cabbrev('bw', 'Bw')
 
 " Use fzf for help and buffers -----------------------------------------------------------
 command! -nargs=? -complete=help H
   \ if <q-args> ==# '' | Helptags | else | h <args> | endif
 command! -nargs=? -bang -complete=buffer B
   \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
-call m#util#cabbrev('h', 'H')
-call m#util#cabbrev('b', 'B')
+call m#cabbrev('h', 'H')
+call m#cabbrev('b', 'B')
 
 " Set tab width. 4 by default, ! is noet -------------------------------------------------
 command! -count=4 -bang T
@@ -24,7 +24,7 @@ command! -count=4 -bang T
 
 " Fill the rest of the line with character -----------------------------------------------
 command! -nargs=? Hr call m#command#hr(<q-args>)
-call m#util#cabbrev('hr', 'Hr')
+call m#cabbrev('hr', 'Hr')
 
 " :redir to a new buffer -----------------------------------------------------------------
 command! -nargs=+ -complete=command Redir call m#command#redir(<q-args>)
@@ -36,8 +36,11 @@ command! -nargs=1 -complete=option Set call m#command#set(<q-args>)
 command! RenameFile call m#command#rename_file()
 
 " xdg-open -------------------------------------------------------------------------------
-command! -nargs=? -complete=file Open call m#command#open(<q-args>)
-call m#util#cabbrev('open', 'Open')
+function s:OpenComp(A,L,P)
+  return getcompletion(a:A, 'file', 1)
+endfunction
+command! -nargs=? -complete=customlist,s:OpenComp Open call m#command#open(<q-args>)
+call m#cabbrev('open', 'Open')
 
 " ctags ----------------------------------------------------------------------------------
 if executable('ctags')
@@ -49,23 +52,28 @@ endif
 
 " Lightweight git blame ------------------------------------------------------------------
 command! -nargs=? -range GB
-  \ echo join(systemlist("git -C " . shellescape(expand('%:p:h'))
-  \ .. " blame -L <line1>,<line2> <args> -- " . expand('%:t')), "\n")
+  \ call s:PrintLines(systemlist("git -C " . shellescape(expand('%:p:h'))
+  \ .. " blame -L <line1>,<line2> <args> -- " . expand('%:t')))
+function! s:PrintLines(list)
+  for item in a:list
+    echomsg item
+  endfor
+endfunction
 
 " Shortcuts ------------------------------------------------------------------------------
 command! Wiki VimwikiIndex
 command! Vimrc edit $MYVIMRC
 
 " Lowercase commands ---------------------------------------------------------------------
-call m#util#cabbrev('git',  'Git')
-call m#util#cabbrev('rg',   'Rg')
-call m#util#cabbrev('man',  'Man')
-call m#util#cabbrev('rc',   'Rc')
-call m#util#cabbrev('rcd',  'Rcd')
-call m#util#cabbrev('trim', 'Trim')
-call m#util#cabbrev('fzf',  'Files')
-call m#util#cabbrev('fern', 'Fern')
-call m#util#cabbrev('vres', 'vert res')
+call m#cabbrev('git',  'Git')
+call m#cabbrev('rg',   'Rg')
+call m#cabbrev('man',  'Man')
+call m#cabbrev('rc',   'Rc')
+call m#cabbrev('rcd',  'Rcd')
+call m#cabbrev('trim', 'Trim')
+call m#cabbrev('fzf',  'Files')
+call m#cabbrev('fern', 'Fern')
+call m#cabbrev('vres', 'vert res')
 
 " Synstack -------------------------------------------------------------------------------
 command! Synstack
@@ -105,9 +113,9 @@ function! s:Scratch(filetype)
   call nvim_buf_set_name(0, '[Scratch]')
   resize 15
 endfunction
-call m#util#cabbrev('scra', 'Scratch')
-call m#util#cabbrev('scrat', 'Scratch')
-call m#util#cabbrev('scratc', 'Scratch')
-call m#util#cabbrev('scratch', 'Scratch')
+call m#cabbrev('scra', 'Scratch')
+call m#cabbrev('scrat', 'Scratch')
+call m#cabbrev('scratc', 'Scratch')
+call m#cabbrev('scratch', 'Scratch')
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

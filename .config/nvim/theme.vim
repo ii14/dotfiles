@@ -26,7 +26,6 @@ let g:lightline.component = {
   \ }
 
 let g:lightline.component_function = {
-  \ 'mode'         : 'LightlineMode',
   \ 'filename'     : 'LightlineFilename',
   \ 'fileformat'   : 'LightlineFileformat',
   \ 'fileencoding' : 'LightlineFileencoding',
@@ -35,6 +34,7 @@ let g:lightline.component_function = {
   \ 'lsp'          : 'LightlineLsp',
   \ 'pro'          : 'LightlinePro',
   \ 'tab'          : 'LightlineTab',
+  \ 'gitsigns'     : 'LightlineGitsigns',
   \ }
 
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -46,8 +46,14 @@ let g:lightline#bufferline#unnamed   = '[No Name]'
 let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
-function! LightlineMode()
-  return winwidth(0) < 50 ? '' : lightline#mode()
+" function! LightlineMode()
+"   return winwidth(0) < 50 ? '' : lightline#mode()
+" endfunction
+function! LightlineMode() abort
+  if get(g:, 'window_mode', v:false)
+    return 'WINDOW'
+  endif
+  return lightline#mode()
 endfunction
 
 function! LightlineFilename()
@@ -99,12 +105,27 @@ function! LightlineFiletype()
   return winwidth(0) > 49 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
+function! s:gitsigns()
+  if !has_key(b:, 'gitsigns_status_dict')
+    return ''
+  endif
+  let d = b:gitsigns_status_dict
+  let d = (get(d, 'added',   0) ? '+'..d.added   : '')
+    \   ..(get(d, 'changed', 0) ? '~'..d.changed : '')
+    \   ..(get(d, 'removed', 0) ? '-'..d.removed : '')
+  return d !=# '' ? ' '..d : ''
+endfunction
+
 function! LightlineFugitive()
   return winwidth(0) > 70
     \ && &filetype !=# 'fern'
     \ && &filetype !=# 'qf'
     \ && exists('*FugitiveHead')
-    \ ? FugitiveHead() : ''
+    \ ? FugitiveHead()..s:gitsigns() : ''
+endfunction
+
+function! LightlineGitsigns()
+  return get(b:, 'gitsigns_status', '')
 endfunction
 
 function! LightlineLsp()

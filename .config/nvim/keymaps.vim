@@ -4,6 +4,17 @@ nno 0 ^
 nno ^ 0
 " Yank to the end of the line
 nno Y y$
+" Select last yanked or modified text
+nno gV `[v`]
+" Don't leave visual mode when changing indentation
+xno < <gv
+xno > >gv
+" Split line, opposite of J
+nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
+" Get rid of annoying stuff
+nno q: :
+nno Q <Nop>
+
 " Reverse {j,k} and {gj,gk}, unless count is given
 nno <expr> j v:count ? 'j' : 'gj'
 xno <expr> j v:count ? 'j' : 'gj'
@@ -13,8 +24,9 @@ nno <expr> gj v:count ? 'gj' : 'j'
 xno <expr> gj v:count ? 'gj' : 'j'
 nno <expr> gk v:count ? 'gk' : 'k'
 xno <expr> gk v:count ? 'gk' : 'k'
+
 " Horizontal scrolling
-let s:hscroll = 8
+let s:hscroll = 12
 function! s:hscroll(t) abort
   if v:count
     let s:hscroll = v:count
@@ -26,8 +38,9 @@ nno <expr> zh <SID>hscroll('zh')
 xno <expr> zh <SID>hscroll('zh')
 nno <expr> zl <SID>hscroll('zl')
 xno <expr> zl <SID>hscroll('zl')
+
 " Vertical scrolling
-let s:vscroll = 1
+let s:vscroll = 3
 function! s:vscroll(t) abort
   if v:count
     let s:vscroll = v:count
@@ -39,16 +52,6 @@ nno <expr> <C-E> <SID>vscroll('<C-E>')
 xno <expr> <C-E> <SID>vscroll('<C-E>')
 nno <expr> <C-Y> <SID>vscroll('<C-Y>')
 xno <expr> <C-Y> <SID>vscroll('<C-Y>')
-" Select last yanked or modified text
-nno gV `[v`]
-" Don't leave visual mode when changing indentation
-xno < <gv
-xno > >gv
-" Split line, opposite of J
-nno S i<CR><ESC>k:sil! keepp s/\v +$//<CR>:noh<CR>j^
-" Get rid of annoying stuff
-nno q: :
-nno Q <Nop>
 
 " WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
@@ -65,12 +68,10 @@ nno <silent> <leader><leader> :Buffers<CR>
 
 " FILES ----------------------------------------------------------------------------------
 " fzf
+nno <C-F> :lua require'm.menus'.bookmarks()<CR>
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
-nno <C-F>     :lua require'm.menus'.bookmarks()<CR>
-nno <leader>; :lua require'm.menus'.bookmarks()<CR>
-nno <leader>h :History<CR>
 " Fern
 nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
 nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
@@ -113,18 +114,34 @@ nno <silent> ]L :llast<CR>
 " Paste and keep register in visual mode
 xno zp  pgvy
 xno zgp pgvy`]<Space>
+" Yank and leave the cursor just after the new text
+nno <expr> gy  GY()
+xno <expr> gy  GY()
+nno <expr> gY  GY()..'$'
+nno <expr> gyy GY()..'_'
+function! GY(type = '') abort
+  if a:type == ''
+    set opfunc=GY
+    return 'g@'
+  endif
+  let c = get({'line': "'[V']", 'char': "`[v`]", 'block': '`[\<C-V>`]'}, a:type, '')
+  execute printf("normal! %s\"%sy`]\<Space>", c, v:register)
+endfunction
 " System clipboard
-nno <leader>y  "+y
-nno <leader>Y  "+y$
-nno <leader>p  "+p
-nno <leader>P  "+P
-nno <leader>gp "+gp
-nno <leader>gP "+gP
-xno <leader>y  "+y
-xno <leader>p  "+p
-xno <leader>P  "+P
-xno <leader>gp "+gp
-xno <leader>gP "+gP
+nno  <leader>y  "+y
+nno  <leader>Y  "+y$
+nmap <leader>gy "+gy
+nmap <leader>gY "+gy$
+nno  <leader>p  "+p
+nno  <leader>P  "+P
+nno  <leader>gp "+gp
+nno  <leader>gP "+gP
+xno  <leader>y  "+y
+xmap <leader>gy "+gy
+xno  <leader>p  "+p
+xno  <leader>P  "+P
+xno  <leader>gp "+gp
+xno  <leader>gP "+gP
 
 " GIT ------------------------------------------------------------------------------------
 nno <leader>gs :Git<CR>
@@ -146,17 +163,17 @@ nno <silent> zI :IndentBlanklineRefresh<CR>
 " LSP ------------------------------------------------------------------------------------
 " LSP buffer local mappings in $VIMCONFIG/lsp.vim
 nno <silent> <leader>ld :TroubleToggle<CR>
-nno <buffer><silent> g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
-nno <buffer><silent> ]g <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
-nno <buffer><silent> [g <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
-nno <buffer><silent> ]G <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
-nno <buffer><silent> [G <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
+nno <silent> g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
+nno <silent> ]g <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
+nno <silent> [g <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
+nno <silent> ]G <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
+nno <silent> [G <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
 
 " TERMDEBUG ------------------------------------------------------------------------------
 nno <leader>dr :Run<CR>
 nno <leader>dS :Stop<CR>
 nno <leader>ds :Step<CR>
-nno <leader>do :Over<CR>
+nno <leader>dn :Over<CR>
 nno <leader>df :Finish<CR>
 nno <leader>dc :Continue<CR>
 nno <leader>db :Break<CR>
@@ -229,6 +246,6 @@ cmap <C-G><C-I> ""<Left>
 cmap <C-G><C-G> \(\)<Left><Left>
 cmap <C-G><C-W> \<\><Left><Left>
 " Last command with bang
-nno !: :<Up>!
+nno <expr> !: histget('cmd')[-1:] !=# '!' ? ':<Up>!' : ':<Up>'
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

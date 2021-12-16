@@ -351,8 +351,7 @@ function! plug#end()
   let lod = { 'ft': {}, 'map': {}, 'cmd': {} }
 
   if exists('g:did_load_filetypes')
-    " nathom/filetype.nvim
-    " filetype off
+    filetype off
   endif
   for name in g:plugs_order
     if !has_key(g:plugs, name)

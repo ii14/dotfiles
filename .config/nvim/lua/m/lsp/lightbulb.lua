@@ -3,13 +3,13 @@ local M = {}
 local SIGN_GROUP = 'lightbulb'
 local SIGN_NAME = 'LightBulbSign'
 local DEBOUNCE = 500
-local PRIORITY = 10
+local PRIORITY = 20
 
 local timer = vim.loop.new_timer()
 local sign_bufnr = nil
 local sign_line = nil
 
-local function has_code_action(bufnr)
+local function has_capability(bufnr)
   for _, client in pairs(vim.lsp.buf_get_clients(bufnr)) do
     if client.supports_method('textDocument/codeAction') then
       return true
@@ -49,7 +49,7 @@ local function mk_handler(bufnr, line)
 end
 
 local function update()
-  if not has_code_action() then return end
+  if not has_capability() then return end
   local params = vim.lsp.util.make_range_params()
   params.context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() }
   local handler = mk_handler(vim.api.nvim_get_current_buf(), params.range.start.line)
@@ -64,5 +64,12 @@ function M.update()
     vim.schedule(update)
   end)
 end
+
+vim.cmd([[
+  augroup VimrcLightbulb
+    autocmd!
+    autocmd CursorMoved * lua require 'm.lsp.lightbulb'.update()
+  augroup end
+]])
 
 return M
