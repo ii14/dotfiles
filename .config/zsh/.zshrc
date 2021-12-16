@@ -63,6 +63,8 @@ alias t='trash -v'
 
 
 hash -d trash="$HOME/.local/share/Trash"
+hash -d lcs="$HOME/.local/share"
+hash -d lcb="$HOME/.local/bin"
 hash -d dls="$(xdg-user-dir DOWNLOAD)"
 hash -d pic="$(xdg-user-dir PICTURES)"
 hash -d vid="$(xdg-user-dir VIDEOS)"
