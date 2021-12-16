@@ -101,7 +101,7 @@ let g:bookmarks = [
     Plug 'sheerun/vim-polyglot'
     Plug 'fedorenchik/qt-support.vim'
     Plug 'PotatoesMaster/i3-vim-syntax'
-    Plug 'CantoroMC/vim-rasi'
+    Plug 'ii14/vim-rasi'
     Plug 'norcalli/nvim-colorizer.lua'
     Plug 'milisims/nvim-luaref'
 
