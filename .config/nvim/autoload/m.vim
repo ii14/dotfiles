@@ -52,7 +52,7 @@ function! m#fern_hijack_directory() abort
 endfunction
 
 " LSP - Update tab
-fun! m#lsp_update_tab() abort
+function! m#lsp_update_tab() abort
   let l:tabnr = tabpagenr()
   for l:win in getwininfo()
     if l:win.tabnr == l:tabnr
@@ -62,4 +62,4 @@ fun! m#lsp_update_tab() abort
       endif
     endif
   endfor
-endfun
+endfunction

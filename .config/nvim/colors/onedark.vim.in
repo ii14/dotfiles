@@ -1,0 +1,546 @@
+highlight clear
+if exists('syntax_on')
+  syntax reset
+endif
+set t_Co=256
+let g:colors_name = 'mydark'
+
+"DEFINE red             #E06C75
+"DEFINE dark_red        #BE5046
+"DEFINE green           #98C379
+"DEFINE yellow          #E5C07B
+"DEFINE dark_yellow     #D19A66
+"DEFINE blue            #61AFEF
+"DEFINE purple          #C678DD
+"DEFINE cyan            #56B6C2
+"DEFINE white           #ABB2BF
+"DEFINE black           #282C34
+"DEFINE dark_black      #21252C
+"DEFINE visual_black    NONE
+"DEFINE comment_grey    #5C6370
+"DEFINE gutter_fg_grey  #4B5263
+"DEFINE cursor_grey     #2C323C
+"DEFINE visual_grey     #3E4452
+"DEFINE menu_grey       #3E4452
+"DEFINE special_grey    #3B4048
+"DEFINE vertsplit       #181A1F
+"DEFINE italic          italic
+
+hi Comment        guibg=NONE guifg=${comment_grey} gui=${italic}
+hi Constant       guibg=NONE guifg=${cyan}         gui=NONE
+hi String         guibg=NONE guifg=${green}        gui=NONE
+hi Character      guibg=NONE guifg=${green}        gui=NONE
+hi Number         guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi Boolean        guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi Float          guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi Identifier     guibg=NONE guifg=${red}          gui=NONE
+hi Function       guibg=NONE guifg=${blue}         gui=NONE
+hi Statement      guibg=NONE guifg=${purple}       gui=NONE
+hi Conditional    guibg=NONE guifg=${purple}       gui=NONE
+hi Repeat         guibg=NONE guifg=${purple}       gui=NONE
+hi Label          guibg=NONE guifg=${purple}       gui=NONE
+hi Operator       guibg=NONE guifg=${purple}       gui=NONE
+hi Keyword        guibg=NONE guifg=${red}          gui=NONE
+hi Exception      guibg=NONE guifg=${purple}       gui=NONE
+hi PreProc        guibg=NONE guifg=${yellow}       gui=NONE
+hi Include        guibg=NONE guifg=${blue}         gui=NONE
+hi Define         guibg=NONE guifg=${purple}       gui=NONE
+hi Macro          guibg=NONE guifg=${purple}       gui=NONE
+hi PreCondit      guibg=NONE guifg=${yellow}       gui=NONE
+hi Type           guibg=NONE guifg=${yellow}       gui=NONE
+hi StorageClass   guibg=NONE guifg=${yellow}       gui=NONE
+hi Structure      guibg=NONE guifg=${yellow}       gui=NONE
+hi Typedef        guibg=NONE guifg=${yellow}       gui=NONE
+hi Special        guibg=NONE guifg=${blue}         gui=NONE
+hi SpecialChar    guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi Tag            guibg=NONE guifg=NONE            gui=NONE
+hi Delimiter      guibg=NONE guifg=NONE            gui=NONE
+hi SpecialComment guibg=NONE guifg=${comment_grey} gui=NONE
+hi Debug          guibg=NONE guifg=NONE            gui=NONE
+hi Underlined     guibg=NONE guifg=NONE            gui=underline
+hi Ignore         guibg=NONE guifg=NONE            gui=NONE
+hi Error          guibg=NONE guifg=${red}          gui=NONE
+hi Todo           guibg=NONE guifg=${purple}       gui=NONE
+
+hi ColorColumn      guibg=${cursor_grey}  guifg=NONE               gui=NONE
+hi Conceal          guibg=NONE            guifg=NONE               gui=NONE
+hi Cursor           guibg=${blue}         guifg=${black}           gui=NONE
+hi CursorIM         guibg=NONE            guifg=NONE               gui=NONE
+hi CursorColumn     guibg=${cursor_grey}  guifg=NONE               gui=NONE
+if &diff
+  hi CursorLine     guibg=NONE            guifg=NONE               gui=underline
+else
+  hi CursorLine     guibg=${cursor_grey}  guifg=NONE               gui=NONE
+endif
+hi Directory        guibg=NONE            guifg=${blue}            gui=NONE
+hi DiffAdd          guibg=${green}        guifg=${black}           gui=NONE
+hi DiffChange       guibg=NONE            guifg=${yellow}          gui=underline
+hi DiffDelete       guibg=${red}          guifg=${black}           gui=NONE
+hi DiffText         guibg=${yellow}       guifg=${black}           gui=NONE
+hi ErrorMsg         guibg=NONE            guifg=${red}             gui=NONE
+hi VertSplit        guibg=NONE            guifg=${vertsplit}       gui=NONE
+hi Folded           guibg=NONE            guifg=${comment_grey}    gui=NONE
+hi FoldColumn       guibg=NONE            guifg=NONE               gui=NONE
+hi SignColumn       guibg=NONE            guifg=NONE               gui=NONE
+hi IncSearch        guibg=${comment_grey} guifg=${yellow}          gui=NONE
+hi LineNr           guibg=NONE            guifg=${gutter_fg_grey}  gui=NONE
+hi CursorLineNr     guibg=NONE            guifg=NONE               gui=NONE
+hi MatchParen       guibg=NONE            guifg=${blue}            gui=underline
+hi ModeMsg          guibg=NONE            guifg=NONE               gui=NONE
+hi MoreMsg          guibg=NONE            guifg=NONE               gui=NONE
+hi NonText          guibg=NONE            guifg=${special_grey}    gui=NONE
+hi Normal           guibg=${black}        guifg=${white}           gui=NONE
+hi Pmenu            guibg=${menu_grey}    guifg=NONE               gui=NONE
+hi PmenuSel         guibg=${blue}         guifg=${black}           gui=NONE
+hi PmenuSbar        guibg=${special_grey} guifg=NONE               gui=NONE
+hi PmenuThumb       guibg=${white}        guifg=NONE               gui=NONE
+hi Question         guibg=NONE            guifg=${purple}          gui=NONE
+hi QuickFixLine     guibg=${blue}         guifg=${black}           gui=NONE
+hi Search           guibg=${yellow}       guifg=${black}           gui=NONE
+hi SpecialKey       guibg=NONE            guifg=${special_grey}    gui=NONE
+hi SpellBad         guibg=NONE            guifg=${red}             gui=underline
+hi SpellCap         guibg=NONE            guifg=${dark_yellow}     gui=NONE
+hi SpellLocal       guibg=NONE            guifg=${dark_yellow}     gui=NONE
+hi SpellRare        guibg=NONE            guifg=${dark_yellow}     gui=NONE
+hi StatusLine       guibg=${cursor_grey}  guifg=${white}           gui=NONE
+hi StatusLineNC     guibg=NONE            guifg=${comment_grey}    gui=NONE
+hi StatusLineTerm   guibg=${cursor_grey}  guifg=${white}           gui=NONE
+hi StatusLineTermNC guibg=NONE            guifg=${comment_grey}    gui=NONE
+hi TabLine          guibg=NONE            guifg=${comment_grey}    gui=NONE
+hi TabLineFill      guibg=NONE            guifg=NONE               gui=NONE
+hi TabLineSel       guibg=NONE            guifg=${white}           gui=NONE
+hi Terminal         guibg=${black}        guifg=${white}           gui=NONE
+hi Title            guibg=NONE            guifg=${green}           gui=NONE
+hi Visual           guibg=${visual_grey}  guifg=${visual_black}    gui=NONE
+hi VisualNOS        guibg=${visual_grey}  guifg=NONE               gui=NONE
+hi WarningMsg       guibg=NONE            guifg=${yellow}          gui=NONE
+hi WildMenu         guibg=${blue}         guifg=${black}           gui=NONE
+
+hi NormalDark       guibg=${dark_black}   guifg=${white}
+
+" indent-blankline
+hi      IndentBlanklineChar               guifg=${gutter_fg_grey} gui=nocombine
+hi link IndentBlanklineSpaceChar          IndentBlanklineChar
+hi link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
+
+" Neovim diagnostics
+hi DiagnosticError            guifg=${red}
+hi DiagnosticWarn             guifg=${yellow}
+hi DiagnosticInfo             guifg=${blue}
+hi DiagnosticHint             guifg=${cyan}
+hi DiagnosticUnderlineError   guifg=${red}    gui=underline
+hi DiagnosticUnderlineWarn    guifg=${yellow} gui=underline
+hi DiagnosticUnderlineInfo    guifg=${blue}   gui=underline
+hi DiagnosticUnderlineHint    guifg=${cyan}   gui=underline
+hi DiagnosticSignError        guifg=${red}
+hi DiagnosticSignWarn         guifg=${yellow}
+hi DiagnosticSignInfo         guifg=${blue}
+hi DiagnosticSignHint         guifg=${cyan}
+hi DiagnosticVirtualTextError guifg=${red}    guibg=${cursor_grey}
+hi DiagnosticVirtualTextWarn  guifg=${yellow} guibg=${cursor_grey}
+hi DiagnosticVirtualTextInfo  guifg=${blue}   guibg=${cursor_grey}
+hi DiagnosticVirtualTextHint  guifg=${cyan}   guibg=${cursor_grey}
+
+" Neovim LSP
+hi link LspReferenceText  Visual
+hi link LspReferenceRead  Visual
+hi link LspReferenceWrite Visual
+
+" lightbulb
+sign define LightBulbSign text=? texthl=Number
+
+" Fern
+hi link FernRootText     String
+hi link FernRootSymbol   String
+hi link FernMarkedLine   WarningMsg
+hi link FernMarkedText   WarningMsg
+hi link FernLeafSymbol   LineNr
+hi link FernBranchSymbol Comment
+
+" Termdebug
+hi debugPC          guibg=${special_grey} guifg=NONE     gui=NONE
+hi debugBreakpoint  guibg=${red}          guifg=${black} gui=NONE
+
+" CSS
+hi cssAttrComma         guibg=NONE guifg=${purple}      gui=NONE
+hi cssAttributeSelector guibg=NONE guifg=${green}       gui=NONE
+hi cssBraces            guibg=NONE guifg=${white}       gui=NONE
+hi cssClassName         guibg=NONE guifg=${dark_yellow} gui=NONE
+hi cssClassNameDot      guibg=NONE guifg=${dark_yellow} gui=NONE
+hi cssDefinition        guibg=NONE guifg=${purple}      gui=NONE
+hi cssFontAttr          guibg=NONE guifg=${dark_yellow} gui=NONE
+hi cssFontDescriptor    guibg=NONE guifg=${purple}      gui=NONE
+hi cssFunctionName      guibg=NONE guifg=${blue}        gui=NONE
+hi cssIdentifier        guibg=NONE guifg=${blue}        gui=NONE
+hi cssImportant         guibg=NONE guifg=${purple}      gui=NONE
+hi cssInclude           guibg=NONE guifg=${white}       gui=NONE
+hi cssIncludeKeyword    guibg=NONE guifg=${purple}      gui=NONE
+hi cssMediaType         guibg=NONE guifg=${dark_yellow} gui=NONE
+hi cssProp              guibg=NONE guifg=${white}       gui=NONE
+hi cssPseudoClassId     guibg=NONE guifg=${dark_yellow} gui=NONE
+hi cssSelectorOp        guibg=NONE guifg=${purple}      gui=NONE
+hi cssSelectorOp2       guibg=NONE guifg=${purple}      gui=NONE
+hi cssTagName           guibg=NONE guifg=${red}         gui=NONE
+
+" Fish Shell
+hi fishKeyword     guibg=NONE guifg=${purple} gui=NONE
+hi fishConditional guibg=NONE guifg=${purple} gui=NONE
+
+" Go
+hi goDeclaration  guibg=NONE guifg=${purple} gui=NONE
+hi goBuiltins     guibg=NONE guifg=${cyan}   gui=NONE
+hi goFunctionCall guibg=NONE guifg=${blue}   gui=NONE
+hi goVarDefs      guibg=NONE guifg=${red}    gui=NONE
+hi goVarAssign    guibg=NONE guifg=${red}    gui=NONE
+hi goVar          guibg=NONE guifg=${purple} gui=NONE
+hi goConst        guibg=NONE guifg=${purple} gui=NONE
+hi goType         guibg=NONE guifg=${yellow} gui=NONE
+hi goTypeName     guibg=NONE guifg=${yellow} gui=NONE
+hi goDeclType     guibg=NONE guifg=${cyan}   gui=NONE
+hi goTypeDecl     guibg=NONE guifg=${purple} gui=NONE
+
+" HTML (keep consistent with Markdown, below)
+hi htmlArg            guibg=NONE guifg=${dark_yellow} gui=NONE
+hi htmlBold           guibg=NONE guifg=${dark_yellow} gui=bold
+hi htmlEndTag         guibg=NONE guifg=${white}       gui=NONE
+hi htmlH1             guibg=NONE guifg=${red}         gui=NONE
+hi htmlH2             guibg=NONE guifg=${red}         gui=NONE
+hi htmlH3             guibg=NONE guifg=${red}         gui=NONE
+hi htmlH4             guibg=NONE guifg=${red}         gui=NONE
+hi htmlH5             guibg=NONE guifg=${red}         gui=NONE
+hi htmlH6             guibg=NONE guifg=${red}         gui=NONE
+hi htmlItalic         guibg=NONE guifg=${purple}      gui=${italic}
+hi htmlLink           guibg=NONE guifg=${cyan}        gui=underline
+hi htmlSpecialChar    guibg=NONE guifg=${dark_yellow} gui=NONE
+hi htmlSpecialTagName guibg=NONE guifg=${red}         gui=NONE
+hi htmlTag            guibg=NONE guifg=${white}       gui=NONE
+hi htmlTagN           guibg=NONE guifg=${red}         gui=NONE
+hi htmlTagName        guibg=NONE guifg=${red}         gui=NONE
+hi htmlTitle          guibg=NONE guifg=${white}       gui=NONE
+
+" JavaScript
+hi javaScriptBraces     guibg=NONE guifg=${white}       gui=NONE
+hi javaScriptFunction   guibg=NONE guifg=${purple}      gui=NONE
+hi javaScriptIdentifier guibg=NONE guifg=${purple}      gui=NONE
+hi javaScriptNull       guibg=NONE guifg=${dark_yellow} gui=NONE
+hi javaScriptNumber     guibg=NONE guifg=${dark_yellow} gui=NONE
+hi javaScriptRequire    guibg=NONE guifg=${cyan}        gui=NONE
+hi javaScriptReserved   guibg=NONE guifg=${purple}      gui=NONE
+" http//github.com/pangloss/vim-javascript
+hi jsArrowFunction   guibg=NONE guifg=${purple}      gui=NONE
+hi jsClassKeyword    guibg=NONE guifg=${purple}      gui=NONE
+hi jsClassMethodType guibg=NONE guifg=${purple}      gui=NONE
+hi jsDocParam        guibg=NONE guifg=${blue}        gui=NONE
+hi jsDocTags         guibg=NONE guifg=${purple}      gui=NONE
+hi jsExport          guibg=NONE guifg=${purple}      gui=NONE
+hi jsExportDefault   guibg=NONE guifg=${purple}      gui=NONE
+hi jsExtendsKeyword  guibg=NONE guifg=${purple}      gui=NONE
+hi jsFrom            guibg=NONE guifg=${purple}      gui=NONE
+hi jsFuncCall        guibg=NONE guifg=${blue}        gui=NONE
+hi jsFunction        guibg=NONE guifg=${purple}      gui=NONE
+hi jsGenerator       guibg=NONE guifg=${yellow}      gui=NONE
+hi jsGlobalObjects   guibg=NONE guifg=${yellow}      gui=NONE
+hi jsImport          guibg=NONE guifg=${purple}      gui=NONE
+hi jsModuleAs        guibg=NONE guifg=${purple}      gui=NONE
+hi jsModuleWords     guibg=NONE guifg=${purple}      gui=NONE
+hi jsModules         guibg=NONE guifg=${purple}      gui=NONE
+hi jsNull            guibg=NONE guifg=${dark_yellow} gui=NONE
+hi jsOperator        guibg=NONE guifg=${purple}      gui=NONE
+hi jsStorageClass    guibg=NONE guifg=${purple}      gui=NONE
+hi jsSuper           guibg=NONE guifg=${red}         gui=NONE
+hi jsTemplateBraces  guibg=NONE guifg=${dark_red}    gui=NONE
+hi jsTemplateVar     guibg=NONE guifg=${green}       gui=NONE
+hi jsThis            guibg=NONE guifg=${red}         gui=NONE
+hi jsUndefined       guibg=NONE guifg=${dark_yellow} gui=NONE
+" http//github.com/othree/yajs.vim
+hi javascriptArrowFunc    guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptClassExtends guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptClassKeyword guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptDocNotation  guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptDocParamName guibg=NONE guifg=${blue}     gui=NONE
+hi javascriptDocTags      guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptEndColons    guibg=NONE guifg=${white}    gui=NONE
+hi javascriptExport       guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptFuncArg      guibg=NONE guifg=${white}    gui=NONE
+hi javascriptFuncKeyword  guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptIdentifier   guibg=NONE guifg=${red}      gui=NONE
+hi javascriptImport       guibg=NONE guifg=${purple}   gui=NONE
+hi javascriptMethodName   guibg=NONE guifg=${white}    gui=NONE
+hi javascriptObjectLabel  guibg=NONE guifg=${white}    gui=NONE
+hi javascriptOpSymbol     guibg=NONE guifg=${cyan}     gui=NONE
+hi javascriptOpSymbols    guibg=NONE guifg=${cyan}     gui=NONE
+hi javascriptPropertyName guibg=NONE guifg=${green}    gui=NONE
+hi javascriptTemplateSB   guibg=NONE guifg=${dark_red} gui=NONE
+hi javascriptVariable     guibg=NONE guifg=${purple}   gui=NONE
+
+" JSON
+hi jsonCommentError      guibg=NONE guifg=${white}       gui=NONE
+hi jsonKeyword           guibg=NONE guifg=${red}         gui=NONE
+hi jsonBoolean           guibg=NONE guifg=${dark_yellow} gui=NONE
+hi jsonNumber            guibg=NONE guifg=${dark_yellow} gui=NONE
+hi jsonQuote             guibg=NONE guifg=${white}       gui=NONE
+hi jsonMissingCommaError guibg=NONE guifg=${red}         gui=reverse
+hi jsonNoQuotesError     guibg=NONE guifg=${red}         gui=reverse
+hi jsonNumError          guibg=NONE guifg=${red}         gui=reverse
+hi jsonString            guibg=NONE guifg=${green}       gui=NONE
+hi jsonStringSQError     guibg=NONE guifg=${red}         gui=reverse
+hi jsonSemicolonError    guibg=NONE guifg=${red}         gui=reverse
+
+" LESS
+hi lessVariable      guibg=NONE guifg=${purple}      gui=NONE
+hi lessAmpersandChar guibg=NONE guifg=${white}       gui=NONE
+hi lessClass         guibg=NONE guifg=${dark_yellow} gui=NONE
+
+" Markdown (keep consistent with HTML, above)
+hi markdownBlockquote        guibg=NONE guifg=${comment_grey} gui=NONE
+hi markdownBold              guibg=NONE guifg=${dark_yellow}  gui=bold
+hi markdownCode              guibg=NONE guifg=${green}        gui=NONE
+hi markdownCodeBlock         guibg=NONE guifg=${green}        gui=NONE
+hi markdownCodeDelimiter     guibg=NONE guifg=${green}        gui=NONE
+hi markdownH1                guibg=NONE guifg=${red}          gui=NONE
+hi markdownH2                guibg=NONE guifg=${red}          gui=NONE
+hi markdownH3                guibg=NONE guifg=${red}          gui=NONE
+hi markdownH4                guibg=NONE guifg=${red}          gui=NONE
+hi markdownH5                guibg=NONE guifg=${red}          gui=NONE
+hi markdownH6                guibg=NONE guifg=${red}          gui=NONE
+hi markdownHeadingDelimiter  guibg=NONE guifg=${red}          gui=NONE
+hi markdownHeadingRule       guibg=NONE guifg=${comment_grey} gui=NONE
+hi markdownId                guibg=NONE guifg=${purple}       gui=NONE
+hi markdownIdDeclaration     guibg=NONE guifg=${blue}         gui=NONE
+hi markdownIdDelimiter       guibg=NONE guifg=${purple}       gui=NONE
+hi markdownItalic            guibg=NONE guifg=${purple}       gui=${italic}
+hi markdownLinkDelimiter     guibg=NONE guifg=${purple}       gui=NONE
+hi markdownLinkText          guibg=NONE guifg=${blue}         gui=NONE
+hi markdownListMarker        guibg=NONE guifg=${red}          gui=NONE
+hi markdownOrderedListMarker guibg=NONE guifg=${red}          gui=NONE
+hi markdownRule              guibg=NONE guifg=${comment_grey} gui=NONE
+hi markdownUrl               guibg=NONE guifg=${cyan}         gui=underline
+
+" Perl
+hi perlFiledescRead      guibg=NONE guifg=${green}        gui=NONE
+hi perlFunction          guibg=NONE guifg=${purple}       gui=NONE
+hi perlMatchStartEnd     guibg=NONE guifg=${blue}         gui=NONE
+hi perlMethod            guibg=NONE guifg=${purple}       gui=NONE
+hi perlPOD               guibg=NONE guifg=${comment_grey} gui=NONE
+hi perlSharpBang         guibg=NONE guifg=${comment_grey} gui=NONE
+hi perlSpecialString     guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi perlStatementFiledesc guibg=NONE guifg=${red}          gui=NONE
+hi perlStatementFlow     guibg=NONE guifg=${red}          gui=NONE
+hi perlStatementInclude  guibg=NONE guifg=${purple}       gui=NONE
+hi perlStatementScalar   guibg=NONE guifg=${purple}       gui=NONE
+hi perlStatementStorage  guibg=NONE guifg=${purple}       gui=NONE
+hi perlSubName           guibg=NONE guifg=${yellow}       gui=NONE
+hi perlVarPlain          guibg=NONE guifg=${blue}         gui=NONE
+
+" PHP
+hi phpVarSelector    guibg=NONE guifg=${red}         gui=NONE
+hi phpOperator       guibg=NONE guifg=${white}       gui=NONE
+hi phpParent         guibg=NONE guifg=${white}       gui=NONE
+hi phpMemberSelector guibg=NONE guifg=${white}       gui=NONE
+hi phpType           guibg=NONE guifg=${purple}      gui=NONE
+hi phpKeyword        guibg=NONE guifg=${purple}      gui=NONE
+hi phpClass          guibg=NONE guifg=${yellow}      gui=NONE
+hi phpUseClass       guibg=NONE guifg=${white}       gui=NONE
+hi phpUseAlias       guibg=NONE guifg=${white}       gui=NONE
+hi phpInclude        guibg=NONE guifg=${purple}      gui=NONE
+hi phpClassExtends   guibg=NONE guifg=${green}       gui=NONE
+hi phpDocTags        guibg=NONE guifg=${white}       gui=NONE
+hi phpFunction       guibg=NONE guifg=${blue}        gui=NONE
+hi phpFunctions      guibg=NONE guifg=${cyan}        gui=NONE
+hi phpMethodsVar     guibg=NONE guifg=${dark_yellow} gui=NONE
+hi phpMagicConstants guibg=NONE guifg=${dark_yellow} gui=NONE
+hi phpSuperglobals   guibg=NONE guifg=${red}         gui=NONE
+hi phpConstants      guibg=NONE guifg=${dark_yellow} gui=NONE
+
+" Ruby
+hi rubyBlockParameter            guibg=NONE guifg=${red}    gui=NONE
+hi rubyBlockParameterList        guibg=NONE guifg=${red}    gui=NONE
+hi rubyClass                     guibg=NONE guifg=${purple} gui=NONE
+hi rubyConstant                  guibg=NONE guifg=${yellow} gui=NONE
+hi rubyControl                   guibg=NONE guifg=${purple} gui=NONE
+hi rubyEscape                    guibg=NONE guifg=${red}    gui=NONE
+hi rubyFunction                  guibg=NONE guifg=${blue}   gui=NONE
+hi rubyGlobalVariable            guibg=NONE guifg=${red}    gui=NONE
+hi rubyInclude                   guibg=NONE guifg=${blue}   gui=NONE
+hi rubyIncluderubyGlobalVariable guibg=NONE guifg=${red}    gui=NONE
+hi rubyInstanceVariable          guibg=NONE guifg=${red}    gui=NONE
+hi rubyInterpolation             guibg=NONE guifg=${cyan}   gui=NONE
+hi rubyInterpolationDelimiter    guibg=NONE guifg=${red}    gui=NONE
+hi rubyInterpolationDelimiter    guibg=NONE guifg=${red}    gui=NONE
+hi rubyRegexp                    guibg=NONE guifg=${cyan}   gui=NONE
+hi rubyRegexpDelimiter           guibg=NONE guifg=${cyan}   gui=NONE
+hi rubyStringDelimiter           guibg=NONE guifg=${green}  gui=NONE
+hi rubySymbol                    guibg=NONE guifg=${cyan}   gui=NONE
+
+" Sass
+" http//github.com/tpope/vim-haml
+hi sassAmpersand      guibg=NONE guifg=${red}         gui=NONE
+hi sassClass          guibg=NONE guifg=${dark_yellow} gui=NONE
+hi sassControl        guibg=NONE guifg=${purple}      gui=NONE
+hi sassExtend         guibg=NONE guifg=${purple}      gui=NONE
+hi sassFor            guibg=NONE guifg=${white}       gui=NONE
+hi sassFunction       guibg=NONE guifg=${cyan}        gui=NONE
+hi sassId             guibg=NONE guifg=${blue}        gui=NONE
+hi sassInclude        guibg=NONE guifg=${purple}      gui=NONE
+hi sassMedia          guibg=NONE guifg=${purple}      gui=NONE
+hi sassMediaOperators guibg=NONE guifg=${white}       gui=NONE
+hi sassMixin          guibg=NONE guifg=${purple}      gui=NONE
+hi sassMixinName      guibg=NONE guifg=${blue}        gui=NONE
+hi sassMixing         guibg=NONE guifg=${purple}      gui=NONE
+hi sassVariable       guibg=NONE guifg=${purple}      gui=NONE
+" http//github.com/cakebaker/scss-syntax.vim
+hi scssExtend       guibg=NONE guifg=${purple}      gui=NONE
+hi scssImport       guibg=NONE guifg=${purple}      gui=NONE
+hi scssInclude      guibg=NONE guifg=${purple}      gui=NONE
+hi scssMixin        guibg=NONE guifg=${purple}      gui=NONE
+hi scssSelectorName guibg=NONE guifg=${dark_yellow} gui=NONE
+hi scssVariable     guibg=NONE guifg=${purple}      gui=NONE
+
+" TeX
+hi texStatement    guibg=NONE guifg=${purple}      gui=NONE
+hi texSubscripts   guibg=NONE guifg=${dark_yellow} gui=NONE
+hi texSuperscripts guibg=NONE guifg=${dark_yellow} gui=NONE
+hi texTodo         guibg=NONE guifg=${dark_red}    gui=NONE
+hi texBeginEnd     guibg=NONE guifg=${purple}      gui=NONE
+hi texBeginEndName guibg=NONE guifg=${blue}        gui=NONE
+hi texMathMatcher  guibg=NONE guifg=${blue}        gui=NONE
+hi texMathDelim    guibg=NONE guifg=${blue}        gui=NONE
+hi texDelimiter    guibg=NONE guifg=${dark_yellow} gui=NONE
+hi texSpecialChar  guibg=NONE guifg=${dark_yellow} gui=NONE
+hi texCite         guibg=NONE guifg=${blue}        gui=NONE
+hi texRefZone      guibg=NONE guifg=${blue}        gui=NONE
+
+" TypeScript
+hi typescriptReserved  guibg=NONE guifg=${purple} gui=NONE
+hi typescriptEndColons guibg=NONE guifg=${white}  gui=NONE
+hi typescriptBraces    guibg=NONE guifg=${white}  gui=NONE
+
+" XML
+hi xmlAttrib  guibg=NONE guifg=${dark_yellow} gui=NONE
+hi xmlEndTag  guibg=NONE guifg=${red}         gui=NONE
+hi xmlTag     guibg=NONE guifg=${red}         gui=NONE
+hi xmlTagName guibg=NONE guifg=${red}         gui=NONE
+
+" plasticboy/vim-markdown (keep consistent with Markdown, above)
+hi mkdDelimiter guibg=NONE guifg=${purple} gui=NONE
+hi mkdHeading   guibg=NONE guifg=${red}    gui=NONE
+hi mkdLink      guibg=NONE guifg=${blue}   gui=NONE
+hi mkdURL       guibg=NONE guifg=${cyan}   gui=underline
+
+" tpope/vim-fugitive
+hi diffAdded   guibg=NONE guifg=${green} gui=NONE
+hi diffRemoved guibg=NONE guifg=${red}   gui=NONE
+
+" lewis6991/gitsigns.nvim
+hi GitSignsAdd    guibg=NONE guifg=${green}  gui=NONE
+hi GitSignsChange guibg=NONE guifg=${yellow} gui=NONE
+hi GitSignsDelete guibg=NONE guifg=${red}    gui=NONE
+
+" Git Highlighting
+hi gitcommitComment       guibg=NONE guifg=${comment_grey} gui=NONE
+hi gitcommitUnmerged      guibg=NONE guifg=${green}        gui=NONE
+hi gitcommitOnBranch      guibg=NONE guifg=NONE            gui=NONE
+hi gitcommitBranch        guibg=NONE guifg=${purple}       gui=NONE
+hi gitcommitDiscardedType guibg=NONE guifg=${red}          gui=NONE
+hi gitcommitSelectedType  guibg=NONE guifg=${green}        gui=NONE
+hi gitcommitHeader        guibg=NONE guifg=NONE            gui=NONE
+hi gitcommitUntrackedFile guibg=NONE guifg=${cyan}         gui=NONE
+hi gitcommitDiscardedFile guibg=NONE guifg=${red}          gui=NONE
+hi gitcommitSelectedFile  guibg=NONE guifg=${green}        gui=NONE
+hi gitcommitUnmergedFile  guibg=NONE guifg=${yellow}       gui=NONE
+hi gitcommitFile          guibg=NONE guifg=NONE            gui=NONE
+hi gitcommitSummary       guibg=NONE guifg=${white}        gui=NONE
+hi gitcommitOverflow      guibg=NONE guifg=${red}          gui=NONE
+hi link gitcommitNoBranch       gitcommitBranch
+hi link gitcommitUntracked      gitcommitComment
+hi link gitcommitDiscarded      gitcommitComment
+hi link gitcommitSelected       gitcommitComment
+hi link gitcommitDiscardedArrow gitcommitDiscardedFile
+hi link gitcommitSelectedArrow  gitcommitSelectedFile
+hi link gitcommitUnmergedArrow  gitcommitUnmergedFile
+
+" Neovim terminal colors
+let g:terminal_color_0  = '${black}'
+let g:terminal_color_1  = '${red}'
+let g:terminal_color_2  = '${green}'
+let g:terminal_color_3  = '${yellow}'
+let g:terminal_color_4  = '${blue}'
+let g:terminal_color_5  = '${purple}'
+let g:terminal_color_6  = '${cyan}'
+let g:terminal_color_7  = '${white}'
+let g:terminal_color_8  = '${visual_grey}'
+let g:terminal_color_9  = '${dark_red}'
+let g:terminal_color_10 = '${green}'
+let g:terminal_color_11 = '${dark_yellow}'
+let g:terminal_color_12 = '${blue}'
+let g:terminal_color_13 = '${purple}'
+let g:terminal_color_14 = '${cyan}'
+let g:terminal_color_15 = '${comment_grey}'
+let g:terminal_color_background = g:terminal_color_0
+let g:terminal_color_foreground = g:terminal_color_7
+
+" lightline
+let g:lightline#colorscheme#onedark#palette = #{
+  \ normal: #{
+  \   left: [
+  \     ['${black}', '${green}', '235', '114'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${green}', '235', '114'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   middle: [
+  \     ['${white}', '${black}', '145', '235']],
+  \   error: [
+  \     ['${black}', '${red}', '235', '204']],
+  \   warning: [
+  \     ['${black}', '${yellow}', '235', '180']],
+  \ },
+  \ inactive: #{
+  \   left: [
+  \     ['${white}', '${visual_grey}', '145', '236'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${white}', '235', '145'],
+  \     ['${black}', '${white}', '235', '145']],
+  \   middle: [
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \ },
+  \ insert: #{
+  \   left:  [
+  \     ['${black}', '${blue}', '235', '39'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${blue}', '235', '39'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \ },
+  \ replace: #{
+  \   left:  [
+  \     ['${black}', '${red}', '235', '204'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${red}', '235', '204'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \ },
+  \ visual: #{
+  \   left:  [
+  \     ['${black}', '${purple}', '235', '170'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${purple}', '235', '170'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \ },
+  \ tabline: #{
+  \   left:   [
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   tabsel: [
+  \     ['${black}', '${white}', '235', '145']],
+  \   middle: [
+  \     ['${white}', '${black}', '145', '235']],
+  \   right:  [
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \ },
+  \ }
+
+set background=dark
+
+" vim: ft=vim

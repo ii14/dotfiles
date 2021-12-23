@@ -2,13 +2,13 @@ set termguicolors
 
 let g:lightline = {}
 
-let g:onedark_terminal_italics = 1
-colorscheme onedark
-let g:lightline.colorscheme = 'onedark'
-
-" let g:ayu_avoid_italics = v:true
-" colorscheme ayu
-" let g:lightline.colorscheme = 'ayu_dark'
+" See $VIMCONFIG/colors/onedark.vim.in
+if luaeval('require("m.util.preproc").ensure(vim.env.VIMCONFIG.."/colors/onedark.vim")')
+  colorscheme onedark
+  let g:lightline.colorscheme = 'onedark'
+else
+  echomsg 'Failed to load colorscheme'
+endif
 
 let g:lightline.active = {
   \ 'left'  : [['mode', 'paste'], ['fugitive', 'pro'], ['filename']],

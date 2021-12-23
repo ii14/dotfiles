@@ -7,7 +7,7 @@
 " FERN            $VIMCONFIG/ftplugin/fern.vim
 " GREP            $VIMCONFIG/grep.vim
 " THEME           $VIMCONFIG/theme.vim
-" HIGHLIGHTING    $VIMCONFIG/after/plugin/colors.vim
+" COLORSCHEME     $VIMCONFIG/colors/onedark.vim.in
 " SNIPPETS        $VIMCONFIG/lua/m/snippets/init.lua
 
 let $VIMDATA = stdpath('data')
@@ -62,7 +62,6 @@ let g:bookmarks = [
     Plug 'wellle/visual-split.vim'
 
   " Visual -------------------------------------------------------------------------------
-    Plug 'ii14/onedark.nvim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'lukas-reineke/indent-blankline.nvim'
