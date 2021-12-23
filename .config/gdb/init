@@ -5,4 +5,9 @@ set print pretty on
 set pagination off
 set confirm off
 set verbose off
-# vim: ft=gdb
+
+alias v  = info locals
+alias sf = select-frame
+alias rf = reverse-finish
+
+# vim: ft=gdb sw=2 sts=2 et
