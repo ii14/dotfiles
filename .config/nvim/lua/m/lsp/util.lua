@@ -1,17 +1,29 @@
 local M = {}
 
-M.is_attached = function(bufnr)
+function M.is_attached(bufnr)
   for _, _ in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return true
   end
   return false
 end
 
-M.get_client_name = function(bufnr)
+function M.get_client_name(bufnr)
   for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return client.name
   end
   return ''
+end
+
+function M.update_tab()
+  local tabnr = vim.api.nvim_get_current_tabpage()
+  for _, win in ipairs(vim.fn.getwininfo()) do
+    if win.tabnr == tabnr then
+      local ok, attached = pcall(vim.api.nvim_buf_get_var, win.bufnr, 'lsp_attached')
+      if ok then
+        vim.fn.setwinvar(win.winnr, '&signcolumn', attached and 'yes' or 'auto')
+      end
+    end
+  end
 end
 
 local HEADER_TO_SOURCE = {

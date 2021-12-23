@@ -4,7 +4,7 @@ local callbacks = vim.lsp.handlers
 
 local M = {}
 
-local find_qf_index = function(items)
+local function find_qf_index(items)
   local fname = api.nvim_buf_get_name(api.nvim_get_current_buf())
   local linenr = api.nvim_win_get_cursor(0)[1]
 
@@ -25,7 +25,7 @@ local find_qf_index = function(items)
   return idx
 end
 
-local set_qflist = function(items)
+local function set_qflist(items)
   util.set_qflist(items)
   local qf_index = find_qf_index(items)
   if qf_index ~= -1 then
@@ -46,7 +46,7 @@ callbacks['textDocument/references'] = function(_, result)
   vim.cmd('copen')
 end
 
-local symbol_callback = function(entity)
+local function symbol_callback(entity)
   return function(_, result, context)
     if not result or vim.tbl_isempty(result) then
       print('LSP: No '..entity..' found')
@@ -60,7 +60,7 @@ end
 callbacks['textDocument/documentSymbol'] = symbol_callback('document symbols')
 callbacks['workspace/symbol']            = symbol_callback('symbols')
 
-local location_callback = function(_, result)
+local function location_callback(_, result)
   if result == nil or vim.tbl_isempty(result) then
     print('LSP: No location found')
     return nil

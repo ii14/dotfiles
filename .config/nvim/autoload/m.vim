@@ -50,16 +50,3 @@ function! m#fern_hijack_directory() abort
     execute printf('bwipeout %d', l:bufnr)
   endif
 endfunction
-
-" LSP - Update tab
-function! m#lsp_update_tab() abort
-  let l:tabnr = tabpagenr()
-  for l:win in getwininfo()
-    if l:win.tabnr == l:tabnr
-      let l:attached = getbufvar(l:win.bufnr, 'lsp_attached', 0)
-      if type(l:attached) == v:t_bool
-        call setbufvar(l:win.bufnr, '&signcolumn', l:attached ? 'yes' : 'auto')
-      endif
-    endif
-  endfor
-endfunction

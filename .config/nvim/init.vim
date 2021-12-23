@@ -135,10 +135,6 @@ let g:bookmarks = [
   " LSP ----------------------------------------------------------------------------------
     if !exists('g:disable_lsp')
       lua require 'm.lsp'
-      aug Vimrc
-        au User LspAttach source $VIMCONFIG/lsp.vim
-        au TabEnter * call m#lsp_update_tab()
-      aug end
     endif
 
   " Snippets -----------------------------------------------------------------------------

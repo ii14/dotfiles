@@ -1,10 +1,5 @@
 local clients = {}
 
-local function doevent(name, data)
-  vim.g.lsp_event = data
-  vim.cmd('doautocmd User '..name)
-end
-
 local function wrap(a, b)
   if b then
     return function(...)
@@ -38,12 +33,18 @@ local on_attach = vim.schedule_wrap(function(client, bufnr)
   table.insert(clients[client.id].bufs, bufnr)
   vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', true)
   vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')
-  doevent('LspAttach', {
+  require('m.lsp.util').update_tab()
+
+  vim.g.lsp_event = {
     event = 'attach',
     bufnr = bufnr,
     client_id = client.id,
     client_name = client.name,
-  })
+  }
+
+  vim.api.nvim_buf_call(bufnr, function()
+    vim.cmd('source '..vim.env.VIMCONFIG..'/lsp.vim')
+  end)
 end)
 
 local on_exit = vim.schedule_wrap(function(_, _, id)
@@ -55,14 +56,10 @@ local on_exit = vim.schedule_wrap(function(_, _, id)
     if not util.is_attached(bufnr) then
       vim.api.nvim_buf_set_var(bufnr, 'lsp_attached', false)
       vim.fn.setbufvar(bufnr, '&signcolumn', 'auto')
-      doevent('LspDetach', {
-        event = 'detach',
-        bufnr = bufnr,
-        client_id = id,
-        client_name = client.name,
-      })
     end
   end
+  util.update_tab()
+
   clients[id] = nil
 end)
 
@@ -81,5 +78,12 @@ local setup = setmetatable({}, {
     end
   end
 })
+
+vim.cmd([[
+  augroup VimrcLsp
+    autocmd!
+    autocmd TabEnter * lua require 'm.lsp.util'.update_tab()
+  augroup end
+]])
 
 return setup
