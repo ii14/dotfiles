@@ -196,7 +196,15 @@ ino <silent> <C-R><C-D> <C-R>=m#bufdir()<CR>
 ino <silent> <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 " Completion
 ino <expr> <C-X><C-X> compe#complete()
-ino <expr> <CR>       compe#confirm('<CR>')
+" ino <expr> <CR>       compe#confirm('<CR>')
+ino <expr> <CR>       <SID>i_cr()
+function! s:i_cr() abort
+  let l:res = compe#confirm("\<CR>")
+  if l:res !=# "\<CR>"
+    let l:res .= "\<CR>"
+  endif
+  return l:res
+endfunction
 ino <expr> <C-Y>      compe#confirm('<C-Y>')
 " ino <expr> <C-E>      compe#close('<End>')
 ino <expr> <C-E>      <SID>i_ctrl_e()

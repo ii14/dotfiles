@@ -106,7 +106,7 @@ let g:bookmarks = [
     Plug 'milisims/nvim-luaref'
 
   " Misc ---------------------------------------------------------------------------------
-    Plug 'vimwiki/vimwiki'
+    Plug 'vimwiki/vimwiki', {'on': 'VimwikiIndex', 'for': ['vimwiki', 'markdown']}
     Plug 'kizza/actionmenu.nvim'
 
   " Custom -------------------------------------------------------------------------------
@@ -151,10 +151,6 @@ let g:bookmarks = [
     lua require 'm.snippets'
 
   " Fern ---------------------------------------------------------------------------------
-    let g:loaded_netrw = 1
-    let g:loaded_netrwPlugin = 1
-    let g:loaded_netrwSettings = 1
-    let g:loaded_netrwFileHandlers = 1
     let g:fern#disable_default_mappings = 1
     let g:fern#drawer_width = 31
     let g:fern#renderer#default#collapsed_symbol = '> '
@@ -192,7 +188,7 @@ let g:bookmarks = [
       au VimEnter * ++once au Vimrc SourcePost .exrc silent Pro!
     aug end
 
-  " autosplit.vim ------------------------------------------------------------------------
+  " autosplit ----------------------------------------------------------------------------
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
     let g:autosplit_bt = ['help']
 
@@ -211,8 +207,17 @@ let g:bookmarks = [
   " termdebug ----------------------------------------------------------------------------
     let g:termdebug_wide = 1
 
-  " quickfix-reflector.vim ---------------------------------------------------------------
-    let g:qf_modifiable = 0
+  " Disable builtin plugins --------------------------------------------------------------
+    let g:loaded_netrw = 1
+    let g:loaded_netrwPlugin = 1
+    let g:loaded_netrwSettings = 1
+    let g:loaded_netrwFileHandlers = 1
+    let g:loaded_tutor_mode_plugin = 1
+    let g:loaded_2html_plugin = 1
+    let g:loaded_spellfile_plugin = 1
+    let g:loaded_tarPlugin = 1
+    let g:loaded_zipPlugin = 1
+    let g:loaded_gzip = 1
 
 " SETTINGS ///////////////////////////////////////////////////////////////////////////////
   " Visual -------------------------------------------------------------------------------
