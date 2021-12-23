@@ -1,12 +1,10 @@
-local util = require 'm.lsp.util'
-local setup = util.setup
-require 'm.lsp.callbacks'
+local setup = require 'm.lsp.setup'
 
 setup.clangd {
   cmd = {"clangd", "--background-index"},
   commands = {
     ClangdSwitchSourceHeader = {
-      function() util.switch_source_header(0) end,
+      function() require('m.lsp.util').switch_source_header(0) end,
       description = 'Switch between source/header',
     },
   },
@@ -51,6 +49,13 @@ setup.tsserver {}
 
 setup.gopls {}
 
+setup.zls {}
+
+
+vim.diagnostic.config {
+  severity_sort = true,
+}
+
 do
   local null_ls = require 'null-ls'
   local diagnostics = null_ls.builtins.diagnostics
@@ -62,13 +67,6 @@ do
     },
   }
 end
-
-
-vim.diagnostic.config {
-  severity_sort = true,
-}
-
-require 'm.lsp.lightbulb'
 
 require 'trouble'.setup {
   icons = false,
