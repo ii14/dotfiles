@@ -23,7 +23,7 @@ fun! s:qfvisible()
   return v:false
 endfun
 
-fun! qf#open()
+fun! m#qf#open()
   if s:hasqf()
     copen
   else
@@ -32,7 +32,7 @@ fun! qf#open()
   endif
 endfun
 
-fun! qf#show()
+fun! m#qf#show()
   if s:hasqf()
     copen
     wincmd p
@@ -42,29 +42,29 @@ fun! qf#show()
   endif
 endfun
 
-fun! qf#toggle()
+fun! m#qf#toggle()
   if s:qfvisible()
     cclose
   else
-    call qf#show()
+    call m#qf#show()
   endif
 endfun
 
-fun! qf#cexec(cmd)
+fun! m#qf#cexec(cmd)
   let l = line('.')
   wincmd p
   exe a:cmd
   exe l.'cc'
 endfun
 
-fun! qf#lexec(cmd)
+fun! m#qf#lexec(cmd)
   let l = line('.')
   wincmd p
   exe a:cmd
   exe l.'ll'
 endfun
 
-fun! qf#textfunc(info)
+fun! m#qf#textfunc(info)
   if a:info.quickfix
     let items = getqflist({'id': a:info.id, 'items': 1}).items
   else

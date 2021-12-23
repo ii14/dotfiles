@@ -17,13 +17,13 @@ nnoremap <buffer><nowait><silent> o <CR><C-W>p
 
 if !b:qf_isLoc
   wincmd J
-  nnoremap <buffer><nowait><silent> <C-S> :call qf#cexec('wincmd s')<CR>
-  nnoremap <buffer><nowait><silent> <C-V> :call qf#cexec('wincmd v')<CR>
-  nnoremap <buffer><nowait><silent> <C-T> :call qf#cexec('tab split')<CR>
+  nnoremap <buffer><nowait><silent> <C-S> :call m#qf#cexec('wincmd s')<CR>
+  nnoremap <buffer><nowait><silent> <C-V> :call m#qf#cexec('wincmd v')<CR>
+  nnoremap <buffer><nowait><silent> <C-T> :call m#qf#cexec('tab split')<CR>
 else
-  nnoremap <buffer><nowait><silent> <C-S> :call qf#lexec('wincmd s')<CR>
-  nnoremap <buffer><nowait><silent> <C-V> :call qf#lexec('wincmd v')<CR>
-  nnoremap <buffer><nowait><silent> <C-T> :call qf#lexec('tab split')<CR>
+  nnoremap <buffer><nowait><silent> <C-S> :call m#qf#lexec('wincmd s')<CR>
+  nnoremap <buffer><nowait><silent> <C-V> :call m#qf#lexec('wincmd v')<CR>
+  nnoremap <buffer><nowait><silent> <C-T> :call m#qf#lexec('tab split')<CR>
 endif
 
 let b:qf_lastWin = winnr('#')

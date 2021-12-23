@@ -108,9 +108,6 @@ let g:bookmarks = [
     Plug 'vimwiki/vimwiki', {'on': 'VimwikiIndex', 'for': ['vimwiki', 'markdown']}
     Plug 'kizza/actionmenu.nvim'
 
-  " Custom -------------------------------------------------------------------------------
-    Plug $VIMCONFIG..'/m/qf.vim'
-
   " Performance --------------------------------------------------------------------------
     Plug 'tweekmonster/startuptime.vim'
     Plug 'lewis6991/impatient.nvim'
