@@ -46,16 +46,6 @@ let g:lightline#bufferline#unnamed   = '[No Name]'
 let g:lightline#bufferline#clickable = 1
 " let g:lightline#bufferline#min_buffer_count = 2
 
-" function! LightlineMode()
-"   return winwidth(0) < 50 ? '' : lightline#mode()
-" endfunction
-function! LightlineMode() abort
-  if get(g:, 'window_mode', v:false)
-    return 'WINDOW'
-  endif
-  return lightline#mode()
-endfunction
-
 function! LightlineFilename()
   if &filetype ==# 'fern'
     " fern internals, can potentially break

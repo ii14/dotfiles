@@ -1,4 +1,4 @@
-local Drawer = {}
+local Win = {}
 
 local POSITIONS = {
   h = 'H', H = 'H',
@@ -20,7 +20,7 @@ local function findwin()
   return 0
 end
 
-function Drawer.setupwin()
+function Win.setupwin()
   vim.cmd('wincmd '..position)
   if position == 'J' or position == 'K' then
     vim.api.nvim_win_set_height(0, height)
@@ -29,11 +29,11 @@ function Drawer.setupwin()
   vim.api.nvim_win_set_var(0, 'drawer', true)
 end
 
-function Drawer.getwin()
+function Win.getwin()
   local winid = findwin()
   if winid == 0 then
     vim.cmd('vsplit')
-    Drawer.setupwin()
+    Win.setupwin()
     return 0
   elseif winid ~= vim.api.nvim_get_current_win() then
     vim.api.nvim_set_current_win(winid)
@@ -43,7 +43,7 @@ function Drawer.getwin()
   end
 end
 
-function Drawer.resize(h)
+function Win.resize(h)
   height = h
   if position == 'J' or position == 'K' then
     local winid = findwin()
@@ -53,7 +53,7 @@ function Drawer.resize(h)
   end
 end
 
-function Drawer.move(pos)
+function Win.move(pos)
   if POSITIONS[pos] == nil then return end
   position = POSITIONS[pos]
   local winid = findwin()
@@ -66,7 +66,7 @@ function Drawer.move(pos)
   end
 end
 
-function Drawer._bufwinenter()
+function Win._bufwinenter()
   local bufnr = vim.api.nvim_get_current_buf()
   local buftype = vim.api.nvim_buf_get_option(bufnr, 'buftype')
   if buftype == 'quickfix' then
@@ -78,16 +78,8 @@ function Drawer._bufwinenter()
         vim.api.nvim_win_close(win.winid, false)
       end
     end
-    Drawer.setupwin()
+    Win.setupwin()
   end
 end
 
-function Drawer.term(id)
-  require 'drawer.term'.term(id)
-end
-
-function Drawer.qf()
-  require 'drawer.qf'.qf()
-end
-
-return Drawer
+return Win

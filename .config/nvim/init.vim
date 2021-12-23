@@ -58,12 +58,11 @@ let g:bookmarks = [
     Plug 'romainl/vim-cool'
     Plug 'godlygeek/tabular'
     Plug 'ii14/vim-bbye'
-    Plug 'mbbill/undotree', {'on': ['UndotreeShow', 'UndotreeToggle']}
+    Plug 'mbbill/undotree'
     Plug 'wellle/visual-split.vim'
 
   " Visual -------------------------------------------------------------------------------
     Plug 'ii14/onedark.nvim'
-    " Plug 'CantoroMC/ayu-nvim'
     Plug 'itchyny/lightline.vim'
     Plug 'mengelbrecht/lightline-bufferline'
     Plug 'lukas-reineke/indent-blankline.nvim'
@@ -71,7 +70,7 @@ let g:bookmarks = [
   " File management ----------------------------------------------------------------------
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
-    Plug 'lambdalisue/fern.vim', {'on': 'Fern'}
+    Plug 'lambdalisue/fern.vim'
     Plug 'LumaKernel/fern-mapping-fzf.vim', {'on': 'Fern'}
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
     Plug 'bogado/file-line'
@@ -111,10 +110,9 @@ let g:bookmarks = [
 
   " Custom -------------------------------------------------------------------------------
     Plug $VIMCONFIG..'/m/qf.vim'
-    Plug $VIMCONFIG..'/m/drawer.nvim'
 
   " Performance --------------------------------------------------------------------------
-    Plug 'tweekmonster/startuptime.vim', {'on': 'StartupTime'}
+    Plug 'tweekmonster/startuptime.vim'
     Plug 'lewis6991/impatient.nvim'
     Plug 'nathom/filetype.nvim'
 
