@@ -119,11 +119,7 @@ function! LightlineGitsigns()
 endfunction
 
 function! LightlineLsp()
-  try
-    return luaeval("require('m.lsp.util').get_client_name()")
-  catch
-    return ''
-  endtry
+  return luaeval("require('m.lsp.util').get_client_names()")
 endfunction
 
 function! LightlinePro()

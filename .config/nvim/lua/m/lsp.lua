@@ -51,13 +51,8 @@ setup.gopls {}
 
 setup.zls {}
 
-
-vim.diagnostic.config {
-  severity_sort = true,
-}
-
-do
-  local null_ls = require 'null-ls'
+local ok, null_ls = pcall(require, 'null-ls')
+if ok then
   local diagnostics = null_ls.builtins.diagnostics
   null_ls.setup {
     sources = {
@@ -67,17 +62,3 @@ do
     },
   }
 end
-
-require 'trouble'.setup {
-  icons = false,
-  fold_open = "v",
-  fold_closed = ">",
-  signs = {
-    error = "E",
-    warning = "W",
-    hint = "H",
-    information = "i",
-    other = "-",
-  },
-  padding = false,
-}

@@ -1,6 +1,9 @@
+local ok, luasnip_config = pcall(require, 'luasnip.config')
+if not ok then return end
+
 local M = {}
 
-require('luasnip.config').set_config {
+luasnip_config.set_config {
   history = true,
   updateevents = 'TextChanged,TextChangedI',
   ext_base_prio = 200,

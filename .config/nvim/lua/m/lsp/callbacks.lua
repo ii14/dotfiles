@@ -1,12 +1,10 @@
-local api = vim.api
-local util = vim.lsp.util
 local callbacks = vim.lsp.handlers
 
 local M = {}
 
 local function find_qf_index(items)
-  local fname = api.nvim_buf_get_name(api.nvim_get_current_buf())
-  local linenr = api.nvim_win_get_cursor(0)[1]
+  local fname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local linenr = vim.api.nvim_win_get_cursor(0)[1]
 
   local found_file = false
   local idx = -1
@@ -26,7 +24,7 @@ local function find_qf_index(items)
 end
 
 local function set_qflist(items)
-  util.set_qflist(items)
+  vim.lsp.util.set_qflist(items)
   local qf_index = find_qf_index(items)
   if qf_index ~= -1 then
     local view = vim.fn.winsaveview()
@@ -42,7 +40,7 @@ callbacks['textDocument/references'] = function(_, result)
     print('LSP: No references found')
     return nil
   end
-  set_qflist(util.locations_to_items(result))
+  set_qflist(vim.lsp.util.locations_to_items(result))
   vim.cmd('copen')
 end
 
@@ -52,7 +50,7 @@ local function symbol_callback(entity)
       print('LSP: No '..entity..' found')
       return nil
     end
-    set_qflist(util.symbols_to_items(result, context.bufnr))
+    set_qflist(vim.lsp.util.symbols_to_items(result, context.bufnr))
     vim.cmd('copen')
   end
 end
@@ -66,13 +64,13 @@ local function location_callback(_, result)
     return nil
   end
   if vim.tbl_islist(result) then
-    util.jump_to_location(result[1])
+    vim.lsp.util.jump_to_location(result[1])
     if #result > 1 then
-      set_qflist(util.locations_to_items(result))
+      set_qflist(vim.lsp.util.locations_to_items(result))
       vim.cmd("copen")
     end
   else
-    util.jump_to_location(result)
+    vim.lsp.util.jump_to_location(result)
   end
 end
 

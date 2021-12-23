@@ -1,5 +1,6 @@
 local M = {}
 
+--- Check if buffer is attached to any client
 function M.is_attached(bufnr)
   for _, _ in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return true
@@ -7,6 +8,7 @@ function M.is_attached(bufnr)
   return false
 end
 
+--- Get client name as string
 function M.get_client_name(bufnr)
   for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
     return client.name
@@ -14,16 +16,13 @@ function M.get_client_name(bufnr)
   return ''
 end
 
-function M.update_tab()
-  local tabnr = vim.api.nvim_get_current_tabpage()
-  for _, win in ipairs(vim.fn.getwininfo()) do
-    if win.tabnr == tabnr then
-      local ok, attached = pcall(vim.api.nvim_buf_get_var, win.bufnr, 'lsp_attached')
-      if ok then
-        vim.fn.setwinvar(win.winnr, '&signcolumn', attached and 'yes' or 'auto')
-      end
-    end
+--- Get comma separated client names
+function M.get_client_names(bufnr)
+  local t = {}
+  for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
+    table.insert(t, client.name)
   end
+  return table.concat(t, ',')
 end
 
 local HEADER_TO_SOURCE = {
@@ -39,6 +38,7 @@ local HEADER_TO_SOURCE = {
   ['H++'] = 'C++',
 }
 
+--- clangd: Switch between header and source file
 function M.switch_source_header(bufnr)
   bufnr = require('lspconfig/util').validate_bufnr(bufnr)
   local params = { uri = vim.uri_from_bufnr(bufnr) }

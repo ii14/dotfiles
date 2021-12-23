@@ -1,6 +1,6 @@
 " KEY MAPPINGS    $VIMCONFIG/maps.vim
 " COMMANDS        $VIMCONFIG/commands.vim
-" LSP CONFIG      $VIMCONFIG/lua/m/lsp/init.lua
+" LSP CONFIG      $VIMCONFIG/lua/m/lsp.lua
 " LSP BUFFER      $VIMCONFIG/lsp.vim
 " TERMINAL        $VIMCONFIG/term.vim
 " FZF             $VIMCONFIG/fzf.vim
@@ -8,7 +8,7 @@
 " GREP            $VIMCONFIG/grep.vim
 " THEME           $VIMCONFIG/theme.vim
 " COLORSCHEME     $VIMCONFIG/colors/onedark.vim.in
-" SNIPPETS        $VIMCONFIG/lua/m/snippets/init.lua
+" SNIPPETS        $VIMCONFIG/lua/m/snippets.lua
 
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
@@ -115,10 +115,10 @@ let g:bookmarks = [
   call plug#end()
   call m#check_missing_plugs()
 
-  lua pcall(require, 'impatient')
-  lua require 'm.global'
-
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
+  lua pcall(require, 'impatient')
+  lua require 'm.setup'
+
   source $VIMCONFIG/theme.vim
   source $VIMCONFIG/fzf.vim
 
@@ -131,14 +131,6 @@ let g:bookmarks = [
       \ 'luasnip': v:true,
       \ }}
     " LSP buffer local config in $VIMCONFIG/lsp.vim
-
-  " LSP ----------------------------------------------------------------------------------
-    if !exists('g:disable_lsp')
-      lua require 'm.lsp'
-    endif
-
-  " Snippets -----------------------------------------------------------------------------
-    lua require 'm.snippets'
 
   " Fern ---------------------------------------------------------------------------------
     let g:fern#disable_default_mappings = 1
@@ -157,19 +149,6 @@ let g:bookmarks = [
     " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
-
-  " comment.nvim -------------------------------------------------------------------------
-    lua require 'Comment'.setup{ ignore = '^$' }
-
-  " filetype.nvim ------------------------------------------------------------------------
-    lua require 'filetype'.setup{ overrides = {
-      \   extensions = {
-      \     pro = 'qmake',
-      \   },
-      \ }}
-
-  " gitsigns -----------------------------------------------------------------------------
-    lua require 'gitsigns'.setup{}
 
   " exrc.vim -----------------------------------------------------------------------------
     let g:exrc#names = ['.exrc']
@@ -262,10 +241,10 @@ let g:bookmarks = [
     set undofile                              " persistent undo history
     set noswapfile                            " disable swap files
 
+  source $VIMCONFIG/keymaps.vim
   source $VIMCONFIG/commands.vim
   source $VIMCONFIG/grep.vim
   source $VIMCONFIG/term.vim
-  source $VIMCONFIG/keymaps.vim
 
 " AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
   aug Vimrc
