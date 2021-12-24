@@ -15,6 +15,11 @@ let g:lightline.active = {
   \ 'right' : [['lineinfo'], ['percent'], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
   \ }
 
+let g:lightline.inactive = {
+  \ 'left': [['filename']],
+  \ 'right': [[], [], ['lsp', 'fileformat', 'fileencoding', 'filetype']],
+  \ }
+
 let g:lightline.tabline = {
   \ 'left'  : [['buffers']],
   \ 'right' : [['tab']],
@@ -40,6 +45,20 @@ let g:lightline.component_function = {
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 let g:lightline.component_type   = {'buffers': 'tabsel'}
 let g:lightline.component_raw    = {'buffers': 1}
+
+let g:lightline.mode_map = {
+  \ 'n'      : 'Normal',
+  \ 'i'      : 'Insert',
+  \ 'R'      : 'Replace',
+  \ 'v'      : 'Visual',
+  \ 'V'      : 'V-Line',
+  \ "\<C-v>" : 'V-Block',
+  \ 'c'      : 'Command',
+  \ 's'      : 'Select',
+  \ 'S'      : 'S-Line',
+  \ "\<C-s>" : 'S-Block',
+  \ 't'      : 'Terminal',
+  \ }
 
 set showtabline=2
 let g:lightline#bufferline#unnamed   = '[No Name]'

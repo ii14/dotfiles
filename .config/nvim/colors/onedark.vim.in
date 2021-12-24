@@ -489,7 +489,7 @@ let g:lightline#colorscheme#onedark#palette = #{
   \     ['${black}', '${green}', '235', '114'],
   \     ['${white}', '${visual_grey}', '145', '236']],
   \   middle: [
-  \     ['${white}', '${black}', '145', '235']],
+  \     ['${green}', '${cursor_grey}', '145', '235']],
   \   error: [
   \     ['${black}', '${red}', '235', '204']],
   \   warning: [
@@ -512,14 +512,8 @@ let g:lightline#colorscheme#onedark#palette = #{
   \   right: [
   \     ['${black}', '${blue}', '235', '39'],
   \     ['${white}', '${visual_grey}', '145', '236']],
-  \ },
-  \ replace: #{
-  \   left:  [
-  \     ['${black}', '${red}', '235', '204'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${red}', '235', '204'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   middle: [
+  \     ['${blue}', '${cursor_grey}', '145', '235']],
   \ },
   \ visual: #{
   \   left:  [
@@ -528,6 +522,18 @@ let g:lightline#colorscheme#onedark#palette = #{
   \   right: [
   \     ['${black}', '${purple}', '235', '170'],
   \     ['${white}', '${visual_grey}', '145', '236']],
+  \   middle: [
+  \     ['${purple}', '${cursor_grey}', '145', '235']],
+  \ },
+  \ replace: #{
+  \   left:  [
+  \     ['${black}', '${red}', '235', '204'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   right: [
+  \     ['${black}', '${red}', '235', '204'],
+  \     ['${white}', '${visual_grey}', '145', '236']],
+  \   middle: [
+  \     ['${red}', '${cursor_grey}', '145', '235']],
   \ },
   \ tabline: #{
   \   left:   [

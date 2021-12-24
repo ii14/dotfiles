@@ -83,8 +83,8 @@ let g:bookmarks = [
       Plug 'folke/trouble.nvim'
     endif
     Plug 'hrsh7th/nvim-compe'
-    Plug 'tamago324/compe-necosyntax'
-    Plug 'Shougo/neco-syntax'
+    " Plug 'tamago324/compe-necosyntax'
+    " Plug 'Shougo/neco-syntax'
     Plug 'L3MON4D3/LuaSnip'
 
   " Development --------------------------------------------------------------------------
