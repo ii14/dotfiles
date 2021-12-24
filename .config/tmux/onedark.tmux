@@ -7,6 +7,7 @@ onedark_white="#aab2bf"
 onedark_green="#98c379"
 onedark_visual_grey="#3e4452"
 onedark_comment_grey="#5c6370"
+onedark_cursor_grey="#2c323c"
 onedark_vertsplit="#181a1f"
 
 set() {
@@ -28,8 +29,8 @@ set "status-left-length" "100"
 set "status-right-length" "100"
 set "status-right-attr" "none"
 
-set "message-style" "bg=$onedark_visual_grey,fg=$onedark_white"
-set "message-command-style" "bg=$onedark_visual_grey,fg=$onedark_white"
+set "message-style" "bg=$onedark_cursor_grey,fg=$onedark_white"
+set "message-command-style" "bg=$onedark_cursor_grey,fg=$onedark_white"
 
 set "status-attr" "none"
 set "status-left-attr" "none"
@@ -46,7 +47,7 @@ set "window-active-style" "fg=$onedark_white"
 set "display-panes-active-colour" "$onedark_yellow"
 set "display-panes-colour" "$onedark_blue"
 
-set "status-bg" "default"
+set "status-bg" "$onedark_cursor_grey"
 set "status-fg" "$onedark_white"
 
 set "@prefix_highlight_fg" "$onedark_black"
