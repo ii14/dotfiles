@@ -9,6 +9,7 @@
 " THEME           $VIMCONFIG/theme.vim
 " COLORSCHEME     $VIMCONFIG/colors/onedark.vim.in
 " SNIPPETS        $VIMCONFIG/lua/m/snippets.lua
+" AUTOCOMMANDS    $VIMCONFIG/autocmd.vim
 
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
@@ -241,43 +242,10 @@ let g:bookmarks = [
     set undofile                              " persistent undo history
     set noswapfile                            " disable swap files
 
-  source $VIMCONFIG/keymaps.vim
-  source $VIMCONFIG/commands.vim
-  source $VIMCONFIG/grep.vim
-  source $VIMCONFIG/term.vim
-
-" AUTOCOMMANDS ///////////////////////////////////////////////////////////////////////////
-  aug Vimrc
-
-  " Return to last edit position ---------------------------------------------------------
-    au BufReadPost *
-      \ if index(['gitcommit', 'fugitive'], &filetype) == -1 &&
-      \   line("'\"") > 0 && line("'\"") <= line("$") |
-      \   exe "normal! g`\"" |
-      \ endif
-
-  " Gutter and cursor line ---------------------------------------------------------------
-    au WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl   cursorline | endif
-    au WinLeave             * if &bt !=# 'terminal' | setl nocursorline | endif
-    au TermOpen * setl nonumber norelativenumber nocursorline signcolumn=auto
-    au CmdwinEnter * setl nonumber norelativenumber
-
-  " Highlight yanked text ----------------------------------------------------------------
-    au TextYankPost * silent! lua vim.highlight.on_yank()
-
-  " Open quickfix window on grep ---------------------------------------------------------
-    au QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
-      \ call timer_start(10, {-> execute('cwindow')})
-    au QuickFixCmdPost lgrep,lgrepadd,lvimgrep,lhelpgrep
-      \ call timer_start(10, {-> execute('lwindow')})
-
-  " Auto close quickfix, if it's the last buffer -----------------------------------------
-    au WinEnter * if winnr('$') == 1 && &buftype ==# 'quickfix' | q! | endif
-
-  " Workarounds --------------------------------------------------------------------------
-    " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
-    au VimEnter * silent exec "!kill -s SIGWINCH $PPID"
-
-  aug end
+source $VIMCONFIG/keymaps.vim
+source $VIMCONFIG/commands.vim
+source $VIMCONFIG/grep.vim
+source $VIMCONFIG/term.vim
+source $VIMCONFIG/autocmd.vim
 
 " vim: tw=90 ts=2 sts=2 sw=2 et
