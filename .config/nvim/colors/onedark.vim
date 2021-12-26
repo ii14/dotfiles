@@ -435,6 +435,7 @@ hi diffRemoved guibg=NONE guifg=#E06C75   gui=NONE
 hi GitSignsAdd    guibg=NONE guifg=#98C379  gui=NONE
 hi GitSignsChange guibg=NONE guifg=#E5C07B gui=NONE
 hi GitSignsDelete guibg=NONE guifg=#E06C75    gui=NONE
+hi GitSignsCurrentLineBlame guifg=#5C6370
 
 " Git Highlighting
 hi gitcommitComment       guibg=NONE guifg=#5C6370 gui=NONE

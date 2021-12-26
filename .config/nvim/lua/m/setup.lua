@@ -34,6 +34,10 @@ require('Comment').setup{
   ignore = '^$',
 }
 
-require('gitsigns').setup{}
+require('gitsigns').setup{
+  preview_config = {
+    border = 'none',
+  },
+}
 
 require('m.snippets')
