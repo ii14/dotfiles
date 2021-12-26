@@ -10,6 +10,7 @@ function M.bookmarks()
     echo {{'Invalid g:bookmarks', 'ErrorMsg'}}
     return
   end
+
   for _, item in ipairs(bookmarks) do
     local hl
     if item[3] then
@@ -26,7 +27,6 @@ function M.bookmarks()
 
   local ch = vim.fn.getchar()
   vim.cmd('redraw')
-
   if ch == 0 or ch == 27 --[[<Esc>]] then
     return
   elseif ch == 13 --[[<CR>]] then
@@ -69,7 +69,6 @@ function M.options()
 
   local ch = vim.fn.getchar()
   vim.cmd('redraw')
-
   if ch == 0 or ch == 27 or ch == 13 then
     return
   elseif ch == 32 then

@@ -41,3 +41,5 @@ require('gitsigns').setup{
 }
 
 require('m.snippets')
+
+require('m.compiledb')
