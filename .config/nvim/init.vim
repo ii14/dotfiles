@@ -70,7 +70,7 @@ let g:bookmarks = [
     Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
     Plug 'junegunn/fzf.vim'
     Plug 'lambdalisue/fern.vim'
-    Plug 'LumaKernel/fern-mapping-fzf.vim', {'on': 'Fern'}
+    Plug 'LumaKernel/fern-mapping-fzf.vim'
     Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
     Plug 'bogado/file-line'
 

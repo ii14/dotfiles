@@ -94,6 +94,7 @@ nno <silent> <leader><CR> :let @/ = ''<CR>
 " MACROS ---------------------------------------------------------------------------------
 no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
 nno <leader>q q
+nno qe :Regedit<CR>
 
 " QUICKFIX -------------------------------------------------------------------------------
 nno <silent> qq :call qf#open()<CR>
