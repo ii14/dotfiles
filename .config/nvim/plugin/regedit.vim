@@ -4,7 +4,7 @@ function! Regedit(reg) abort
   if a:reg != ''
     let l:reg = a:reg
   else
-    echo 'Select register...'
+    echo 'Select register to edit...'
     let l:reg = getchar()
     redraw
     if l:reg == 0 || l:reg == 27 " C-C or ESC
@@ -38,6 +38,8 @@ function! Regedit(reg) abort
   call nvim_buf_set_name(0, b:reg)
   exec 'call nvim_buf_set_lines(0, 0, -1, v:false, ['..b:reg..'])'
   setl nomodified
+
+  inoremap <buffer> <CR> <C-V><CR>
 
   autocmd BufWriteCmd <buffer>
     \ exec 'let '..b:reg..' = nvim_buf_get_lines(0, 0, -1, v:false)[0]' |
