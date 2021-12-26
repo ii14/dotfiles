@@ -1,6 +1,4 @@
-let s:registers = map(str2list(
-  \ '"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-  \ 'nr2char(v:val)')
+let s:registers = map(str2list('"0123456789abcdefghijklmnopqrstuvwxyz'), 'nr2char(v:val)')
 
 function! Regedit(reg) abort
   if a:reg != ''
