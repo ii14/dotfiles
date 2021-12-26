@@ -19,7 +19,8 @@ let $VIMPLUGINS = $VIMDATA.'/plugged'
 let g:mapleader = ' '
 aug Vimrc | au! | aug end
 
-if v:progname ==# 'vi'
+let g:vimrc_minimal = v:progname ==# 'vi'
+if g:vimrc_minimal
   source $VIMCONFIG/minimal.vim
   finish
 endif
@@ -198,7 +199,6 @@ let g:bookmarks = [
     set title titlelen=45                     " set vim window title
     set titlestring=nvim:\ %F
     set shortmess+=I                          " no intro message
-    set noshowmode                            " redundant mode message
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set synmaxcol=1000                        " highlight only the first 1000 columns
@@ -206,7 +206,6 @@ let g:bookmarks = [
 
   " Editing ------------------------------------------------------------------------------
     set textwidth=90
-    set history=1000                          " command history size
     set virtualedit=block                     " move cursor anywhere in visual block mode
     set scrolloff=1 sidescrolloff=1           " keep near lines visible when scrolling
     set mouse=nvi                             " mouse support
@@ -227,7 +226,6 @@ let g:bookmarks = [
     set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation
 
   " Search and Autocompletion ------------------------------------------------------------
-    " set path+=**
     set ignorecase smartcase                  " ignore case unless search starts with uppercase
     set inccommand=nosplit                    " :substitute live preview
     set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__

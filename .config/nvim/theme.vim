@@ -1,4 +1,5 @@
-set termguicolors
+set termguicolors " true color
+set noshowmode    " redundant mode message
 
 let g:lightline = {}
 
