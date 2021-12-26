@@ -187,11 +187,6 @@ ino <C-A> <Home>
 ino <C-E> <End>
 ino <C-F> <cmd>call m#bf#iforward()<CR>
 ino <C-B> <cmd>call m#bf#ibackward()<CR>
-" Complete i_CTRL-G_{H,J,K,L} mappings
-ino <C-G>h     <Left>
-ino <C-G><C-H> <Left>
-ino <C-G>l     <Right>
-ino <C-G><C-L> <Right>
 " Insert stuff
 ino <silent> <C-R><C-D> <C-R>=m#bufdir()<CR>
 ino <silent> <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
@@ -238,15 +233,8 @@ cno <C-R><C-D> <C-R>=m#bufdir()<CR>
 cno <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 cno <C-X><C-A> <C-A>
 " Remap c_CTRL-{G,T} to free up CTRL-G mapping
-cno <C-G>n     <C-G>
 cno <C-G><C-N> <C-G>
-cno <C-G>p     <C-T>
 cno <C-G><C-P> <C-T>
-" Move one character left and right, consistent with insert mode
-cno <C-G>h     <Left>
-cno <C-G><C-H> <Left>
-cno <C-G>l     <Right>
-cno <C-G><C-L> <Right>
 " Pairs
 cmap <C-G><C-O> ()<Left>
 cmap <C-G><C-B> {}<Left>
