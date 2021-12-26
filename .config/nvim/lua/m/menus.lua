@@ -53,6 +53,7 @@ local options = {
   {'n', 'number',     [[call m#command#toggle_line_numbers()]]},
   {'i', 'indent',     [[IndentBlanklineToggle]]},
   {'c', 'colorizer',  [[ColorizerToggle]]},
+  {'S', 'syntax',     [[exec 'syntax '..(exists('syntax_on') ? 'off' : 'on')]]},
 }
 
 function M.options()
