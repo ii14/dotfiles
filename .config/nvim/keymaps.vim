@@ -112,9 +112,14 @@ nno <silent> [L :lfirst<CR>
 nno <silent> ]L :llast<CR>
 
 " REGISTERS ------------------------------------------------------------------------------
-" Paste and keep register in visual mode
-xno zp  pgvy
-xno zgp pgvy`]<Space>
+" Paste and keep register
+xno <silent> zp  :call <SID>zp()<CR>
+xno <silent> zgp :call <SID>zp()<CR>`]<Space>
+function! s:zp() abort
+  let l:reg = getreginfo('"')
+  normal! gvp
+  call setreg('"', l:reg)
+endfunction
 " Yank and leave the cursor just after the new text
 nno <expr> gy  GY()
 xno <expr> gy  GY()
