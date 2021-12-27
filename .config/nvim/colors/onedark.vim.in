@@ -128,10 +128,17 @@ hi DiagnosticError            guifg=${red}
 hi DiagnosticWarn             guifg=${yellow}
 hi DiagnosticInfo             guifg=${blue}
 hi DiagnosticHint             guifg=${cyan}
-hi DiagnosticUnderlineError   guifg=${red}    gui=underline
-hi DiagnosticUnderlineWarn    guifg=${yellow} gui=underline
-hi DiagnosticUnderlineInfo    guifg=${blue}   gui=underline
-hi DiagnosticUnderlineHint    guifg=${cyan}   gui=underline
+if $TERM ==# 'xterm-kitty'
+  hi DiagnosticUnderlineError guisp=${red}    gui=underline
+  hi DiagnosticUnderlineWarn  guisp=${yellow} gui=underline
+  hi DiagnosticUnderlineInfo  guisp=${blue}   gui=underline
+  hi DiagnosticUnderlineHint  guisp=${cyan}   gui=underline
+else
+  hi DiagnosticUnderlineError guifg=${red}    gui=underline
+  hi DiagnosticUnderlineWarn  guifg=${yellow} gui=underline
+  hi DiagnosticUnderlineInfo  guifg=${blue}   gui=underline
+  hi DiagnosticUnderlineHint  guifg=${cyan}   gui=underline
+endif
 hi DiagnosticSignError        guifg=${red}
 hi DiagnosticSignWarn         guifg=${yellow}
 hi DiagnosticSignInfo         guifg=${blue}

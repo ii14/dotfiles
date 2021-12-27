@@ -128,10 +128,17 @@ hi DiagnosticError            guifg=#E06C75
 hi DiagnosticWarn             guifg=#E5C07B
 hi DiagnosticInfo             guifg=#61AFEF
 hi DiagnosticHint             guifg=#56B6C2
-hi DiagnosticUnderlineError   guifg=#E06C75    gui=underline
-hi DiagnosticUnderlineWarn    guifg=#E5C07B gui=underline
-hi DiagnosticUnderlineInfo    guifg=#61AFEF   gui=underline
-hi DiagnosticUnderlineHint    guifg=#56B6C2   gui=underline
+if $TERM ==# 'xterm-kitty'
+  hi DiagnosticUnderlineError guisp=#E06C75    gui=underline
+  hi DiagnosticUnderlineWarn  guisp=#E5C07B gui=underline
+  hi DiagnosticUnderlineInfo  guisp=#61AFEF   gui=underline
+  hi DiagnosticUnderlineHint  guisp=#56B6C2   gui=underline
+else
+  hi DiagnosticUnderlineError guifg=#E06C75    gui=underline
+  hi DiagnosticUnderlineWarn  guifg=#E5C07B gui=underline
+  hi DiagnosticUnderlineInfo  guifg=#61AFEF   gui=underline
+  hi DiagnosticUnderlineHint  guifg=#56B6C2   gui=underline
+endif
 hi DiagnosticSignError        guifg=#E06C75
 hi DiagnosticSignWarn         guifg=#E5C07B
 hi DiagnosticSignInfo         guifg=#61AFEF
