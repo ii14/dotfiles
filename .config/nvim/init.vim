@@ -201,6 +201,7 @@ let g:bookmarks = [
     set shortmess+=I                          " no intro message
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+    set fillchars=diff:╱
     set synmaxcol=1000                        " highlight only the first 1000 columns
     set pumblend=13 winblend=13               " pseudo transparency
 

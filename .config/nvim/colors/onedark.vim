@@ -24,6 +24,10 @@ let g:colors_name = 'mydark'
 "DEFINE menu_grey       #3E4452
 "DEFINE special_grey    #3B4048
 "DEFINE vertsplit       #181A1F
+"DEFINE diff_delete     #3D333B
+"DEFINE diff_add        #353D3C
+"DEFINE diff_change     #303237
+"DEFINE diff_text       #4D4942
 "DEFINE italic          italic
 
 hi Comment        guibg=NONE guifg=#5C6370 gui=italic
@@ -67,16 +71,12 @@ hi Conceal          guibg=NONE            guifg=NONE               gui=NONE
 hi Cursor           guibg=#61AFEF         guifg=#282C34           gui=NONE
 hi CursorIM         guibg=NONE            guifg=NONE               gui=NONE
 hi CursorColumn     guibg=#2C323C  guifg=NONE               gui=NONE
-if &diff
-  hi CursorLine     guibg=NONE            guifg=NONE               gui=underline
-else
-  hi CursorLine     guibg=#2C323C  guifg=NONE               gui=NONE
-endif
+hi CursorLine       guibg=#2C323C  guifg=NONE               gui=NONE
 hi Directory        guibg=NONE            guifg=#61AFEF            gui=NONE
-hi DiffAdd          guibg=#98C379        guifg=#282C34           gui=NONE
-hi DiffChange       guibg=NONE            guifg=#E5C07B          gui=underline
-hi DiffDelete       guibg=#E06C75          guifg=#282C34           gui=NONE
-hi DiffText         guibg=#E5C07B       guifg=#282C34           gui=NONE
+hi DiffAdd          guibg=#353D3C     guifg=NONE               gui=NONE
+hi DiffDelete       guibg=#3D333B  guifg=#282C34           gui=NONE
+hi DiffChange       guibg=#303237  guifg=NONE               gui=NONE
+hi DiffText         guibg=#4D4942    guifg=NONE               gui=NONE
 hi ErrorMsg         guibg=NONE            guifg=#E06C75             gui=NONE
 hi VertSplit        guibg=NONE            guifg=#181A1F       gui=NONE
 hi Folded           guibg=NONE            guifg=#5C6370    gui=NONE
