@@ -36,7 +36,12 @@ function M.bookmarks()
   else
     ch = vim.fn.nr2char(ch)
     for _, item in ipairs(bookmarks) do
-      if item[1] == ch then
+      local s1, s2 = item[1], nil
+      -- make lowercase characters work with ctrl
+      if s1:match('^%l$') then
+        s2 = vim.api.nvim_replace_termcodes('<C-'..s1..'>', true, false, true)
+      end
+      if s1 == ch or (s2 and s2 == ch) then
         vim.cmd(item[3] or ('Files '..item[2]))
         return
       end
