@@ -29,7 +29,7 @@ function M._update_tab()
 end
 
 --- LSP on_init callback, register client
-local on_init = function(client)
+M.on_init = function(client)
   clients[client.id] = {
     name = client.name,
     bufs = {},
@@ -37,7 +37,7 @@ local on_init = function(client)
 end
 
 --- LSP on_attach callback
-local on_attach = vim.schedule_wrap(function(client, bufnr)
+M.on_attach = vim.schedule_wrap(function(client, bufnr)
   require 'm.lsp.callbacks'
   require 'm.lsp.lightbulb'
 
@@ -66,7 +66,7 @@ local on_attach = vim.schedule_wrap(function(client, bufnr)
 end)
 
 --- LSP on_exit callback
-local on_exit = vim.schedule_wrap(function(_, _, id)
+M.on_exit = vim.schedule_wrap(function(_, _, id)
   local client = clients[id]
   if not client then return end
 
@@ -96,9 +96,9 @@ return setmetatable(M, {
       error('config does not exist: '..k)
     end
     return function(config)
-      config.on_attach = wrap(on_attach, config.on_attach)
-      config.on_init = wrap(on_init, config.on_init)
-      config.on_exit = wrap(on_exit, config.on_exit)
+      config.on_attach = wrap(M.on_attach, config.on_attach)
+      config.on_init = wrap(M.on_init, config.on_init)
+      config.on_exit = wrap(M.on_exit, config.on_exit)
       lspconfig[k].setup(config)
     end
   end
