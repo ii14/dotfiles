@@ -27,6 +27,9 @@ require('filetype').setup{
     extensions = {
       pro = 'qmake',
     },
+    endswith = {
+      ['/i3/config'] = 'i3',
+    },
   },
 }
 
