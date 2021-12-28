@@ -58,6 +58,8 @@ nno <C-H> <C-W>h
 nno <C-J> <C-W>j
 nno <C-K> <C-W>k
 nno <C-L> <C-W>l
+nno <C-W>t     <cmd>tab split<CR>
+nno <C-W><C-T> <cmd>tab split<CR>
 nmap <leader>w <C-W>
 
 " BUFFERS --------------------------------------------------------------------------------
@@ -94,6 +96,7 @@ nno <silent> <leader><CR> :let @/ = ''<CR>
 " MACROS ---------------------------------------------------------------------------------
 no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
 nno <leader>q q
+nno qr q
 nno qe :Regedit<CR>
 
 " QUICKFIX -------------------------------------------------------------------------------

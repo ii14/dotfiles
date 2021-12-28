@@ -40,6 +40,7 @@ function! Regedit(reg) abort
   setl nomodified
 
   inoremap <buffer> <CR> <C-V><CR>
+  exec 'nnoremap <buffer> <CR> <cmd>x<CR>@'..l:reg
 
   autocmd BufWriteCmd <buffer>
     \ exec 'let '..b:reg..' = nvim_buf_get_lines(0, 0, -1, v:false)[0]' |
