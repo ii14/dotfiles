@@ -118,7 +118,9 @@ let g:bookmarks = [
   call m#check_missing_plugs()
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
-  lua pcall(require, 'impatient')
+  if !exists('$VIMNOLUACACHE')
+    lua pcall(require, 'impatient')
+  endif
   lua require 'm.setup'
 
   source $VIMCONFIG/theme.vim
