@@ -25,8 +25,9 @@ function M.bookmarks()
   end
   echo {{':Files'}}
 
-  local ch = vim.fn.getchar()
+  local ok, ch = pcall(vim.fn.getchar)
   vim.cmd('redraw')
+  if not ok then return end
   if ch == 0 or ch == 27 --[[<Esc>]] then
     return
   elseif ch == 13 --[[<CR>]] then
@@ -72,8 +73,9 @@ function M.options()
   end
   echo {{':set'}}
 
-  local ch = vim.fn.getchar()
+  local ok, ch = pcall(vim.fn.getchar)
   vim.cmd('redraw')
+  if not ok then return end
   if ch == 0 or ch == 27 or ch == 13 then
     return
   elseif ch == 32 then
