@@ -5,8 +5,8 @@ autoload -U colors && colors
 if [[ -f $ZSH_PLUGIN_PATH/git-prompt.zsh/git-prompt.zsh ]]; then
     source $ZSH_PLUGIN_PATH/git-prompt.zsh/git-prompt.zsh
     ZSH_GIT_PROMPT_SHOW_UPSTREAM="no"
-    ZSH_THEME_GIT_PROMPT_PREFIX="%K{233}"
-    ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233} "
+    ZSH_THEME_GIT_PROMPT_PREFIX="%K{233} "
+    ZSH_THEME_GIT_PROMPT_SUFFIX="%K{233}"
     ZSH_THEME_GIT_PROMPT_SEPARATOR="%K{233} "
     ZSH_THEME_GIT_PROMPT_DETACHED="%K{233}%{$fg[cyan]%}:"
     ZSH_THEME_GIT_PROMPT_BRANCH="%K{233}%{$fg[yellow]%}"
@@ -63,7 +63,10 @@ else
     fi
 
     # print directory
-    PROMPT+='%B%(4~|%-1~/…/%2~|%3~)%b '
+    PROMPT+='%B%(4~|%-1~/…/%2~|%3~)%b'
+
+    # exit status and background job indicators
+    PROMPT+='%K{233}%F{0}%(1j. *.)%(?..%(1j.. )!)'
 
     # print git branch
     if [[ -v _zsh_gitprompt_loaded ]]; then
@@ -71,7 +74,7 @@ else
     fi
 
     # print vim mode indicator
-    PROMPT+='%F{233}%K{${PROMPT_COLOR}}%k%F{${PROMPT_COLOR}}%f '
+    PROMPT+='%K{233} %F{233}%K{${PROMPT_COLOR}}%k%F{${PROMPT_COLOR}}%f '
 
     # set terminal window title
     if [[ -v SSH_CONNECTION ]]; then
