@@ -1,4 +1,4 @@
-" KEY MAPPINGS    $VIMCONFIG/maps.vim
+" KEY MAPPINGS    $VIMCONFIG/keymaps.vim
 " COMMANDS        $VIMCONFIG/commands.vim
 " LSP CONFIG      $VIMCONFIG/lua/m/lsp.lua
 " LSP BUFFER      $VIMCONFIG/lsp.vim

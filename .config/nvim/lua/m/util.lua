@@ -14,4 +14,17 @@ function M.lua_includeexpr(fname)
   return fname
 end
 
+function M.vim_includeexpr(fname)
+  if vim.api.nvim_get_current_line():match('Plug') then
+    local match = (fname or vim.v.fname):match('^[^/]*/([^/]*)$')
+    if match then
+      local chk = vim.env.VIMPLUGINS..'/'..match
+      if vim.fn.isdirectory(chk) ~= 0 then
+        return chk
+      end
+    end
+  end
+  return M.lua_includeexpr(fname)
+end
+
 return M
