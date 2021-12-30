@@ -2,24 +2,32 @@ local M = {}
 
 --- Check if buffer is attached to any client
 function M.is_attached(bufnr)
-  for _, _ in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
-    return true
+  local lsp = rawget(vim, 'lsp')
+  if lsp then
+    for _, _ in pairs(lsp.buf_get_clients(bufnr or 0)) do
+      return true
+    end
   end
   return false
 end
 
 --- Get client name as string
 function M.get_client_name(bufnr)
-  for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
-    return client.name
+  local lsp = rawget(vim, 'lsp')
+  if lsp then
+    for _, client in pairs(lsp.buf_get_clients(bufnr or 0)) do
+      return client.name
+    end
   end
   return ''
 end
 
 --- Get comma separated client names
 function M.get_client_names(bufnr)
+  local lsp = rawget(vim, 'lsp')
+  if not lsp then return '' end
   local t = {}
-  for _, client in pairs(vim.lsp.buf_get_clients(bufnr or 0)) do
+  for _, client in pairs(lsp.buf_get_clients(bufnr or 0)) do
     table.insert(t, client.name)
   end
   return table.concat(t, ',')

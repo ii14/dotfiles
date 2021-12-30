@@ -10,9 +10,12 @@ local sign_bufnr = nil
 local sign_line = nil
 
 local function has_capability(bufnr)
-  for _, client in pairs(vim.lsp.buf_get_clients(bufnr)) do
-    if client.supports_method('textDocument/codeAction') then
-      return true
+  local lsp = rawget(vim, 'lsp')
+  if lsp then
+    for _, client in pairs(lsp.buf_get_clients(bufnr)) do
+      if client.supports_method('textDocument/codeAction') then
+        return true
+      end
     end
   end
   return false
