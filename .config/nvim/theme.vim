@@ -43,10 +43,6 @@ let g:lightline.component_function = {
   \ 'gitsigns'     : 'LightlineGitsigns',
   \ }
 
-let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
-let g:lightline.component_type   = {'buffers': 'tabsel'}
-let g:lightline.component_raw    = {'buffers': 1}
-
 let g:lightline.mode_map = {
   \ 'n'      : 'Normal',
   \ 'i'      : 'Insert',
@@ -60,6 +56,10 @@ let g:lightline.mode_map = {
   \ "\<C-s>" : 'S-Block',
   \ 't'      : 'Terminal',
   \ }
+
+let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+let g:lightline.component_type   = {'buffers': 'tabsel'}
+let g:lightline.component_raw    = {'buffers': 1}
 
 set showtabline=2
 let g:lightline#bufferline#unnamed   = '[No Name]'

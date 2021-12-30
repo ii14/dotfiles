@@ -29,6 +29,8 @@ if exists('$VIMNOLSP')
   let g:disable_lsp = 1
 endif
 
+let g:enable_lua_theme = 1
+
 let g:bookmarks = [
   \ ['w', '<working directory>', 'Files .'],
   \ ['f', '<buffer directory>', 'exe "Files "..m#bufdir()'],
@@ -64,8 +66,10 @@ let g:bookmarks = [
     Plug 'wellle/visual-split.vim'
 
   " Visual -------------------------------------------------------------------------------
-    Plug 'itchyny/lightline.vim'
-    Plug 'mengelbrecht/lightline-bufferline'
+    if !exists('g:enable_lua_theme')
+      Plug 'itchyny/lightline.vim'
+      Plug 'mengelbrecht/lightline-bufferline'
+    endif
     Plug 'lukas-reineke/indent-blankline.nvim'
 
   " File management ----------------------------------------------------------------------
@@ -123,7 +127,9 @@ let g:bookmarks = [
   endif
   lua require 'm.setup'
 
-  source $VIMCONFIG/theme.vim
+  if !exists('g:enable_lua_theme')
+    source $VIMCONFIG/theme.vim
+  endif
   source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------

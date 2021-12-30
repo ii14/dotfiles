@@ -46,3 +46,26 @@ require('gitsigns').setup{
 require('m.snippets')
 
 require('m.compiledb')
+
+if vim.g.enable_lua_theme then
+  vim.o.termguicolors = true
+  vim.o.showmode = false
+
+  -- See $VIMCONFIG/colors/onedark.vim.in
+  local colorscheme = vim.env.VIMCONFIG..'/colors/onedark.vim'
+  if require('m.util.preproc').ensure(colorscheme) then
+    vim.cmd('colorscheme onedark')
+  end
+
+  require('m.ui.bufferline').setup()
+
+  vim.o.statusline = [[%!v:lua.require('m.ui.statusline').render()]]
+  vim.cmd([[
+    augroup Statusline
+      autocmd!
+      autocmd WinLeave,BufLeave *  lua vim.wo.statusline = require('m.ui.statusline').render(1)
+      autocmd FileType          qf lua vim.wo.statusline = require('m.ui.statusline').render()
+      autocmd WinEnter,BufEnter *  set statusline<
+    augroup end
+  ]])
+end

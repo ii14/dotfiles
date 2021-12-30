@@ -487,6 +487,11 @@ let g:terminal_color_15 = '#5C6370'
 let g:terminal_color_background = g:terminal_color_0
 let g:terminal_color_foreground = g:terminal_color_7
 
+if exists('g:enable_lua_theme')
+  set background=dark
+  finish
+endif
+
 " lightline
 let g:lightline#colorscheme#onedark#palette = #{
   \ normal: #{
