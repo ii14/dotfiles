@@ -66,6 +66,13 @@ function dev {
         && cd "$res"
 }
 
+function repos {
+    res="$(
+        fd -t d -d 1 . ~/repos \
+            | fzf --prompt='~/repos/' --reverse --height=50%)" \
+        && cd "$res"
+}
+
 function pro {
     res="$(
         cd "${1:-.}" && \
