@@ -3,12 +3,11 @@ augroup VimrcTerm
   " Disable insert mode after terminal process terminates.
   " 'nomodifiable' doesn't work, but maybe there is a better way to do it?
   autocmd TermClose * ++nested stopinsert | au VimrcTerm TermEnter <buffer> stopinsert
-  autocmd TermOpen * let b:term_forward_esc = 1
+  autocmd TermOpen * let b:term_fwd_esc = 1
 augroup end
 
 " Forward escape key ---------------------------------------------------------------------
-let g:term_forward_esc = ['n\?vim\%(.\.\*\)\?', 'fzf']
-tnoremap <nowait><silent><expr> <Esc> m#term#should_forward_esc() ? '<Esc>' : '<C-\><C-N>'
+tnoremap <nowait><silent><expr> <Esc> luaeval('require"m.util".term_fwd_esc()') ? '<Esc>' : '<C-\><C-N>'
 tnoremap <C-\><Esc> <Esc>
 tnoremap <C-\><C-C> <Nop>
 

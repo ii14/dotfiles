@@ -3,7 +3,7 @@ if exists('syntax_on')
   syntax reset
 endif
 set t_Co=256
-let g:colors_name = 'mydark'
+let g:colors_name = 'onedark'
 
 "DEFINE red             #E06C75
 "DEFINE dark_red        #BE5046
@@ -15,7 +15,7 @@ let g:colors_name = 'mydark'
 "DEFINE cyan            #56B6C2
 "DEFINE white           #ABB2BF
 "DEFINE black           #282C34
-"DEFINE dark_black      #21252C
+"DEFINE dim             #21252C
 "DEFINE visual_black    NONE
 "DEFINE comment_grey    #5C6370
 "DEFINE gutter_fg_grey  #4B5263
@@ -26,8 +26,8 @@ let g:colors_name = 'mydark'
 "DEFINE vertsplit       #181A1F
 "DEFINE diff_delete     #3D333B
 "DEFINE diff_add        #353D3C
-"DEFINE diff_change     #303237
-"DEFINE diff_text       #4D4942
+"DEFINE diff_change     #2F3136
+"DEFINE diff_text       #44423E
 "DEFINE italic          italic
 
 hi Comment        guibg=NONE guifg=#5C6370 gui=italic
@@ -75,12 +75,12 @@ hi CursorLine       guibg=#2C323C  guifg=NONE               gui=NONE
 hi Directory        guibg=NONE            guifg=#61AFEF            gui=NONE
 hi DiffAdd          guibg=#353D3C     guifg=NONE               gui=NONE
 hi DiffDelete       guibg=#3D333B  guifg=#282C34           gui=NONE
-hi DiffChange       guibg=#303237  guifg=NONE               gui=NONE
-hi DiffText         guibg=#4D4942    guifg=NONE               gui=NONE
+hi DiffChange       guibg=#2F3136  guifg=NONE               gui=NONE
+hi DiffText         guibg=#44423E    guifg=NONE               gui=NONE
 hi ErrorMsg         guibg=NONE            guifg=#E06C75             gui=NONE
 hi VertSplit        guibg=NONE            guifg=#181A1F       gui=NONE
 hi Folded           guibg=NONE            guifg=#5C6370    gui=NONE
-hi FoldColumn       guibg=NONE            guifg=NONE               gui=NONE
+hi FoldColumn       guibg=NONE            guifg=#5C6370    gui=NONE
 hi SignColumn       guibg=NONE            guifg=NONE               gui=NONE
 hi IncSearch        guibg=#5C6370 guifg=#E5C07B          gui=NONE
 hi LineNr           guibg=NONE            guifg=#4B5263  gui=NONE
@@ -97,7 +97,9 @@ hi PmenuThumb       guibg=#ABB2BF        guifg=NONE               gui=NONE
 hi Question         guibg=NONE            guifg=#C678DD          gui=NONE
 hi QuickFixLine     guibg=#61AFEF         guifg=#282C34           gui=NONE
 hi Search           guibg=#E5C07B       guifg=#282C34           gui=NONE
-hi SpecialKey       guibg=NONE            guifg=#3B4048    gui=NONE
+hi SpecialKey       guibg=NONE            guifg=#61AFEF            gui=NONE
+hi SpecialKeyWin    guibg=NONE            guifg=#3B4048    gui=NONE
+set winhighlight=SpecialKey:SpecialKeyWin
 hi SpellBad         guibg=NONE            guifg=#E06C75             gui=underline
 hi SpellCap         guibg=NONE            guifg=#D19A66     gui=NONE
 hi SpellLocal       guibg=NONE            guifg=#D19A66     gui=NONE
@@ -116,18 +118,18 @@ hi VisualNOS        guibg=#3E4452  guifg=NONE               gui=NONE
 hi WarningMsg       guibg=NONE            guifg=#E5C07B          gui=NONE
 hi WildMenu         guibg=#61AFEF         guifg=#282C34           gui=NONE
 
-hi NormalDark       guibg=#21252C   guifg=#ABB2BF
+hi Dim guibg=#21252C guifg=#ABB2BF
 
 " indent-blankline
-hi      IndentBlanklineChar               guifg=#4B5263 gui=nocombine
+hi IndentBlanklineChar guifg=#4B5263 gui=nocombine
 hi link IndentBlanklineSpaceChar          IndentBlanklineChar
 hi link IndentBlanklineSpaceCharBlankline IndentBlanklineChar
 
 " Neovim diagnostics
-hi DiagnosticError            guifg=#E06C75
-hi DiagnosticWarn             guifg=#E5C07B
-hi DiagnosticInfo             guifg=#61AFEF
-hi DiagnosticHint             guifg=#56B6C2
+hi DiagnosticError guifg=#E06C75
+hi DiagnosticWarn  guifg=#E5C07B
+hi DiagnosticInfo  guifg=#61AFEF
+hi DiagnosticHint  guifg=#56B6C2
 if $TERM ==# 'xterm-kitty'
   hi DiagnosticUnderlineError guisp=#E06C75    gui=underline
   hi DiagnosticUnderlineWarn  guisp=#E5C07B gui=underline
@@ -139,14 +141,6 @@ else
   hi DiagnosticUnderlineInfo  guifg=#61AFEF   gui=underline
   hi DiagnosticUnderlineHint  guifg=#56B6C2   gui=underline
 endif
-hi DiagnosticSignError        guifg=#E06C75
-hi DiagnosticSignWarn         guifg=#E5C07B
-hi DiagnosticSignInfo         guifg=#61AFEF
-hi DiagnosticSignHint         guifg=#56B6C2
-hi DiagnosticVirtualTextError guifg=#E06C75    guibg=#2C323C
-hi DiagnosticVirtualTextWarn  guifg=#E5C07B guibg=#2C323C
-hi DiagnosticVirtualTextInfo  guifg=#61AFEF   guibg=#2C323C
-hi DiagnosticVirtualTextHint  guifg=#56B6C2   guibg=#2C323C
 
 " Neovim LSP
 hi link LspReferenceText  Visual
@@ -162,303 +156,304 @@ hi link FernRootSymbol   String
 hi link FernMarkedLine   WarningMsg
 hi link FernMarkedText   WarningMsg
 hi link FernLeafSymbol   LineNr
-hi link FernBranchSymbol Comment
+hi link FernBranchSymbol LineNr
 
 " Termdebug
-hi debugPC          guibg=#3B4048 guifg=NONE     gui=NONE
-hi debugBreakpoint  guibg=#E06C75          guifg=#282C34 gui=NONE
+hi debugPC          guibg=#3B4048
+hi debugBreakpoint  guibg=#E06C75 guifg=#282C34
 
 " CSS
-hi cssAttrComma         guibg=NONE guifg=#C678DD      gui=NONE
-hi cssAttributeSelector guibg=NONE guifg=#98C379       gui=NONE
-hi cssBraces            guibg=NONE guifg=#ABB2BF       gui=NONE
-hi cssClassName         guibg=NONE guifg=#D19A66 gui=NONE
-hi cssClassNameDot      guibg=NONE guifg=#D19A66 gui=NONE
-hi cssDefinition        guibg=NONE guifg=#C678DD      gui=NONE
-hi cssFontAttr          guibg=NONE guifg=#D19A66 gui=NONE
-hi cssFontDescriptor    guibg=NONE guifg=#C678DD      gui=NONE
-hi cssFunctionName      guibg=NONE guifg=#61AFEF        gui=NONE
-hi cssIdentifier        guibg=NONE guifg=#61AFEF        gui=NONE
-hi cssImportant         guibg=NONE guifg=#C678DD      gui=NONE
-hi cssInclude           guibg=NONE guifg=#ABB2BF       gui=NONE
-hi cssIncludeKeyword    guibg=NONE guifg=#C678DD      gui=NONE
-hi cssMediaType         guibg=NONE guifg=#D19A66 gui=NONE
-hi cssProp              guibg=NONE guifg=#ABB2BF       gui=NONE
-hi cssPseudoClassId     guibg=NONE guifg=#D19A66 gui=NONE
-hi cssSelectorOp        guibg=NONE guifg=#C678DD      gui=NONE
-hi cssSelectorOp2       guibg=NONE guifg=#C678DD      gui=NONE
-hi cssTagName           guibg=NONE guifg=#E06C75         gui=NONE
+hi cssAttrComma         guifg=#C678DD
+hi cssAttributeSelector guifg=#98C379
+hi cssBraces            guifg=#ABB2BF
+hi cssClassName         guifg=#D19A66
+hi cssClassNameDot      guifg=#D19A66
+hi cssDefinition        guifg=#C678DD
+hi cssFontAttr          guifg=#D19A66
+hi cssFontDescriptor    guifg=#C678DD
+hi cssFunctionName      guifg=#61AFEF
+hi cssIdentifier        guifg=#61AFEF
+hi cssImportant         guifg=#C678DD
+hi cssInclude           guifg=#ABB2BF
+hi cssIncludeKeyword    guifg=#C678DD
+hi cssMediaType         guifg=#D19A66
+hi cssProp              guifg=#ABB2BF
+hi cssPseudoClassId     guifg=#D19A66
+hi cssSelectorOp        guifg=#C678DD
+hi cssSelectorOp2       guifg=#C678DD
+hi cssTagName           guifg=#E06C75
 
 " Fish Shell
-hi fishKeyword     guibg=NONE guifg=#C678DD gui=NONE
-hi fishConditional guibg=NONE guifg=#C678DD gui=NONE
+hi fishKeyword     guifg=#C678DD
+hi fishConditional guifg=#C678DD
 
 " Go
-hi goDeclaration  guibg=NONE guifg=#C678DD gui=NONE
-hi goBuiltins     guibg=NONE guifg=#56B6C2   gui=NONE
-hi goFunctionCall guibg=NONE guifg=#61AFEF   gui=NONE
-hi goVarDefs      guibg=NONE guifg=#E06C75    gui=NONE
-hi goVarAssign    guibg=NONE guifg=#E06C75    gui=NONE
-hi goVar          guibg=NONE guifg=#C678DD gui=NONE
-hi goConst        guibg=NONE guifg=#C678DD gui=NONE
-hi goType         guibg=NONE guifg=#E5C07B gui=NONE
-hi goTypeName     guibg=NONE guifg=#E5C07B gui=NONE
-hi goDeclType     guibg=NONE guifg=#56B6C2   gui=NONE
-hi goTypeDecl     guibg=NONE guifg=#C678DD gui=NONE
+hi goDeclaration  guifg=#C678DD
+hi goBuiltins     guifg=#56B6C2
+hi goFunctionCall guifg=#61AFEF
+hi goVarDefs      guifg=#E06C75
+hi goVarAssign    guifg=#E06C75
+hi goVar          guifg=#C678DD
+hi goConst        guifg=#C678DD
+hi goType         guifg=#E5C07B
+hi goTypeName     guifg=#E5C07B
+hi goDeclType     guifg=#56B6C2
+hi goTypeDecl     guifg=#C678DD
 
 " HTML (keep consistent with Markdown, below)
-hi htmlArg            guibg=NONE guifg=#D19A66 gui=NONE
-hi htmlBold           guibg=NONE guifg=#D19A66 gui=bold
-hi htmlEndTag         guibg=NONE guifg=#ABB2BF       gui=NONE
-hi htmlH1             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlH2             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlH3             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlH4             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlH5             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlH6             guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlItalic         guibg=NONE guifg=#C678DD      gui=italic
-hi htmlLink           guibg=NONE guifg=#56B6C2        gui=underline
-hi htmlSpecialChar    guibg=NONE guifg=#D19A66 gui=NONE
-hi htmlSpecialTagName guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlTag            guibg=NONE guifg=#ABB2BF       gui=NONE
-hi htmlTagN           guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlTagName        guibg=NONE guifg=#E06C75         gui=NONE
-hi htmlTitle          guibg=NONE guifg=#ABB2BF       gui=NONE
+hi htmlArg            guifg=#D19A66
+hi htmlBold           guifg=#D19A66 gui=bold
+hi htmlEndTag         guifg=#ABB2BF
+hi htmlH1             guifg=#E06C75
+hi htmlH2             guifg=#E06C75
+hi htmlH3             guifg=#E06C75
+hi htmlH4             guifg=#E06C75
+hi htmlH5             guifg=#E06C75
+hi htmlH6             guifg=#E06C75
+hi htmlItalic         guifg=#C678DD gui=italic
+hi htmlLink           guifg=#56B6C2 gui=underline
+hi htmlSpecialChar    guifg=#D19A66
+hi htmlSpecialTagName guifg=#E06C75
+hi htmlTag            guifg=#ABB2BF
+hi htmlTagN           guifg=#E06C75
+hi htmlTagName        guifg=#E06C75
+hi htmlTitle          guifg=#ABB2BF
 
 " JavaScript
-hi javaScriptBraces     guibg=NONE guifg=#ABB2BF       gui=NONE
-hi javaScriptFunction   guibg=NONE guifg=#C678DD      gui=NONE
-hi javaScriptIdentifier guibg=NONE guifg=#C678DD      gui=NONE
-hi javaScriptNull       guibg=NONE guifg=#D19A66 gui=NONE
-hi javaScriptNumber     guibg=NONE guifg=#D19A66 gui=NONE
-hi javaScriptRequire    guibg=NONE guifg=#56B6C2        gui=NONE
-hi javaScriptReserved   guibg=NONE guifg=#C678DD      gui=NONE
+hi javaScriptBraces     guifg=#ABB2BF
+hi javaScriptFunction   guifg=#C678DD
+hi javaScriptIdentifier guifg=#C678DD
+hi javaScriptNull       guifg=#D19A66
+hi javaScriptNumber     guifg=#D19A66
+hi javaScriptRequire    guifg=#56B6C2
+hi javaScriptReserved   guifg=#C678DD
 " http//github.com/pangloss/vim-javascript
-hi jsArrowFunction   guibg=NONE guifg=#C678DD      gui=NONE
-hi jsClassKeyword    guibg=NONE guifg=#C678DD      gui=NONE
-hi jsClassMethodType guibg=NONE guifg=#C678DD      gui=NONE
-hi jsDocParam        guibg=NONE guifg=#61AFEF        gui=NONE
-hi jsDocTags         guibg=NONE guifg=#C678DD      gui=NONE
-hi jsExport          guibg=NONE guifg=#C678DD      gui=NONE
-hi jsExportDefault   guibg=NONE guifg=#C678DD      gui=NONE
-hi jsExtendsKeyword  guibg=NONE guifg=#C678DD      gui=NONE
-hi jsFrom            guibg=NONE guifg=#C678DD      gui=NONE
-hi jsFuncCall        guibg=NONE guifg=#61AFEF        gui=NONE
-hi jsFunction        guibg=NONE guifg=#C678DD      gui=NONE
-hi jsGenerator       guibg=NONE guifg=#E5C07B      gui=NONE
-hi jsGlobalObjects   guibg=NONE guifg=#E5C07B      gui=NONE
-hi jsImport          guibg=NONE guifg=#C678DD      gui=NONE
-hi jsModuleAs        guibg=NONE guifg=#C678DD      gui=NONE
-hi jsModuleWords     guibg=NONE guifg=#C678DD      gui=NONE
-hi jsModules         guibg=NONE guifg=#C678DD      gui=NONE
-hi jsNull            guibg=NONE guifg=#D19A66 gui=NONE
-hi jsOperator        guibg=NONE guifg=#C678DD      gui=NONE
-hi jsStorageClass    guibg=NONE guifg=#C678DD      gui=NONE
-hi jsSuper           guibg=NONE guifg=#E06C75         gui=NONE
-hi jsTemplateBraces  guibg=NONE guifg=#BE5046    gui=NONE
-hi jsTemplateVar     guibg=NONE guifg=#98C379       gui=NONE
-hi jsThis            guibg=NONE guifg=#E06C75         gui=NONE
-hi jsUndefined       guibg=NONE guifg=#D19A66 gui=NONE
+hi jsArrowFunction   guifg=#C678DD
+hi jsClassKeyword    guifg=#C678DD
+hi jsClassMethodType guifg=#C678DD
+hi jsDocParam        guifg=#61AFEF
+hi jsDocTags         guifg=#C678DD
+hi jsExport          guifg=#C678DD
+hi jsExportDefault   guifg=#C678DD
+hi jsExtendsKeyword  guifg=#C678DD
+hi jsFrom            guifg=#C678DD
+hi jsFuncCall        guifg=#61AFEF
+hi jsFunction        guifg=#C678DD
+hi jsGenerator       guifg=#E5C07B
+hi jsGlobalObjects   guifg=#E5C07B
+hi jsImport          guifg=#C678DD
+hi jsModuleAs        guifg=#C678DD
+hi jsModuleWords     guifg=#C678DD
+hi jsModules         guifg=#C678DD
+hi jsNull            guifg=#D19A66
+hi jsOperator        guifg=#C678DD
+hi jsStorageClass    guifg=#C678DD
+hi jsSuper           guifg=#E06C75
+hi jsTemplateBraces  guifg=#BE5046
+hi jsTemplateVar     guifg=#98C379
+hi jsThis            guifg=#E06C75
+hi jsUndefined       guifg=#D19A66
 " http//github.com/othree/yajs.vim
-hi javascriptArrowFunc    guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptClassExtends guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptClassKeyword guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptDocNotation  guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptDocParamName guibg=NONE guifg=#61AFEF     gui=NONE
-hi javascriptDocTags      guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptEndColons    guibg=NONE guifg=#ABB2BF    gui=NONE
-hi javascriptExport       guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptFuncArg      guibg=NONE guifg=#ABB2BF    gui=NONE
-hi javascriptFuncKeyword  guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptIdentifier   guibg=NONE guifg=#E06C75      gui=NONE
-hi javascriptImport       guibg=NONE guifg=#C678DD   gui=NONE
-hi javascriptMethodName   guibg=NONE guifg=#ABB2BF    gui=NONE
-hi javascriptObjectLabel  guibg=NONE guifg=#ABB2BF    gui=NONE
-hi javascriptOpSymbol     guibg=NONE guifg=#56B6C2     gui=NONE
-hi javascriptOpSymbols    guibg=NONE guifg=#56B6C2     gui=NONE
-hi javascriptPropertyName guibg=NONE guifg=#98C379    gui=NONE
-hi javascriptTemplateSB   guibg=NONE guifg=#BE5046 gui=NONE
-hi javascriptVariable     guibg=NONE guifg=#C678DD   gui=NONE
+hi javascriptArrowFunc    guifg=#C678DD
+hi javascriptClassExtends guifg=#C678DD
+hi javascriptClassKeyword guifg=#C678DD
+hi javascriptDocNotation  guifg=#C678DD
+hi javascriptDocParamName guifg=#61AFEF
+hi javascriptDocTags      guifg=#C678DD
+hi javascriptEndColons    guifg=#ABB2BF
+hi javascriptExport       guifg=#C678DD
+hi javascriptFuncArg      guifg=#ABB2BF
+hi javascriptFuncKeyword  guifg=#C678DD
+hi javascriptIdentifier   guifg=#E06C75
+hi javascriptImport       guifg=#C678DD
+hi javascriptMethodName   guifg=#ABB2BF
+hi javascriptObjectLabel  guifg=#ABB2BF
+hi javascriptOpSymbol     guifg=#56B6C2
+hi javascriptOpSymbols    guifg=#56B6C2
+hi javascriptPropertyName guifg=#98C379
+hi javascriptTemplateSB   guifg=#BE5046
+hi javascriptVariable     guifg=#C678DD
 
 " JSON
-hi jsonCommentError      guibg=NONE guifg=#ABB2BF       gui=NONE
-hi jsonKeyword           guibg=NONE guifg=#E06C75         gui=NONE
-hi jsonBoolean           guibg=NONE guifg=#D19A66 gui=NONE
-hi jsonNumber            guibg=NONE guifg=#D19A66 gui=NONE
-hi jsonQuote             guibg=NONE guifg=#ABB2BF       gui=NONE
-hi jsonMissingCommaError guibg=NONE guifg=#E06C75         gui=reverse
-hi jsonNoQuotesError     guibg=NONE guifg=#E06C75         gui=reverse
-hi jsonNumError          guibg=NONE guifg=#E06C75         gui=reverse
-hi jsonString            guibg=NONE guifg=#98C379       gui=NONE
-hi jsonStringSQError     guibg=NONE guifg=#E06C75         gui=reverse
-hi jsonSemicolonError    guibg=NONE guifg=#E06C75         gui=reverse
+hi jsonCommentError      guifg=#ABB2BF
+hi jsonKeyword           guifg=#E06C75
+hi jsonBoolean           guifg=#D19A66
+hi jsonNumber            guifg=#D19A66
+hi jsonQuote             guifg=#ABB2BF
+hi jsonMissingCommaError guifg=#E06C75 gui=reverse
+hi jsonNoQuotesError     guifg=#E06C75 gui=reverse
+hi jsonNumError          guifg=#E06C75 gui=reverse
+hi jsonString            guifg=#98C379
+hi jsonStringSQError     guifg=#E06C75 gui=reverse
+hi jsonSemicolonError    guifg=#E06C75 gui=reverse
 
 " LESS
-hi lessVariable      guibg=NONE guifg=#C678DD      gui=NONE
-hi lessAmpersandChar guibg=NONE guifg=#ABB2BF       gui=NONE
-hi lessClass         guibg=NONE guifg=#D19A66 gui=NONE
+hi lessVariable      guifg=#C678DD
+hi lessAmpersandChar guifg=#ABB2BF
+hi lessClass         guifg=#D19A66
 
 " Markdown (keep consistent with HTML, above)
-hi markdownBlockquote        guibg=NONE guifg=#5C6370 gui=NONE
-hi markdownBold              guibg=NONE guifg=#D19A66  gui=bold
-hi markdownCode              guibg=NONE guifg=#98C379        gui=NONE
-hi markdownCodeBlock         guibg=NONE guifg=#98C379        gui=NONE
-hi markdownCodeDelimiter     guibg=NONE guifg=#98C379        gui=NONE
-hi markdownH1                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownH2                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownH3                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownH4                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownH5                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownH6                guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownHeadingDelimiter  guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownHeadingRule       guibg=NONE guifg=#5C6370 gui=NONE
-hi markdownId                guibg=NONE guifg=#C678DD       gui=NONE
-hi markdownIdDeclaration     guibg=NONE guifg=#61AFEF         gui=NONE
-hi markdownIdDelimiter       guibg=NONE guifg=#C678DD       gui=NONE
-hi markdownItalic            guibg=NONE guifg=#C678DD       gui=italic
-hi markdownLinkDelimiter     guibg=NONE guifg=#C678DD       gui=NONE
-hi markdownLinkText          guibg=NONE guifg=#61AFEF         gui=NONE
-hi markdownListMarker        guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownOrderedListMarker guibg=NONE guifg=#E06C75          gui=NONE
-hi markdownRule              guibg=NONE guifg=#5C6370 gui=NONE
-hi markdownUrl               guibg=NONE guifg=#56B6C2         gui=underline
+hi markdownBlockquote        guifg=#5C6370
+hi markdownBold              guifg=#D19A66 gui=bold
+hi markdownCode              guifg=#98C379
+hi markdownCodeBlock         guifg=#98C379
+hi markdownCodeDelimiter     guifg=#98C379
+hi markdownH1                guifg=#E06C75
+hi markdownH2                guifg=#E06C75
+hi markdownH3                guifg=#E06C75
+hi markdownH4                guifg=#E06C75
+hi markdownH5                guifg=#E06C75
+hi markdownH6                guifg=#E06C75
+hi markdownHeadingDelimiter  guifg=#E06C75
+hi markdownHeadingRule       guifg=#5C6370
+hi markdownId                guifg=#C678DD
+hi markdownIdDeclaration     guifg=#61AFEF
+hi markdownIdDelimiter       guifg=#C678DD
+hi markdownItalic            guifg=#C678DD gui=italic
+hi markdownLinkDelimiter     guifg=#C678DD
+hi markdownLinkText          guifg=#61AFEF
+hi markdownListMarker        guifg=#E06C75
+hi markdownOrderedListMarker guifg=#E06C75
+hi markdownRule              guifg=#5C6370
+hi markdownUrl               guifg=#56B6C2 gui=underline
 
 " Perl
-hi perlFiledescRead      guibg=NONE guifg=#98C379        gui=NONE
-hi perlFunction          guibg=NONE guifg=#C678DD       gui=NONE
-hi perlMatchStartEnd     guibg=NONE guifg=#61AFEF         gui=NONE
-hi perlMethod            guibg=NONE guifg=#C678DD       gui=NONE
-hi perlPOD               guibg=NONE guifg=#5C6370 gui=NONE
-hi perlSharpBang         guibg=NONE guifg=#5C6370 gui=NONE
-hi perlSpecialString     guibg=NONE guifg=#D19A66  gui=NONE
-hi perlStatementFiledesc guibg=NONE guifg=#E06C75          gui=NONE
-hi perlStatementFlow     guibg=NONE guifg=#E06C75          gui=NONE
-hi perlStatementInclude  guibg=NONE guifg=#C678DD       gui=NONE
-hi perlStatementScalar   guibg=NONE guifg=#C678DD       gui=NONE
-hi perlStatementStorage  guibg=NONE guifg=#C678DD       gui=NONE
-hi perlSubName           guibg=NONE guifg=#E5C07B       gui=NONE
-hi perlVarPlain          guibg=NONE guifg=#61AFEF         gui=NONE
+hi perlFiledescRead      guifg=#98C379
+hi perlFunction          guifg=#C678DD
+hi perlMatchStartEnd     guifg=#61AFEF
+hi perlMethod            guifg=#C678DD
+hi perlPOD               guifg=#5C6370
+hi perlSharpBang         guifg=#5C6370
+hi perlSpecialString     guifg=#D19A66
+hi perlStatementFiledesc guifg=#E06C75
+hi perlStatementFlow     guifg=#E06C75
+hi perlStatementInclude  guifg=#C678DD
+hi perlStatementScalar   guifg=#C678DD
+hi perlStatementStorage  guifg=#C678DD
+hi perlSubName           guifg=#E5C07B
+hi perlVarPlain          guifg=#61AFEF
 
 " PHP
-hi phpVarSelector    guibg=NONE guifg=#E06C75         gui=NONE
-hi phpOperator       guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpParent         guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpMemberSelector guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpType           guibg=NONE guifg=#C678DD      gui=NONE
-hi phpKeyword        guibg=NONE guifg=#C678DD      gui=NONE
-hi phpClass          guibg=NONE guifg=#E5C07B      gui=NONE
-hi phpUseClass       guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpUseAlias       guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpInclude        guibg=NONE guifg=#C678DD      gui=NONE
-hi phpClassExtends   guibg=NONE guifg=#98C379       gui=NONE
-hi phpDocTags        guibg=NONE guifg=#ABB2BF       gui=NONE
-hi phpFunction       guibg=NONE guifg=#61AFEF        gui=NONE
-hi phpFunctions      guibg=NONE guifg=#56B6C2        gui=NONE
-hi phpMethodsVar     guibg=NONE guifg=#D19A66 gui=NONE
-hi phpMagicConstants guibg=NONE guifg=#D19A66 gui=NONE
-hi phpSuperglobals   guibg=NONE guifg=#E06C75         gui=NONE
-hi phpConstants      guibg=NONE guifg=#D19A66 gui=NONE
+hi phpVarSelector    guifg=#E06C75
+hi phpOperator       guifg=#ABB2BF
+hi phpParent         guifg=#ABB2BF
+hi phpMemberSelector guifg=#ABB2BF
+hi phpType           guifg=#C678DD
+hi phpKeyword        guifg=#C678DD
+hi phpClass          guifg=#E5C07B
+hi phpUseClass       guifg=#ABB2BF
+hi phpUseAlias       guifg=#ABB2BF
+hi phpInclude        guifg=#C678DD
+hi phpClassExtends   guifg=#98C379
+hi phpDocTags        guifg=#ABB2BF
+hi phpFunction       guifg=#61AFEF
+hi phpFunctions      guifg=#56B6C2
+hi phpMethodsVar     guifg=#D19A66
+hi phpMagicConstants guifg=#D19A66
+hi phpSuperglobals   guifg=#E06C75
+hi phpConstants      guifg=#D19A66
 
 " Ruby
-hi rubyBlockParameter            guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyBlockParameterList        guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyClass                     guibg=NONE guifg=#C678DD gui=NONE
-hi rubyConstant                  guibg=NONE guifg=#E5C07B gui=NONE
-hi rubyControl                   guibg=NONE guifg=#C678DD gui=NONE
-hi rubyEscape                    guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyFunction                  guibg=NONE guifg=#61AFEF   gui=NONE
-hi rubyGlobalVariable            guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyInclude                   guibg=NONE guifg=#61AFEF   gui=NONE
-hi rubyIncluderubyGlobalVariable guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyInstanceVariable          guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyInterpolation             guibg=NONE guifg=#56B6C2   gui=NONE
-hi rubyInterpolationDelimiter    guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyInterpolationDelimiter    guibg=NONE guifg=#E06C75    gui=NONE
-hi rubyRegexp                    guibg=NONE guifg=#56B6C2   gui=NONE
-hi rubyRegexpDelimiter           guibg=NONE guifg=#56B6C2   gui=NONE
-hi rubyStringDelimiter           guibg=NONE guifg=#98C379  gui=NONE
-hi rubySymbol                    guibg=NONE guifg=#56B6C2   gui=NONE
+hi rubyBlockParameter            guifg=#E06C75
+hi rubyBlockParameterList        guifg=#E06C75
+hi rubyClass                     guifg=#C678DD
+hi rubyConstant                  guifg=#E5C07B
+hi rubyControl                   guifg=#C678DD
+hi rubyEscape                    guifg=#E06C75
+hi rubyFunction                  guifg=#61AFEF
+hi rubyGlobalVariable            guifg=#E06C75
+hi rubyInclude                   guifg=#61AFEF
+hi rubyIncluderubyGlobalVariable guifg=#E06C75
+hi rubyInstanceVariable          guifg=#E06C75
+hi rubyInterpolation             guifg=#56B6C2
+hi rubyInterpolationDelimiter    guifg=#E06C75
+hi rubyInterpolationDelimiter    guifg=#E06C75
+hi rubyRegexp                    guifg=#56B6C2
+hi rubyRegexpDelimiter           guifg=#56B6C2
+hi rubyStringDelimiter           guifg=#98C379
+hi rubySymbol                    guifg=#56B6C2
 
 " Sass
 " http//github.com/tpope/vim-haml
-hi sassAmpersand      guibg=NONE guifg=#E06C75         gui=NONE
-hi sassClass          guibg=NONE guifg=#D19A66 gui=NONE
-hi sassControl        guibg=NONE guifg=#C678DD      gui=NONE
-hi sassExtend         guibg=NONE guifg=#C678DD      gui=NONE
-hi sassFor            guibg=NONE guifg=#ABB2BF       gui=NONE
-hi sassFunction       guibg=NONE guifg=#56B6C2        gui=NONE
-hi sassId             guibg=NONE guifg=#61AFEF        gui=NONE
-hi sassInclude        guibg=NONE guifg=#C678DD      gui=NONE
-hi sassMedia          guibg=NONE guifg=#C678DD      gui=NONE
-hi sassMediaOperators guibg=NONE guifg=#ABB2BF       gui=NONE
-hi sassMixin          guibg=NONE guifg=#C678DD      gui=NONE
-hi sassMixinName      guibg=NONE guifg=#61AFEF        gui=NONE
-hi sassMixing         guibg=NONE guifg=#C678DD      gui=NONE
-hi sassVariable       guibg=NONE guifg=#C678DD      gui=NONE
+hi sassAmpersand      guifg=#E06C75
+hi sassClass          guifg=#D19A66
+hi sassControl        guifg=#C678DD
+hi sassExtend         guifg=#C678DD
+hi sassFor            guifg=#ABB2BF
+hi sassFunction       guifg=#56B6C2
+hi sassId             guifg=#61AFEF
+hi sassInclude        guifg=#C678DD
+hi sassMedia          guifg=#C678DD
+hi sassMediaOperators guifg=#ABB2BF
+hi sassMixin          guifg=#C678DD
+hi sassMixinName      guifg=#61AFEF
+hi sassMixing         guifg=#C678DD
+hi sassVariable       guifg=#C678DD
 " http//github.com/cakebaker/scss-syntax.vim
-hi scssExtend       guibg=NONE guifg=#C678DD      gui=NONE
-hi scssImport       guibg=NONE guifg=#C678DD      gui=NONE
-hi scssInclude      guibg=NONE guifg=#C678DD      gui=NONE
-hi scssMixin        guibg=NONE guifg=#C678DD      gui=NONE
-hi scssSelectorName guibg=NONE guifg=#D19A66 gui=NONE
-hi scssVariable     guibg=NONE guifg=#C678DD      gui=NONE
+hi scssExtend       guifg=#C678DD
+hi scssImport       guifg=#C678DD
+hi scssInclude      guifg=#C678DD
+hi scssMixin        guifg=#C678DD
+hi scssSelectorName guifg=#D19A66
+hi scssVariable     guifg=#C678DD
 
 " TeX
-hi texStatement    guibg=NONE guifg=#C678DD      gui=NONE
-hi texSubscripts   guibg=NONE guifg=#D19A66 gui=NONE
-hi texSuperscripts guibg=NONE guifg=#D19A66 gui=NONE
-hi texTodo         guibg=NONE guifg=#BE5046    gui=NONE
-hi texBeginEnd     guibg=NONE guifg=#C678DD      gui=NONE
-hi texBeginEndName guibg=NONE guifg=#61AFEF        gui=NONE
-hi texMathMatcher  guibg=NONE guifg=#61AFEF        gui=NONE
-hi texMathDelim    guibg=NONE guifg=#61AFEF        gui=NONE
-hi texDelimiter    guibg=NONE guifg=#D19A66 gui=NONE
-hi texSpecialChar  guibg=NONE guifg=#D19A66 gui=NONE
-hi texCite         guibg=NONE guifg=#61AFEF        gui=NONE
-hi texRefZone      guibg=NONE guifg=#61AFEF        gui=NONE
+hi texStatement    guifg=#C678DD
+hi texSubscripts   guifg=#D19A66
+hi texSuperscripts guifg=#D19A66
+hi texTodo         guifg=#BE5046
+hi texBeginEnd     guifg=#C678DD
+hi texBeginEndName guifg=#61AFEF
+hi texMathMatcher  guifg=#61AFEF
+hi texMathDelim    guifg=#61AFEF
+hi texDelimiter    guifg=#D19A66
+hi texSpecialChar  guifg=#D19A66
+hi texCite         guifg=#61AFEF
+hi texRefZone      guifg=#61AFEF
 
 " TypeScript
-hi typescriptReserved  guibg=NONE guifg=#C678DD gui=NONE
-hi typescriptEndColons guibg=NONE guifg=#ABB2BF  gui=NONE
-hi typescriptBraces    guibg=NONE guifg=#ABB2BF  gui=NONE
+hi typescriptReserved  guifg=#C678DD
+hi typescriptEndColons guifg=#ABB2BF
+hi typescriptBraces    guifg=#ABB2BF
 
 " XML
-hi xmlAttrib  guibg=NONE guifg=#D19A66 gui=NONE
-hi xmlEndTag  guibg=NONE guifg=#E06C75         gui=NONE
-hi xmlTag     guibg=NONE guifg=#E06C75         gui=NONE
-hi xmlTagName guibg=NONE guifg=#E06C75         gui=NONE
+hi xmlAttrib  guifg=#D19A66
+hi xmlEndTag  guifg=#E06C75
+hi xmlTag     guifg=#E06C75
+hi xmlTagName guifg=#E06C75
 
 " plasticboy/vim-markdown (keep consistent with Markdown, above)
-hi mkdDelimiter guibg=NONE guifg=#C678DD gui=NONE
-hi mkdHeading   guibg=NONE guifg=#E06C75    gui=NONE
-hi mkdLink      guibg=NONE guifg=#61AFEF   gui=NONE
-hi mkdURL       guibg=NONE guifg=#56B6C2   gui=underline
+hi mkdDelimiter guifg=#C678DD
+hi mkdHeading   guifg=#E06C75
+hi mkdLink      guifg=#61AFEF
+hi mkdURL       guifg=#56B6C2 gui=underline
 
 " tpope/vim-fugitive
-hi diffAdded   guibg=NONE guifg=#98C379 gui=NONE
-hi diffRemoved guibg=NONE guifg=#E06C75   gui=NONE
+hi diffAdded   guifg=#98C379
+hi diffRemoved guifg=#E06C75
+hi diffChanged guifg=#E5C07B
 
 " lewis6991/gitsigns.nvim
-hi GitSignsAdd    guibg=NONE guifg=#98C379  gui=NONE
-hi GitSignsChange guibg=NONE guifg=#E5C07B gui=NONE
-hi GitSignsDelete guibg=NONE guifg=#E06C75    gui=NONE
+hi GitSignsAdd    guifg=#98C379
+hi GitSignsChange guifg=#E5C07B
+hi GitSignsDelete guifg=#E06C75
 hi GitSignsCurrentLineBlame guifg=#5C6370
 
 " Git Highlighting
-hi gitcommitComment       guibg=NONE guifg=#5C6370 gui=NONE
-hi gitcommitUnmerged      guibg=NONE guifg=#98C379        gui=NONE
-hi gitcommitOnBranch      guibg=NONE guifg=NONE            gui=NONE
-hi gitcommitBranch        guibg=NONE guifg=#C678DD       gui=NONE
-hi gitcommitDiscardedType guibg=NONE guifg=#E06C75          gui=NONE
-hi gitcommitSelectedType  guibg=NONE guifg=#98C379        gui=NONE
-hi gitcommitHeader        guibg=NONE guifg=NONE            gui=NONE
-hi gitcommitUntrackedFile guibg=NONE guifg=#56B6C2         gui=NONE
-hi gitcommitDiscardedFile guibg=NONE guifg=#E06C75          gui=NONE
-hi gitcommitSelectedFile  guibg=NONE guifg=#98C379        gui=NONE
-hi gitcommitUnmergedFile  guibg=NONE guifg=#E5C07B       gui=NONE
-hi gitcommitFile          guibg=NONE guifg=NONE            gui=NONE
-hi gitcommitSummary       guibg=NONE guifg=#ABB2BF        gui=NONE
-hi gitcommitOverflow      guibg=NONE guifg=#E06C75          gui=NONE
+hi gitcommitComment       guifg=#5C6370
+hi gitcommitUnmerged      guifg=#98C379
+hi gitcommitOnBranch      guifg=NONE
+hi gitcommitBranch        guifg=#C678DD
+hi gitcommitDiscardedType guifg=#E06C75
+hi gitcommitSelectedType  guifg=#98C379
+hi gitcommitHeader        guifg=NONE
+hi gitcommitUntrackedFile guifg=#56B6C2
+hi gitcommitDiscardedFile guifg=#E06C75
+hi gitcommitSelectedFile  guifg=#98C379
+hi gitcommitUnmergedFile  guifg=#E5C07B
+hi gitcommitFile          guifg=NONE
+hi gitcommitSummary       guifg=#ABB2BF
+hi gitcommitOverflow      guifg=#E06C75
 hi link gitcommitNoBranch       gitcommitBranch
 hi link gitcommitUntracked      gitcommitComment
 hi link gitcommitDiscarded      gitcommitComment
@@ -467,8 +462,13 @@ hi link gitcommitDiscardedArrow gitcommitDiscardedFile
 hi link gitcommitSelectedArrow  gitcommitSelectedFile
 hi link gitcommitUnmergedArrow  gitcommitUnmergedFile
 
+hi link DiffviewNormal Dim
+hi DiffviewFilePanelTitle    guifg=#61AFEF
+hi DiffviewFilePanelFileName guifg=#ABB2BF
+hi DiffviewNonText           guifg=#5C6370
+
 " Neovim terminal colors
-let g:terminal_color_0  = '#282C34'
+let g:terminal_color_0  = '#3E4452'
 let g:terminal_color_1  = '#E06C75'
 let g:terminal_color_2  = '#98C379'
 let g:terminal_color_3  = '#E5C07B'
@@ -484,8 +484,8 @@ let g:terminal_color_12 = '#61AFEF'
 let g:terminal_color_13 = '#C678DD'
 let g:terminal_color_14 = '#56B6C2'
 let g:terminal_color_15 = '#5C6370'
-let g:terminal_color_background = g:terminal_color_0
-let g:terminal_color_foreground = g:terminal_color_7
+let g:terminal_color_background = '#282C34'
+let g:terminal_color_foreground = '#ABB2BF'
 
 if exists('g:enable_lua_theme')
   set background=dark

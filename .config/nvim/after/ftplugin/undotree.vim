@@ -1,0 +1,1 @@
+setl winhighlight=Normal:Dim

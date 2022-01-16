@@ -1,17 +1,16 @@
 local api = vim.api
 local fn = vim.fn
-local hl = require('m.ui.palette').hl
+local H = require('m.ui.palette').hl
+local bl = require('m.ui.buf')
 
 local M = {}
 
---- redraw flag
-local redraw = false
---- reload buffers flag
-local bufs_reload = true
---- update buffer properties flag
-local bufs_update = true
---- buffer list
-local buflist = {}
+--- pending redraw flag
+local pending_redraw = false
+--- pending buffer reload flag
+local pending_reload = true
+--- pending buffer properties update flag
+local pending_update = true
 
 local function make_lookup(t)
   for k, v in ipairs(t) do
@@ -22,14 +21,15 @@ local function make_lookup(t)
 end
 
 local UPDATE_EVENTS = {
-  'BufEnter', 'BufAdd', 'BufLeave', 'BufDelete', 'BufModifiedSet',
-  'TabNew', 'TabEnter', 'TabClosed', 'FileType', 'VimResized',
+  'BufEnter', 'BufAdd', 'BufLeave', 'BufDelete',
+  'BufModifiedSet', 'BufFilePost', 'TabNew',
+  'TabEnter', 'TabClosed', 'FileType', 'VimResized',
 }
 local UPDATE_OPTIONS = {
   'buflisted', 'readonly', 'modifiable', 'buftype', 'showtabline',
 }
 local BUF_RELOAD_EVENTS = make_lookup {
-  'BufAdd', 'BufDelete',
+  'BufAdd', 'BufDelete', 'BufFilePost',
 }
 local BUF_UPDATE_EVENTS = make_lookup {
   'BufEnter', 'BufLeave', 'BufModifiedSet', 'TabEnter', 'FileType',
@@ -38,75 +38,9 @@ local BUF_UPDATE_OPTIONS = make_lookup {
   'readonly', 'modifiable', 'buftype',
 }
 
-local NO_BUFS = hl('EL')..' no buffers'..hl('BG')..'▕'
+local NO_BUFS = H'EL'..' no buffers'..H'BG'..'▕'
+local NO_BUFS_LEN = 12
 local NO_NAME = '[No Name]'
-local SHORTEN = true
-
---- Update smart paths
-local function update_paths(bufs)
-  -- thanks to mengelbrecht/lightline-bufferline for the algorithm
-  local bs = {}
-  local count_per_tail = {}
-
-  for _, buf in ipairs(bufs) do
-    local b = { buf = buf }
-    local name
-    if SHORTEN then
-      name = fn.pathshorten(buf.path)
-    else
-      name = buf.path
-    end
-
-    if name and name ~= '' then
-      b.path = fn.fnamemodify(name, ':p:~:.')
-      local sep = fn.strridx(b.path, '/')
-      if sep ~= -1 and b.path:sub(sep + 1) == '/' then
-        sep = fn.strridx(b.path, '/', sep - 1)
-      end
-      b.sep = sep
-      b.label = b.path:sub(sep + 2)
-      count_per_tail[b.label] = (count_per_tail[b.label] or 0) + 1
-    else
-      b.path = name
-      b.label = name
-    end
-
-    table.insert(bs, b)
-  end
-
-  while true do
-    local n = 0
-    for k, v in pairs(count_per_tail) do
-      if v > 1 then
-        n = n + 1
-      else
-        count_per_tail[k] = nil
-      end
-    end
-    if n == 0 then
-      break
-    end
-
-    local ambiguous = count_per_tail
-    count_per_tail = {}
-    for _, b in ipairs(bs) do
-      if #b.path > 0 then
-        if b.sep > -1 and ambiguous[b.label] then
-          b.sep = fn.strridx(b.path, '/', b.sep - 1)
-          b.label = b.path:sub(b.sep + 2)
-        end
-        count_per_tail[b.label] = (count_per_tail[b.label] or 0) + 1
-      end
-    end
-  end
-
-  for _, v in ipairs(bs) do
-    local buf = v.buf
-    v.buf = nil
-    buf.name = v.label
-  end
-  return bufs
-end
 
 local function render_buf(buf)
   local name = buf.name
@@ -115,15 +49,9 @@ local function render_buf(buf)
     name = NO_NAME
   end
 
-  -- changed and readonly indicators
+  -- changed indicator
   if buf.changed then
-    if buf.readonly then
-      name = name..' +-'
-    else
-      name = name..' +'
-    end
-  elseif buf.readonly then
-    name = name..' -'
+    name = name..' +'
   end
 
   local len = #name + 2
@@ -132,9 +60,9 @@ local function render_buf(buf)
 
   -- highlighting
   if buf.current then
-    name = hl('A')..' '..name..hl('AS')..'▕'
+    name = H'A'..' '..name..H'AS'..'▕'
   else
-    name = hl('B')..' '..name..hl('BS')..'▕'
+    name = H'B'..' '..name..H'BS'..'▕'
   end
 
   -- clickable
@@ -143,84 +71,37 @@ local function render_buf(buf)
   return name, len
 end
 
---- Update all buffers
-local function reload_bufs()
-  bufs_reload = false
-  bufs_update = false
-
-  local opt = api.nvim_buf_get_option
-  local curbuf = api.nvim_get_current_buf()
-  local bufinfo = fn.getbufinfo({ buflisted = 1 })
-
-  for i, info in ipairs(bufinfo) do
-    local bufnr = info.bufnr
-    local buftype = opt(bufnr, 'buftype')
-
-    local buf = {
-      bufnr = bufnr,
-      path = info.name,
-
-      current = bufnr == curbuf,
-      changed = info.changed == 1,
-      buftype = buftype,
-      readonly =
-        (opt(bufnr, 'readonly') or not opt(bufnr, 'modifiable'))
-        and opt(bufnr, 'filetype') ~= 'help',
-    }
-
-    bufinfo[i] = buf
+local function process()
+  if pending_reload then
+    pending_reload = false
+    pending_update = false
+    bl.reload()
+    return true
+  elseif pending_update then
+    pending_update = false
+    bl.update()
+    return true
   end
-
-  -- shorten paths
-  buflist = update_paths(bufinfo)
-
-  -- render individual buffers
-  for _, buf in ipairs(buflist) do
-    local str, slen = render_buf(buf)
-    buf.display = str
-    buf.displaylen = slen
-  end
+  return false
 end
 
---- Update buffer properties
-local function update_bufs()
-  bufs_update = false
-
-  local opt = api.nvim_buf_get_option
-  local curbuf = api.nvim_get_current_buf()
-
-  for _, buf in ipairs(buflist) do
-    local bufnr = buf.bufnr
-    buf.current = bufnr == curbuf
-    buf.changed = opt(bufnr, 'modified')
-    buf.buftype = opt(bufnr, 'buftype')
-    buf.readonly =
-      (opt(bufnr, 'readonly') or not opt(bufnr, 'modifiable'))
-      and opt(bufnr, 'filetype') ~= 'help'
-
-    local str, slen = render_buf(buf)
-    buf.display = str
-    buf.displaylen = slen
-  end
-end
-
---- Render the buffer section
+--- Render buffer section
 local function render_bufs(width)
-  if bufs_reload then
-    reload_bufs()
-  elseif bufs_update then
-    update_bufs()
+  if process() then
+    for _, buf in ipairs(bl.buflist) do
+      buf.display, buf.displaylen = render_buf(buf)
+    end
   end
 
-  if #buflist == 0 then
-    return NO_BUFS, 12
+  if #bl.buflist == 0 then
+    return NO_BUFS, NO_BUFS_LEN
   end
 
   local strs = {}
   local len = 0
   local curidx = nil
 
-  for i, buf in ipairs(buflist) do
+  for i, buf in ipairs(bl.buflist) do
     len = len + buf.displaylen
     table.insert(strs, { buf.display, buf.displaylen })
     if buf.current then
@@ -277,59 +158,78 @@ local function render_bufs(width)
     strs[k] = v[1]
   end
   local s = table.concat(strs)
-  if trimbeg then s = hl('EL')..'<'..s end
-  if trimend then s = s..hl('EL')..'>' end
+  if trimbeg then s = H'EL' .. '<' .. s end
+  if trimend then s = s .. H'EL' .. '>' end
   return s, len
 end
 
---- Render the tab section
+--- Render tab section
 local function render_tabs()
-  local max = fn.tabpagenr('$')
-  if max == 1 then return end
-  return ' '..fn.tabpagenr()..'/'..max..' '
+  local last = fn.tabpagenr('$')
+  if last > 1 then
+    return ' '..fn.tabpagenr()..'/'..last..' '
+  end
 end
 
---- Render bufferline
-function M.render()
-  local width = vim.o.columns
-  local tab = render_tabs() or ''
-  local tlen = #tab
-  local buf, blen = render_bufs(width - tlen)
-  local str = (buf or '')..hl('BG')..string.rep('▁', width - blen - tlen)..hl('B')..tab
-  vim.g.bufferline = str
+--- Redraw bufferline
+function M.redraw()
+  pending_redraw = false
+  local width = api.nvim_get_option('columns')
+
+  local tab = render_tabs()
+  if tab then
+    width = width - #tab
+    tab = H'B'..tab
+  end
+
+  local bufs, len = render_bufs(width)
+  width = width - len
+
+  local spacer
+  if width > 0 then
+    spacer = H'BG'..string.rep('▁', width)
+  end
+
+  api.nvim_set_var('bufferline', (bufs or '')..(spacer or '')..(tab or ''))
   vim.cmd('redrawtabline')
 end
 
-local function _update()
-  if redraw then
-    redraw = false
-    M.render()
-  end
-end
-
 --- Update bufferline
+--- reload buffers if ev is true
 function M.update(ev, opt)
-  if vim.o.showtabline == 0 then
+  local show = api.nvim_get_option('showtabline')
+  if show == 0 or (show == 1 and fn.tabpagenr('$') < 2) then
     return
   end
 
-  if ev == nil and opt == nil then
-    bufs_reload = true
-  elseif BUF_RELOAD_EVENTS[ev] or opt == 'buflisted' then
-    bufs_reload = true
-  elseif BUF_UPDATE_EVENTS[ev] or BUF_UPDATE_OPTIONS[opt] then
-    bufs_update = true
+  if ev then
+    if ev == true or BUF_RELOAD_EVENTS[ev] or opt == 'buflisted' then
+      pending_reload = true
+    elseif BUF_UPDATE_EVENTS[ev] or BUF_UPDATE_OPTIONS[opt] then
+      pending_update = true
+    end
   end
 
-  if not redraw then
-    redraw = true
-    vim.schedule(_update)
+  pending_redraw = true
+  -- if not pending_redraw then
+  --   pending_redraw = true
+  --   vim.schedule(M.redraw)
+  -- end
+end
+
+local function on_start()
+  if pending_redraw then
+    pending_redraw = true
+    M.redraw()
   end
 end
 
 function M.setup()
-  _G.m = _G.m or {}
+  if not _G.m then _G.m = {} end
   _G.m.bufferline = M
+
+  local ns = api.nvim_create_namespace('bufferline')
+  api.nvim_set_decoration_provider(ns, { on_start = on_start })
 
   vim.cmd([[
     function! BufferlineGoto(minwid, clicks, btn, modifiers)
@@ -351,9 +251,9 @@ function M.setup()
     augroup end
   ]], table.concat(lines, '\n')))
 
-  vim.g.bufferline = ''
-  vim.o.tabline = [[%{%g:bufferline%}]]
-  vim.o.showtabline = 2
+  api.nvim_set_var('bufferline', '')
+  api.nvim_set_option('tabline', [[%{%g:bufferline%}]])
+  api.nvim_set_option('showtabline', 2)
 end
 
 return M

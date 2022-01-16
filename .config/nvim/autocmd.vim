@@ -9,8 +9,11 @@ augroup VimrcAutocmd
     \ endif
 
 " Gutter and cursor line ---------------------------------------------------------------
-  au WinEnter,BufWinEnter * if &bt !=# 'terminal' | setl   cursorline | endif
-  au WinLeave             * if &bt !=# 'terminal' | setl nocursorline | endif
+  func! s:cursorline()
+    return &bt !=# 'terminal' && !get(w:, 'diffview', v:false)
+  endfunc
+  au WinEnter,BufWinEnter * if s:cursorline() | setl   cursorline | endif
+  au WinLeave             * if s:cursorline() | setl nocursorline | endif
   au TermOpen * setl nonumber norelativenumber nocursorline signcolumn=auto
   au CmdwinEnter * setl nonumber norelativenumber
 

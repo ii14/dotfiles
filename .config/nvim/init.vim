@@ -84,7 +84,6 @@ let g:bookmarks = [
     if !exists('g:disable_lsp')
       Plug 'neovim/nvim-lspconfig'
       Plug 'ii14/lsp-command'
-      Plug 'nvim-lua/plenary.nvim'
       Plug 'jose-elias-alvarez/null-ls.nvim'
       Plug 'folke/trouble.nvim'
     endif
@@ -92,14 +91,19 @@ let g:bookmarks = [
     " Plug 'tamago324/compe-necosyntax'
     " Plug 'Shougo/neco-syntax'
     Plug 'L3MON4D3/LuaSnip'
+    Plug 'nvim-lua/plenary.nvim'
 
   " Development --------------------------------------------------------------------------
     Plug 'tpope/vim-fugitive'
     Plug 'rbong/vim-flog'
+    Plug 'sindrets/diffview.nvim'
     Plug 'lewis6991/gitsigns.nvim'
     Plug 'tpope/vim-dispatch'
     Plug 'ii14/exrc.vim'
     Plug 'ii14/pro.vim'
+    if !exists('$NONREPL')
+      Plug 'ii14/nrepl.nvim'
+    endif
 
   " Syntax -------------------------------------------------------------------------------
     Plug 'sheerun/vim-polyglot'
@@ -122,11 +126,7 @@ let g:bookmarks = [
   call m#check_missing_plugs()
 
 " PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
-  if !exists('$VIMNOLUACACHE')
-    lua pcall(require, 'impatient')
-  endif
-  lua require 'm.setup'
-
+  source $VIMCONFIG/setup.lua
   if !exists('g:enable_lua_theme')
     source $VIMCONFIG/theme.vim
   endif
@@ -155,7 +155,7 @@ let g:bookmarks = [
 
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
-    let g:indent_blankline_filetype_exclude = ['man', 'fern', 'floggraph', 'fugitive', 'gitcommit']
+    let g:indent_blankline_filetype_exclude = ['', 'man', 'fern', 'floggraph', 'fugitive', 'gitcommit']
     " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
@@ -175,6 +175,7 @@ let g:bookmarks = [
     let g:undotree_DiffAutoOpen = 0
     let g:undotree_WindowLayout = 2
     let g:undotree_HelpLine = 0
+    let g:undotree_ShortIndicators = 1
 
   " vimwiki ------------------------------------------------------------------------------
     let g:vimwiki_key_mappings = {'global': 0}

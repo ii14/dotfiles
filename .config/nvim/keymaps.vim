@@ -63,8 +63,16 @@ nno <C-W><C-T> <cmd>tab split<CR>
 nmap <leader>w <C-W>
 
 " BUFFERS --------------------------------------------------------------------------------
-nno <silent> <C-N> :bn<CR>
-nno <silent> <C-P> :bp<CR>
+if !exists('g:enable_lua_theme')
+  nno <silent> <C-N> :bn<CR>
+  nno <silent> <C-P> :bp<CR>
+else
+  nno <silent> <C-N>      :lua require('m.ui.buf').next()<CR>
+  nno <silent> <C-P>      :lua require('m.ui.buf').prev()<CR>
+  nno <silent> <C-G><C-N> :lua require('m.ui.buf').move_right()<CR>
+  nno <silent> <C-G><C-P> :lua require('m.ui.buf').move_left()<CR>
+  nno <silent> <C-G><C-G> <C-G>
+endif
 nno <silent> <C-B> :Buffers<CR>
 nno <silent> <leader><leader> :Buffers<CR>
 
@@ -157,7 +165,8 @@ nno <leader>gs :Git<CR>
 nno <leader>gl :Flog<CR>
 nno <leader>gb :Git blame<CR>
 nno <leader>ga :Gwrite<CR>
-nno <leader>gd :Gvdiffsplit!<CR>
+nno <leader>gd :DiffviewOpen<CR>
+nno <leader>gh :DiffviewFileHistory<CR>
 nno <leader>g2 :diffget //2<CR>
 nno <leader>g3 :diffget //3<CR>
 
@@ -191,8 +200,8 @@ nno <leader>de :Eval<CR>
 
 " INSERT ---------------------------------------------------------------------------------
 " Emacs
-ino <C-A> <Home>
-ino <C-E> <End>
+ino <C-A> <C-O>^
+" ino <C-E> <End>
 ino <C-F> <cmd>call m#bf#iforward()<CR>
 ino <C-B> <cmd>call m#bf#ibackward()<CR>
 " Insert stuff
@@ -211,7 +220,7 @@ function! s:i_cr() abort
 endfunction
 ino <expr> <C-Y>      compe#confirm('<C-Y>')
 " ino <expr> <C-E>      compe#close('<End>')
-ino <expr> <C-E>      <SID>i_ctrl_e()
+ino <silent><expr> <C-E>      <SID>i_ctrl_e()
 function! s:i_ctrl_e() abort
   if mode()[0] ==# 'i' && pumvisible()
     if complete_info(['selected']).selected != -1

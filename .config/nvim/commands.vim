@@ -12,8 +12,10 @@ call m#cabbrev('bw', 'Bw')
 " Use fzf for help and buffers -----------------------------------------------------------
 command! -nargs=? -complete=help H
   \ if <q-args> ==# '' | Helptags | else | h <args> | endif
-command! -nargs=? -bang -complete=buffer B
-  \ if <q-args> ==# '' | Buffers | else | b<bang> <args> | endif
+command! -count=0 -nargs=? -bang -complete=buffer B
+  \ if <q-args> ==# '' && <count> == 0 | Buffers |
+  \ elseif <count> | <count>b<bang> |
+  \ else | b<bang> <args> | endif
 call m#cabbrev('h', 'H')
 call m#cabbrev('b', 'B')
 

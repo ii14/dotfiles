@@ -55,6 +55,7 @@ local options = {
   {'W', 'wrapscan',   [[set wrapscan! | set wrapscan?]]},
   {'s', 'ignorecase', [[set ignorecase! | set ignorecase?]]},
   {'l', 'list',       [[set list! | set list?]]},
+  {'f', 'foldenable', [[set foldenable! | set foldenable?]]},
   {'m', 'mouse',      [[let &mouse = (&mouse ==# '' ? 'nvi' : '') | set mouse?]]},
   {'n', 'number',     [[call m#command#toggle_line_numbers()]]},
   {'i', 'indent',     [[IndentBlanklineToggle]]},

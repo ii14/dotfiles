@@ -91,37 +91,61 @@ local function get_mode()
 end
 
 local function is_special(bt, ft)
-  return bt == 'quickfix' or ft == 'fern' or ft == 'Trouble'
+  return bt == 'quickfix'
+      or bt == 'terminal'
+      or bt == 'help'
+      or ft == 'fern'
+      or ft == 'Trouble'
+      or ft == 'fugitive'
+      or ft == 'floggraph'
+      or ft == 'git'
+      or ft == 'DiffviewFiles'
+      or ft == 'DiffviewFileHistory'
 end
 
-local function render_name(ctx)
-  local name
-  if ctx.buftype == 'quickfix' then
-    local info = fn.getwininfo(ctx.winid)[1]
-    if info then
-      if info.loclist == 1 then
-        name = '[Location] '..fn.getloclist(0, { title = 1 }).title
-      elseif info.quickfix == 1 then
-        name = '[Quickfix] '..fn.getqflist({ title = 1 }).title
-      end
+local MODE_OVERRIDES_FILETYPE = {
+  fern      = 'Fern',
+  floggraph = 'Flog',
+  fugitive  = 'Fugitive',
+  Trouble   = 'Trouble',
+  DiffviewFiles = 'DiffFiles',
+  DiffviewFileHistory = 'DiffHistory',
+}
+
+local function mode_override(ctx)
+  if ctx.quickfix then
+    if ctx.quickfix.loclist then
+      return 'Location'
+    else
+      return 'Quickfix'
     end
+  elseif ctx.buftype == 'help' then
+    return 'Help'
+  else
+    return MODE_OVERRIDES_FILETYPE[ctx.filetype]
+  end
+end
+
+-- TODO: for special buffers nothing renders when window is inactive
+local function render_name(ctx)
+  if ctx.quickfix then
+    return ctx.quickfix.title
   elseif ctx.filetype == 'fern' then
     local fern = api.nvim_buf_get_var(ctx.bufnr, 'fern')
-    name = fn.fnamemodify(fern.root._path, ':~')
+    return fn.fnamemodify(fern.root._path, ':~')
   elseif ctx.filetype == 'termdebug' then
-    name = '[GDB]'
-  elseif ctx.filetype == 'terminal' then
-    local term_title = api.nvim_buf_get_var(ctx.bufnr, 'term_title')
-    name = '[Term] '..term_title
+    return '[GDB]'
+  elseif ctx.buftype == 'terminal' then
+    return api.nvim_buf_get_var(ctx.bufnr, 'term_title')
   elseif ctx.filetype == 'Trouble' then
-    name = '[Trouble]'
+    return
   else
-    name = fn.expand('%:t')
+    local name = fn.expand('%:t')
     if name == '' then
       name = '[No Name]'
     end
+    return name
   end
-  return name
 end
 
 local function render_mod(ctx)
@@ -134,7 +158,7 @@ local function render_mod(ctx)
     res = (res or '')..'-'
   end
   if res then
-    return ' ['..res..']'
+    return ' '..res
   end
 end
 
@@ -240,6 +264,23 @@ function M.render(inactive)
   local buftype = api.nvim_buf_get_option(bufnr, 'buftype')
   local filetype = api.nvim_buf_get_option(bufnr, 'filetype')
   local special = is_special(buftype, filetype)
+  local quickfix
+  if buftype == 'quickfix' then
+    local info = fn.getwininfo(winid)[1]
+    if info then
+      if info.loclist == 1 then
+        quickfix = {
+          loclist = true,
+          title = fn.getloclist(0, { title = 1 }).title,
+        }
+      elseif info.quickfix == 1 then
+        quickfix = {
+          loclist = false,
+          title = fn.getqflist({ title = 1 }).title,
+        }
+      end
+    end
+  end
 
   local ctx = {
     bufnr = bufnr,
@@ -248,19 +289,24 @@ function M.render(inactive)
     buftype = buftype,
     filetype = filetype,
     special = special,
+    quickfix = quickfix,
   }
 
-  local name = render_name(ctx)
+  local name = render_name(ctx) or ''
+  name = name:gsub('%%', '%%%%')
   local mod = render_mod(ctx)
 
   if inactive then
     return hl('B')..' '..name..(mod or '')..'%<'
   elseif mod then
-    name = name..hl('CS')..mod
+    name = name..mod
   end
 
   local mode = get_mode()
   local himode = MODE_HL[mode] or 'N'
+  if mode == 'Normal' then
+    mode = mode_override(ctx) or mode
+  end
   if width < WIDTH_TINY then
     mode = ' '
   elseif width < WIDTH_SMALL then
@@ -298,14 +344,25 @@ function M.render(inactive)
     s = s..hl('B')..left..hl('BS')..'▕'
   end
   s = s..hi2..' '..name..' '..hl('C')
-  s = s..[[%<%=]]
-  s = s..right..' '
+  s = s..[[%<%=]]..right..' '
   if width >= WIDTH_SMALL then
     s = s..hl('BS')..'▏'..hl('B')..[[%3p%% ]]
     s = s..hi..[[ %3l:%-2c ]]
   end
 
   return s
+end
+
+function M.setup()
+  vim.o.statusline = [[%!v:lua.require('m.ui.statusline').render()]]
+  vim.cmd([[
+    augroup Statusline
+      autocmd!
+      autocmd WinLeave,BufLeave *  lua vim.wo.statusline = require('m.ui.statusline').render(1)
+      autocmd FileType          qf lua vim.wo.statusline = require('m.ui.statusline').render()
+      autocmd WinEnter,BufEnter *  set statusline<
+    augroup end
+  ]])
 end
 
 return M
