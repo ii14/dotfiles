@@ -1,12 +1,12 @@
+" PLUGINS         $VIMCONFIG/plugins.lua
+" LUA SETUP       $VIMCONFIG/setup.lua
 " KEY MAPPINGS    $VIMCONFIG/keymaps.vim
 " COMMANDS        $VIMCONFIG/commands.vim
 " LSP CONFIG      $VIMCONFIG/lua/m/lsp.lua
 " LSP BUFFER      $VIMCONFIG/lsp.vim
 " TERMINAL        $VIMCONFIG/term.vim
 " FZF             $VIMCONFIG/fzf.vim
-" FERN            $VIMCONFIG/ftplugin/fern.vim
 " GREP            $VIMCONFIG/grep.vim
-" THEME           $VIMCONFIG/theme.vim
 " COLORSCHEME     $VIMCONFIG/colors/onedark.vim.in
 " SNIPPETS        $VIMCONFIG/lua/m/snippets.lua
 " AUTOCOMMANDS    $VIMCONFIG/autocmd.vim
@@ -63,7 +63,7 @@ let g:bookmarks = [
 
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
-    let g:indent_blankline_filetype_exclude = ['', 'man', 'fern', 'floggraph', 'fugitive', 'gitcommit', 'lir']
+    let g:indent_blankline_filetype_exclude = ['', 'man', 'lir', 'floggraph', 'fugitive', 'gitcommit']
     " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'

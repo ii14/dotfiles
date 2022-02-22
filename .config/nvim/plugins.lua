@@ -26,8 +26,6 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 -- File management --
 Plug 'junegunn/fzf' { run = ':call fzf#install()' }
 Plug 'junegunn/fzf.vim' { depends = 'junegunn/fzf' }
--- Plug 'lambdalisue/fern.vim' { depends = 'antoinemadec/FixCursorHold.nvim' }
--- Plug 'LumaKernel/fern-mapping-fzf.vim'
 Plug 'tamago324/lir.nvim'
 Plug 'bogado/file-line'
 

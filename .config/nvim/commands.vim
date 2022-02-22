@@ -74,7 +74,6 @@ call m#cabbrev('rc',   'Rc')
 call m#cabbrev('rcd',  'Rcd')
 call m#cabbrev('trim', 'Trim')
 call m#cabbrev('fzf',  'Files')
-call m#cabbrev('fern', 'Fern')
 call m#cabbrev('vres', 'vert res')
 
 " Synstack -------------------------------------------------------------------------------

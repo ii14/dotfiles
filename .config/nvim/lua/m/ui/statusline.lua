@@ -94,7 +94,6 @@ local function is_special(bt, ft)
   return bt == 'quickfix'
       or bt == 'terminal'
       or bt == 'help'
-      or ft == 'fern'
       or ft == 'lir'
       or ft == 'Trouble'
       or ft == 'fugitive'
@@ -105,7 +104,6 @@ local function is_special(bt, ft)
 end
 
 local MODE_OVERRIDES_FILETYPE = {
-  fern      = 'Fern',
   lir       = 'Files',
   floggraph = 'Flog',
   fugitive  = 'Fugitive',
@@ -132,9 +130,6 @@ end
 local function render_name(ctx)
   if ctx.quickfix then
     return ctx.quickfix.title
-  elseif ctx.filetype == 'fern' then
-    local fern = api.nvim_buf_get_var(ctx.bufnr, 'fern')
-    return fn.fnamemodify(fern.root._path, ':~')
   elseif ctx.filetype == 'lir' then
     return fn.fnamemodify(require('lir').get_context().dir, ':~')
   elseif ctx.filetype == 'termdebug' then
