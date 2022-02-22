@@ -1,0 +1,22 @@
+diff --git a/autoload/polyglot/init.vim b/autoload/polyglot/init.vim
+index 353da7e..f4b439d 100644
+--- a/autoload/polyglot/init.vim
++++ b/autoload/polyglot/init.vim
+@@ -114,6 +114,8 @@ if !exists('g:python_highlight_all')
+   call s:SetDefault('g:python_slow_sync', 1)
+ endif
+ 
++finish
++
+ " Some variables are needed for haxe loading
+ 
+ " We need it because scripts.vim in vim uses "set ft=" which cannot be
+diff --git a/extras/filetype.vim b/extras/filetype.vim
+index 4313adc..d2fd5d2 100644
+--- a/extras/filetype.vim
++++ b/extras/filetype.vim
+@@ -1,3 +1,4 @@
++finish
+ " Vim support file to detect file types
+ "
+ " Maintainer:	Bram Moolenaar <Bram@vim.org>

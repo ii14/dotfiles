@@ -63,18 +63,12 @@ nno <C-W><C-T> <cmd>tab split<CR>
 nmap <leader>w <C-W>
 
 " BUFFERS --------------------------------------------------------------------------------
-if !exists('g:enable_lua_theme')
-  nno <silent> <C-N> :bn<CR>
-  nno <silent> <C-P> :bp<CR>
-else
-  nno <silent> <C-N>      :lua require('m.ui.buf').next()<CR>
-  nno <silent> <C-P>      :lua require('m.ui.buf').prev()<CR>
-  nno <silent> <C-G><C-N> :lua require('m.ui.buf').move_right()<CR>
-  nno <silent> <C-G><C-P> :lua require('m.ui.buf').move_left()<CR>
-  nno <silent> <C-G><C-G> <C-G>
-endif
-nno <silent> <C-B> :Buffers<CR>
-nno <silent> <leader><leader> :Buffers<CR>
+nno <C-N>      <cmd>lua require('m.ui.buf').next()<CR>
+nno <C-P>      <cmd>lua require('m.ui.buf').prev()<CR>
+nno <C-G><C-N> <cmd>lua require('m.ui.buf').move_right()<CR>
+nno <C-G><C-P> <cmd>lua require('m.ui.buf').move_left()<CR>
+nno <C-G><C-G> <C-G>
+nno <C-B> <cmd>Buffers<CR>
 
 " FILES ----------------------------------------------------------------------------------
 " fzf
@@ -82,10 +76,12 @@ nno <C-F> :lua require'm.menus'.bookmarks()<CR>
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
-" Fern
-nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
-nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
-nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
+" " Fern
+" nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
+" nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
+" nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
+" lir
+nno <silent> - <cmd>execute 'edit' m#bufdir()[:-2]<CR>
 
 " SEARCH AND REPLACE ---------------------------------------------------------------------
 map *   <Plug>(asterisk-*)
@@ -99,7 +95,7 @@ map gz# <Plug>(asterisk-gz#)
 nmap c*        z*cgn
 nmap <leader>c z*cgn
 xmap <leader>c z*cgn
-nno <silent> <leader><CR> :let @/ = ''<CR>
+nno <leader><CR> <cmd>let @/ = ''<CR>
 
 " MACROS ---------------------------------------------------------------------------------
 no <expr> q reg_recording() is# '' ? '\<Nop>' : 'q'
@@ -108,19 +104,19 @@ nno qr q
 nno qe :Regedit<CR>
 
 " QUICKFIX -------------------------------------------------------------------------------
-nno <silent> qq :call qf#open()<CR>
-nno <silent> qt :call qf#toggle()<CR>
-nno <silent> qo :call qf#show()<CR>
-nno <silent> qc :cclose<CR>
+nno qq <cmd>call m#qf#open()<CR>
+nno qt <cmd>call m#qf#toggle()<CR>
+nno qo <cmd>call m#qf#show()<CR>
+nno qc <cmd>cclose<CR>
 " Unimpaired mappings
-nno <silent> [q :cprev<CR>
-nno <silent> ]q :cnext<CR>
-nno <silent> [Q :cfirst<CR>
-nno <silent> ]Q :clast<CR>
-nno <silent> [l :lprev<CR>
-nno <silent> ]l :lnext<CR>
-nno <silent> [L :lfirst<CR>
-nno <silent> ]L :llast<CR>
+nno [q <cmd>cprev<CR>
+nno ]q <cmd>cnext<CR>
+nno [Q <cmd>cfirst<CR>
+nno ]Q <cmd>clast<CR>
+nno [l <cmd>lprev<CR>
+nno ]l <cmd>lnext<CR>
+nno [L <cmd>lfirst<CR>
+nno ]L <cmd>llast<CR>
 
 " REGISTERS ------------------------------------------------------------------------------
 " Paste and keep register
@@ -172,20 +168,24 @@ nno <leader>g3 :diffget //3<CR>
 
 " MISC -----------------------------------------------------------------------------------
 nno <leader>v ggVG
-nno <silent> <leader>r :call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
+nno <leader>r <cmd>call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 nno <leader>o :lua require'm.menus'.options()<CR>
 xno <leader>t :Tabularize /
+nno <leader>n :norm<Space>
+xno <leader>n :norm<Space>
+nno <leader>N :norm!<Space>
+xno <leader>N :norm!<Space>
 nno m= :Set makeprg<CR>
-nno <silent> zI :IndentBlanklineRefresh<CR>
+nno zI <cmd>IndentBlanklineRefresh<CR>
 
 " LSP ------------------------------------------------------------------------------------
 " LSP buffer local mappings in $VIMCONFIG/lsp.vim
-nno <silent> <leader>ld :TroubleToggle<CR>
-nno <silent> g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
-nno <silent> ]g <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
-nno <silent> [g <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
-nno <silent> ]G <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
-nno <silent> [G <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
+nno <leader>ld <cmd>TroubleToggle<CR>
+nno g? <cmd>lua vim.diagnostic.open_float(0, {scope='line'})<CR>
+nno ]g <cmd>lua vim.diagnostic.goto_next{float=false}<CR>
+nno [g <cmd>lua vim.diagnostic.goto_prev{float=false}<CR>
+nno ]G <cmd>lua vim.diagnostic.goto_prev{float=false,cursor_position={0,0}}<CR>
+nno [G <cmd>lua vim.diagnostic.goto_next{float=false,cursor_position={0,0}}<CR>
 
 " TERMDEBUG ------------------------------------------------------------------------------
 nno <leader>dr :Run<CR>
@@ -243,12 +243,13 @@ cno <expr> <C-P> wildmenumode() ? '<C-P>' : '<Up>'
 cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
 " Emacs
 cno <C-A> <Home>
-cno <expr> <C-F> getcmdline() !=# '' ? '<C-R>=m#bf#cforward()<CR>' : '<C-F>'
+cno <C-F> <C-R>=m#bf#cforward()<CR>
 cno <C-B> <C-R>=m#bf#cbackward()<CR>
+cno <C-O> <C-F>
+cno <C-X><C-A> <C-A>
 " Insert stuff
 cno <C-R><C-D> <C-R>=m#bufdir()<CR>
 cno <C-R><C-T> <C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>
-cno <C-X><C-A> <C-A>
 " Remap c_CTRL-{G,T} to free up CTRL-G mapping
 cno <C-G><C-N> <C-G>
 cno <C-G><C-P> <C-T>
@@ -259,7 +260,9 @@ cmap <C-G><C-A> <><Left>
 cmap <C-G><C-I> ""<Left>
 cmap <C-G><C-G> \(\)<Left><Left>
 cmap <C-G><C-W> \<\><Left><Left>
+
 " Last command with bang
 nno <expr> !: histget('cmd')[-1:] !=# '!' ? ':<Up>!' : ':<Up>'
+nno <expr> @! len(@:) ? @:[-1:] ==# '!' ? '@:' : '<cmd>exe @:.."!"<CR>' : '<cmd>echoe "E30: No previous command line"<CR>'
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

@@ -10,45 +10,50 @@ if not vim.g.disable_lsp then
   vim.diagnostic.config{
     severity_sort = true,
   }
-
-  require('trouble').setup{
-    icons = false,
-    fold_open = "v",
-    fold_closed = ">",
-    signs = {
-      error = "E",
-      warning = "W",
-      hint = "H",
-      information = "i",
-      other = "-",
-    },
-    padding = false,
-  }
 end
 
-require('filetype').setup{
-  overrides = {
-    extensions = {
-      pro = 'qmake',
+if vim.filetype then
+  vim.filetype.add{
+    pattern = {
+      ['.*/cmus/rc'] = 'cmusrc',
     },
-    endswith = {
-      ['/i3/config'] = 'i3',
-      ['/cmus/rc'] = 'cmusrc',
-    },
-  },
-}
+  }
+  vim.cmd([[
+    augroup VimrcFiletypeDetect
+      autocmd!
+      autocmd BufNewFile,BufRead *
+        \ if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat
+        \ | runtime! scripts.vim | endif
+      autocmd StdinReadPost * if !did_filetype() | runtime! scripts.vim | endif
+    augroup end
+  ]])
+end
+
+-- require('filetype').setup{
+--   overrides = {
+--     extensions = {
+--       pro = 'qmake',
+--     },
+--     endswith = {
+--       ['/i3/config'] = 'i3',
+--       ['/cmus/rc'] = 'cmusrc',
+--     },
+--   },
+-- }
 
 require('Comment').setup{
   ignore = '^$',
 }
 
+-- TODO: lazy load
 require('gitsigns').setup{
   preview_config = {
     border = 'none',
   },
 }
 
-require('diffview').setup{
+-- TODO: lazy load
+require('diffview.config').setup{
   use_icons = false,
   signs = {
     fold_closed = ">",
@@ -80,11 +85,71 @@ require('diffview').setup{
   },
 }
 
+do
+  local actions = require('lir.actions')
+  local mark_actions = require('lir.mark.actions')
+  local clipboard_actions = require('lir.clipboard.actions')
+
+  require('lir').setup{
+    show_hidden_files = false,
+    hide_cursor = true,
+
+    mappings = {
+      ['l'] = actions.edit,
+      ['<CR>'] = actions.edit,
+      ['<C-S>'] = actions.split,
+      ['<C-V>'] = actions.vsplit,
+      ['<C-T>'] = actions.tabedit,
+
+      ['-'] = actions.up,
+      ['h'] = actions.up,
+      ['q'] = function()
+        vim.cmd('Bd')
+      end,
+
+      ['@'] = actions.cd,
+      ['Y'] = actions.yank_path,
+      ['.'] = actions.toggle_show_hidden,
+
+      ['K'] = actions.mkdir,
+      ['N'] = actions.newfile,
+      ['R'] = actions.rename,
+      -- ['D'] = actions.delete,
+      ['D'] = function()
+        local ctx = require('lir.vim').get_context()
+        local name = ctx:current_value()
+        if vim.fn.confirm('Trash?: ' .. name, '&Yes\n&No', 1) == 1 then
+          vim.fn.system({'trash', ctx.dir .. name})
+          if vim.v.shell_error ~= 0 then
+            require('lir.utils').error('Trash file failed')
+          end
+          actions.reload()
+        end
+      end,
+
+      ['J'] = function()
+        mark_actions.toggle_mark()
+        vim.cmd('normal! j')
+      end,
+      ['C'] = clipboard_actions.copy,
+      ['X'] = clipboard_actions.cut,
+      ['P'] = clipboard_actions.paste,
+    },
+
+    on_init = function()
+      vim.api.nvim_buf_set_keymap(0, 'x', 'J',
+        [[:<C-u>lua require'lir.mark.actions'.toggle_mark('v')<CR>]],
+        { noremap = true, silent = true }
+      )
+    end,
+  }
+end
+
 require('m.snippets')
 
 require('m.compiledb')
 
-if vim.g.enable_lua_theme then
+do
   vim.o.termguicolors = true
   vim.o.showmode = false
 

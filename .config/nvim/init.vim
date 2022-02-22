@@ -29,8 +29,6 @@ if exists('$VIMNOLSP')
   let g:disable_lsp = 1
 endif
 
-let g:enable_lua_theme = 1
-
 let g:bookmarks = [
   \ ['w', '<working directory>', 'Files .'],
   \ ['f', '<buffer directory>', 'exe "Files "..m#bufdir()'],
@@ -49,87 +47,8 @@ let g:bookmarks = [
   \ ]
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
-  call plug#begin($VIMPLUGINS)
-
-  " Editing ------------------------------------------------------------------------------
-    Plug 'ii14/vim-surround'
-    Plug 'numToStr/Comment.nvim'
-    Plug 'tpope/vim-repeat'
-    Plug 'tpope/vim-abolish'
-    Plug 'wellle/targets.vim'
-    Plug 'tommcdo/vim-exchange'
-    Plug 'haya14busa/vim-asterisk'
-    Plug 'romainl/vim-cool'
-    Plug 'godlygeek/tabular'
-    Plug 'ii14/vim-bbye'
-    Plug 'mbbill/undotree'
-    Plug 'wellle/visual-split.vim'
-
-  " Visual -------------------------------------------------------------------------------
-    if !exists('g:enable_lua_theme')
-      Plug 'itchyny/lightline.vim'
-      Plug 'mengelbrecht/lightline-bufferline'
-    endif
-    Plug 'lukas-reineke/indent-blankline.nvim'
-
-  " File management ----------------------------------------------------------------------
-    Plug 'junegunn/fzf', {'do': { -> fzf#install() }}
-    Plug 'junegunn/fzf.vim'
-    Plug 'lambdalisue/fern.vim'
-    Plug 'LumaKernel/fern-mapping-fzf.vim'
-    Plug 'antoinemadec/FixCursorHold.nvim' " required by fern.vim
-    Plug 'bogado/file-line'
-
-  " Autocompletion -----------------------------------------------------------------------
-    if !exists('g:disable_lsp')
-      Plug 'neovim/nvim-lspconfig'
-      Plug 'ii14/lsp-command'
-      Plug 'jose-elias-alvarez/null-ls.nvim'
-      Plug 'folke/trouble.nvim'
-    endif
-    Plug 'hrsh7th/nvim-compe'
-    " Plug 'tamago324/compe-necosyntax'
-    " Plug 'Shougo/neco-syntax'
-    Plug 'L3MON4D3/LuaSnip'
-    Plug 'nvim-lua/plenary.nvim'
-
-  " Development --------------------------------------------------------------------------
-    Plug 'tpope/vim-fugitive'
-    Plug 'rbong/vim-flog'
-    Plug 'sindrets/diffview.nvim'
-    Plug 'lewis6991/gitsigns.nvim'
-    Plug 'tpope/vim-dispatch'
-    Plug 'ii14/exrc.vim'
-    Plug 'ii14/pro.vim'
-    if !exists('$NONREPL')
-      Plug 'ii14/nrepl.nvim'
-    endif
-
-  " Syntax -------------------------------------------------------------------------------
-    Plug 'sheerun/vim-polyglot'
-    Plug 'fedorenchik/qt-support.vim'
-    Plug 'PotatoesMaster/i3-vim-syntax'
-    Plug 'ii14/vim-rasi'
-    Plug 'norcalli/nvim-colorizer.lua'
-    Plug 'milisims/nvim-luaref'
-
-  " Misc ---------------------------------------------------------------------------------
-    Plug 'vimwiki/vimwiki', {'on': 'VimwikiIndex', 'for': ['vimwiki', 'markdown']}
-    Plug 'kizza/actionmenu.nvim'
-
-  " Performance --------------------------------------------------------------------------
-    Plug 'tweekmonster/startuptime.vim'
-    Plug 'lewis6991/impatient.nvim'
-    Plug 'nathom/filetype.nvim'
-
-  call plug#end()
-  call m#check_missing_plugs()
-
-" PLUGIN SETTINGS ////////////////////////////////////////////////////////////////////////
+  source $VIMCONFIG/plugins.lua
   source $VIMCONFIG/setup.lua
-  if !exists('g:enable_lua_theme')
-    source $VIMCONFIG/theme.vim
-  endif
   source $VIMCONFIG/fzf.vim
 
   " Completion ---------------------------------------------------------------------------
@@ -142,20 +61,9 @@ let g:bookmarks = [
       \ }}
     " LSP buffer local config in $VIMCONFIG/lsp.vim
 
-  " Fern ---------------------------------------------------------------------------------
-    let g:fern#disable_default_mappings = 1
-    let g:fern#drawer_width = 31
-    let g:fern#renderer#default#collapsed_symbol = '> '
-    let g:fern#renderer#default#expanded_symbol = 'v '
-    let g:fern#renderer#default#leaf_symbol = '¦ '
-    let g:fern#hide_cursor = 1
-    aug Vimrc
-      au BufEnter * ++nested call m#fern_hijack_directory()
-    aug end
-
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
-    let g:indent_blankline_filetype_exclude = ['', 'man', 'fern', 'floggraph', 'fugitive', 'gitcommit']
+    let g:indent_blankline_filetype_exclude = ['', 'man', 'fern', 'floggraph', 'fugitive', 'gitcommit', 'lir']
     " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
@@ -231,9 +139,9 @@ let g:bookmarks = [
     set shiftwidth=4 softtabstop=4 tabstop=8  " tab width
     set shiftround                            " follow tab grid
     set smartindent                           " smarter auto indentation
+    set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation
     set foldlevel=999                         " unfold everything by default
     set foldmethod=indent                     " folding based on indentation
-    set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation
 
   " Search and Autocompletion ------------------------------------------------------------
     set ignorecase smartcase                  " ignore case unless search starts with uppercase

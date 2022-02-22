@@ -1,5 +1,6 @@
 local M = {}
 
+local initialized = false
 local clients = {}
 local bufs = {}
 
@@ -34,13 +35,21 @@ M.on_init = function(client)
     name = client.name,
     bufs = {},
   }
+
+  if not initialized then
+    initialized = true
+    require('m.lsp.callbacks')
+    require('m.lsp.lightbulb')
+    require('fidget').setup{
+      text = {
+        spinner = 'dots_scrolling',
+      },
+    }
+  end
 end
 
 --- LSP on_attach callback
 M.on_attach = vim.schedule_wrap(function(client, bufnr)
-  require 'm.lsp.callbacks'
-  require 'm.lsp.lightbulb'
-
   if not clients[client.id] then
     clients[client.id] = {
       name = client.name,

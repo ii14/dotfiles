@@ -95,6 +95,7 @@ local function is_special(bt, ft)
       or bt == 'terminal'
       or bt == 'help'
       or ft == 'fern'
+      or ft == 'lir'
       or ft == 'Trouble'
       or ft == 'fugitive'
       or ft == 'floggraph'
@@ -105,6 +106,7 @@ end
 
 local MODE_OVERRIDES_FILETYPE = {
   fern      = 'Fern',
+  lir       = 'Files',
   floggraph = 'Flog',
   fugitive  = 'Fugitive',
   Trouble   = 'Trouble',
@@ -133,6 +135,8 @@ local function render_name(ctx)
   elseif ctx.filetype == 'fern' then
     local fern = api.nvim_buf_get_var(ctx.bufnr, 'fern')
     return fn.fnamemodify(fern.root._path, ':~')
+  elseif ctx.filetype == 'lir' then
+    return fn.fnamemodify(require('lir').get_context().dir, ':~')
   elseif ctx.filetype == 'termdebug' then
     return '[GDB]'
   elseif ctx.buftype == 'terminal' then
@@ -229,7 +233,7 @@ local function render_lsp(ctx)
   if lsp then
     if ctx.width >= WIDTH_TINY then
       local res = {}
-      for _, client in ipairs(lsp.buf_get_clients(ctx.bufnr)) do
+      for _, client in pairs(lsp.buf_get_clients(ctx.bufnr)) do
         table.insert(res, client.name)
       end
       return table.concat(res, ',')
@@ -354,15 +358,15 @@ function M.render(inactive)
 end
 
 function M.setup()
+  vim.g.qf_disable_statusline = 1
   vim.o.statusline = [[%!v:lua.require('m.ui.statusline').render()]]
-  vim.cmd([[
+  vim.cmd([=[
     augroup Statusline
       autocmd!
-      autocmd WinLeave,BufLeave *  lua vim.wo.statusline = require('m.ui.statusline').render(1)
-      autocmd FileType          qf lua vim.wo.statusline = require('m.ui.statusline').render()
-      autocmd WinEnter,BufEnter *  set statusline<
+      autocmd WinLeave,BufLeave * lua vim.wo.statusline = require('m.ui.statusline').render(1)
+      autocmd WinEnter,BufEnter * set statusline<
     augroup end
-  ]])
+  ]=])
 end
 
 return M

@@ -9,7 +9,7 @@ let g:colors_name = 'onedark'
 "DEFINE dark_red        #BE5046
 "DEFINE green           #98C379
 "DEFINE yellow          #E5C07B
-"DEFINE dark_yellow     #D19A66
+"DEFINE orange          #D19A66
 "DEFINE blue            #61AFEF
 "DEFINE purple          #C678DD
 "DEFINE cyan            #56B6C2
@@ -17,6 +17,7 @@ let g:colors_name = 'onedark'
 "DEFINE black           #282C34
 "DEFINE dim             #21252C
 "DEFINE visual_black    NONE
+"DEFINE light_grey      #848b98
 "DEFINE comment_grey    #5C6370
 "DEFINE gutter_fg_grey  #4B5263
 "DEFINE cursor_grey     #2C323C
@@ -34,9 +35,9 @@ hi Comment        guibg=NONE guifg=#5C6370 gui=italic
 hi Constant       guibg=NONE guifg=#56B6C2         gui=NONE
 hi String         guibg=NONE guifg=#98C379        gui=NONE
 hi Character      guibg=NONE guifg=#98C379        gui=NONE
-hi Number         guibg=NONE guifg=#D19A66  gui=NONE
-hi Boolean        guibg=NONE guifg=#D19A66  gui=NONE
-hi Float          guibg=NONE guifg=#D19A66  gui=NONE
+hi Number         guibg=NONE guifg=#D19A66       gui=NONE
+hi Boolean        guibg=NONE guifg=#D19A66       gui=NONE
+hi Float          guibg=NONE guifg=#D19A66       gui=NONE
 hi Identifier     guibg=NONE guifg=#E06C75          gui=NONE
 hi Function       guibg=NONE guifg=#61AFEF         gui=NONE
 hi Statement      guibg=NONE guifg=#C678DD       gui=NONE
@@ -56,7 +57,7 @@ hi StorageClass   guibg=NONE guifg=#E5C07B       gui=NONE
 hi Structure      guibg=NONE guifg=#E5C07B       gui=NONE
 hi Typedef        guibg=NONE guifg=#E5C07B       gui=NONE
 hi Special        guibg=NONE guifg=#61AFEF         gui=NONE
-hi SpecialChar    guibg=NONE guifg=#D19A66  gui=NONE
+hi SpecialChar    guibg=NONE guifg=#D19A66       gui=NONE
 hi Tag            guibg=NONE guifg=NONE            gui=NONE
 hi Delimiter      guibg=NONE guifg=NONE            gui=NONE
 hi SpecialComment guibg=NONE guifg=#5C6370 gui=NONE
@@ -101,9 +102,9 @@ hi SpecialKey       guibg=NONE            guifg=#61AFEF            gui=NONE
 hi SpecialKeyWin    guibg=NONE            guifg=#3B4048    gui=NONE
 set winhighlight=SpecialKey:SpecialKeyWin
 hi SpellBad         guibg=NONE            guifg=#E06C75             gui=underline
-hi SpellCap         guibg=NONE            guifg=#D19A66     gui=NONE
-hi SpellLocal       guibg=NONE            guifg=#D19A66     gui=NONE
-hi SpellRare        guibg=NONE            guifg=#D19A66     gui=NONE
+hi SpellCap         guibg=NONE            guifg=#D19A66          gui=NONE
+hi SpellLocal       guibg=NONE            guifg=#D19A66          gui=NONE
+hi SpellRare        guibg=NONE            guifg=#D19A66          gui=NONE
 hi StatusLine       guibg=#2C323C  guifg=#ABB2BF           gui=NONE
 hi StatusLineNC     guibg=NONE            guifg=#5C6370    gui=NONE
 hi StatusLineTerm   guibg=#2C323C  guifg=#ABB2BF           gui=NONE
@@ -467,6 +468,10 @@ hi DiffviewFilePanelTitle    guifg=#61AFEF
 hi DiffviewFilePanelFileName guifg=#ABB2BF
 hi DiffviewNonText           guifg=#5C6370
 
+hi LirDir          guifg=#61AFEF
+hi LirSymLink      guifg=#56B6C2
+hi LirEmptyDirText guifg=#ABB2BF
+
 " Neovim terminal colors
 let g:terminal_color_0  = '#3E4452'
 let g:terminal_color_1  = '#E06C75'
@@ -487,79 +492,67 @@ let g:terminal_color_15 = '#5C6370'
 let g:terminal_color_background = '#282C34'
 let g:terminal_color_foreground = '#ABB2BF'
 
-if exists('g:enable_lua_theme')
-  set background=dark
-  finish
-endif
-
-" lightline
-let g:lightline#colorscheme#onedark#palette = #{
-  \ normal: #{
-  \   left: [
-  \     ['#282C34', '#98C379', '235', '114'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   right: [
-  \     ['#282C34', '#98C379', '235', '114'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   middle: [
-  \     ['#98C379', '#2C323C', '145', '235']],
-  \   error: [
-  \     ['#282C34', '#E06C75', '235', '204']],
-  \   warning: [
-  \     ['#282C34', '#E5C07B', '235', '180']],
-  \ },
-  \ inactive: #{
-  \   left: [
-  \     ['#ABB2BF', '#3E4452', '145', '236'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   right: [
-  \     ['#282C34', '#ABB2BF', '235', '145'],
-  \     ['#282C34', '#ABB2BF', '235', '145']],
-  \   middle: [
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \ },
-  \ insert: #{
-  \   left:  [
-  \     ['#282C34', '#61AFEF', '235', '39'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   right: [
-  \     ['#282C34', '#61AFEF', '235', '39'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   middle: [
-  \     ['#61AFEF', '#2C323C', '145', '235']],
-  \ },
-  \ visual: #{
-  \   left:  [
-  \     ['#282C34', '#C678DD', '235', '170'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   right: [
-  \     ['#282C34', '#C678DD', '235', '170'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   middle: [
-  \     ['#C678DD', '#2C323C', '145', '235']],
-  \ },
-  \ replace: #{
-  \   left:  [
-  \     ['#282C34', '#E06C75', '235', '204'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   right: [
-  \     ['#282C34', '#E06C75', '235', '204'],
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   middle: [
-  \     ['#E06C75', '#2C323C', '145', '235']],
-  \ },
-  \ tabline: #{
-  \   left:   [
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \   tabsel: [
-  \     ['#282C34', '#ABB2BF', '235', '145']],
-  \   middle: [
-  \     ['#ABB2BF', '#282C34', '145', '235']],
-  \   right:  [
-  \     ['#ABB2BF', '#3E4452', '145', '236']],
-  \ },
-  \ }
-
 set background=dark
+finish
+
+" hi TSAnnotation         guifg=${white}
+" hi TSAttribute          guifg=${cyan}
+" hi TSBoolean            guifg=${orange}
+" hi TSCharacter          guifg=${orange}
+" hi TSComment            guifg=${comment_grey}
+" hi TSConditional        guifg=${purple}
+" hi TSConstant           guifg=${orange}
+" hi TSConstBuiltin       guifg=${orange}
+" hi TSConstMacro         guifg=${orange}
+" hi TSConstructor        guifg=${yellow} gui=bold
+" hi TSError              guifg=${white}
+" hi TSException          guifg=${purple}
+" hi TSField              guifg=${cyan}
+" hi TSFloat              guifg=${orange}
+" hi TSFunction           guifg=${blue}
+" hi TSFuncBuiltin        guifg=${cyan}
+" hi TSFuncMacro          guifg=${cyan}
+" hi TSInclude            guifg=${purple}
+" hi TSKeyword            guifg=${purple}
+" hi TSKeywordFunction    guifg=${purple}
+" hi TSKeywordOperator    guifg=${purple}
+" hi TSLabel              guifg=${red}
+" hi TSMethod             guifg=${blue}
+" hi TSNamespace          guifg=${yellow}
+" hi TSNone               guifg=${white}
+" hi TSNumber             guifg=${orange}
+" hi TSOperator           guifg=${white}
+" hi TSParameter          guifg=${red}
+" hi TSParameterReference guifg=${white}
+" hi TSProperty           guifg=${cyan}
+" hi TSPunctDelimiter     guifg=#848b98
+" hi TSPunctBracket       guifg=#848b98
+" hi TSPunctSpecial       guifg=${red}
+" hi TSRepeat             guifg=${purple}
+" hi TSString             guifg=${green}
+" hi TSStringRegex        guifg=${blue}
+" hi TSStringEscape       guifg=${orange}
+" hi TSSymbol             guifg=${cyan}
+" hi TSTag                guifg=${red}
+" hi TSTagDelimiter       guifg=${red}
+" hi TSText               guifg=${white}
+" hi TSStrong             guifg=${white} gui=bold
+" hi TSEmphasis           guifg=${white} gui=italic
+" hi TSUnderline          guifg=${white} gui=underline
+" hi TSStrike             guifg=${white} gui=strikethrough
+" hi TSTitle              guifg=${orange} gui=bold
+" hi TSLiteral            guifg=${green}
+" hi TSURI                guifg=${cyan} gui=underline
+" hi TSMath               guifg=${white}
+" hi TSTextReference      guifg=${blue}
+" hi TSEnviroment         guifg=${white}
+" hi TSEnviromentName     guifg=${white}
+" hi TSNote               guifg=${white}
+" hi TSWarning            guifg=${white}
+" hi TSDanger             guifg=${white}
+" hi TSType               guifg=${yellow}
+" hi TSTypeBuiltin        guifg=${orange}
+" hi TSVariable           guifg=${white}
+" hi TSVariableBuiltin    guifg=${white}
 
 " vim: ft=vim

@@ -9,7 +9,7 @@ let g:colors_name = 'onedark'
 "DEFINE dark_red        #BE5046
 "DEFINE green           #98C379
 "DEFINE yellow          #E5C07B
-"DEFINE dark_yellow     #D19A66
+"DEFINE orange          #D19A66
 "DEFINE blue            #61AFEF
 "DEFINE purple          #C678DD
 "DEFINE cyan            #56B6C2
@@ -17,6 +17,7 @@ let g:colors_name = 'onedark'
 "DEFINE black           #282C34
 "DEFINE dim             #21252C
 "DEFINE visual_black    NONE
+"DEFINE light_grey      #848b98
 "DEFINE comment_grey    #5C6370
 "DEFINE gutter_fg_grey  #4B5263
 "DEFINE cursor_grey     #2C323C
@@ -34,9 +35,9 @@ hi Comment        guibg=NONE guifg=${comment_grey} gui=${italic}
 hi Constant       guibg=NONE guifg=${cyan}         gui=NONE
 hi String         guibg=NONE guifg=${green}        gui=NONE
 hi Character      guibg=NONE guifg=${green}        gui=NONE
-hi Number         guibg=NONE guifg=${dark_yellow}  gui=NONE
-hi Boolean        guibg=NONE guifg=${dark_yellow}  gui=NONE
-hi Float          guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi Number         guibg=NONE guifg=${orange}       gui=NONE
+hi Boolean        guibg=NONE guifg=${orange}       gui=NONE
+hi Float          guibg=NONE guifg=${orange}       gui=NONE
 hi Identifier     guibg=NONE guifg=${red}          gui=NONE
 hi Function       guibg=NONE guifg=${blue}         gui=NONE
 hi Statement      guibg=NONE guifg=${purple}       gui=NONE
@@ -56,7 +57,7 @@ hi StorageClass   guibg=NONE guifg=${yellow}       gui=NONE
 hi Structure      guibg=NONE guifg=${yellow}       gui=NONE
 hi Typedef        guibg=NONE guifg=${yellow}       gui=NONE
 hi Special        guibg=NONE guifg=${blue}         gui=NONE
-hi SpecialChar    guibg=NONE guifg=${dark_yellow}  gui=NONE
+hi SpecialChar    guibg=NONE guifg=${orange}       gui=NONE
 hi Tag            guibg=NONE guifg=NONE            gui=NONE
 hi Delimiter      guibg=NONE guifg=NONE            gui=NONE
 hi SpecialComment guibg=NONE guifg=${comment_grey} gui=NONE
@@ -101,9 +102,9 @@ hi SpecialKey       guibg=NONE            guifg=${blue}            gui=NONE
 hi SpecialKeyWin    guibg=NONE            guifg=${special_grey}    gui=NONE
 set winhighlight=SpecialKey:SpecialKeyWin
 hi SpellBad         guibg=NONE            guifg=${red}             gui=underline
-hi SpellCap         guibg=NONE            guifg=${dark_yellow}     gui=NONE
-hi SpellLocal       guibg=NONE            guifg=${dark_yellow}     gui=NONE
-hi SpellRare        guibg=NONE            guifg=${dark_yellow}     gui=NONE
+hi SpellCap         guibg=NONE            guifg=${orange}          gui=NONE
+hi SpellLocal       guibg=NONE            guifg=${orange}          gui=NONE
+hi SpellRare        guibg=NONE            guifg=${orange}          gui=NONE
 hi StatusLine       guibg=${cursor_grey}  guifg=${white}           gui=NONE
 hi StatusLineNC     guibg=NONE            guifg=${comment_grey}    gui=NONE
 hi StatusLineTerm   guibg=${cursor_grey}  guifg=${white}           gui=NONE
@@ -166,19 +167,19 @@ hi debugBreakpoint  guibg=${red} guifg=${black}
 hi cssAttrComma         guifg=${purple}
 hi cssAttributeSelector guifg=${green}
 hi cssBraces            guifg=${white}
-hi cssClassName         guifg=${dark_yellow}
-hi cssClassNameDot      guifg=${dark_yellow}
+hi cssClassName         guifg=${orange}
+hi cssClassNameDot      guifg=${orange}
 hi cssDefinition        guifg=${purple}
-hi cssFontAttr          guifg=${dark_yellow}
+hi cssFontAttr          guifg=${orange}
 hi cssFontDescriptor    guifg=${purple}
 hi cssFunctionName      guifg=${blue}
 hi cssIdentifier        guifg=${blue}
 hi cssImportant         guifg=${purple}
 hi cssInclude           guifg=${white}
 hi cssIncludeKeyword    guifg=${purple}
-hi cssMediaType         guifg=${dark_yellow}
+hi cssMediaType         guifg=${orange}
 hi cssProp              guifg=${white}
-hi cssPseudoClassId     guifg=${dark_yellow}
+hi cssPseudoClassId     guifg=${orange}
 hi cssSelectorOp        guifg=${purple}
 hi cssSelectorOp2       guifg=${purple}
 hi cssTagName           guifg=${red}
@@ -201,8 +202,8 @@ hi goDeclType     guifg=${cyan}
 hi goTypeDecl     guifg=${purple}
 
 " HTML (keep consistent with Markdown, below)
-hi htmlArg            guifg=${dark_yellow}
-hi htmlBold           guifg=${dark_yellow} gui=bold
+hi htmlArg            guifg=${orange}
+hi htmlBold           guifg=${orange} gui=bold
 hi htmlEndTag         guifg=${white}
 hi htmlH1             guifg=${red}
 hi htmlH2             guifg=${red}
@@ -212,7 +213,7 @@ hi htmlH5             guifg=${red}
 hi htmlH6             guifg=${red}
 hi htmlItalic         guifg=${purple} gui=${italic}
 hi htmlLink           guifg=${cyan} gui=underline
-hi htmlSpecialChar    guifg=${dark_yellow}
+hi htmlSpecialChar    guifg=${orange}
 hi htmlSpecialTagName guifg=${red}
 hi htmlTag            guifg=${white}
 hi htmlTagN           guifg=${red}
@@ -223,8 +224,8 @@ hi htmlTitle          guifg=${white}
 hi javaScriptBraces     guifg=${white}
 hi javaScriptFunction   guifg=${purple}
 hi javaScriptIdentifier guifg=${purple}
-hi javaScriptNull       guifg=${dark_yellow}
-hi javaScriptNumber     guifg=${dark_yellow}
+hi javaScriptNull       guifg=${orange}
+hi javaScriptNumber     guifg=${orange}
 hi javaScriptRequire    guifg=${cyan}
 hi javaScriptReserved   guifg=${purple}
 " http//github.com/pangloss/vim-javascript
@@ -245,14 +246,14 @@ hi jsImport          guifg=${purple}
 hi jsModuleAs        guifg=${purple}
 hi jsModuleWords     guifg=${purple}
 hi jsModules         guifg=${purple}
-hi jsNull            guifg=${dark_yellow}
+hi jsNull            guifg=${orange}
 hi jsOperator        guifg=${purple}
 hi jsStorageClass    guifg=${purple}
 hi jsSuper           guifg=${red}
 hi jsTemplateBraces  guifg=${dark_red}
 hi jsTemplateVar     guifg=${green}
 hi jsThis            guifg=${red}
-hi jsUndefined       guifg=${dark_yellow}
+hi jsUndefined       guifg=${orange}
 " http//github.com/othree/yajs.vim
 hi javascriptArrowFunc    guifg=${purple}
 hi javascriptClassExtends guifg=${purple}
@@ -277,8 +278,8 @@ hi javascriptVariable     guifg=${purple}
 " JSON
 hi jsonCommentError      guifg=${white}
 hi jsonKeyword           guifg=${red}
-hi jsonBoolean           guifg=${dark_yellow}
-hi jsonNumber            guifg=${dark_yellow}
+hi jsonBoolean           guifg=${orange}
+hi jsonNumber            guifg=${orange}
 hi jsonQuote             guifg=${white}
 hi jsonMissingCommaError guifg=${red} gui=reverse
 hi jsonNoQuotesError     guifg=${red} gui=reverse
@@ -290,11 +291,11 @@ hi jsonSemicolonError    guifg=${red} gui=reverse
 " LESS
 hi lessVariable      guifg=${purple}
 hi lessAmpersandChar guifg=${white}
-hi lessClass         guifg=${dark_yellow}
+hi lessClass         guifg=${orange}
 
 " Markdown (keep consistent with HTML, above)
 hi markdownBlockquote        guifg=${comment_grey}
-hi markdownBold              guifg=${dark_yellow} gui=bold
+hi markdownBold              guifg=${orange} gui=bold
 hi markdownCode              guifg=${green}
 hi markdownCodeBlock         guifg=${green}
 hi markdownCodeDelimiter     guifg=${green}
@@ -324,7 +325,7 @@ hi perlMatchStartEnd     guifg=${blue}
 hi perlMethod            guifg=${purple}
 hi perlPOD               guifg=${comment_grey}
 hi perlSharpBang         guifg=${comment_grey}
-hi perlSpecialString     guifg=${dark_yellow}
+hi perlSpecialString     guifg=${orange}
 hi perlStatementFiledesc guifg=${red}
 hi perlStatementFlow     guifg=${red}
 hi perlStatementInclude  guifg=${purple}
@@ -348,10 +349,10 @@ hi phpClassExtends   guifg=${green}
 hi phpDocTags        guifg=${white}
 hi phpFunction       guifg=${blue}
 hi phpFunctions      guifg=${cyan}
-hi phpMethodsVar     guifg=${dark_yellow}
-hi phpMagicConstants guifg=${dark_yellow}
+hi phpMethodsVar     guifg=${orange}
+hi phpMagicConstants guifg=${orange}
 hi phpSuperglobals   guifg=${red}
-hi phpConstants      guifg=${dark_yellow}
+hi phpConstants      guifg=${orange}
 
 " Ruby
 hi rubyBlockParameter            guifg=${red}
@@ -376,7 +377,7 @@ hi rubySymbol                    guifg=${cyan}
 " Sass
 " http//github.com/tpope/vim-haml
 hi sassAmpersand      guifg=${red}
-hi sassClass          guifg=${dark_yellow}
+hi sassClass          guifg=${orange}
 hi sassControl        guifg=${purple}
 hi sassExtend         guifg=${purple}
 hi sassFor            guifg=${white}
@@ -394,20 +395,20 @@ hi scssExtend       guifg=${purple}
 hi scssImport       guifg=${purple}
 hi scssInclude      guifg=${purple}
 hi scssMixin        guifg=${purple}
-hi scssSelectorName guifg=${dark_yellow}
+hi scssSelectorName guifg=${orange}
 hi scssVariable     guifg=${purple}
 
 " TeX
 hi texStatement    guifg=${purple}
-hi texSubscripts   guifg=${dark_yellow}
-hi texSuperscripts guifg=${dark_yellow}
+hi texSubscripts   guifg=${orange}
+hi texSuperscripts guifg=${orange}
 hi texTodo         guifg=${dark_red}
 hi texBeginEnd     guifg=${purple}
 hi texBeginEndName guifg=${blue}
 hi texMathMatcher  guifg=${blue}
 hi texMathDelim    guifg=${blue}
-hi texDelimiter    guifg=${dark_yellow}
-hi texSpecialChar  guifg=${dark_yellow}
+hi texDelimiter    guifg=${orange}
+hi texSpecialChar  guifg=${orange}
 hi texCite         guifg=${blue}
 hi texRefZone      guifg=${blue}
 
@@ -417,7 +418,7 @@ hi typescriptEndColons guifg=${white}
 hi typescriptBraces    guifg=${white}
 
 " XML
-hi xmlAttrib  guifg=${dark_yellow}
+hi xmlAttrib  guifg=${orange}
 hi xmlEndTag  guifg=${red}
 hi xmlTag     guifg=${red}
 hi xmlTagName guifg=${red}
@@ -467,6 +468,10 @@ hi DiffviewFilePanelTitle    guifg=${blue}
 hi DiffviewFilePanelFileName guifg=${white}
 hi DiffviewNonText           guifg=${comment_grey}
 
+hi LirDir          guifg=${blue}
+hi LirSymLink      guifg=${cyan}
+hi LirEmptyDirText guifg=${white}
+
 " Neovim terminal colors
 let g:terminal_color_0  = '${visual_grey}'
 let g:terminal_color_1  = '${red}'
@@ -479,7 +484,7 @@ let g:terminal_color_7  = '${white}'
 let g:terminal_color_8  = '${visual_grey}'
 let g:terminal_color_9  = '${dark_red}'
 let g:terminal_color_10 = '${green}'
-let g:terminal_color_11 = '${dark_yellow}'
+let g:terminal_color_11 = '${orange}'
 let g:terminal_color_12 = '${blue}'
 let g:terminal_color_13 = '${purple}'
 let g:terminal_color_14 = '${cyan}'
@@ -487,79 +492,67 @@ let g:terminal_color_15 = '${comment_grey}'
 let g:terminal_color_background = '${black}'
 let g:terminal_color_foreground = '${white}'
 
-if exists('g:enable_lua_theme')
-  set background=dark
-  finish
-endif
-
-" lightline
-let g:lightline#colorscheme#onedark#palette = #{
-  \ normal: #{
-  \   left: [
-  \     ['${black}', '${green}', '235', '114'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${green}', '235', '114'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   middle: [
-  \     ['${green}', '${cursor_grey}', '145', '235']],
-  \   error: [
-  \     ['${black}', '${red}', '235', '204']],
-  \   warning: [
-  \     ['${black}', '${yellow}', '235', '180']],
-  \ },
-  \ inactive: #{
-  \   left: [
-  \     ['${white}', '${visual_grey}', '145', '236'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${white}', '235', '145'],
-  \     ['${black}', '${white}', '235', '145']],
-  \   middle: [
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \ },
-  \ insert: #{
-  \   left:  [
-  \     ['${black}', '${blue}', '235', '39'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${blue}', '235', '39'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   middle: [
-  \     ['${blue}', '${cursor_grey}', '145', '235']],
-  \ },
-  \ visual: #{
-  \   left:  [
-  \     ['${black}', '${purple}', '235', '170'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${purple}', '235', '170'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   middle: [
-  \     ['${purple}', '${cursor_grey}', '145', '235']],
-  \ },
-  \ replace: #{
-  \   left:  [
-  \     ['${black}', '${red}', '235', '204'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   right: [
-  \     ['${black}', '${red}', '235', '204'],
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   middle: [
-  \     ['${red}', '${cursor_grey}', '145', '235']],
-  \ },
-  \ tabline: #{
-  \   left:   [
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \   tabsel: [
-  \     ['${black}', '${white}', '235', '145']],
-  \   middle: [
-  \     ['${white}', '${black}', '145', '235']],
-  \   right:  [
-  \     ['${white}', '${visual_grey}', '145', '236']],
-  \ },
-  \ }
-
 set background=dark
+finish
+
+" hi TSAnnotation         guifg=${white}
+" hi TSAttribute          guifg=${cyan}
+" hi TSBoolean            guifg=${orange}
+" hi TSCharacter          guifg=${orange}
+" hi TSComment            guifg=${comment_grey}
+" hi TSConditional        guifg=${purple}
+" hi TSConstant           guifg=${orange}
+" hi TSConstBuiltin       guifg=${orange}
+" hi TSConstMacro         guifg=${orange}
+" hi TSConstructor        guifg=${yellow} gui=bold
+" hi TSError              guifg=${white}
+" hi TSException          guifg=${purple}
+" hi TSField              guifg=${cyan}
+" hi TSFloat              guifg=${orange}
+" hi TSFunction           guifg=${blue}
+" hi TSFuncBuiltin        guifg=${cyan}
+" hi TSFuncMacro          guifg=${cyan}
+" hi TSInclude            guifg=${purple}
+" hi TSKeyword            guifg=${purple}
+" hi TSKeywordFunction    guifg=${purple}
+" hi TSKeywordOperator    guifg=${purple}
+" hi TSLabel              guifg=${red}
+" hi TSMethod             guifg=${blue}
+" hi TSNamespace          guifg=${yellow}
+" hi TSNone               guifg=${white}
+" hi TSNumber             guifg=${orange}
+" hi TSOperator           guifg=${white}
+" hi TSParameter          guifg=${red}
+" hi TSParameterReference guifg=${white}
+" hi TSProperty           guifg=${cyan}
+" hi TSPunctDelimiter     guifg=#848b98
+" hi TSPunctBracket       guifg=#848b98
+" hi TSPunctSpecial       guifg=${red}
+" hi TSRepeat             guifg=${purple}
+" hi TSString             guifg=${green}
+" hi TSStringRegex        guifg=${blue}
+" hi TSStringEscape       guifg=${orange}
+" hi TSSymbol             guifg=${cyan}
+" hi TSTag                guifg=${red}
+" hi TSTagDelimiter       guifg=${red}
+" hi TSText               guifg=${white}
+" hi TSStrong             guifg=${white} gui=bold
+" hi TSEmphasis           guifg=${white} gui=italic
+" hi TSUnderline          guifg=${white} gui=underline
+" hi TSStrike             guifg=${white} gui=strikethrough
+" hi TSTitle              guifg=${orange} gui=bold
+" hi TSLiteral            guifg=${green}
+" hi TSURI                guifg=${cyan} gui=underline
+" hi TSMath               guifg=${white}
+" hi TSTextReference      guifg=${blue}
+" hi TSEnviroment         guifg=${white}
+" hi TSEnviromentName     guifg=${white}
+" hi TSNote               guifg=${white}
+" hi TSWarning            guifg=${white}
+" hi TSDanger             guifg=${white}
+" hi TSType               guifg=${yellow}
+" hi TSTypeBuiltin        guifg=${orange}
+" hi TSVariable           guifg=${white}
+" hi TSVariableBuiltin    guifg=${white}
 
 " vim: ft=vim

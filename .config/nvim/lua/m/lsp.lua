@@ -1,7 +1,7 @@
 local setup = require 'm.lsp.setup'
 
 setup.clangd {
-  cmd = {"clangd", "--background-index"},
+  cmd = {'clangd', '--background-index'},
   commands = {
     ClangdSwitchSourceHeader = {
       function() require('m.lsp.util').switch_source_header(0) end,
@@ -22,24 +22,19 @@ setup.pylsp {
 }
 
 setup.sumneko_lua {
-  cmd = (function()
-    local root = vim.fn.expand('$HOME')..'/repos/lua-language-server'
-    -- local root = '/opt/lua-language-server'
-    return { root..'/bin/Linux/lua-language-server', '-E', root..'/main.lua' }
-  end)(),
   settings = {
     Lua = {
       runtime = {
         version = 'LuaJIT',
         path = (function()
-          local runtime_path = vim.split(package.path, ';')
-          table.insert(runtime_path, "lua/?.lua")
-          table.insert(runtime_path, "lua/?/init.lua")
-          return runtime_path
+          local rtp = vim.split(package.path, ';')
+          table.insert(rtp, "lua/?.lua")
+          table.insert(rtp, "lua/?/init.lua")
+          return rtp
         end)(),
       },
       diagnostics = { globals = {'vim'} },
-      workspace = { library = vim.api.nvim_get_runtime_file("lua/", true) },
+      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
       telemetry = { enable = false },
     },
   },

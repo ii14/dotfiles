@@ -12,7 +12,7 @@ if exists('s:grepprg')
   set grepformat=%f:%l:%c:%m,%f:%l:%m
 
   function! s:formatgrepprg()
-    let l:cmd = s:grepprg . ' --vimgrep'
+    let l:cmd = s:grepprg .. ' --vimgrep'
     if &ignorecase
       if &smartcase
         let l:cmd .= ' --smart-case'
@@ -31,12 +31,12 @@ if exists('s:grepprg')
   augroup end
 endif
 
-function! s:grep(...)
-  return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
+function! s:grep(args)
+  return system(join([&grepprg] + [expandcmd(escape(a:args, '\'))], ' '))
 endfunction
 
-command! -nargs=+ -complete=file -bar Grep  cgetexpr s:grep(<f-args>)
-command! -nargs=+ -complete=file -bar LGrep lgetexpr s:grep(<f-args>)
+command! -nargs=+ -complete=file Grep  cgetexpr s:grep(<q-args>)
+command! -nargs=+ -complete=file LGrep lgetexpr s:grep(<q-args>)
 
 call m#cabbrev('gr',    'Grep')
 call m#cabbrev('gre',   'Grep')

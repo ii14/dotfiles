@@ -1,4 +1,4 @@
-local callbacks = vim.lsp.handlers
+local c = vim.lsp.handlers
 
 local M = {}
 
@@ -35,7 +35,7 @@ end
 
 -- select line under cursor on quickfix list
 -- don't switch back from quickfix to previous window
-callbacks['textDocument/references'] = function(_, result)
+c['textDocument/references'] = function(_, result)
   if not result or vim.tbl_isempty(result) then
     print('LSP: No references found')
     return nil
@@ -55,8 +55,8 @@ local function symbol_callback(entity)
   end
 end
 
-callbacks['textDocument/documentSymbol'] = symbol_callback('document symbols')
-callbacks['workspace/symbol']            = symbol_callback('symbols')
+c['textDocument/documentSymbol'] = symbol_callback('document symbols')
+c['workspace/symbol']            = symbol_callback('symbols')
 
 local function location_callback(_, result)
   if result == nil or vim.tbl_isempty(result) then
@@ -74,10 +74,10 @@ local function location_callback(_, result)
   end
 end
 
-callbacks['textDocument/declaration']    = location_callback
-callbacks['textDocument/definition']     = location_callback
-callbacks['textDocument/typeDefinition'] = location_callback
-callbacks['textDocument/implementation'] = location_callback
+c['textDocument/declaration']    = location_callback
+c['textDocument/definition']     = location_callback
+c['textDocument/typeDefinition'] = location_callback
+c['textDocument/implementation'] = location_callback
 
 local last_actions
 local last_on_choice
