@@ -14,7 +14,7 @@
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
 let $VIMCONFIG = stdpath('config')
-let $VIMPLUGINS = $VIMDATA.'/plugged'
+let $VIMPLUGINS = $VIMDATA.'/neopm'
 
 let g:mapleader = ' '
 aug Vimrc | au! | aug end

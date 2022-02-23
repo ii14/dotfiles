@@ -1,4 +1,5 @@
-local setup = require 'm.lsp.setup'
+local setup = require('m.lsp.setup')
+local util = require('lspconfig.util')
 
 setup.clangd {
   cmd = {'clangd', '--background-index'},
@@ -22,6 +23,10 @@ setup.pylsp {
 }
 
 setup.sumneko_lua {
+  root_dir = function(fname)
+    return util.root_pattern('.luarc.json')(fname)
+        or util.find_git_ancestor(fname)
+  end,
   settings = {
     Lua = {
       runtime = {
@@ -33,8 +38,17 @@ setup.sumneko_lua {
           return rtp
         end)(),
       },
-      diagnostics = { globals = {'vim'} },
-      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
+      diagnostics = {
+        globals = {'vim'},
+        disable = {
+          'empty-block',
+          'trailing-space',
+        },
+      },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file('', true),
+        checkThirdParty = false,
+      },
       telemetry = { enable = false },
     },
   },
