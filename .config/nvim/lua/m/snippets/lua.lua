@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.lua = {
+ls.add_snippets('lua', {
 
   snip{
     name='function', trig='fn',
@@ -185,4 +185,4 @@ ls.snippets.lua = {
     t'vim.api.nvim_buf_clear_namespace(', i(0), t')',
   },
 
-}
+})

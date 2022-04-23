@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.make = {
+ls.add_snippets('make', {
 
   snip{
     name='CC rule', trig='^cc', regTrig=true,
@@ -96,4 +96,4 @@ ls.snippets.make = {
     },
   },
 
-}
+})

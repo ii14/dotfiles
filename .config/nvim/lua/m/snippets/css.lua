@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.css = {
+ls.add_snippets('css', {
 
   snip{name='background-color', trig='bg', t'background-color: #', i(1, '333'), t';'},
 
@@ -26,4 +26,4 @@ ls.snippets.css = {
   snip{name='margin',  trig='mar', t'margin: ', i(1, '0'), t';'},
   snip{name='padding', trig='pad', t'padding: ', i(1, '0'), t';'},
 
-}
+})

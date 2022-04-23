@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.html = {
+ls.add_snippets('html', {
 
   snip{
     name='html document', trig='^html', regTrig=true,
@@ -35,4 +35,4 @@ ls.snippets.html = {
     t'<link rel="stylesheet" type="text/css" href="', i(1, 'style'), t'.css">',
   },
 
-}
+})

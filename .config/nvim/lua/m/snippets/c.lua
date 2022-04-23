@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.c = {
+ls.add_snippets('c', {
 
   -- PREPROCESSOR
   snip{
@@ -125,4 +125,4 @@ ls.snippets.c = {
   snip{name='printf', trig='pf', t'printf("', i(1), t'"', i(2), t');'},
   snip{name='fprintf', trig='fp', t'printf(stderr, "', i(1), t'"', i(2), t');'},
 
-}
+})

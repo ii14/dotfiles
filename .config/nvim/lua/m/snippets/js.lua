@@ -110,5 +110,5 @@ local s = {
 
 }
 
-ls.snippets.javascript = s
-ls.snippets.typescript = s
+ls.add_snippets('javascript', s)
+ls.add_snippets('typescript', s)

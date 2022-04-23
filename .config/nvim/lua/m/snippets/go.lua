@@ -10,7 +10,7 @@ local d = ls.dynamic_node
 
 local nl = t{'', ''}
 
-ls.snippets.go = {
+ls.add_snippets('go', {
 
   snip{
     name='append', trig='ap',
@@ -52,4 +52,4 @@ ls.snippets.go = {
     t'for ', i(1, 'e'), t' := range ', i(2, 'container'), t{' {', '\t'}, i(0), t{'', '}'},
   },
 
-}
+})
