@@ -61,5 +61,5 @@ set "status-left" "#[fg=$onedark_black,bg=$onedark_green] #S #{prefix_highlight}
 set "window-status-format" " #I #W "
 set "window-status-current-format" "#[fg=$onedark_black,bg=$onedark_white] #I #W "
 
-set "pane-border-style" "bg=default,fg=$onedark_comment_grey"
+set "pane-border-style" "bg=default,fg=$onedark_visual_grey"
 set "pane-active-border-style" "bg=default,fg=$onedark_green"
