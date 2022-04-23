@@ -1,4 +1,4 @@
-if vim.env.VIMNOLUACACHE == nil then
+if not vim.g.disable_lua_cache then
   pcall(require, 'impatient')
 end
 
@@ -18,34 +18,13 @@ if vim.filetype then
       ['.*/cmus/rc'] = 'cmusrc',
     },
   }
-  vim.cmd([[
-    augroup VimrcFiletypeDetect
-      autocmd!
-      autocmd BufNewFile,BufRead *
-        \ if !did_filetype() && expand("<amatch>") !~ g:ft_ignore_pat
-        \ | runtime! scripts.vim | endif
-      autocmd StdinReadPost * if !did_filetype() | runtime! scripts.vim | endif
-    augroup end
-  ]])
 end
-
--- require('filetype').setup{
---   overrides = {
---     extensions = {
---       pro = 'qmake',
---     },
---     endswith = {
---       ['/i3/config'] = 'i3',
---       ['/cmus/rc'] = 'cmusrc',
---     },
---   },
--- }
 
 require('Comment').setup{
   ignore = '^$',
 }
 
--- TODO: lazy load
+-- TODO: lazy load?
 require('gitsigns').setup{
   preview_config = {
     border = 'none',
@@ -149,16 +128,9 @@ require('m.snippets')
 
 require('m.compiledb')
 
-do
-  vim.o.termguicolors = true
-  vim.o.showmode = false
+vim.o.termguicolors = true
+vim.cmd('colorscheme onedark')
 
-  -- See $VIMCONFIG/colors/onedark.vim.in
-  local colorscheme = vim.env.VIMCONFIG..'/colors/onedark.vim'
-  if require('m.util.preproc').ensure(colorscheme) then
-    vim.cmd('colorscheme onedark')
-  end
-
-  require('m.ui.bufferline').setup()
-  require('m.ui.statusline').setup()
-end
+vim.o.showmode = false
+require('m.ui.bufferline').setup()
+require('m.ui.statusline').setup()

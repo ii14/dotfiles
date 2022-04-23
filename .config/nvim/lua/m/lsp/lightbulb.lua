@@ -68,11 +68,10 @@ function M.update()
   end)
 end
 
-vim.cmd([[
-  augroup VimrcLightbulb
-    autocmd!
-    autocmd CursorMoved * lua require 'm.lsp.lightbulb'.update()
-  augroup end
-]])
+vim.api.nvim_create_autocmd('CursorMoved', {
+  desc = '[LSP] Update lightbulb',
+  callback = function() M.update() end,
+  group = vim.api.nvim_create_augroup('VimrcLightbulb', {}),
+})
 
 return M

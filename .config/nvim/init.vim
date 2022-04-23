@@ -7,7 +7,7 @@
 " TERMINAL        $VIMCONFIG/term.vim
 " FZF             $VIMCONFIG/fzf.vim
 " GREP            $VIMCONFIG/grep.vim
-" COLORSCHEME     $VIMCONFIG/colors/onedark.vim.in
+" COLORSCHEME     $VIMCONFIG/colors/onedark.lua
 " SNIPPETS        $VIMCONFIG/lua/m/snippets.lua
 " AUTOCOMMANDS    $VIMCONFIG/autocmd.vim
 
@@ -19,14 +19,18 @@ let $VIMPLUGINS = $VIMDATA.'/neopm'
 let g:mapleader = ' '
 aug Vimrc | au! | aug end
 
-let g:vimrc_minimal = v:progname ==# 'vi'
-if g:vimrc_minimal
+if v:progname ==# 'vi'
   source $VIMCONFIG/minimal.vim
   finish
 endif
 
-if exists('$VIMNOLSP')
+call m#addopts(['NoLsp', 'NoCache'])
+
+if g:options.NoLsp || exists('$VIMNOLSP')
   let g:disable_lsp = 1
+endif
+if g:options.NoCache || exists('$VIMNOCACHE')
+  let g:disable_lua_cache = 1
 endif
 
 let g:bookmarks = [
@@ -64,7 +68,6 @@ let g:bookmarks = [
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
     let g:indent_blankline_filetype_exclude = ['', 'man', 'lir', 'floggraph', 'fugitive', 'gitcommit']
-    " let g:indent_blankline_show_first_indent_level = v:false
     let g:indent_blankline_show_trailing_blankline_indent = v:false
     let g:indent_blankline_char = '¦'
 
@@ -133,10 +136,11 @@ let g:bookmarks = [
     set diffopt+=vertical                     " start diff as a vertical split
     set nojoinspaces                          " join lines with one space instead of two
     set gdefault                              " use g flag by default in substitutions
+    set backspace=indent,start                " no backspacing over eol
 
   " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces
-    set shiftwidth=4 softtabstop=4 tabstop=8  " tab width
+    set tabstop=8 shiftwidth=4 softtabstop=-1 " tab width
     set shiftround                            " follow tab grid
     set smartindent                           " smarter auto indentation
     set cino+=:0,g0,l1,N-s,E-s                " c/cpp indentation

@@ -2,75 +2,98 @@ local c = vim.lsp.handlers
 
 local M = {}
 
+
 local function find_qf_index(items)
-  local fname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local fname = vim.api.nvim_buf_get_name(0)
   local linenr = vim.api.nvim_win_get_cursor(0)[1]
 
-  local found_file = false
+  local found = false
   local idx = -1
-  for index, value in ipairs(items) do
-    if value.filename == fname then
-      found_file = true
-      if value.lnum == linenr then
-        return index
-      elseif value.lnum < linenr or idx == -1 then
-        idx = index
+  for i, v in ipairs(items) do
+    if v.filename == fname then
+      found = true
+      if v.lnum == linenr then
+        return i
+      elseif v.lnum < linenr or idx == -1 then
+        idx = i
       end
-    elseif found_file then
+    elseif found then
       return idx
     end
   end
   return idx
 end
 
-local function set_qflist(items)
-  vim.lsp.util.set_qflist(items)
-  local qf_index = find_qf_index(items)
-  if qf_index ~= -1 then
-    local view = vim.fn.winsaveview()
-    vim.cmd('cc ' .. qf_index)
-    vim.fn.winrestview(view)
+local function set_qflist(result, ctx, config, title)
+  local loclist = config and config.loclist or false
+
+  if loclist then
+    vim.fn.setloclist(0, {}, ' ', {
+      title = title or 'Locations',
+      items = result,
+      context = ctx,
+    })
+  else
+    vim.fn.setqflist({}, ' ', {
+      title = title or 'Locations',
+      items = result,
+      context = ctx,
+    })
   end
+
+  local idx = find_qf_index(result)
+  if idx == -1 then return end
+
+  local view = vim.fn.winsaveview()
+  vim.api.nvim_command((loclist and 'll' or 'cc')..idx)
+  vim.fn.winrestview(view)
 end
+
 
 -- select line under cursor on quickfix list
--- don't switch back from quickfix to previous window
-c['textDocument/references'] = function(_, result)
+c['textDocument/references'] = function(_, result, ctx, config)
   if not result or vim.tbl_isempty(result) then
     print('LSP: No references found')
-    return nil
-  end
-  set_qflist(vim.lsp.util.locations_to_items(result))
-  vim.cmd('copen')
-end
-
-local function symbol_callback(entity)
-  return function(_, result, context)
-    if not result or vim.tbl_isempty(result) then
-      print('LSP: No '..entity..' found')
-      return nil
-    end
-    set_qflist(vim.lsp.util.symbols_to_items(result, context.bufnr))
-    vim.cmd('copen')
+  else
+    local util = require('vim.lsp.util')
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    set_qflist(util.locations_to_items(result, client.offset_encoding), ctx, config, 'References')
+    vim.api.nvim_command((config and config.loclist) and 'lopen' or 'botright copen')
   end
 end
 
-c['textDocument/documentSymbol'] = symbol_callback('document symbols')
-c['workspace/symbol']            = symbol_callback('symbols')
 
-local function location_callback(_, result)
+local function symbol_callback(_, result, ctx, config)
+  if not result or vim.tbl_isempty(result) then
+    print('LSP: No symbols found')
+  else
+    local util = require('vim.lsp.util')
+    set_qflist(util.symbols_to_items(result, ctx.bufnr), ctx, config, 'Symbols')
+    vim.api.nvim_command((config and config.loclist) and 'lopen' or 'botright copen')
+  end
+end
+
+c['textDocument/documentSymbol'] = symbol_callback
+c['workspace/symbol']            = symbol_callback
+
+
+local function location_callback(_, result, ctx, config)
   if result == nil or vim.tbl_isempty(result) then
     print('LSP: No location found')
-    return nil
+    return
   end
+
+  local util = require('vim.lsp.util')
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+
   if vim.tbl_islist(result) then
-    vim.lsp.util.jump_to_location(result[1])
+    util.jump_to_location(result[1], client.offset_encoding)
     if #result > 1 then
-      set_qflist(vim.lsp.util.locations_to_items(result))
-      vim.cmd("copen")
+      set_qflist(util.locations_to_items(result, client.offset_encoding), ctx, config, 'Locations')
+      vim.api.nvim_command((config and config.loclist) and 'lopen' or 'botright copen')
     end
   else
-    vim.lsp.util.jump_to_location(result)
+    util.jump_to_location(result, client.offset_encoding)
   end
 end
 
@@ -78,6 +101,7 @@ c['textDocument/declaration']    = location_callback
 c['textDocument/definition']     = location_callback
 c['textDocument/typeDefinition'] = location_callback
 c['textDocument/implementation'] = location_callback
+
 
 local last_actions
 local last_on_choice
@@ -98,5 +122,6 @@ function M.select_callback(index, _)
   index = index + 1
   last_on_choice(last_actions[index], index)
 end
+
 
 return M

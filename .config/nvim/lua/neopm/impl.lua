@@ -1,12 +1,12 @@
 local fn = vim.fn
 local uv = vim.loop
 local tinsert = table.insert
-local Task = require('plug.task')
-local Git = require('plug.git')
-local UpdateView = require('plug.updateview')
+local Task = require('neopm.task')
+local Git = require('neopm.git')
+local UpdateView = require('neopm.updateview')
 
 ---@type NeopmState
-local state = require('plug')._state
+local state = require('neopm.state')
 
 local Impl = {}
 
@@ -171,11 +171,21 @@ local function start(update)
 
   -- wait for tasks
   -- TODO: configurable timeout
-  -- TODO: user interrupt
+  local interrupt = false
   vim.wait(60000, function()
+    if not pcall(fn.getchar, 0) then
+      interrupt = true
+      return true
+    end
     buf:flush()
     return Task.done()
   end)
+
+  if interrupt then
+    Task.cancel()
+    vim.api.nvim_echo({{'Neopm: Keyboard interrupt', 'ErrorMsg'}}, true, {})
+    return false
+  end
 
   buf:global('Generating help tags...')
   Impl.helptags()

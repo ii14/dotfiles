@@ -21,7 +21,7 @@ call m#cabbrev('b', 'B')
 
 " Set tab width. 4 by default, ! is noet -------------------------------------------------
 command! -count=4 -bang T
-  \ setl ts=<count> sts=<count> sw=<count> |
+  \ setl ts=<count> sw=<count> sts=-1 |
   \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
 
 " Fill the rest of the line with character -----------------------------------------------
@@ -81,9 +81,9 @@ command! Synstack
   \ echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ' > ')
 
 " Fix typos ------------------------------------------------------------------------------
-command! -bang Q q<bang>
-command! -bang Qa qa<bang>
-command! -bang QA qa<bang>
+command! -bang -bar Q  q<bang>
+command! -bang -bar Qa qa<bang>
+command! -bang -bar QA qa<bang>
 
 " Lazy loaded termdebug ------------------------------------------------------------------
 if !exists(':Termdebug')

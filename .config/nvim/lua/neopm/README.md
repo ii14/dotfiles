@@ -38,7 +38,7 @@ Plugin manager for neovim, pre-alpha stage.
 
 ```
 mkdir -p ~/.config/nvim/lua
-git clone https://github.com/ii14/neopm.nvim ~/.config/nvim/lua/plug
+git clone https://github.com/ii14/neopm ~/.config/nvim/lua/neopm
 ```
 
 ## Managing plugins
@@ -46,9 +46,8 @@ git clone https://github.com/ii14/neopm.nvim ~/.config/nvim/lua/plug
 ```lua
 -- can be a global or local variable, doesn't matter.
 -- name can be anything, eg. you can use `p` or `P` if
--- you prefer it to be something shorter. module name
--- will change in a near future.
-Plug = require('plug')
+-- you prefer it to be something shorter.
+Plug = require('neopm')
 
 -- default config:
 -- Plug.config {
@@ -131,14 +130,10 @@ Plug.load()
 
 ### Install and update plugins
 
-Assuming you created a global variable (if not, replace `Plug` with `require'plug'`):
-
 ```
-:lua Plug.install()
-:lua Plug.update()
+:Neopm install
+:Neopm update
 ```
-
-In future vim commands will be provided.
 
 ### Patching plugins
 

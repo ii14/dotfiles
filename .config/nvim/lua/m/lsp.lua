@@ -33,8 +33,8 @@ setup.sumneko_lua {
         version = 'LuaJIT',
         path = (function()
           local rtp = vim.split(package.path, ';')
-          table.insert(rtp, "lua/?.lua")
-          table.insert(rtp, "lua/?/init.lua")
+          table.insert(rtp, 'lua/?.lua')
+          table.insert(rtp, 'lua/?/init.lua')
           return rtp
         end)(),
       },

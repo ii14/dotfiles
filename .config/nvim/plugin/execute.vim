@@ -42,4 +42,4 @@ function! s:__execute__(line1, line2, arg) abort
   call nvim_buf_set_lines(0, l:line1, l:line2, v:true, l:lines)
 endfunction
 
-com! -bar -nargs=? -range X call s:__execute__(<line1>, <line2>, <q-args>)
+com! -bar -nargs=? -range=% X call s:__execute__(<line1>, <line2>, <q-args>)

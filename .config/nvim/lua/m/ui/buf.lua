@@ -38,7 +38,7 @@ local function shorten_paths(bufs)
       b.label = name
     end
 
-    table.insert(bs, b)
+    bs[#bs+1] = b
   end
 
   while true do
@@ -114,14 +114,14 @@ function M.reload()
       M.buflist[idx] = buf
       prev[buf.bufnr] = nil
     else
-      table.insert(M.buflist, buf)
+      M.buflist[#M.buflist+1] = buf
     end
   end
 
   -- remove deleted buffers
   local del = {}
   for _, idx in pairs(prev) do
-    table.insert(del, idx)
+    del[#del+1] = idx
   end
   table.sort(del)
   for i = #del, 1, -1 do
@@ -133,6 +133,7 @@ end
 
 --- Update buffer properties
 function M.update()
+  print('update')
   local curbuf = api.nvim_get_current_buf()
   local altbuf = fn.bufnr('#')
 

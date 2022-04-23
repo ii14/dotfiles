@@ -1,8 +1,6 @@
 local ok, luasnip_config = pcall(require, 'luasnip.config')
 if not ok then return end
 
-local M = {}
-
 luasnip_config.set_config {
   history = true,
   updateevents = 'TextChanged,TextChangedI',
@@ -23,17 +21,14 @@ local lookup = {
   go         = 'm.snippets.go',
 }
 
-function M.require_format(filetype)
-  local mod = lookup[filetype]
-  if mod then require(mod) end
-end
-
-vim.api.nvim_exec([[
-  augroup VimrcSnippets
-    autocmd!
-    autocmd FileType * lua require('m.snippets').require_format(vim.o.filetype)
-  augroup end
-]], false)
+vim.api.nvim_create_autocmd('FileType', {
+  desc = '[Snippets] Loads snippets for current filetype',
+  callback = function(ctx)
+    local mod = lookup[ctx.match]
+    if mod then require(mod) end
+  end,
+  group = vim.api.nvim_create_augroup('VimrcSnippets', {}),
+})
 
 local function imap(lhs, rhs, opts) vim.api.nvim_set_keymap('i', lhs, rhs, opts) end
 local function smap(lhs, rhs, opts) vim.api.nvim_set_keymap('s', lhs, rhs, opts) end
@@ -48,5 +43,3 @@ smap('<S-Tab>', [[<cmd>lua require('luasnip').jump(-1)<CR>]], noremap)
 -- smap('<C-E>', [[luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<End>']], expr)
 imap('<Esc>', [[<Esc><cmd>silent LuaSnipUnlinkCurrent<CR>]], noremap)
 smap('<Esc>', [[<Esc><cmd>silent LuaSnipUnlinkCurrent<CR>]], noremap)
-
-return M

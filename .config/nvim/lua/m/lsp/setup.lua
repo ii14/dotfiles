@@ -17,7 +17,7 @@ local function wrap(a, b)
 end
 
 --- Update signcolumns for current tab
-function M._update_tab()
+local function update_tab()
   local tabnr = vim.api.nvim_get_current_tabpage()
   for _, win in ipairs(vim.fn.getwininfo()) do
     if win.tabnr == tabnr then
@@ -30,7 +30,7 @@ function M._update_tab()
 end
 
 --- LSP on_init callback, register client
-M.on_init = function(client)
+function M.on_init(client)
   clients[client.id] = {
     name = client.name,
     bufs = {},
@@ -60,7 +60,7 @@ M.on_attach = vim.schedule_wrap(function(client, bufnr)
   table.insert(clients[client.id].bufs, bufnr)
   bufs[bufnr] = true
   vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')
-  M._update_tab()
+  update_tab()
 
   vim.g.lsp_event = {
     event = 'attach',
@@ -79,28 +79,27 @@ M.on_exit = vim.schedule_wrap(function(_, _, id)
   local client = clients[id]
   if not client then return end
 
-  local util = require 'm.lsp.util'
+  local util = require('m.lsp.util')
   for _, bufnr in ipairs(client.bufs) do
     if not util.is_attached(bufnr) then
       bufs[bufnr] = false
       vim.fn.setbufvar(bufnr, '&signcolumn', 'auto')
     end
   end
-  M._update_tab()
+  update_tab()
 
   clients[id] = nil
 end)
 
-vim.cmd([[
-  augroup VimrcLsp
-    autocmd!
-    autocmd TabEnter * lua require 'm.lsp.setup'._update_tab()
-  augroup end
-]])
+vim.api.nvim_create_autocmd('TabEnter', {
+  desc = '[LSP] Updates tab',
+  callback = function() update_tab() end,
+  group = vim.api.nvim_create_augroup('VimrcLsp', {}),
+})
 
 return setmetatable(M, {
   __index = function(_, k)
-    local lspconfig = require 'lspconfig'
+    local lspconfig = require('lspconfig')
     if lspconfig[k] == nil then
       error('config does not exist: '..k)
     end

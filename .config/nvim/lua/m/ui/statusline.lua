@@ -206,16 +206,16 @@ local function render_diagnostic(ctx)
     end
     local res = {}
     if count[d.severity.ERROR] then
-      table.insert(res, 'E'..count[d.severity.ERROR])
+      res[#res+1] = 'E'..count[d.severity.ERROR]
     end
     if count[d.severity.WARN] then
-      table.insert(res, 'W'..count[d.severity.WARN])
+      res[#res+1] = 'W'..count[d.severity.WARN]
     end
     if count[d.severity.INFO] then
-      table.insert(res, 'I'..count[d.severity.INFO])
+      res[#res+1] = 'I'..count[d.severity.INFO]
     end
     if count[d.severity.HINT] then
-      table.insert(res, 'H'..count[d.severity.HINT])
+      res[#res+1] = 'H'..count[d.severity.HINT]
     end
     if #res > 0 then
       return table.concat(res, ' ')
@@ -229,7 +229,7 @@ local function render_lsp(ctx)
     if ctx.width >= WIDTH_TINY then
       local res = {}
       for _, client in pairs(lsp.buf_get_clients(ctx.bufnr)) do
-        table.insert(res, client.name)
+        res[#res+1] = client.name
       end
       return table.concat(res, ',')
     end
@@ -252,7 +252,7 @@ end
 
 local function insert(t, v)
   if v and v ~= '' then
-    table.insert(t, ' '..v)
+    t[#t+1] = ' '..v
   end
 end
 

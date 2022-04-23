@@ -1,0 +1,118 @@
+*pro.txt*					Simple config management
+
+==============================================================================
+*pro.vim* is a simple config management plugin.
+
+Plugin is meant to be used with ii14/|exrc.vim| plugin or 'exrc' option.
+
+
+g:pro							*g:pro*
+	A dictionary with configurations.
+>
+	let g:pro = {}
+
+	let g:pro.release = {
+	  \ '&makeprg'     : 'make -j -C build/release',
+	  \ 'g:qmake#dir'  : 'build/release',
+	  \ }
+
+	let g:pro.debug = {
+	  \ '&makeprg'     : 'make -j -C build/debug',
+	  \ 'g:qmake#dir'  : 'build/debug',
+	  \ 'g:qmake#args' : 'CONFIG+=debug',
+	  \ }
+
+	let g:pro.test = {
+	  \ '&makeprg'     : 'make -j -C build/test && ./build/test/test',
+	  \ 'g:qmake#dir'  : 'build/test',
+	  \ 'g:qmake#args' : 'CONFIG+=debug CONFIG+=test',
+	  \ }
+<
+	When config is selected with |:Pro|, previous values are saved as
+	default values and any missing settings will be reverted. It's also
+	possible to set the default values explicitly by using _ key:
+>
+	let g:pro._ = {'$MY_VAR': 'default_value'}
+
+	let g:pro.debug = {'$MY_VAR': 'debug_value'}
+	" in 'debug' $MY_VAR is set to 'debug_value'
+
+	let g:pro.release = {}
+	" in 'release' $MY_VAR is set to 'default_value'
+<
+
+g:pro#default						*g:pro#default*
+	Default config. Automatically selected upon initialization.
+>
+	let g:pro#default = 'debug'
+<
+	Might not fully work without support for |SourcePost| event,
+	introduced in patch 8.1.0729.
+
+
+:Pro[!] [{config}]					*:Pro*
+	Apply settings from {config}.
+>
+	:Pro debug
+<
+	If {config} is not provided, prints out the name of selected config,
+	unless ! was provided, in which case the settings from the currently
+	selected or default config are reloaded.
+	Reload configuration when .exrc file is sourced:
+>
+	autocmd SourcePost .exrc silent Pro!
+<
+	|:verbose| modifier prints out configurations and their settings.
+>
+	:verbose Pro
+	    release
+	        &makeprg = make -j -C build/release
+	        qmake#dir = build/release
+	    debug *
+	        &makeprg = make -j -C build/debug
+	        qmake#args = CONFIG+=debug
+	        qmake#dir = build/debug
+	    test
+	        &makeprg = make -j -C build/test && ./build/test/test
+	        qmake#args = CONFIG+=debug CONFIG+=test
+	        qmake#dir = build/test
+<
+
+pro#selected()						*pro#selected()*
+	Returns name of the currently selected config.
+
+	Display current config in lightline:
+>
+	let g:lightline = {}
+
+	let g:lightline.active = {
+	  \ 'left': [
+	  \   ['mode', 'paste'],
+	  \   ['pro', 'readonly', 'filename', 'modified'],
+	  \ ]}
+
+	let g:lightline.component_function = {
+	  \ 'pro': 'pro#selected',
+	  \ }
+<
+
+pro#configs()						*pro#configs()*
+	Returns list of all config names.
+
+	Select config with fzf.vim:
+>
+	nnoremap <silent> <leader>r :call fzf#run(fzf#wrap(
+	  \ {'source': pro#configs(), 'sink': 'Pro'}))<CR>
+<
+
+ProUpdate						*ProUpdate*
+	Configuration update event.
+>
+	augroup Project
+	  autocmd!
+	  autocmd User ProUpdate echomsg 'Selected config: ' . pro#selected()
+	augroup end
+<
+
+==============================================================================
+vim:tw=78:sw=8:sts=8:ts=8:noet:ft=help:norl:

@@ -14,7 +14,7 @@ augroup VimrcAutocmd
   endfunc
   au WinEnter,BufWinEnter * if s:cursorline() | setl   cursorline | endif
   au WinLeave             * if s:cursorline() | setl nocursorline | endif
-  au TermOpen * setl nonumber norelativenumber nocursorline signcolumn=auto
+  au TermOpen    * setl nonumber norelativenumber nocursorline signcolumn=auto
   au CmdwinEnter * setl nonumber norelativenumber
 
 " Highlight yanked text ----------------------------------------------------------------

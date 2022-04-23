@@ -1,4 +1,8 @@
-Plug = require('plug')
+Plug = require('neopm')
+
+-- Plug.config {
+--   install_dir = vim.fn.stdpath('data')..'/neopm2',
+-- }
 
 local function lazy(name)
   return function()
@@ -15,7 +19,7 @@ Plug 'wellle/targets.vim'
 Plug 'tommcdo/vim-exchange'
 Plug 'haya14busa/vim-asterisk'
 Plug 'romainl/vim-cool'
-Plug 'godlygeek/tabular'
+Plug 'RRethy/nvim-align'
 Plug 'ii14/vim-bbye'
 Plug 'mbbill/undotree'
 Plug 'wellle/visual-split.vim'
@@ -30,9 +34,10 @@ Plug 'tamago324/lir.nvim'
 Plug 'bogado/file-line'
 
 -- Completion, LSP --
-if vim.g.disable_lsp == nil then
+if not vim.g.disable_lsp then
   Plug 'neovim/nvim-lspconfig'
   Plug 'ii14/lsp-command'
+  -- Plug '~/dev/vim/lsp-command'
   Plug 'jose-elias-alvarez/null-ls.nvim' { depends = 'nvim-lua/plenary.nvim' }
   Plug 'folke/trouble.nvim' {
     setup = lazy 'trouble',
@@ -49,10 +54,7 @@ Plug 'L3MON4D3/LuaSnip'
 -- Development --
 Plug 'tpope/vim-dispatch'
 Plug 'ii14/exrc.vim'
-Plug 'ii14/pro.vim'
-if vim.env.NO_NREPL == nil then
-  Plug 'ii14/nrepl.nvim'
-end
+Plug 'ii14/nrepl.nvim'
 
 -- Git --
 Plug 'tpope/vim-fugitive'
@@ -78,7 +80,6 @@ Plug 'ii14/luv-vim-docs'
 -- Performance --
 Plug 'tweekmonster/startuptime.vim'
 Plug 'lewis6991/impatient.nvim'
--- Plug 'nathom/filetype.nvim'
 
 Plug.autoinstall(true)
 Plug.load()

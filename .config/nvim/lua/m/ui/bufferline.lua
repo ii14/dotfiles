@@ -103,7 +103,7 @@ local function render_bufs(width)
 
   for i, buf in ipairs(bl.buflist) do
     len = len + buf.displaylen
-    table.insert(strs, { buf.display, buf.displaylen })
+    strs[#strs+1] = { buf.display, buf.displaylen }
     if buf.current then
       curidx = i
     end
@@ -194,6 +194,12 @@ function M.redraw()
   vim.cmd('redrawtabline')
 end
 
+local function trigger_redraw()
+  if pending_redraw then
+    M.redraw()
+  end
+end
+
 --- Update bufferline
 --- reload buffers if ev is true
 function M.update(ev, opt)
@@ -210,26 +216,26 @@ function M.update(ev, opt)
     end
   end
 
-  pending_redraw = true
-  -- if not pending_redraw then
-  --   pending_redraw = true
-  --   vim.schedule(M.redraw)
-  -- end
-end
-
-local function on_start()
-  if pending_redraw then
+  -- pending_redraw = true
+  if not pending_redraw then
     pending_redraw = true
-    M.redraw()
+    vim.schedule(trigger_redraw)
   end
 end
 
 function M.setup()
-  if not _G.m then _G.m = {} end
-  _G.m.bufferline = M
+  -- if not _G.m then _G.m = {} end
+  -- _G.m.bufferline = M
 
   local ns = api.nvim_create_namespace('bufferline')
-  api.nvim_set_decoration_provider(ns, { on_start = on_start })
+
+  api.nvim_set_decoration_provider(ns, {
+    on_start = function()
+      if pending_redraw then
+        M.redraw()
+      end
+    end,
+  })
 
   vim.cmd([[
     function! BufferlineGoto(minwid, clicks, btn, modifiers)
@@ -237,19 +243,36 @@ function M.setup()
     endfunction
   ]])
 
-  local lines = {}
-  for _, v in ipairs(UPDATE_EVENTS) do
-    table.insert(lines, 'autocmd '..v..' * lua m.bufferline.update("'..v..'")')
-  end
-  for _, v in ipairs(UPDATE_OPTIONS) do
-    table.insert(lines, 'autocmd OptionSet '..v..' lua m.bufferline.update("OptionSet", "'..v..'")')
-  end
-  vim.cmd(string.format([[
-    augroup Bufferline
-      autocmd!
-      %s
-    augroup end
-  ]], table.concat(lines, '\n')))
+  local augroup = vim.api.nvim_create_augroup('Bufferline', {})
+  vim.api.nvim_create_autocmd(UPDATE_EVENTS, {
+    desc = '[Bufferline] Update on event',
+    callback = function(ctx)
+      M.update(ctx.event)
+    end,
+    group = augroup,
+  })
+  vim.api.nvim_create_autocmd('OptionSet', {
+    desc = '[Bufferline] Update on option',
+    pattern = UPDATE_OPTIONS,
+    callback = function(ctx)
+      M.update('OptionSet', ctx.match)
+    end,
+    group = augroup,
+  })
+
+  -- local lines = {}
+  -- for _, v in ipairs(UPDATE_EVENTS) do
+  --   table.insert(lines, 'autocmd '..v..' * lua m.bufferline.update("'..v..'")')
+  -- end
+  -- for _, v in ipairs(UPDATE_OPTIONS) do
+  --   table.insert(lines, 'autocmd OptionSet '..v..' lua m.bufferline.update("OptionSet", "'..v..'")')
+  -- end
+  -- vim.cmd(string.format([[
+  --   augroup Bufferline
+  --     autocmd!
+  --     %s
+  --   augroup end
+  -- ]], table.concat(lines, '\n')))
 
   api.nvim_set_var('bufferline', '')
   api.nvim_set_option('tabline', [[%{%g:bufferline%}]])

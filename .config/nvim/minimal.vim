@@ -6,13 +6,8 @@ filetype off
 syntax off
 
 " theme
-if luaeval('require("m.util.preproc").ensure(vim.env.VIMCONFIG.."/colors/onedark.vim")')
-  set termguicolors " true color
-  set noshowmode    " redundant mode message
-  colorscheme onedark
-else
-  echomsg 'Failed to load colorscheme'
-endif
+set termguicolors
+colorscheme onedark
 
 " Visual
 " set number relativenumber                 " line numbers

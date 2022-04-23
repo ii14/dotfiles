@@ -15,4 +15,7 @@ hi def link qfError     Error
 setl conceallevel=2
 setl concealcursor=nc
 
+" fidget.nvim workaround
+set winhighlight=
+
 let b:current_syntax = 'qf'

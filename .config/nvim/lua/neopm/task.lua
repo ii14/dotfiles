@@ -1,7 +1,7 @@
 local uv = vim.loop
 local ccreate, cresume, cyield, crunning =
   coroutine.create, coroutine.resume, coroutine.yield, coroutine.running
-local tinsert, tremove, tconcat = table.insert, table.remove, table.concat
+local tinsert, tconcat = table.insert, table.concat
 
 
 local CHUNK_SIZE = 1024 -- bytes per chunk when reading a file
@@ -16,8 +16,11 @@ local tasks = {}
 --- Active tasks
 local active = 0
 --- Running jobs (uv_process_t)
----@type userdata[]
+---@type table<userdata[],boolean>
 local jobs = {}
+--- Open pipes (uv_pipe_t)
+---@type table<userdata,boolean>
+local pipes = {}
 --- Cancelled flag
 local cancelled = false
 
@@ -33,6 +36,14 @@ end
 --- Discard first value
 local function discard_first(_, ...)
   return ...
+end
+
+--- Close uv handle
+---@param handle userdata
+local function close(handle)
+  if not handle:is_closing() then
+    pcall(uv.close, handle)
+  end
 end
 
 
@@ -89,6 +100,7 @@ function Task.reset()
   tasks = {}
   active = 0
   jobs = {}
+  pipes = {}
   cancelled = false
 end
 
@@ -113,13 +125,21 @@ function Task.done()
   return active == 0 or cancelled
 end
 
---- Cancels all tasks (and spawned jobs)
+--- Cancels all tasks
 function Task.cancel()
   cancelled = true
-  for _, job in ipairs(jobs) do
-    job:kill('SIGTERM')
+
+  for job in pairs(jobs) do
+    if not job:is_closing() then
+      job:kill('SIGTERM')
+    end
   end
   jobs = {}
+
+  for pipe in pairs(pipes) do
+    close(pipe)
+  end
+  pipes = {}
 end
 
 --- Waits until all tasks are done
@@ -163,11 +183,11 @@ end
 ---@return fun(err?: string, data: string)|nil callback
 ---@return string[] output
 local function new_pipe(cb, capture)
-  if not cb and not capture then
-    return uv.new_pipe()
-  end
-
   local pipe = uv.new_pipe()
+  pipes[pipe] = true
+  if not cb and not capture then
+    return pipe
+  end
   local callback, output
 
   if capture and cb then
@@ -233,21 +253,18 @@ function Task:exec(path, args, opts)
     env = opts.env,
     stdio = { nil, stdout_pipe, stderr_pipe },
   }, function(status, signal)
-    handle:close()
+    close(handle)
     if stdout_pipe then
-      stdout_pipe:close()
+      close(stdout_pipe)
+      pipes[stdout_pipe] = nil
     end
     if stderr_pipe then
-      stderr_pipe:close()
+      close(stderr_pipe)
+      pipes[stderr_pipe] = nil
     end
 
     -- remove from active jobs
-    for i, v in ipairs(jobs) do
-      if handle == v then
-        tremove(jobs, i)
-        break
-      end
-    end
+    jobs[handle] = nil
 
     -- split output to lines
     if stdout_output then
@@ -267,10 +284,12 @@ function Task:exec(path, args, opts)
 
   if not handle then
     if stdout_pipe then
-      stdout_pipe:close()
+      close(stdout_pipe)
+      pipes[stdout_pipe] = nil
     end
     if stderr_pipe then
-      stderr_pipe:close()
+      close(stderr_pipe)
+      pipes[stderr_pipe] = nil
     end
     error('failed to spawn process: '..path..' '..tconcat(args, ' '))
   end
@@ -283,7 +302,7 @@ function Task:exec(path, args, opts)
     stderr_pipe:read_start(stderr_cb)
   end
 
-  tinsert(jobs, handle)
+  jobs[handle] = true
   return Task.yield()
 end
 

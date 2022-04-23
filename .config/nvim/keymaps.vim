@@ -53,6 +53,11 @@ xno <expr> <C-E> <SID>vscroll('<C-E>')
 nno <expr> <C-Y> <SID>vscroll('<C-Y>')
 xno <expr> <C-Y> <SID>vscroll('<C-Y>')
 
+" Center cursor after n/N
+nno <Plug>(center) <cmd>call timer_start(0, {-> execute('norm!zz')})<CR>
+nno <silent> n <Plug>(center)n
+nno <silent> N <Plug>(center)N
+
 " WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
 nno <C-J> <C-W>j
@@ -76,10 +81,6 @@ nno <C-F> :lua require'm.menus'.bookmarks()<CR>
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
-" " Fern
-" nno <silent><expr> -  ':Fern '.(expand('%') ==# '' ? '.' : '%:h -reveal=%:t').'<CR>'
-" nno <silent><expr> _  ':Fern . -drawer -toggle'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
-" nno <silent><expr> g- ':Fern . -drawer'.(expand('%')!=#''?' -reveal=%':'').'<CR>'
 " lir
 nno <silent> - <cmd>execute 'edit' m#bufdir()[:-2]<CR>
 
@@ -170,7 +171,7 @@ nno <leader>g3 :diffget //3<CR>
 nno <leader>v ggVG
 nno <leader>r <cmd>call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
 nno <leader>o :lua require'm.menus'.options()<CR>
-xno <leader>t :Tabularize /
+xno <leader>t :Align<Space>
 nno <leader>n :norm<Space>
 xno <leader>n :norm<Space>
 nno <leader>N :norm!<Space>
@@ -245,6 +246,7 @@ cno <expr> <C-N> wildmenumode() ? '<C-N>' : '<Down>'
 cno <C-A> <Home>
 cno <C-F> <C-R>=m#bf#cforward()<CR>
 cno <C-B> <C-R>=m#bf#cbackward()<CR>
+cno <C-D> <Del>
 cno <C-O> <C-F>
 cno <C-X><C-A> <C-A>
 " Insert stuff
