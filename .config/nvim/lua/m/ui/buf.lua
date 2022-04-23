@@ -133,7 +133,6 @@ end
 
 --- Update buffer properties
 function M.update()
-  print('update')
   local curbuf = api.nvim_get_current_buf()
   local altbuf = fn.bufnr('#')
 
