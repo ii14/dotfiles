@@ -3,6 +3,7 @@
 
 [core]
     excludesFile = ~/.config/git/ignore
+    pager = less -FX
 
 [pager]
     branch = false
@@ -16,7 +17,7 @@
 [alias]
     st = status
     ci = commit --verbose
-    cia = commit --verbose --amend
+    ca = commit --amend
     co = checkout
     com = checkout master
     aa = add --all
@@ -26,10 +27,11 @@
     brs = branch -vva
     wt = worktree
     l = log --graph --abbrev-commit --decorate --format=line --all
-    lt = !git --no-pager l -n 10
-    l1 = !git --no-pager log -n 1
-    np = !git --no-pager
+    lt = log --graph --abbrev-commit --decorate --format=line --all -n 10
+    l1 = log -n 1
     root = rev-parse --show-toplevel
+    bg = bisect good
+    bb = bisect bad
 
 [pretty]
     line = %C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)
