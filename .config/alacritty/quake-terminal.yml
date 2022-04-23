@@ -1,3 +1,4 @@
 import:
   - ~/.config/alacritty/alacritty.yml
-background_opacity: 0.9
+window:
+  opacity: 0.9

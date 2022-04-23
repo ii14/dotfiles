@@ -76,3 +76,8 @@ function hashcwd {
     hash -d "$1"="$PWD"
     return $?
 }
+
+
+if [[ $TERM == 'alacritty' ]]; then
+    eval "$(TERM=xterm-256color dircolors)"
+fi
