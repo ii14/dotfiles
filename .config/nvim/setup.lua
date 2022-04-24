@@ -29,6 +29,28 @@ require('gitsigns').setup{
   preview_config = {
     border = 'none',
   },
+  on_attach = function(bufnr)
+    local NOREMAP = { noremap = true, silent = true }
+    local EXPR = { expr = true, noremap = true, silent = true }
+    local function map(mode, lhs, rhs, opts)
+      vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts or NOREMAP)
+    end
+
+    map('n', ']c', [[&diff ? ']c' : '<cmd>lua require"gitsigns".next_hunk()<CR>']], EXPR)
+    map('n', '[c', [[&diff ? '[c' : '<cmd>lua require"gitsigns".prev_hunk()<CR>']], EXPR)
+
+    map('n', '<leader>hs', '<cmd>lua require"gitsigns".stage_hunk()<CR>')
+    map('x', '<leader>hs', '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>')
+    map('n', '<leader>hu', '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>')
+    map('n', '<leader>hr', '<cmd>lua require"gitsigns".reset_hunk()<CR>')
+    map('x', '<leader>hr', '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>')
+    map('n', '<leader>hR', '<cmd>lua require"gitsigns".reset_buffer()<CR>')
+    map('n', '<leader>hp', '<cmd>lua require"gitsigns".preview_hunk()<CR>')
+    map('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line(true)<CR>')
+
+    map('o', 'ih', [[:<C-U>lua require"gitsigns".select_hunk()<CR>]])
+    map('x', 'ih', [[:<C-U>lua require"gitsigns".select_hunk()<CR>]])
+  end,
 }
 
 -- TODO: lazy load
