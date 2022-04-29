@@ -1,3 +1,4 @@
+0
 setl nobuflisted
 setl colorcolumn=
 setl nonumber norelativenumber
