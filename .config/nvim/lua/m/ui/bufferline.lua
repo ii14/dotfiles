@@ -26,7 +26,7 @@ local UPDATE_EVENTS = {
   'TabEnter', 'TabClosed', 'FileType', 'VimResized',
 }
 local UPDATE_OPTIONS = {
-  'buflisted', 'readonly', 'modifiable', 'buftype', 'showtabline',
+  'buflisted', 'readonly', 'modifiable', 'buftype', 'showtabline', 'modified',
 }
 local BUF_RELOAD_EVENTS = make_lookup {
   'BufAdd', 'BufDelete', 'BufFilePost',
@@ -35,7 +35,7 @@ local BUF_UPDATE_EVENTS = make_lookup {
   'BufEnter', 'BufLeave', 'BufModifiedSet', 'TabEnter', 'FileType',
 }
 local BUF_UPDATE_OPTIONS = make_lookup {
-  'readonly', 'modifiable', 'buftype',
+  'readonly', 'modifiable', 'buftype', 'modified',
 }
 
 local NO_BUFS = H'EL'..' no buffers'..H'BG'..'▕'
@@ -216,7 +216,6 @@ function M.update(ev, opt)
     end
   end
 
-  -- pending_redraw = true
   if not pending_redraw then
     pending_redraw = true
     vim.schedule(trigger_redraw)
@@ -224,9 +223,6 @@ function M.update(ev, opt)
 end
 
 function M.setup()
-  -- if not _G.m then _G.m = {} end
-  -- _G.m.bufferline = M
-
   local ns = api.nvim_create_namespace('bufferline')
 
   api.nvim_set_decoration_provider(ns, {
@@ -259,20 +255,6 @@ function M.setup()
     end,
     group = augroup,
   })
-
-  -- local lines = {}
-  -- for _, v in ipairs(UPDATE_EVENTS) do
-  --   table.insert(lines, 'autocmd '..v..' * lua m.bufferline.update("'..v..'")')
-  -- end
-  -- for _, v in ipairs(UPDATE_OPTIONS) do
-  --   table.insert(lines, 'autocmd OptionSet '..v..' lua m.bufferline.update("OptionSet", "'..v..'")')
-  -- end
-  -- vim.cmd(string.format([[
-  --   augroup Bufferline
-  --     autocmd!
-  --     %s
-  --   augroup end
-  -- ]], table.concat(lines, '\n')))
 
   api.nvim_set_var('bufferline', '')
   api.nvim_set_option('tabline', [[%{%g:bufferline%}]])

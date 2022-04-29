@@ -37,6 +37,10 @@ command! -nargs=1 -complete=option Set call m#command#set(<q-args>)
 " Rename current file --------------------------------------------------------------------
 command! RenameFile call m#command#rename_file()
 
+" compiledb ------------------------------------------------------------------------------
+command! -nargs=? -complete=dir Compiledb
+  \ call luaeval('require "m.compiledb".run(_A)', <q-args>)
+
 " xdg-open -------------------------------------------------------------------------------
 function s:OpenComp(A,L,P)
   return getcompletion(a:A, 'file', 1)
@@ -48,9 +52,9 @@ call m#cabbrev('open', 'Open')
 if executable('ctags')
   command! Ctags !ctags -R .
 endif
-if executable('qmltags') " https://github.com/pylipp/qtilities
-  command! Qmltags !qmltags
-endif
+" if executable('qmltags') " https://github.com/pylipp/qtilities
+"   command! Qmltags !qmltags
+" endif
 
 " Lightweight git blame ------------------------------------------------------------------
 command! -nargs=? -range GB

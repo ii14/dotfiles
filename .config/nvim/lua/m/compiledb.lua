@@ -74,9 +74,4 @@ function M.run(path)
   })
 end
 
-vim.cmd([[
-  command! -nargs=? -complete=dir Compiledb
-    \ call luaeval('require "m.compiledb".run(_A[1])', [<q-args>])
-]])
-
 return M

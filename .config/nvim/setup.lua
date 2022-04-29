@@ -1,24 +1,22 @@
-if not vim.g.disable_lua_cache then
-  pcall(require, 'impatient')
+if not vim.g.options.NoCache then
+  require('impatient')
 end
 
 require('m.global')
 
-if not vim.g.disable_lsp then
+if not vim.g.options.NoLsp then
   require('m.lsp')
-
+  require('m.lint')
   vim.diagnostic.config{
     severity_sort = true,
   }
 end
 
-if vim.filetype then
-  vim.filetype.add{
-    pattern = {
-      ['.*/cmus/rc'] = 'cmusrc',
-    },
-  }
-end
+vim.filetype.add{
+  pattern = {
+    ['.*/cmus/rc'] = 'cmusrc',
+  },
+}
 
 require('Comment').setup{
   ignore = '^$',
@@ -147,8 +145,6 @@ do
 end
 
 require('m.snippets')
-
-require('m.compiledb')
 
 vim.o.termguicolors = true
 vim.cmd('colorscheme onedark')

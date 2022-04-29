@@ -19,19 +19,14 @@ let $VIMPLUGINS = $VIMDATA.'/neopm'
 let g:mapleader = ' '
 aug Vimrc | au! | aug end
 
-if v:progname ==# 'vi'
+if v:progname ==# 'vi' && !exists('g:upgraded')
   source $VIMCONFIG/minimal.vim
   finish
 endif
 
 call m#addopts(['NoLsp', 'NoCache'])
-
-if g:options.NoLsp || exists('$VIMNOLSP')
-  let g:disable_lsp = 1
-endif
-if g:options.NoCache || exists('$VIMNOCACHE')
-  let g:disable_lua_cache = 1
-endif
+if exists('$VIMNOLSP')   | let g:options.NoLsp   = v:true | endif
+if exists('$VIMNOCACHE') | let g:options.NoCache = v:true | endif
 
 let g:bookmarks = [
   \ ['w', '<working directory>', 'Files .'],

@@ -5,6 +5,24 @@ set noloadplugins
 filetype off
 syntax off
 
+command! -bar Upgrade call s:upgrade()
+function! s:upgrade()
+  let g:upgraded = v:true
+
+  set loadplugins
+  if !exists('g:syntax_on')
+    syntax on
+    " filetype on
+    " filetype detect for all buffers
+  endif
+
+  source $VIMCONFIG/init.vim
+  runtime! plugin/**/*.vim
+  runtime! plugin/**/*.lua
+
+  delcommand Upgrade
+endfunction
+
 " theme
 set termguicolors
 colorscheme onedark

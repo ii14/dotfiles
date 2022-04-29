@@ -157,6 +157,12 @@ xno  <leader>P  "+P
 xno  <leader>gp "+gp
 xno  <leader>gP "+gP
 
+" TEXT OBJECTS ---------------------------------------------------------------------------
+xno <silent><expr> ii luaeval('require"m.textobj".inner_indent()')
+ono <silent><expr> ii luaeval('require"m.textobj".inner_indent()')
+xno <silent><expr> ai luaeval('require"m.textobj".outer_indent()')
+ono <silent><expr> ai luaeval('require"m.textobj".outer_indent()')
+
 " GIT ------------------------------------------------------------------------------------
 nno <leader>gs :Git<CR>
 nno <leader>gl :Flog<CR>

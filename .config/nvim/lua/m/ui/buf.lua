@@ -231,6 +231,4 @@ function M.move_left()
   end
 end
 
-if not _G.m then _G.m = {} end
-_G.m.buf = M
 return M

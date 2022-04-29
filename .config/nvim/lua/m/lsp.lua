@@ -59,23 +59,3 @@ setup.tsserver {}
 setup.gopls {}
 
 setup.zls {}
-
-local ok, null_ls = pcall(require, 'null-ls')
-if ok then
-  local diagnostics = null_ls.builtins.diagnostics
-  null_ls.setup {
-    on_init = setup.on_init,
-    on_attach = setup.on_attach,
-    on_exit = setup.on_exit,
-    sources = {
-      diagnostics.shellcheck.with{
-        filetypes = { 'sh', 'bash' }, -- workaround for filetype.nvim bang detection
-        diagnostics_format = '[#{c}] #{m}',
-      },
-      diagnostics.qmllint.with{
-        args = { '$FILENAME' },
-      },
-      diagnostics.php,
-    },
-  }
-end

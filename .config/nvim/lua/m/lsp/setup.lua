@@ -2,7 +2,7 @@ local M = {}
 
 local initialized = false
 local clients = {}
-local bufs = {}
+local buffers = {}
 
 --- Combine callback functions
 local function wrap(a, b)
@@ -16,15 +16,28 @@ local function wrap(a, b)
   end
 end
 
---- Update signcolumns for current tab
-local function update_tab()
-  local tabnr = vim.api.nvim_get_current_tabpage()
+--- Initialize LSP modules
+local function init()
+  if initialized then return end
+  initialized = true
+
+  require('m.lsp.callbacks')
+  require('m.lsp.lightbulb')
+  require('fidget').setup{
+    text = {
+      spinner = 'dots_scrolling',
+    },
+  }
+end
+
+--- Update signcolumn
+local function update_signcolumn()
   for _, win in ipairs(vim.fn.getwininfo()) do
-    if win.tabnr == tabnr then
-      local attached = bufs[win.bufnr]
-      if attached ~= nil then
-        vim.fn.setwinvar(win.winnr, '&signcolumn', attached and 'yes' or 'auto')
-      end
+    local attached = buffers[win.bufnr]
+    if attached ~= nil then
+      vim.api.nvim_win_call(vim.fn.win_getid(win.winnr, win.tabnr), function()
+        vim.cmd('setlocal signcolumn'..(attached and '=yes' or '<'))
+      end)
     end
   end
 end
@@ -35,17 +48,7 @@ function M.on_init(client)
     name = client.name,
     bufs = {},
   }
-
-  if not initialized then
-    initialized = true
-    require('m.lsp.callbacks')
-    require('m.lsp.lightbulb')
-    require('fidget').setup{
-      text = {
-        spinner = 'dots_scrolling',
-      },
-    }
-  end
+  init()
 end
 
 --- LSP on_attach callback
@@ -58,9 +61,11 @@ M.on_attach = vim.schedule_wrap(function(client, bufnr)
   end
 
   table.insert(clients[client.id].bufs, bufnr)
-  bufs[bufnr] = true
-  vim.fn.setbufvar(bufnr, '&signcolumn', 'yes')
-  update_tab()
+  buffers[bufnr] = true
+  vim.api.nvim_buf_call(bufnr, function()
+    vim.cmd('setlocal signcolumn=yes')
+  end)
+  update_signcolumn()
 
   vim.g.lsp_event = {
     event = 'attach',
@@ -82,20 +87,16 @@ M.on_exit = vim.schedule_wrap(function(_, _, id)
   local util = require('m.lsp.util')
   for _, bufnr in ipairs(client.bufs) do
     if not util.is_attached(bufnr) then
-      bufs[bufnr] = false
-      vim.fn.setbufvar(bufnr, '&signcolumn', 'auto')
+      buffers[bufnr] = false
+      vim.api.nvim_buf_call(bufnr, function()
+        vim.cmd('setlocal signcolumn<')
+      end)
     end
   end
-  update_tab()
+  update_signcolumn()
 
   clients[id] = nil
 end)
-
-vim.api.nvim_create_autocmd('TabEnter', {
-  desc = '[LSP] Updates tab',
-  callback = function() update_tab() end,
-  group = vim.api.nvim_create_augroup('VimrcLsp', {}),
-})
 
 return setmetatable(M, {
   __index = function(_, k)

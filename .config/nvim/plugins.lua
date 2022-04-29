@@ -34,21 +34,17 @@ Plug 'tamago324/lir.nvim'
 Plug 'bogado/file-line'
 
 -- Completion, LSP --
-if not vim.g.disable_lsp then
+if not vim.g.options.NoLsp then
   Plug 'neovim/nvim-lspconfig'
   Plug 'ii14/lsp-command'
-  -- Plug '~/dev/vim/lsp-command'
-  Plug 'jose-elias-alvarez/null-ls.nvim' { depends = 'nvim-lua/plenary.nvim' }
+  Plug 'mfussenegger/nvim-lint'
   Plug 'folke/trouble.nvim' {
     setup = lazy 'trouble',
     on = { 'Trouble', 'TroubleClose', 'TroubleRefresh', 'TroubleToggle' },
   }
   Plug 'j-hui/fidget.nvim'
-  -- Plug 'mfussenegger/nvim-lint'
 end
 Plug 'hrsh7th/nvim-compe'
--- Plug 'tamago324/compe-necosyntax'
--- Plug 'Shougo/neco-syntax'
 Plug 'L3MON4D3/LuaSnip'
 
 -- Development --
