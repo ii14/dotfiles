@@ -3,7 +3,7 @@ if vim.g.syntax_on then
   vim.cmd('syn reset')
 end
 vim.o.background = 'dark'
-vim.g.colors_name = 'onedark2'
+vim.g.colors_name = 'onedark'
 
 local red            = '#E06C75'
 local dark_red       = '#BE5046'
