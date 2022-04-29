@@ -1,7 +1,11 @@
 --- Pretty print
 _G.P = function(...)
-  local objs = vim.tbl_map(vim.inspect, { ... })
-  print(unpack(objs))
+  local n = select('#', ...)
+  local p = {...}
+  for i = 1, n do
+    p[i] = vim.inspect(p[i])
+  end
+  print(table.concat(p, ', '))
   return ...
 end
 
