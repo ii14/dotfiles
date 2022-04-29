@@ -148,9 +148,6 @@ function ytls {
 
 # VIM ------------------------------------------------------------------------------------
 alias vgit='vim "+Gedit :"'
-alias vim-install='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugInstall'
-alias vim-update='vim "+au FileType vim-plug ++once only | set nonu nornu | bd#" +PlugUpdate'
-alias vimclean='vim -u NORC --clean "+syntax off"'
 alias :q='exit'
 function :h {
     if ((ARGC == 0)); then
@@ -159,7 +156,7 @@ function :h {
         vim "+h $1 | only"
     fi
 }
-[ -v NVIM_LISTEN_ADDRESS ] && alias vim='vim -u $VIMCONFIG/remote.vim -i NONE --headless'
+[ -v NVIM_LISTEN_ADDRESS ] && alias vim='vim -u $VIMCONFIG/remote.lua -i NONE --headless'
 
 # GIT ------------------------------------------------------------------------------------
 function g {
