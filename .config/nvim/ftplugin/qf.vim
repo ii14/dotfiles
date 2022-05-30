@@ -1,14 +1,13 @@
-if exists('b:qf_isLoc') || getwininfo(win_getid())[0].quickfix != 1
-  finish
-endif
-
-let b:qf_isLoc = getwininfo(win_getid())[0].loclist == 1
-
 setlocal nonumber norelativenumber
 setlocal nowrap
 setlocal scrolloff=0
 setlocal nobuflisted
 setlocal textwidth=0
+
+if exists('b:qf_isLoc') || getwininfo(win_getid())[0].quickfix != 1
+  finish
+endif
+let b:qf_isLoc = getwininfo(win_getid())[0].loclist == 1
 
 nnoremap <buffer><nowait> j j
 nnoremap <buffer><nowait> k k

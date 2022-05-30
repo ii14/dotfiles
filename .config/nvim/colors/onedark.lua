@@ -25,10 +25,10 @@ local visual_grey    = '#3E4452'
 local menu_grey      = '#3E4452'
 local special_grey   = '#3B4048'
 local vertsplit      = '#181A1F'
-local diff_delete    = '#3D333B'
-local diff_add       = '#353D3C'
-local diff_change    = '#2F3136'
-local diff_text      = '#44423E'
+local diff_delete    = '#4C343B'
+local diff_add       = '#3E4C3E'
+local diff_change    = '#2F3135'
+local diff_text      = '#3E4C3E'
 
 local theme = {
   Comment        = { fg = comment_grey, italic = true },

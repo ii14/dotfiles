@@ -67,7 +67,7 @@ Plug 'norcalli/nvim-colorizer.lua'
 
 -- Misc --
 Plug 'vimwiki/vimwiki' { on = 'VimwikiIndex', ft = { 'vimwiki', 'markdown' } }
-Plug 'kizza/actionmenu.nvim'
+-- Plug 'kizza/actionmenu.nvim'
 
 -- Docs --
 Plug 'milisims/nvim-luaref'

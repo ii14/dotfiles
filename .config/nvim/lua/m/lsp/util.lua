@@ -4,7 +4,7 @@ local M = {}
 function M.is_attached(bufnr)
   local lsp = rawget(vim, 'lsp')
   if lsp then
-    for _, _ in pairs(lsp.buf_get_clients(bufnr or 0)) do
+    for _ in pairs(lsp.buf_get_clients(bufnr or 0)) do
       return true
     end
   end

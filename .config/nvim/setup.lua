@@ -152,3 +152,13 @@ vim.cmd('colorscheme onedark')
 vim.o.showmode = false
 require('m.ui.bufferline').setup()
 require('m.ui.statusline').setup()
+
+vim.api.nvim_create_autocmd('InsertEnter', {
+  desc = 'Register syncomp source',
+  once = true,
+  callback = function()
+    local ok, compe = pcall(require, 'compe')
+    if not ok then return end
+    compe.register_source('syncomp', require('m.syncomp'))
+  end,
+})

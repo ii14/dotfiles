@@ -29,7 +29,8 @@ command! -nargs=? Hr call m#command#hr(<q-args>)
 call m#cabbrev('hr', 'Hr')
 
 " :redir to a new buffer -----------------------------------------------------------------
-command! -nargs=+ -complete=command Redir call m#command#redir(<q-args>)
+command! -nargs=+ -complete=command Redir
+  \ call luaeval('require "m.util".redir(_A)', <q-args>)
 
 " :set with prompt -----------------------------------------------------------------------
 command! -nargs=1 -complete=option Set call m#command#set(<q-args>)
@@ -85,6 +86,7 @@ command! Synstack
   \ echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ' > ')
 
 " Fix typos ------------------------------------------------------------------------------
+command! -bang -bar W  w<bang>
 command! -bang -bar Q  q<bang>
 command! -bang -bar Qa qa<bang>
 command! -bang -bar QA qa<bang>

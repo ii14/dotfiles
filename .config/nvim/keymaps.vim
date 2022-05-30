@@ -53,10 +53,20 @@ xno <expr> <C-E> <SID>vscroll('<C-E>')
 nno <expr> <C-Y> <SID>vscroll('<C-Y>')
 xno <expr> <C-Y> <SID>vscroll('<C-Y>')
 
-" Center cursor after n/N
-nno <Plug>(center) <cmd>call timer_start(0, {-> execute('norm!zz')})<CR>
-nno <silent> n <Plug>(center)n
-nno <silent> N <Plug>(center)N
+" n/N always moves in one direction, center the screen afterwards
+function s:centercb(_)
+  if s:topline != winsaveview().topline
+    norm! zz
+    let s:topline = winsaveview().topline
+  endif
+endfunction
+function s:center()
+  let s:topline = winsaveview().topline
+  call timer_start(0, function('s:centercb'))
+endfunction
+nno <Plug>(center) <cmd>call <SID>center()<CR>
+nno <expr><silent> n '<Plug>(center)'..v:count1..'Nn'[v:searchforward]
+nno <expr><silent> N '<Plug>(center)'..v:count1..'nN'[v:searchforward]
 
 " WINDOWS --------------------------------------------------------------------------------
 nno <C-H> <C-W>h
@@ -77,7 +87,7 @@ nno <C-B> <cmd>Buffers<CR>
 
 " FILES ----------------------------------------------------------------------------------
 " fzf
-nno <C-F> :lua require'm.menus'.bookmarks()<CR>
+nno <C-F> :lua require'm.ui.menus'.bookmarks()<CR>
 nno <silent><expr> <leader>f (len(system('git rev-parse')) ? ':Files'
   \ : ':GFiles --exclude-standard --others --cached')."\<CR>"
 nno <silent><expr> <leader>F ':Files '.m#bufdir()."\<CR>"
@@ -158,10 +168,10 @@ xno  <leader>gp "+gp
 xno  <leader>gP "+gP
 
 " TEXT OBJECTS ---------------------------------------------------------------------------
-xno <silent><expr> ii luaeval('require"m.textobj".inner_indent()')
-ono <silent><expr> ii luaeval('require"m.textobj".inner_indent()')
-xno <silent><expr> ai luaeval('require"m.textobj".outer_indent()')
-ono <silent><expr> ai luaeval('require"m.textobj".outer_indent()')
+xno <silent> ii :<C-U>exe luaeval('require"m.textobj".inner_indent()')<CR>
+ono <silent> ii :<C-U>exe luaeval('require"m.textobj".inner_indent()')<CR>
+xno <silent> ai :<C-U>exe luaeval('require"m.textobj".outer_indent()')<CR>
+ono <silent> ai :<C-U>exe luaeval('require"m.textobj".outer_indent()')<CR>
 
 " GIT ------------------------------------------------------------------------------------
 nno <leader>gs :Git<CR>
@@ -176,7 +186,7 @@ nno <leader>g3 :diffget //3<CR>
 " MISC -----------------------------------------------------------------------------------
 nno <leader>v ggVG
 nno <leader>r <cmd>call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>
-nno <leader>o :lua require'm.menus'.options()<CR>
+nno <leader>o :lua require'm.ui.menus'.options()<CR>
 xno <leader>t :Align<Space>
 nno <leader>n :norm<Space>
 xno <leader>n :norm<Space>
@@ -268,6 +278,9 @@ cmap <C-G><C-A> <><Left>
 cmap <C-G><C-I> ""<Left>
 cmap <C-G><C-G> \(\)<Left><Left>
 cmap <C-G><C-W> \<\><Left><Left>
+" Lua expression
+cno <expr> = getcmdtype() == ':' && getcmdline() == '' ? 'lua=' : '='
+nno <leader>= :lua=
 
 " Last command with bang
 nno <expr> !: histget('cmd')[-1:] !=# '!' ? ':<Up>!' : ':<Up>'

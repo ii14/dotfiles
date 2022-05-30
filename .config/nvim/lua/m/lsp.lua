@@ -1,6 +1,14 @@
 local setup = require('m.lsp.setup')
 local util = require('lspconfig.util')
 
+function setup.on_init()
+  require('m.lsp.callbacks')
+  require('m.lsp.lightbulb')
+  require('fidget').setup{
+    text = { spinner = 'dots_scrolling' },
+  }
+end
+
 setup.clangd {
   cmd = {'clangd', '--background-index'},
   commands = {

@@ -61,6 +61,9 @@ local options = {
   {'i', 'indent',     [[IndentBlanklineToggle]]},
   {'c', 'colorizer',  [[ColorizerToggle]]},
   {'S', 'syntax',     [[exec 'syntax '..(exists('syntax_on') ? 'off' : 'on')]]},
+  {'d', 'diagnostics', function()
+    vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text })
+  end}
 }
 
 function M.options()
@@ -85,7 +88,12 @@ function M.options()
     ch = vim.fn.nr2char(ch)
     for _, item in ipairs(options) do
       if item[1] == ch then
-        vim.cmd(item[3])
+        local cmd = item[3]
+        if type(cmd) == 'function' then
+          cmd()
+        else
+          vim.cmd(cmd)
+        end
         return
       end
     end

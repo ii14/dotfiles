@@ -55,9 +55,10 @@ let g:bookmarks = [
       \ 'path': v:true,
       \ 'calc': v:true,
       \ 'buffer': v:true,
-      \ 'necosyntax': v:true,
-      \ 'luasnip': v:true,
+      \ 'syncomp': v:true,
       \ }}
+      " \ 'necosyntax': v:true,
+      " \ 'luasnip': v:true,
     " LSP buffer local config in $VIMCONFIG/lsp.vim
 
   " indent-blankline ---------------------------------------------------------------------
@@ -132,6 +133,7 @@ let g:bookmarks = [
     set nojoinspaces                          " join lines with one space instead of two
     set gdefault                              " use g flag by default in substitutions
     set backspace=indent,start                " no backspacing over eol
+    " set scrolljump=-50                        " center window after jumps
 
   " Indentation and Folding --------------------------------------------------------------
     set expandtab                             " convert tabs to spaces

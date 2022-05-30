@@ -9,10 +9,6 @@ nno <buffer><silent> [D <cmd>lua vim.diagnostic.goto_next{float=false,cursor_pos
 
 nno <buffer><silent> <leader>lS :Lsp stop<CR>
 
-if g:lsp_event.client_name ==# 'null-ls'
-  finish
-endif
-
 nno <buffer><silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 ino <buffer><silent> <C-K> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nno <buffer><silent> <C-]> <cmd>lua vim.lsp.buf.definition()<CR>
@@ -34,19 +30,21 @@ if g:lsp_event.client_name ==# 'clangd'
   nno <buffer><silent> <leader>a :ClangdSwitchSourceHeader<CR>
 endif
 
+setl tagfunc=v:lua.vim.lsp.tagfunc
+setl omnifunc=v:lua.vim.lsp.omnifunc
+setl formatexpr=v:lua.vim.lsp.formatexpr()
+
 " end completion on '({'
 ino <buffer><silent> ( <cmd>lua require 'compe'._close()<CR>(
 ino <buffer><silent> { <cmd>lua require 'compe'._close()<CR>{
-
-setl omnifunc=v:lua.vim.lsp.omnifunc
 
 " Completion -----------------------------------------------------------------------------
 let s:compe = {'source': {
   \ 'path': v:true,
   \ 'calc': v:true,
   \ 'nvim_lsp': v:true,
-  \ 'luasnip': v:true,
   \ }}
+  " \ 'luasnip': v:true,
 
 call compe#setup(s:compe, 0)
 

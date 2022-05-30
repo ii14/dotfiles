@@ -70,7 +70,7 @@ local function indent_obj(inner)
     end
   end
 
-  return t((':<C-U>sil!norm!%dGV%dG<CR>'):format(s, e))
+  return t(('norm!%dGV%dG'):format(s, e))
 end
 
 return {
