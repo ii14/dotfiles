@@ -26,8 +26,8 @@
     br = branch -vv
     brs = branch -vva
     wt = worktree
-    l = log --graph --abbrev-commit --decorate --format=line --all
-    lt = log --graph --abbrev-commit --decorate --format=line --all -n 10
+    l = log --graph --abbrev-commit --decorate --format=line
+    lt = log --graph --abbrev-commit --decorate --format=line -n 10
     l1 = log -n 1
     root = rev-parse --show-toplevel
     bg = bisect good
