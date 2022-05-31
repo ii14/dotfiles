@@ -1,7 +1,10 @@
 local api, fn, setl = vim.api, vim.fn, vim.opt_local
 
-api.nvim_set_hl(0, 'TransparentCursor', { strikethrough = true, blend = 100 })
+local ns = api.nvim_create_namespace('ctxmenu')
+
+api.nvim_set_hl(0, 'ctxmenuCursor', { strikethrough = true, blend = 100 })
 api.nvim_set_hl(0, 'ctxmenuNumber', { bold = true })
+api.nvim_set_hl(0, 'ctxmenuReverse', { reverse = true })
 
 local buf --- Reused buffer
 
@@ -29,6 +32,9 @@ return function(choices)
   else
     anchor, row = 'NW', 1
   end
+
+  local parent = api.nvim_get_current_buf()
+  local cursor = api.nvim_win_get_cursor(0)
 
   if buf == nil or not api.nvim_buf_is_valid(buf) then
     buf = api.nvim_create_buf(false, false)
@@ -59,7 +65,14 @@ return function(choices)
   end)
 
   local guicursor = api.nvim_get_option('guicursor')
-  api.nvim_set_option('guicursor', guicursor..',a:TransparentCursor/lCursor')
+  api.nvim_set_option('guicursor', guicursor..',a:ctxmenuCursor/lCursor')
+
+  -- fake cursor
+  local extmark = api.nvim_buf_set_extmark(parent, ns, cursor[1] - 1, cursor[2], {
+    end_row = cursor[1] - 1, end_col = cursor[2] + 1,
+    hl_group = 'ctxmenuReverse',
+  })
+
   vim.cmd('redraw')
 
   local choice --- Selected choice
@@ -114,6 +127,7 @@ return function(choices)
     end
   end
 
+  api.nvim_buf_del_extmark(parent, ns, extmark)
   api.nvim_win_close(win, true)
   api.nvim_set_option('guicursor', guicursor)
 
