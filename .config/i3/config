@@ -16,6 +16,8 @@ bindsym $mod+Shift+slash    $exec rofi -show windowcd -theme vert
 bindsym $mod+Delete         kill
 bindsym $mod+Shift+q        kill
 
+focus_wrapping workspace
+
 bindsym $mod+h              focus left
 bindsym $mod+j              focus down
 bindsym $mod+k              focus up
@@ -153,6 +155,11 @@ for_window [class="quake-terminal"] move scratchpad, border pixel 1
 for_window [title="^Android Emulator"] floating enable
 for_window [class="^jetbrains" title="^win0$"] floating enable
 for_window [class="^jetbrains" title="^[\S]*\.[\S]* \([\S]*\)"] floating enable
+for_window [title="Microsoft Teams Notification" class="[Mm]icrosoft [Tt]eams - [Pp]review"] \
+    floating enable; \
+    sticky enable; \
+    resize set 640 480; \
+    move position center
 
 # INIT -----------------------------------------------------------------------------------
 $exec xss-lock --transfer-sleep-lock -- i3lock --nofork
