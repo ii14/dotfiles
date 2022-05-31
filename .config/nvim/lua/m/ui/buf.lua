@@ -11,6 +11,15 @@ M.buflist = {}
 
 --- Update smart paths
 local function shorten_paths(bufs)
+  do
+    -- TODO: algorithm can enter an infinite loop when you open for example
+    -- `nvim/lua/m/lsp.lua` and `nvim2/lua/m/lsp.lua`. temporary workaround.
+    for _, buf in pairs(bufs) do
+      buf.name = buf.path:match('[^/]*$')
+    end
+    return bufs
+  end
+
   -- thanks to mengelbrecht/lightline-bufferline for the algorithm
   local bs = {}
   local count_per_tail = {}
