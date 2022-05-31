@@ -10,6 +10,7 @@ set number relativenumber
 set ignorecase smartcase
 set incsearch
 set scrolloff=1
+set clipboard+=unnamed
 
 nno <C-N> gt
 nno <C-P> gT
