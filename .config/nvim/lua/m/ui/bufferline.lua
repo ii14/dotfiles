@@ -1,99 +1,111 @@
-local api = vim.api
-local fn = vim.fn
+local api, fn = vim.api, vim.fn
+local bl = require('m.buf')
 local H = require('m.ui.palette').hl
-local bl = require('m.ui.buf')
 
-local M = {}
+local bufferline = {}
 
---- pending redraw flag
-local pending_redraw = false
---- pending buffer reload flag
-local pending_reload = true
---- pending buffer properties update flag
-local pending_update = true
+---Pending redraw
+local pending = false
 
-local function make_lookup(t)
-  for k, v in ipairs(t) do
-    t[k] = nil
-    t[v] = true
-  end
-  return t
-end
 
-local UPDATE_EVENTS = {
-  'BufEnter', 'BufAdd', 'BufLeave', 'BufDelete',
-  'BufModifiedSet', 'BufFilePost', 'TabNew',
-  'TabEnter', 'TabClosed', 'FileType', 'VimResized',
+local EVENTS = {
+  'BufEnter',
+  'BufFilePost',
+  'BufLeave',
+  'BufModifiedSet',
+  'FileType',
+  'TabClosed',
+  'TabEnter',
+  'TabNew',
+  'VimResized',
 }
-local UPDATE_OPTIONS = {
-  'buflisted', 'readonly', 'modifiable', 'buftype', 'showtabline', 'modified',
+
+local EVENTS_USER = {
+  'BuflistReorder',
+  'BuflistUpdate',
 }
-local BUF_RELOAD_EVENTS = make_lookup {
-  'BufAdd', 'BufDelete', 'BufFilePost',
+
+local EVENTS_OPTIONSET = {
+  'buftype',
+  'modifiable',
+  'modified',
+  'readonly',
+  'showtabline',
 }
-local BUF_UPDATE_EVENTS = make_lookup {
-  'BufEnter', 'BufLeave', 'BufModifiedSet', 'TabEnter', 'FileType',
-}
-local BUF_UPDATE_OPTIONS = make_lookup {
-  'readonly', 'modifiable', 'buftype', 'modified',
-}
+
 
 local NO_BUFS = H'EL'..' no buffers'..H'BG'..'▕'
 local NO_BUFS_LEN = 12
 local NO_NAME = '[No Name]'
 
-local function render_buf(buf)
-  local name = buf.name
 
-  if name == '' then
-    name = NO_NAME
+local get_name = api.nvim_buf_get_name
+local get_opt = api.nvim_buf_get_option
+
+
+---Get buffer list
+local function get()
+  local curbuf = api.nvim_get_current_buf()
+  local altbuf = fn.bufnr('#')
+
+  local bufs = {}
+  for i, bufnr in ipairs(bl.list) do
+    local name = get_name(bufnr)
+    bufs[i] = {
+      bufnr = bufnr,
+      path = name,
+      name = name:match('[^/]*$'),
+
+      -- TODO: is modified the same as getbufinfo().changed?
+      changed = get_opt(bufnr, 'modified'),
+      buftype = get_opt(bufnr, 'buftype'),
+      readonly =
+        (get_opt(bufnr, 'readonly') or not get_opt(bufnr, 'modifiable'))
+        and get_opt(bufnr, 'filetype') ~= 'help',
+
+      current = bufnr == curbuf,
+      alternate = bufnr == altbuf,
+    }
   end
 
-  -- changed indicator
-  if buf.changed then
-    name = name..' +'
-  end
-
-  local len = #name + 2
-
-  name = name:gsub('%%', '%%%%')
-
-  -- highlighting
-  if buf.current then
-    name = H'A'..' '..name..H'AS'..'▕'
-  else
-    name = H'B'..' '..name..H'BS'..'▕'
-  end
-
-  -- clickable
-  name = '%'..buf.bufnr..'@BufferlineGoto@'..name..'%X'
-
-  return name, len
+  return bufs
 end
 
-local function process()
-  if pending_reload then
-    pending_reload = false
-    pending_update = false
-    bl.reload()
-    return true
-  elseif pending_update then
-    pending_update = false
-    bl.update()
-    return true
-  end
-  return false
-end
 
---- Render buffer section
+---Render buffer section
 local function render_bufs(width)
-  if process() then
-    for _, buf in ipairs(bl.buflist) do
-      buf.display, buf.displaylen = render_buf(buf)
+  local bufs = get()
+
+  for _, buf in ipairs(bufs) do
+    local name = buf.name
+
+    if name == '' then
+      name = NO_NAME
     end
+
+    -- changed indicator
+    if buf.changed then
+      name = name..' +'
+    end
+
+    local len = #name + 2
+
+    name = name:gsub('%%', '%%%%')
+
+    -- highlighting
+    if buf.current then
+      name = H'A'..' '..name..H'AS'..'▕'
+    else
+      name = H'B'..' '..name..H'BS'..'▕'
+    end
+
+    -- clickable
+    name = '%'..buf.bufnr..'@BufferlineGoto@'..name..'%X'
+
+    buf.display, buf.displaylen = name, len
   end
 
-  if #bl.buflist == 0 then
+  if #bufs == 0 then
     return NO_BUFS, NO_BUFS_LEN
   end
 
@@ -101,7 +113,7 @@ local function render_bufs(width)
   local len = 0
   local curidx = nil
 
-  for i, buf in ipairs(bl.buflist) do
+  for i, buf in ipairs(bufs) do
     len = len + buf.displaylen
     strs[#strs+1] = { buf.display, buf.displaylen }
     if buf.current then
@@ -163,7 +175,7 @@ local function render_bufs(width)
   return s, len
 end
 
---- Render tab section
+---Render tab section
 local function render_tabs()
   local last = fn.tabpagenr('$')
   if last > 1 then
@@ -171,9 +183,16 @@ local function render_tabs()
   end
 end
 
---- Redraw bufferline
-function M.redraw()
-  pending_redraw = false
+
+---Redraw bufferline
+function bufferline.redraw()
+  pending = false
+
+  local show = api.nvim_get_option('showtabline')
+  if show == 0 or (show == 1 and fn.tabpagenr('$') < 2) then
+    return
+  end
+
   local width = api.nvim_get_option('columns')
 
   local tab = render_tabs()
@@ -194,65 +213,56 @@ function M.redraw()
   vim.cmd('redrawtabline')
 end
 
-local function trigger_redraw()
-  if pending_redraw then
-    M.redraw()
-  end
-end
 
---- Update bufferline
---- reload buffers if ev is true
-function M.update(ev, opt)
+---Schedule update
+function bufferline.update()
   local show = api.nvim_get_option('showtabline')
   if show == 0 or (show == 1 and fn.tabpagenr('$') < 2) then
     return
   end
 
-  if ev then
-    if ev == true or BUF_RELOAD_EVENTS[ev] or opt == 'buflisted' then
-      pending_reload = true
-    elseif BUF_UPDATE_EVENTS[ev] or BUF_UPDATE_OPTIONS[opt] then
-      pending_update = true
-    end
-  end
-
-  if not pending_redraw then
-    pending_redraw = true
-    vim.schedule(trigger_redraw)
+  if not pending then
+    pending = true
+    vim.schedule(function()
+      if pending then
+        bufferline.redraw()
+      end
+    end)
   end
 end
 
-function M.setup()
-  local ns = api.nvim_create_namespace('bufferline')
 
-  api.nvim_set_decoration_provider(ns, {
-    on_start = function()
-      if pending_redraw then
-        M.redraw()
-      end
-    end,
-  })
-
+---Initialize bufferline
+function bufferline.setup()
   vim.cmd([[
     function! BufferlineGoto(minwid, clicks, btn, modifiers)
       execute 'b'..a:minwid
     endfunction
   ]])
 
-  local augroup = vim.api.nvim_create_augroup('Bufferline', {})
-  vim.api.nvim_create_autocmd(UPDATE_EVENTS, {
-    desc = '[Bufferline] Update on event',
-    callback = function(ctx)
-      M.update(ctx.event)
-    end,
+  local augroup = api.nvim_create_augroup('m_bufferline', {})
+
+  local function callback()
+    bufferline.update()
+  end
+
+  api.nvim_create_autocmd(EVENTS, {
+    desc = 'm.bufferline: update',
+    callback = callback,
     group = augroup,
   })
-  vim.api.nvim_create_autocmd('OptionSet', {
-    desc = '[Bufferline] Update on option',
-    pattern = UPDATE_OPTIONS,
-    callback = function(ctx)
-      M.update('OptionSet', ctx.match)
-    end,
+
+  api.nvim_create_autocmd('User', {
+    desc = 'm.bufferline: update',
+    pattern = EVENTS_USER,
+    callback = callback,
+    group = augroup,
+  })
+
+  api.nvim_create_autocmd('OptionSet', {
+    desc = 'm.bufferline: update',
+    pattern = EVENTS_OPTIONSET,
+    callback = callback,
     group = augroup,
   })
 
@@ -261,4 +271,4 @@ function M.setup()
   api.nvim_set_option('showtabline', 2)
 end
 
-return M
+return bufferline

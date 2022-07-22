@@ -1,6 +1,7 @@
 local snippets = require('m.snippets.util')
 local copy = snippets.copy
 local snip = snippets.snip
+local begins = snippets.begins
 
 local ls = require('luasnip')
 local t = ls.text_node
@@ -8,26 +9,27 @@ local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
 
-local nl = t{'', ''}
-
 ls.add_snippets('make', {
 
   snip{
-    name='CC rule', trig='^cc', regTrig=true,
+    name='CC rule', trig='cc',
+    condition = begins'cc',
     i(1), t': ', i(2), t{'', '\t$(CC) $(CFLAGS) -c -o $@ $<'},
   },
 
   snip{
-    name='CXX rule', trig='^cxx', regTrig=true,
+    name='CXX rule', trig='cxx',
+    condition = begins'cxx',
     i(1), t': ', i(2), t{'', '\t$(CXX) $(CXXFLAGS) -c -o $@ $<'},
   },
 
   snip{
-    name='CC template', trig='^CC', regTrig=true,
+    name='CC template', trig='CC',
+    condition = begins'CC',
     t{
       'TARGET   = '}, i(1, 'main'), t{'',
       'SOURCES  = '}, i(2, 'main.c'), t{'',
-      'CFLAGS   = '}, i(3, '-std=c99 -Wall -Wextra -pedantic -g'), t{'',
+      'CFLAGS   = -std=c99 -Wall -Wextra -pedantic -g',
       'INCLUDE  =',
       'LDFLAGS  =',
       '',
@@ -46,6 +48,9 @@ ls.add_snippets('make', {
       '',
       '-include $(DEPS)',
       '',
+      'compile_commands.json: Makefile',
+      '\tcompiledb -n make',
+      '',
       '.PHONY: all clean info',
       '',
       'clean:',
@@ -60,11 +65,12 @@ ls.add_snippets('make', {
   },
 
   snip{
-    name='CXX template', trig='^CXX', regTrig=true,
+    name='CXX template', trig='CXX',
+    condition = begins'CXX',
     t{
       'TARGET   = '}, i(1, 'main'), t{'',
       'SOURCES  = '}, i(2, 'main.cpp'), t{'',
-      'CXXFLAGS = '}, i(3, '-std=c++17 -Wall -Wextra -g'), t{'',
+      'CXXFLAGS = -std=c++17 -Wall -Wextra -g',
       'INCLUDE  =',
       'LDFLAGS  =',
       '',
@@ -82,6 +88,9 @@ ls.add_snippets('make', {
       '\t$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)',
       '',
       '-include $(DEPS)',
+      '',
+      'compile_commands.json: Makefile',
+      '\tcompiledb -n make',
       '',
       '.PHONY: all clean info',
       '',

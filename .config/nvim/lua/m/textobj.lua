@@ -1,9 +1,5 @@
 local fn = vim.fn
 
-local function t(s)
-  return vim.api.nvim_replace_termcodes(s, true, false, true)
-end
-
 local function indent_obj(inner)
   local lnum = fn.line('.')
   local last = fn.line('$')
@@ -70,7 +66,7 @@ local function indent_obj(inner)
     end
   end
 
-  return t(('norm!%dGV%dG'):format(s, e))
+  return T(('norm!%dGV%dG'):format(s, e))
 end
 
 return {

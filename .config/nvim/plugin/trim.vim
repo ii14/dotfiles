@@ -59,7 +59,7 @@ fun! s:TrimAu()
   endif
 endfun
 
-augroup TrimAu
+augroup m_trim
   autocmd!
   autocmd BufWritePre * call s:TrimAu()
 augroup END

@@ -1,6 +1,6 @@
-local M = {}
+local lazy = {}
 
-function M.trouble()
+function lazy.trouble()
   require('trouble').setup{
     icons = false,
     fold_open = "v",
@@ -16,4 +16,4 @@ function M.trouble()
   }
 end
 
-return M
+return lazy

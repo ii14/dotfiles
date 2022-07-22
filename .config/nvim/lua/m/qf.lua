@@ -6,7 +6,7 @@ local prev = {}
 
 local function update()
   diag = diag or vim.diagnostic
-  ns = ns or api.nvim_create_namespace('qfdiag')
+  ns = ns or api.nvim_create_namespace('m_qfdiag')
 
   local all = diag.fromqflist(fn.getqflist())
   local bufs = {}
@@ -50,7 +50,7 @@ end
 local function enable()
   if not autocmd then
     autocmd = api.nvim_create_autocmd('QuickFixCmdPost', {
-      desc = 'Update diagnostics',
+      desc = 'm.qf: Update diagnostics',
       callback = update,
       nested = true,
     })

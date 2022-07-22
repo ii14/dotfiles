@@ -135,7 +135,7 @@ local function render_name(ctx)
   elseif ctx.filetype == 'termdebug' then
     return '[GDB]'
   elseif ctx.buftype == 'terminal' then
-    return api.nvim_buf_get_var(ctx.bufnr, 'term_title')
+    return vim.b[ctx.bufnr].term_title or '-'
   elseif ctx.filetype == 'Trouble' then
     return
   else
@@ -356,7 +356,7 @@ function M.setup()
   vim.g.qf_disable_statusline = 1
   vim.o.statusline = [[%!v:lua.require('m.ui.statusline').render()]]
   vim.cmd([=[
-    augroup Statusline
+    augroup m_statusline
       autocmd!
       autocmd WinLeave,BufLeave * lua vim.wo.statusline = require('m.ui.statusline').render(1)
       autocmd WinEnter,BufEnter * set statusline<

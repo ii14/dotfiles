@@ -156,7 +156,7 @@ function :h {
         vim "+h $1 | only"
     fi
 }
-[ -v NVIM_LISTEN_ADDRESS ] && alias vim='vim -u $VIMCONFIG/remote.lua -i NONE --headless'
+[ -v NVIM ] && alias vim='nvim -u $VIMCONFIG/remote.lua -i NONE --headless'
 
 # GIT ------------------------------------------------------------------------------------
 function g {

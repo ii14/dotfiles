@@ -4,8 +4,11 @@ function! Regedit(reg) abort
   if a:reg != ''
     let l:reg = a:reg
   else
+    echohl Question
     echo 'Select register to edit...'
+    echohl None
     let l:reg = getchar()
+    call nvim_echo([['']], v:false, {})
     redraw
     if l:reg == 0 || l:reg == 27 " C-C or ESC
       return
@@ -24,12 +27,12 @@ function! Regedit(reg) abort
   wincmd J
   resize 1
   setl winfixheight
-  setl winhighlight=SpecialKey:SpecialChar
+  setl winhighlight=SpecialKey:SpecialKey
 
   setl buftype=acwrite
   setl bufhidden=wipe
   setl nobuflisted
-  setl noundofile
+  setl noswapfile noundofile
   setl nonumber norelativenumber
   setl nowrap nolist
   setl colorcolumn=
@@ -40,6 +43,7 @@ function! Regedit(reg) abort
   setl nomodified
 
   inoremap <buffer> <CR> <C-V><CR>
+  inoremap <buffer> <NL> <C-V>000
   exec 'nnoremap <buffer> <CR> <cmd>x<CR>@'..l:reg
 
   autocmd BufWriteCmd <buffer>

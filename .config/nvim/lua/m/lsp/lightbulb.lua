@@ -1,5 +1,8 @@
 local M = {}
 
+-- TODO: lsp.buf.code_action should use actions cached by this
+-- TODO: on sumneko sign somehow shows up, but you can't trigger it with code_action?
+
 local SIGN_GROUP = 'lightbulb'
 local SIGN_NAME = 'LightBulbSign'
 local DEBOUNCE = 500
@@ -69,9 +72,9 @@ function M.update()
 end
 
 vim.api.nvim_create_autocmd('CursorMoved', {
-  desc = '[LSP] Update lightbulb',
+  desc = 'm.lsp: Update lightbulb sign',
   callback = function() M.update() end,
-  group = vim.api.nvim_create_augroup('VimrcLightbulb', {}),
+  group = vim.api.nvim_create_augroup('m_lsp_lightbulb', {}),
 })
 
 return M

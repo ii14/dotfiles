@@ -1,6 +1,7 @@
 local snippets = require('m.snippets.util')
 local copy = snippets.copy
 local snip = snippets.snip
+local begins = snippets.begins
 
 local ls = require('luasnip')
 local t = ls.text_node
@@ -8,12 +9,11 @@ local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
 
-local nl = t{'', ''}
-
 ls.add_snippets('html', {
 
   snip{
-    name='html document', trig='^html', regTrig=true,
+    name='html document', trig='html',
+    condition = begins'html',
     t{
       '<!doctype html>',
       '<html lang="en">',

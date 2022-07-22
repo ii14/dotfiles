@@ -1,29 +1,94 @@
 local api, fn, setl = vim.api, vim.fn, vim.opt_local
 
-local ns = api.nvim_create_namespace('ctxmenu')
+local ns = api.nvim_create_namespace('m_ctxmenu')
 
-api.nvim_set_hl(0, 'ctxmenuCursor', { strikethrough = true, blend = 100 })
-api.nvim_set_hl(0, 'ctxmenuNumber', { bold = true })
-api.nvim_set_hl(0, 'ctxmenuReverse', { reverse = true })
+api.nvim_set_hl(0, 'ctxmenuCursor', { strikethrough = true, blend = 100, default = true })
+api.nvim_set_hl(0, 'ctxmenuNumber', { bold = true, default = true })
+api.nvim_set_hl(0, 'ctxmenuReverse', { reverse = true, default = true })
 
-local buf --- Reused buffer
+local buf -- Popup buffer, reused
+local win -- Popup window
+local choice -- Selected choice
+local mappings = {} -- Key mappings
 
+for keys, func in pairs({
+
+  [{ 'j', 'n', '<C-N>', '<Down>' }] = function()
+    local lnum = api.nvim_win_get_cursor(win)[1] + 1
+    local max = api.nvim_buf_line_count(buf)
+    if lnum > max then lnum = 1 end
+    api.nvim_win_set_cursor(win, { lnum, 0 })
+  end,
+
+  [{ 'k', 'p', '<C-P>', '<Up>' }] = function()
+    local lnum = api.nvim_win_get_cursor(win)[1] - 1
+    if lnum < 1 then lnum = api.nvim_buf_line_count(buf) end
+    api.nvim_win_set_cursor(win, { lnum, 0 })
+  end,
+
+  [{ '<CR>', '<NL>' }] = function()
+    choice = api.nvim_win_get_cursor(win)[1]
+    return true
+  end,
+
+  [{ '<Esc>', 'q' }] = function()
+    return true
+  end,
+
+  [{ '1', '2', '3', '4', '5', '6', '7', '8', '9' }] = function(ch)
+    local num = tonumber(ch)
+    if num > 0 and num <= api.nvim_buf_line_count(buf) then
+      choice = num
+    end
+    return true
+  end,
+
+}) do
+  for _, key in pairs(keys) do
+    key = T(key)
+    mappings[key] = func
+  end
+end
+
+local function loop()
+  while true do
+    local ok, ch = pcall(fn.getcharstr)
+    if not ok then return end -- interrupted
+
+    local action = mappings[ch]
+    if action then
+      if action(ch) then ---@diagnostic disable-line: redundant-parameter
+        return
+      end
+      vim.cmd('redraw')
+    else
+      return ch
+    end
+  end
+end
+
+---Open context menu
+---@param choices string[]
+---@return integer index, string choice
 return function(choices)
   if type(choices) ~= 'table' or #choices < 1 then
     return
   end
 
+  -- reset state
+  win, choice = nil, nil
+
   local width = 2
   local height = math.min(#choices, 9)
 
   local lines = {}
-  for i, choice in ipairs(choices) do
+  for i, item in ipairs(choices) do
     if i <= 9 then
-      lines[i] = (' %d %s'):format(i, choice)
+      lines[i] = (' %d %s'):format(i, item)
     else
-      lines[i] = ('   %s'):format(choice)
+      lines[i] = ('   %s'):format(item)
     end
-    width = math.max(width, #choice + 4)
+    width = math.max(width, #item + 4)
   end
 
   local anchor, row
@@ -36,11 +101,12 @@ return function(choices)
   local parent = api.nvim_get_current_buf()
   local cursor = api.nvim_win_get_cursor(0)
 
+  -- Reuse buffer
   if buf == nil or not api.nvim_buf_is_valid(buf) then
     buf = api.nvim_create_buf(false, false)
   end
 
-  local win = api.nvim_open_win(buf, false, {
+  win = api.nvim_open_win(buf, false, {
     width = width, height = height,
     row = row, col = -1,
     relative = 'cursor',
@@ -49,83 +115,50 @@ return function(choices)
 
   api.nvim_buf_call(buf, function()
     setl.buftype = 'nofile'
+    setl.swapfile = false
+    setl.undofile = false
+    setl.undolevels = -1
+
     setl.modifiable = true
     api.nvim_buf_set_lines(buf, 0, -1, true, lines)
     setl.modifiable = false
+
+    setl.cursorline = true
     setl.wrap = true
     setl.number = false
     setl.relativenumber = false
-    setl.cursorline = true
     setl.foldenable = false
     setl.list = false
-    setl.statusline = ''
-    setl.swapfile = false
+
     setl.winhl = 'Normal:Pmenu,NormalNC:Pmenu,CursorLine:PmenuSel'
+    setl.winblend = vim.o.pumblend
     vim.cmd([[syn match ctxmenuNumber "^ \d"]])
   end)
+
+  api.nvim_win_set_cursor(win, { 1, 0 })
 
   local guicursor = api.nvim_get_option('guicursor')
   api.nvim_set_option('guicursor', guicursor..',a:ctxmenuCursor/lCursor')
 
   -- fake cursor
-  local extmark = api.nvim_buf_set_extmark(parent, ns, cursor[1] - 1, cursor[2], {
-    end_row = cursor[1] - 1, end_col = cursor[2] + 1,
-    hl_group = 'ctxmenuReverse',
-  })
-
-  vim.cmd('redraw')
-
-  local choice --- Selected choice
-
-  local mappings = {}
-  for keys, func in pairs({
-    [{ 'j', 'n', '<C-N>', '<Down>' }] = function()
-      local lnum = api.nvim_win_get_cursor(win)[1] + 1
-      local max = api.nvim_buf_line_count(buf)
-      if lnum > max then lnum = 1 end
-      api.nvim_win_set_cursor(win, { lnum, 0 })
-    end,
-    [{ 'k', 'p', '<C-P>', '<Up>' }] = function()
-      local lnum = api.nvim_win_get_cursor(win)[1] - 1
-      if lnum < 1 then lnum = api.nvim_buf_line_count(buf) end
-      api.nvim_win_set_cursor(win, { lnum, 0 })
-    end,
-    [{ '<CR>', '<NL>' }] = function()
-      choice = api.nvim_win_get_cursor(win)[1]
-      return true
-    end,
-    [{ '<Esc>', 'q' }] = function()
-      return true
-    end,
-    [{ '1', '2', '3', '4', '5', '6', '7', '8', '9' }] = function(ch)
-      local num = tonumber(ch)
-      if num > 0 and num <= api.nvim_buf_line_count(buf) then
-        choice = num
-      end
-      return true
-    end,
-  }) do
-    for _, key in pairs(keys) do
-      key = api.nvim_replace_termcodes(key, true, false, true)
-      mappings[key] = func
-    end
+  local len = #api.nvim_buf_get_lines(parent, cursor[1] - 1, cursor[1], false)[1]
+  local extmark
+  if cursor[2] < len then
+    extmark = api.nvim_buf_set_extmark(parent, ns, cursor[1] - 1, cursor[2], {
+      end_row = cursor[1] - 1, end_col = cursor[2] + 1,
+      hl_group = 'ctxmenuReverse',
+    })
+  else
+    extmark = api.nvim_buf_set_extmark(parent, ns, cursor[1] - 1, cursor[2], {
+      virt_text = {{' ', 'ctxmenuReverse'}},
+      virt_text_pos = 'overlay',
+      hl_mode = 'combine',
+    })
   end
 
-  local keys --- Pass keys
+  api.nvim_command('redraw')
 
-  while true do
-    local ch = fn.getcharstr()
-    local action = mappings[ch]
-    if action then
-      if action(ch) then ---@diagnostic disable-line: redundant-parameter
-        break
-      end
-      vim.cmd('redraw')
-    else
-      keys = ch
-      break
-    end
-  end
+  local keys = loop()
 
   api.nvim_buf_del_extmark(parent, ns, extmark)
   api.nvim_win_close(win, true)

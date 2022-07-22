@@ -1,8 +1,8 @@
-augroup VimrcAutocmd
+augroup m_autocmd
   autocmd!
 
 " Return to last edit position -----------------------------------------------------------
-  au BufReadPost *
+  autocmd BufReadPost *
     \ if index(['gitcommit', 'fugitive'], &filetype) == -1 &&
     \   line("'\"") > 0 && line("'\"") <= line("$") |
     \   exe "normal! g`\"" |
@@ -12,26 +12,26 @@ augroup VimrcAutocmd
   func! s:cursorline()
     return &bt !=# 'terminal' && !get(w:, 'diffview', v:false)
   endfunc
-  au WinEnter,BufWinEnter * if s:cursorline() | setl   cursorline | endif
-  au WinLeave             * if s:cursorline() | setl nocursorline | endif
-  au TermOpen    * setl nonumber norelativenumber nocursorline signcolumn=auto scrolloff=0
-  au CmdwinEnter * setl nonumber norelativenumber
+  autocmd WinEnter,BufWinEnter * if s:cursorline() | setl   cursorline | endif
+  autocmd WinLeave             * if s:cursorline() | setl nocursorline | endif
+  autocmd TermOpen    * setl nonumber norelativenumber nocursorline signcolumn=auto scrolloff=0
+  autocmd CmdwinEnter * setl nonumber norelativenumber
 
 " Highlight yanked text ------------------------------------------------------------------
-  au TextYankPost * silent! lua vim.highlight.on_yank()
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank()
 
 " Open quickfix window on grep -----------------------------------------------------------
-  au QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
+  autocmd QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
     \ call timer_start(10, {-> execute('cwindow')})
-  au QuickFixCmdPost lgrep,lgrepadd,lvimgrep,lhelpgrep
+  autocmd QuickFixCmdPost lgrep,lgrepadd,lvimgrep,lhelpgrep
     \ call timer_start(10, {-> execute('lwindow')})
 
 " Auto close quickfix, if it's the last buffer -------------------------------------------
-  au WinEnter * if winnr('$') == 1 && &buftype ==# 'quickfix' | q! | endif
+  autocmd WinEnter * if winnr('$') == 1 && &buftype ==# 'quickfix' | q! | endif
 
 " Workarounds ----------------------------------------------------------------------------
   " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
-  au VimEnter * call system('kill -s SIGWINCH $PPID')
+  autocmd VimEnter * call system('kill -s SIGWINCH $PPID')
 
 augroup end
 

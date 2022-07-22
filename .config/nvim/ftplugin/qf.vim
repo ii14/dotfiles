@@ -26,7 +26,7 @@ else
 endif
 
 let b:qf_lastWin = winnr('#')
-augroup Quickfix
+augroup m_qf
   autocmd WinEnter <buffer> ++nested
     \ if &ft ==# 'qf' |
     \   let b:qf_lastWin = winnr('#') |

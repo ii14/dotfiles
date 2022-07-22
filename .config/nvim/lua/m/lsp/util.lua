@@ -1,3 +1,5 @@
+local api, fn = vim.api, vim.fn
+
 local M = {}
 
 --- Check if buffer is attached to any client
@@ -48,29 +50,34 @@ local HEADER_TO_SOURCE = {
 
 --- clangd: Switch between header and source file
 function M.switch_source_header(bufnr)
-  bufnr = require('lspconfig/util').validate_bufnr(bufnr)
+  if bufnr == nil or bufnr == 0 then
+    bufnr = api.nvim_get_current_buf()
+  elseif type(bufnr) ~= 'number' then
+    error('expected number')
+  end
+
   local params = { uri = vim.uri_from_bufnr(bufnr) }
   vim.lsp.buf_request(bufnr, 'textDocument/switchSourceHeader', params, function(err, result)
-    if err then error(tostring(err)) end
+    assert(not err, err)
     if result then
-      vim.api.nvim_command('edit ' .. vim.uri_to_fname(result))
+      api.nvim_command('edit ' .. vim.uri_to_fname(result))
     else
-      local fname = vim.api.nvim_buf_get_name(bufnr)
-      local ext = vim.fn.fnamemodify(fname, ':e')
+      local fname = api.nvim_buf_get_name(bufnr)
+      local ext = fn.fnamemodify(fname, ':e')
       local alt = HEADER_TO_SOURCE[ext]
       if alt == nil then
         print('Corresponding file cannot be determined')
         return
       end
-      result = vim.fn.fnamemodify(fname, ':r') .. '.' .. alt
-      print('Create source file? (Enter/y to confirm): '..vim.fn.fnamemodify(result, ':.'))
-      local c = vim.fn.getchar()
+      result = fn.fnamemodify(fname, ':r') .. '.' .. alt
+      print('Create source file? (Enter/y to confirm): '..fn.fnamemodify(result, ':.'))
+      local c = fn.getchar()
       if c ~= 13 and c ~= 121 then
         return
       end
-      vim.api.nvim_command('edit ' .. result)
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, {
-        '#include "' .. vim.fn.fnamemodify(fname, ':.') .. '"',
+      api.nvim_command('edit ' .. result)
+      api.nvim_buf_set_lines(0, 0, -1, false, {
+        '#include "' .. fn.fnamemodify(fname, ':.') .. '"',
       })
     end
   end)

@@ -21,6 +21,7 @@ local light_grey     = '#848b98'
 local comment_grey   = '#5C6370'
 local gutter_fg_grey = '#4B5263'
 local cursor_grey    = '#2C323C'
+local float_grey     = '#313742'
 local visual_grey    = '#3E4452'
 local menu_grey      = '#3E4452'
 local special_grey   = '#3B4048'
@@ -91,6 +92,7 @@ local theme = {
   MoreMsg          = { },
   NonText          = { fg = special_grey },
   Normal           = { bg = black, fg = white },
+  NormalFloat      = { bg = float_grey, fg = white },
   Pmenu            = { bg = menu_grey },
   PmenuSel         = { bg = blue, fg = black },
   PmenuSbar        = { bg = special_grey },
@@ -117,6 +119,7 @@ local theme = {
   VisualNOS        = { bg = visual_grey },
   WarningMsg       = { fg = yellow },
   WildMenu         = { bg = blue, fg = black },
+  FloatBorder      = { fg = comment_grey },
 
   Dim = { bg = dim, fg = white },
 
@@ -453,6 +456,12 @@ local theme = {
   LirDir          = { fg = blue },
   LirSymLink      = { fg = cyan },
   LirEmptyDirText = { fg = white },
+
+  -- cmp
+  CmpItemAbbr           = { fg = white },
+  CmpItemAbbrDeprecated = { fg = light_grey },
+  CmpItemKind           = { fg = blue },
+  CmpItemMenu           = { fg = comment_grey },
 }
 
 -- Neovim diagnostics

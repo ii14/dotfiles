@@ -7,7 +7,7 @@ endif
 unlet s:eoa
 
 let g:options = {}
-function! m#addopts(names)
+function! m#parseopts(names)
   for l:name in a:names
     exec 'command' l:name 'exec'
     let g:options[l:name] = index(s:argv, '+'..l:name) > 0 ? v:true : v:false
@@ -31,8 +31,8 @@ endfunction
 
 " Current buffer directory
 function! m#bufdir() abort
-  if &buftype ==# 'terminal' && has('linux')
-    let d = luaeval('vim.loop.fs_readlink("/proc/".._A.."/cwd") or ""', b:terminal_job_pid)
+  if &buftype ==# 'terminal' && &channel != 0 && has('linux')
+    let d = luaeval('vim.loop.fs_readlink("/proc/".._A.."/cwd") or ""', jobpid(&channel))
     if d !=# '' | let d = fnamemodify(d, ':~:.') | endif
   else
     let d = expand('%:h')

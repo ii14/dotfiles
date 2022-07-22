@@ -8,8 +8,6 @@ local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
 
-local nl = t{'', ''}
-
 ls.add_snippets('css', {
 
   snip{name='background-color', trig='bg', t'background-color: #', i(1, '333'), t';'},

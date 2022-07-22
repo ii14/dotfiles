@@ -1,67 +1,38 @@
 local snippets = require('m.snippets.util')
 local copy = snippets.copy
 local snip = snippets.snip
+local begins = snippets.begins
 
 local ls = require('luasnip')
 local t = ls.text_node
 local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
+local sn = ls.snippet_node
 
-local nl = t{'', ''}
+ls.add_snippets('cpp', require('m.snippets.cxx'))
 
 ls.add_snippets('cpp', {
 
   -- PREPROCESSOR
   snip{
-    name='#include', trig='^#i', regTrig=true,
-    t'#include ',
+    name='#include angle brackets', trig='#<',
+    condition = begins'#<',
+    t'#include <', i(1, 'iostream'), t'>', i(0),
   },
 
   snip{
-    name='#include angle brackets', trig='^#<', regTrig=true,
-    t'#include <', i(1, 'iostream>'), i(0),
-  },
-
-  snip{
-    name='#include double quotes', trig='^#"', regTrig=true,
+    name='#include double quotes', trig='#"',
+    condition = begins'#"',
     t'#include "', d(1, function()
-      local fname = vim.fn.expand('%<')
-      if fname then fname = fname..'.hpp' end
-      return i(1, fname..'"')
-    end, {}), i(0),
-  },
-
-  snip{
-    name='#pragma once', trig='^#p', regTrig=true,
-    t{'#pragma once', ''},
-  },
-
-  snip{
-    name='#define', trig='^#d', regTrig=true,
-    t'#define ',
-  },
-
-  snip{
-    name='#if', trig='^#if', regTrig=true,
-    t'#if ', i(1, '1'), nl,
-    i(0), nl,
-    t'#endif // ', copy(1),
+      return sn(1, { i(1, vim.fn.expand('%<')..'.hpp') })
+    end), t'"', i(0),
   },
 
   -- MAIN
   snip{
-    name='main function', trig='^main', regTrig=true,
-    t{'int main(int argc, char* argv[])', '{', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
-    name='main function with no arguments', trig='^mainn', regTrig=true,
-    t{'int main()', '{', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
-    name='main function with QCoreApplication', trig='^qmain', regTrig=true,
+    name='main function with QCoreApplication', trig='qmain',
+    condition = begins'qmain',
     t{
       '#include <QCoreApplication>',
       '',
@@ -75,7 +46,8 @@ ls.add_snippets('cpp', {
   },
 
   snip{
-    name='main function with QML', trig='^qmlmain', regTrig=true,
+    name='main function with QML', trig='qmlmain',
+    condition = begins'qmlmain',
     t{
       '#include <QGuiApplication>',
       '#include <QQmlApplicationEngine>',
@@ -102,57 +74,35 @@ ls.add_snippets('cpp', {
 
   -- TYPES
   snip{
-    name='struct definition', trig='^s', regTrig=true,
+    name='struct definition', trig='s',
+    condition = begins's',
     t'struct ', i(1), t{'', '{', '\t'}, i(0), t{'', '};'},
   },
 
   snip{
-    name='class definition', trig='^c', regTrig=true,
+    name='class definition', trig='c', regTrig=true,
+    condition = begins'c',
     t'class ', i(1), t{'', '{', '\t'}, i(0), t{'', '};'},
   },
 
   snip{
-    name='QObject definition', trig='^q', regTrig=true,
+    name='QObject definition', trig='q', regTrig=true,
+    condition = begins'q',
     t'class ', i(1), t{' : public QObject', '{', '\tQ_OBJECT', '\t'}, i(0), t{'', '};'},
   },
 
   snip{
-    name='namespace', trig='^ns', regTrig=true,
+    name='namespace', trig='ns', regTrig=true,
+    condition = begins'ns',
     t'namespace ', i(1, '1'), t{' {', ''},
-    i(0), nl,
+    i(0), t{'', ''},
     t'} // namespace ', copy(1),
-  },
-
-  snip{
-    name='function', trig='fn',
-    i(1, 'void'), t' ', i(2, 'function_name'), t'(', i(3), t{')', '{', '\t'}, i(0), t{'', '}'}
   },
 
   -- CONTROL FLOW
   snip{
-    name='if', trig='if',
-    t'if (', i(1, 'true'), t{') {', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
-    name='else if', trig='ei',
-    t'else if (', i(1, 'true'), t{') {', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
-    name='else', trig='el',
-    t{'else {', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
     name='if null', trig='in',
     t'if (', i(1), t{' == nullptr) {', '\t'}, i(0), t{'', '}'},
-  },
-
-  snip{
-    name='for loop', trig='for',
-    t'for (int ', i(2, 'i'), t' = 0; ', copy(2), t' < ', i(1, 'count'), t'; ++',
-    copy(2), t{') {', '\t'}, i(0), t{'', '}'},
   },
 
   snip{
@@ -209,8 +159,6 @@ ls.add_snippets('cpp', {
     t'const std::vector<', i(1, 'int'), t'>&',
   },
 
-  snip{name='char*', trig='cs', t('char*')},
-  snip{name='const char*', trig='cc', t('const char*')},
   snip{name='std::string', trig='str', t'std::string'},
   snip{name='const std::string&', trig='cstr', t'const std::string&'},
   snip{name='QString', trig='qs', t'QString'},
@@ -247,10 +195,5 @@ ls.add_snippets('cpp', {
     name='qobject cast', trig='qc',
     t'qobject_cast<', i(1, 'QObject'), t'*>(', i(2, 'expr'), t')',
   },
-
-  -- MISC
-  snip{name='assert', trig='as', t'assert(', i(1), t');'},
-  snip{name='printf', trig='pf', t'printf("', i(1), t'"', i(2), t');'},
-  snip{name='fprintf', trig='fp', t'printf(stderr, "', i(1), t'"', i(2), t');'},
 
 })

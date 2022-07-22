@@ -40,7 +40,7 @@ function M.bookmarks()
       local s1, s2 = item[1], nil
       -- make lowercase characters work with ctrl
       if s1:match('^%l$') then
-        s2 = vim.api.nvim_replace_termcodes('<C-'..s1..'>', true, false, true)
+        s2 = T('<C-'..s1..'>')
       end
       if s1 == ch or (s2 and s2 == ch) then
         vim.cmd(item[3] or ('Files '..item[2]))
@@ -57,7 +57,7 @@ local options = {
   {'l', 'list',       [[set list! | set list?]]},
   {'f', 'foldenable', [[set foldenable! | set foldenable?]]},
   {'m', 'mouse',      [[let &mouse = (&mouse ==# '' ? 'nvi' : '') | set mouse?]]},
-  {'n', 'number',     [[call m#command#toggle_line_numbers()]]},
+  {'n', 'number',     [[call luaeval('require"m.misc".toggle_line_numbers()')]]},
   {'i', 'indent',     [[IndentBlanklineToggle]]},
   {'c', 'colorizer',  [[ColorizerToggle]]},
   {'S', 'syntax',     [[exec 'syntax '..(exists('syntax_on') ? 'off' : 'on')]]},

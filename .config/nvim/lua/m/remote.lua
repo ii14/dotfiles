@@ -1,4 +1,5 @@
-local api, fn, cmd = vim.api, vim.fn, vim.cmd
+local api, fn = vim.api, vim.fn
+local cmd = api.nvim_command
 
 local function open(args)
   assert(type(args) == 'table')

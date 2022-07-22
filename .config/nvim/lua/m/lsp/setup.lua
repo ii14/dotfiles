@@ -1,5 +1,5 @@
 local api = vim.api
-local augroup = api.nvim_create_augroup('VimrcLspSetup', { clear = true })
+local augroup = api.nvim_create_augroup('m_lsp_setup', { clear = true })
 local M = {}
 
 local initialized = false
@@ -14,6 +14,7 @@ end
 
 api.nvim_create_autocmd('LspAttach', {
   group = augroup,
+  desc = 'm.lsp: attach',
   callback = function(args)
     local bufnr = args.buf
     local id = args.data.client_id
@@ -34,13 +35,14 @@ api.nvim_create_autocmd('LspAttach', {
           end)
         end
       end
-      vim.cmd('source '..vim.env.VIMCONFIG..'/lsp.vim')
+      require('m.lsp.buf')()
     end)
   end,
 })
 
 api.nvim_create_autocmd('LspDetach', {
   group = augroup,
+  desc = 'm.lsp: detach',
   callback = function(args)
     local bufnr = args.buf
 
@@ -64,6 +66,14 @@ api.nvim_create_autocmd('LspDetach', {
 
 local SPECIAL_KEYS = { on_init = true }
 
+local CAPABILITIES do
+  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+  if ok then
+    local protocol = require('vim.lsp.protocol')
+    CAPABILITIES = cmp_nvim_lsp.update_capabilities(protocol.make_client_capabilities())
+  end
+end
+
 return setmetatable(M, {
   __index = function(t, k)
     if SPECIAL_KEYS[k] then
@@ -75,6 +85,10 @@ return setmetatable(M, {
     assert(server ~= nil, 'config does not exist: '..k)
 
     local function setup(config)
+      if CAPABILITIES then
+        config.capabilities = CAPABILITIES
+      end
+
       if not config.on_init then
         config.on_init = on_init
       else

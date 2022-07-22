@@ -1,8 +1,6 @@
-local api = vim.api
-local fn = vim.fn
-local lsp = vim.lsp
-local c = lsp.handlers
-local util = lsp.util
+local api, fn, lsp = vim.api, vim.fn, vim.lsp
+local c, util = lsp.handlers, lsp.util
+local echo = require('m').echo
 
 local M = {}
 
@@ -56,7 +54,7 @@ local function set_qflist(result, ctx, config, title)
 end
 
 local function echow(msg)
-  api.nvim_echo({{msg, 'WarningMsg'}}, false, {})
+  echo(msg, 'WarningMsg', false)
 end
 
 
@@ -112,26 +110,6 @@ c['textDocument/implementation'] = location_callback
 c['$/progress'] = nil
 c['window/workDoneProgress/create'] = nil
 
-
--- local last_actions
--- local last_on_choice
-
--- vim.ui.select = function(items, opts, on_choice)
---   last_actions = items
---   last_on_choice = on_choice
-
---   local choices = {}
---   for _, item in ipairs(items) do
---     local str = opts.format_item(item)
---     table.insert(choices, str)
---   end
---   fn['actionmenu#open'](choices, [[v:lua.require'm.lsp.callbacks'.select_callback]])
--- end
-
--- function M.select_callback(index, _)
---   index = index + 1
---   last_on_choice(last_actions[index], index)
--- end
 
 function vim.ui.select(items, opts, on_choice)
   local choices = {}

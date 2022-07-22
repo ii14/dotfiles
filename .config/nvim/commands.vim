@@ -25,18 +25,19 @@ command! -count=4 -bang T
   \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
 
 " Fill the rest of the line with character -----------------------------------------------
-command! -nargs=? Hr call m#command#hr(<q-args>)
+command! -nargs=? Hr call luaeval('require "m.misc".hr(_A)', <q-args>)
 call m#cabbrev('hr', 'Hr')
 
 " :redir to a new buffer -----------------------------------------------------------------
 command! -nargs=+ -complete=command Redir
-  \ call luaeval('require "m.util".redir(_A)', <q-args>)
+  \ call luaeval('require "m.misc".redir(_A)', <q-args>)
 
 " :set with prompt -----------------------------------------------------------------------
-command! -nargs=1 -complete=option Set call m#command#set(<q-args>)
+command! -nargs=1 -complete=option Set
+  \ call luaeval('require "m.misc".set(_A)', <q-args>)
 
 " Rename current file --------------------------------------------------------------------
-command! RenameFile call m#command#rename_file()
+command! RenameFile lua require "m.misc".rename_file()
 
 " compiledb ------------------------------------------------------------------------------
 command! -nargs=? -complete=dir Compiledb
@@ -46,7 +47,8 @@ command! -nargs=? -complete=dir Compiledb
 function s:OpenComp(A,L,P)
   return getcompletion(a:A, 'file', 1)
 endfunction
-command! -nargs=? -complete=customlist,s:OpenComp Open call m#command#open(<q-args>)
+command! -nargs=? -complete=customlist,s:OpenComp Open
+  \ call luaeval('require "m.misc".open(_A)', <q-args>)
 call m#cabbrev('open', 'Open')
 
 " ctags ----------------------------------------------------------------------------------

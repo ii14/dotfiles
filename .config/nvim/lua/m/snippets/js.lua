@@ -8,8 +8,6 @@ local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
 
-local nl = t{'', ''}
-
 local s = {
 
   snip{

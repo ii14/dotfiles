@@ -1,4 +1,9 @@
-augroup VimrcGrep
+if exists('g:loaded_m_grep')
+  finish
+endif
+let g:loaded_m_grep = 1
+
+augroup m_grep
   autocmd!
 augroup end
 
@@ -26,7 +31,7 @@ if exists('s:grepprg')
   endfunction
 
   let &grepprg = s:formatgrepprg()
-  augroup VimrcGrep
+  augroup m_grep
     autocmd OptionSet smartcase,ignorecase let &grepprg = s:formatgrepprg()
   augroup end
 endif
@@ -45,7 +50,7 @@ call m#cabbrev('lgr',   'LGrep')
 call m#cabbrev('lgre',  'LGrep')
 call m#cabbrev('lgrep', 'LGrep')
 
-augroup VimrcGrep
+augroup m_grep
   autocmd QuickFixCmdPost cgetexpr cwindow
   autocmd QuickFixCmdPost lgetexpr lwindow
 augroup end

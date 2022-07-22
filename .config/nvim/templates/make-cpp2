@@ -20,6 +20,9 @@ all: ./$(BUILDDIR)/$(TARGET)
 
 -include $(DEPS)
 
+compile_commands.json: Makefile
+	compiledb -n make
+
 .PHONY: all clean info
 
 clean:

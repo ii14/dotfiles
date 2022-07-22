@@ -1,5 +1,6 @@
+-- Vim syntax completion
+
 local uv = vim.loop
-local Source = {}
 local cache = {}
 
 local function line_iterator(s)
@@ -103,28 +104,18 @@ local function gather_candidates(filetype)
   return kwords
 end
 
-function Source.new()
-  return setmetatable({}, { __index = Source })
+local source = {}
+
+source.new = function()
+  return setmetatable({}, { __index = source })
 end
 
-function Source.get_metadata(_)
-  return {
-    priority = 100,
-    dup = 0,
-    menu = '[SYN]',
-  }
-end
-
-function Source.determine(_, context)
-  return require('compe').helper.determine(context)
-end
-
-function Source.complete(_, args)
+function source:complete(_, callback)
   local items = {}
   for _, item in ipairs(gather_candidates()) do
-    items[#items+1] = { word = item }
+    items[#items+1] = { label = item }
   end
-  args.callback({ items = items })
+  callback(items)
 end
 
-return Source.new()
+return source.new()

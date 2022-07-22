@@ -51,7 +51,7 @@ end
 function Term.send(id, keys)
   local term = terms[id]
   if term == nil then return end
-  vim.fn.chansend(term.job, vim.api.nvim_replace_termcodes(keys, true, false, true))
+  vim.fn.chansend(term.job, T(keys))
 end
 
 function Term._termclose(id)

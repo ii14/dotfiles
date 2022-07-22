@@ -11,7 +11,7 @@ nnoremap <silent> <F3> <cmd>lua require"m.drawer.term".term(3)<CR>
 nnoremap <silent> <F4> <cmd>lua require"m.drawer.term".term(4)<CR>
 nnoremap <silent> <F5> <cmd>lua require"m.drawer.qf".qf()<CR>
 
-augroup Drawer
+augroup m_drawer
   autocmd!
   autocmd BufWinEnter * lua require 'm.drawer.win'._bufwinenter()
 augroup end

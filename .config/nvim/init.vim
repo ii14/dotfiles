@@ -1,15 +1,13 @@
 " PLUGINS         $VIMCONFIG/plugins.lua
 " LUA SETUP       $VIMCONFIG/setup.lua
-" KEY MAPPINGS    $VIMCONFIG/keymaps.vim
-" COMMANDS        $VIMCONFIG/commands.vim
+" KEY MAPPINGS    $VIMCONFIG/lua/m/keymaps.lua
 " LSP CONFIG      $VIMCONFIG/lua/m/lsp.lua
-" LSP BUFFER      $VIMCONFIG/lsp.vim
-" TERMINAL        $VIMCONFIG/term.vim
-" FZF             $VIMCONFIG/fzf.vim
-" GREP            $VIMCONFIG/grep.vim
+" LSP BUFFER      $VIMCONFIG/lua/m/lsp/buf.lua
 " COLORSCHEME     $VIMCONFIG/colors/onedark.lua
-" SNIPPETS        $VIMCONFIG/lua/m/snippets.lua
+" SNIPPETS        $VIMCONFIG/lua/m/snippets
+" COMMANDS        $VIMCONFIG/commands.vim
 " AUTOCOMMANDS    $VIMCONFIG/autocmd.vim
+" TEMPLATES       $VIMCONFIG/templates
 
 let $VIMDATA = stdpath('data')
 let $VIMCACHE = stdpath('cache')
@@ -17,14 +15,21 @@ let $VIMCONFIG = stdpath('config')
 let $VIMPLUGINS = $VIMDATA.'/neopm'
 
 let g:mapleader = ' '
-aug Vimrc | au! | aug end
+augroup m_vimrc | autocmd! | augroup end
 
-if v:progname ==# 'vi' && !exists('g:upgraded')
+" use minimal config as vi or root
+let g:is_root = luaeval('vim.loop.getuid()') == 0
+if g:is_root || (v:progname ==# 'vi' && !exists('g:upgraded'))
   source $VIMCONFIG/minimal.vim
   finish
 endif
 
-call m#addopts(['NoLsp', 'NoCache'])
+" custom command line options:
+" +NoLsp    disable lsp client
+" +NoCache  disable impatient.nvim
+" +Ts       enable treesitter
+" +NoFt     disable filetype.lua (TODO: for testing master, remove after update)
+call m#parseopts(['NoLsp', 'NoCache', 'Ts', 'NoFt'])
 if exists('$VIMNOLSP')   | let g:options.NoLsp   = v:true | endif
 if exists('$VIMNOCACHE') | let g:options.NoCache = v:true | endif
 
@@ -32,8 +37,10 @@ let g:bookmarks = [
   \ ['w', '<working directory>', 'Files .'],
   \ ['f', '<buffer directory>', 'exe "Files "..m#bufdir()'],
   \ ['g', '<git files>', 'GFiles'],
-  \ ['V', '$VIMRUNTIME'],
+  \ ['u', '<most recently used>', 'lua require("m.fzf").mru()'],
+  \ ['l', '<runtime lua modules>', 'lua require("m.fzf").lua_modules()'],
   \ ['e', '/etc'],
+  \ ['V', '$VIMRUNTIME'],
   \ ['p', '$VIMPLUGINS'],
   \ ['v', '$VIMCONFIG'],
   \ ['s', '~/.local/share'],
@@ -47,19 +54,8 @@ let g:bookmarks = [
 
 " PLUGINS ////////////////////////////////////////////////////////////////////////////////
   source $VIMCONFIG/plugins.lua
+  source $VIMCONFIG/impatient.vim
   source $VIMCONFIG/setup.lua
-  source $VIMCONFIG/fzf.vim
-
-  " Completion ---------------------------------------------------------------------------
-    let g:compe = {'source': {
-      \ 'path': v:true,
-      \ 'calc': v:true,
-      \ 'buffer': v:true,
-      \ 'syncomp': v:true,
-      \ }}
-      " \ 'necosyntax': v:true,
-      " \ 'luasnip': v:true,
-    " LSP buffer local config in $VIMCONFIG/lsp.vim
 
   " indent-blankline ---------------------------------------------------------------------
     let g:indent_blankline_buftype_exclude = ['help', 'terminal']
@@ -69,10 +65,10 @@ let g:bookmarks = [
 
   " exrc.vim -----------------------------------------------------------------------------
     let g:exrc#names = ['.exrc']
-    aug Vimrc
-      au BufWritePost .exrc ++nested silent ExrcTrust
-      au VimEnter * ++once au Vimrc SourcePost .exrc silent Pro!
-    aug end
+    augroup m_vimrc
+      autocmd BufWritePost .exrc ++nested silent ExrcTrust
+      autocmd VimEnter * ++once autocmd m_vimrc SourcePost .exrc silent Pro!
+    augroup end
 
   " autosplit ----------------------------------------------------------------------------
     let g:autosplit_ft = ['man', 'fugitive', 'gitcommit']
@@ -118,8 +114,8 @@ let g:bookmarks = [
     set list                                  " show non-printable characters
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
     set fillchars=diff:╱
-    set synmaxcol=1000                        " highlight only the first 1000 columns
-    set pumblend=13 winblend=13               " pseudo transparency
+    set synmaxcol=1500                        " highlight only the first 1500 columns
+    set pumblend=13                           " pseudo transparency
 
   " Editing ------------------------------------------------------------------------------
     set textwidth=90
@@ -133,6 +129,8 @@ let g:bookmarks = [
     set nojoinspaces                          " join lines with one space instead of two
     set gdefault                              " use g flag by default in substitutions
     set backspace=indent,start                " no backspacing over eol
+    set switchbuf+=useopen                    " qf: jump to window with the buffer open
+    set formatoptions+=/
     " set scrolljump=-50                        " center window after jumps
 
   " Indentation and Folding --------------------------------------------------------------
@@ -159,10 +157,7 @@ let g:bookmarks = [
     set undofile                              " persistent undo history
     set noswapfile                            " disable swap files
 
-source $VIMCONFIG/keymaps.vim
 source $VIMCONFIG/commands.vim
-source $VIMCONFIG/grep.vim
-source $VIMCONFIG/term.vim
 source $VIMCONFIG/autocmd.vim
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

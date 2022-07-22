@@ -1,9 +1,12 @@
 local initialized = false
+
 local function init()
   if initialized then return end
   initialized = true
 
-  require('luasnip.config').set_config {
+  local config = require('luasnip.config')
+  config._setup() -- TODO: remove when loading on demand is implemented in neopm
+  config.set_config {
     history = true,
     updateevents = 'TextChanged,TextChangedI',
     ext_base_prio = 200,
@@ -11,22 +14,10 @@ local function init()
     enable_autosnippets = true,
   }
 
-  local function imap(lhs, rhs, opts) vim.api.nvim_set_keymap('i', lhs, rhs, opts) end
-  local function smap(lhs, rhs, opts) vim.api.nvim_set_keymap('s', lhs, rhs, opts) end
-  local expr = { silent = true, expr = true }
-  local noremap = { silent = true, noremap = true }
-
-  imap('<Tab>',   [[luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>']], expr)
-  imap('<S-Tab>', [[<cmd>lua require('luasnip').jump(-1)<CR>]], noremap)
-  smap('<Tab>',   [[<cmd>lua require('luasnip').jump(1)<CR>]],  noremap)
-  smap('<S-Tab>', [[<cmd>lua require('luasnip').jump(-1)<CR>]], noremap)
-  -- imap('<C-E>', [[luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<End>']], expr)
-  -- smap('<C-E>', [[luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<End>']], expr)
-  imap('<Esc>', [[<Esc><cmd>silent LuaSnipUnlinkCurrent<CR>]], noremap)
-  smap('<Esc>', [[<Esc><cmd>silent LuaSnipUnlinkCurrent<CR>]], noremap)
+  require('m.keymaps').luasnip()
 end
 
-local lookup = {
+local MODULES = {
   c          = 'm.snippets.c',
   cpp        = 'm.snippets.cpp',
   css        = 'm.snippets.css',
@@ -39,11 +30,13 @@ local lookup = {
 }
 
 vim.api.nvim_create_autocmd('FileType', {
-  desc = '[Snippets] Loads snippets for current filetype',
+  desc = 'm.snippets: Loads snippets for current filetype',
   callback = function(ctx)
     init()
-    local mod = lookup[ctx.match]
+    local mod = MODULES[ctx.match]
     if mod then require(mod) end
   end,
-  group = vim.api.nvim_create_augroup('VimrcSnippets', {}),
+  group = vim.api.nvim_create_augroup('m_snippets', {}),
 })
+
+return { init = init }

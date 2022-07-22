@@ -1,4 +1,4 @@
-local socket = vim.env.NVIM_LISTEN_ADDRESS
+local socket = vim.env.NVIM
 if socket == nil or socket == vim.v.servername then
   return
 end

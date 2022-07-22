@@ -1,5 +1,5 @@
-local api = vim.api
-local uv = vim.loop
+local m, api, uv = require('m'), vim.api, vim.loop
+local echo = m.echo
 local lint
 
 -- TODO: needs a more generic solution
@@ -22,7 +22,7 @@ local UPDATE_EVENTS = {
 local attached = {}
 local disabled = {}
 
-local augroup = api.nvim_create_augroup('VimrcLint', {})
+local augroup = api.nvim_create_augroup('m_lint', {})
 
 local function attach(bufnr, filetype)
   if disabled[bufnr] then return end
@@ -52,7 +52,7 @@ local function attach(bufnr, filetype)
 
   local au1 = api.nvim_create_autocmd(UPDATE_EVENTS, {
     buffer = bufnr,
-    desc = '[Lint] Lint buffer',
+    desc = 'm.lint: Lint buffer',
     callback = function()
       buf.update()
     end,
@@ -61,28 +61,22 @@ local function attach(bufnr, filetype)
 
   local au2 = api.nvim_create_autocmd('BufDelete', {
     buffer = bufnr,
-    desc = '[Lint] Delete buffer',
+    desc = 'm.lint: Delete buffer',
     callback = function()
       buf.detach()
     end,
     group = augroup,
   })
 
-  function buf.update()
-    timer:stop()
-    timer:start(DEBOUNCE, 0, function()
-      timer:stop()
-      if not lint then
-        lint = require('lint')
-        lint.linters_by_ft = LINTERS
-      end
-      vim.schedule(function()
-        api.nvim_buf_call(bufnr, function()
-          lint.try_lint()
-        end)
-      end)
+  buf.update = m.debounce_wrap(function()
+    if not lint then
+      lint = require('lint')
+      lint.linters_by_ft = LINTERS
+    end
+    api.nvim_buf_call(bufnr, function()
+      lint.try_lint()
     end)
-  end
+  end, DEBOUNCE, false)
 
   function buf.clear()
     local linters = LINTERS[buf.filetype]
@@ -123,7 +117,7 @@ local function disable(bufnr, value)
 end
 
 api.nvim_create_autocmd('FileType', {
-  desc = '[Lint] Attach linter',
+  desc = 'm.lint: Attach linter',
   callback = function(ctx)
     attach(ctx.buf, ctx.match)
   end,
@@ -139,10 +133,10 @@ api.nvim_create_user_command('Lint', function(ctx)
   elseif ctx.args == '' or ctx.args == 'toggle' then
     disable(bufnr, not disabled[bufnr])
   else
-    api.nvim_echo({{'Lint: invalid option', 'ErrorMsg'}}, false, {})
+    echo('Lint: invalid option', 'ErrorMsg')
   end
 end, {
-  desc = '[Lint] Enable/disable linting for current buffer',
+  desc = 'm.lint: Enable/disable linting for current buffer',
   force = true,
   nargs = '?',
   complete = function(arg, _, _)

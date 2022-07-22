@@ -5,23 +5,39 @@ set noloadplugins
 filetype off
 syntax off
 
-command! -bar Upgrade call s:upgrade()
+" upgrade to full configuration
 function! s:upgrade()
   let g:upgraded = v:true
 
   set loadplugins
-  if !exists('g:syntax_on')
-    syntax on
-    " filetype on
-    " filetype detect for all buffers
-  endif
 
   source $VIMCONFIG/init.vim
   runtime! plugin/**/*.vim
   runtime! plugin/**/*.lua
+  " augroup filetypedetect
+  "   runtime! ftdetect/*.vim
+  "   runtime! ftdetect/*.lua
+  " augroup end
+
+  if !exists('g:syntax_on')
+    syntax on
+  endif
+  lua local api = vim.api
+    \ for _, bufnr in ipairs(api.nvim_list_bufs()) do
+    \   if api.nvim_buf_is_loaded(bufnr) and
+    \     api.nvim_buf_get_option(bufnr, 'filetype') == ''
+    \   then
+    \     api.nvim_buf_call(bufnr, function()
+    \       api.nvim_command('filetype detect')
+    \     end)
+    \   end
+    \ end
 
   delcommand Upgrade
 endfunction
+if !g:is_root
+  command! -bar Upgrade call s:upgrade()
+endif
 
 " theme
 set termguicolors
