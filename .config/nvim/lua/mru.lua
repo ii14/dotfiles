@@ -4,6 +4,7 @@ local api, fn, uv = vim.api, vim.fn, vim.loop
 
 -- TODO: debounce
 -- TODO: check for --headless
+-- TODO: cache real paths for buffers
 
 local FILES = {}
 local MAX_FILES = 50
@@ -61,6 +62,16 @@ autocmd('BufEnter', {
         table.remove(FILES, i)
         break
       end
+    end
+
+    local last = file:match('[^/]*$')
+    if last and last == 'COMMIT_EDITMSG' then
+      return
+    end
+
+    local stat = uv.fs_stat(file)
+    if not stat or stat.type ~= 'file' then
+      return
     end
 
     table.insert(FILES, 1, file)
