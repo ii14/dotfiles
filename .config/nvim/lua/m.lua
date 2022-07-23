@@ -29,20 +29,19 @@ function m.R(mod)
 end
 
 
----Replace termcodes
----@type table<string, string> | fun(s: string): string
-m.T = setmetatable({}, {
-  __index = function(t, s)
+do
+  local cache = {}
+  ---Replace termcodes
+  ---@param s string
+  ---@return string
+  function m.T(s)
     assert(type(s) == 'string', 'expected string')
-    local r = api.nvim_replace_termcodes(s, true, false, true)
-    rawset(t, s, r)
-    return r
-  end,
-  __call = function(t, s)
-    assert(type(s) == 'string', 'expected string')
-    return t[s]
-  end,
-})
+    if not cache[s] then
+      cache[s] = api.nvim_replace_termcodes(s, true, false, true)
+    end
+    return cache[s]
+  end
+end
 
 
 ---Print message

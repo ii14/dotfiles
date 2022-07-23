@@ -333,11 +333,12 @@ map.i('<C-R><C-D>', [[<C-R>=m#bufdir()<CR>]], { silent = true })
 map.i('<C-R><C-T>', [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]], { silent = true })
 
 -- Pairs
+map.i('<Plug>(m-pair)', [[<cmd>lua require('m.pairs')()<CR>]])
 map.i({
   ['<C-G><CR>']  = '<CR><C-O>O',
-  ['<C-G><C-O>'] = '()<C-G>U<Left>',
-  ['<C-G><C-B>'] = '{}<C-G>U<Left>',
-  ['<C-G><C-A>'] = '<><C-G>U<Left>',
+  ['<C-G><C-O>'] = '()<C-G>U<Left><Plug>(m-pair)',
+  ['<C-G><C-B>'] = '{}<C-G>U<Left><Plug>(m-pair)',
+  ['<C-G><C-A>'] = '<><C-G>U<Left><Plug>(m-pair)',
   ['<C-G><C-I>'] = '""<C-G>U<Left>',
 }, { remap = true })
 

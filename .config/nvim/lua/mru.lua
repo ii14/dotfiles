@@ -43,7 +43,7 @@ end
 
 read()
 
-autocmd('BufEnter', {
+autocmd({'BufEnter', 'BufWritePost'}, {
   group = augroup,
   desc = 'mru: add file',
   callback = function(ctx)
