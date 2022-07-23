@@ -278,7 +278,7 @@ do
 
   map.n('<leader>ld', [[<cmd>TroubleToggle<CR>]])
   map.n({
-    ['g?'] = -diag.open_float(0, { scope = 'line' }),
+    ['g?'] = -diag.open_float(),
     [']g'] = -diag.goto_next({ float = false }),
     ['[g'] = -diag.goto_prev({ float = false }),
     [']G'] = -diag.goto_prev({ float = false, cursor_position = { 0, 0 } }),
@@ -305,7 +305,7 @@ do
     lmap.x('gq',    -lsp.range_formatting())
 
     lmap.n({
-      ['g?'] = -diag.open_float(0, { scope = 'line' }),
+      ['g?'] = -diag.open_float(),
       [']d'] = -diag.goto_next({ float = false }),
       ['[d'] = -diag.goto_prev({ float = false }),
       [']D'] = -diag.goto_prev({ float = false, cursor_position = { 0, 0 } }),

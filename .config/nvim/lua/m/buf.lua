@@ -22,11 +22,23 @@ end
 ---@type number[]
 local list = getbuflist()
 
+---Buffer list
 local buf = { list = list }
+
+local function validate_bufnr(bufnr)
+  if bufnr == nil or bufnr == 0 then
+    return api.nvim_get_current_buf()
+  elseif type(bufnr) == 'number' then
+    return bufnr
+  else
+    error('invalid bufnr: expected number')
+  end
+end
 
 
 do
   local function add(bufnr)
+    bufnr = validate_bufnr(bufnr)
     for _, b in ipairs(list) do
       if b == bufnr then
         return
@@ -37,6 +49,7 @@ do
   end
 
   local function remove(bufnr)
+    bufnr = validate_bufnr(bufnr)
     local removed = false
     for i = #list, 1, -1 do
       if list[i] == bufnr then
@@ -49,7 +62,10 @@ do
     end
   end
 
+  local augroup = api.nvim_create_augroup('m_buf', {})
+
   api.nvim_create_autocmd('BufAdd', {
+    group = augroup,
     desc = 'm.buf: update',
     callback = function(ctx)
       add(ctx.buf)
@@ -57,6 +73,7 @@ do
   })
 
   api.nvim_create_autocmd('BufDelete', {
+    group = augroup,
     desc = 'm.buf: update',
     callback = function(ctx)
       remove(ctx.buf)
@@ -64,6 +81,7 @@ do
   })
 
   api.nvim_create_autocmd('OptionSet', {
+    group = augroup,
     desc = 'm.buf: update',
     pattern = 'buflisted',
     callback = function(ctx)
@@ -92,12 +110,7 @@ end
 ---@param bufnr number
 ---@return number
 function buf.index(bufnr)
-  if bufnr == nil or bufnr == 0 then
-    bufnr = api.nvim_get_current_buf()
-  elseif type(bufnr) ~= 'number' then
-    error('expected number')
-  end
-
+  bufnr = validate_bufnr(bufnr)
   for i, b in ipairs(list) do
     if b == bufnr then
       return i

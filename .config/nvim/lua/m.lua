@@ -1,6 +1,7 @@
 local api, uv = vim.api, vim.loop
 
 local m = {
+  buf = require('m.buf'),
   map = require('m.util.map'),
   lazy = require('m.util.lazy'),
 }

@@ -309,7 +309,7 @@ function M.render(inactive)
   if width < WIDTH_TINY then
     mode = ' '
   elseif width < WIDTH_SMALL then
-    mode = ' '..MODE_MAP_SMALL[mode]..' '
+    mode = ' '..(MODE_MAP_SMALL[mode] or 'N')..' '
   else
     mode = ' '..mode..' '
   end
