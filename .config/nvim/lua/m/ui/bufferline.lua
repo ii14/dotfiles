@@ -74,7 +74,13 @@ end
 
 ---Render buffer section
 local function render_bufs(width)
-  local bufs = get()
+  local ok, bufs = pcall(get)
+  -- if events that update the buffer list were
+  -- silenced and an error occurred, force update
+  if not ok then
+    bl.update()
+    bufs = get()
+  end
 
   for _, buf in ipairs(bufs) do
     local name = buf.name
