@@ -290,7 +290,7 @@ do
   -- LSP buffer local mappings
   function keymaps.lsp(client)
     lmap.n('K',     -lsp.hover())
-    lmap.i('<C-K>', -lsp.signature_help())
+    lmap.i('<C-K>', -lsp.signature_help()) -- TODO: used for digraphs, use <C-L> instead?
     lmap.n('<C-]>', -lsp.definition())
     lmap.n('go',    -lsp.type_definition())
     lmap.n('gd',    -lsp.declaration())
@@ -331,6 +331,12 @@ map.i('<C-B>', '<cmd>call m#bf#ibackward()<CR>')
 -- Insert stuff
 map.i('<C-R><C-D>', [[<C-R>=m#bufdir()<CR>]], { silent = true })
 map.i('<C-R><C-T>', [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]], { silent = true })
+
+-- New line below/above
+map.i({
+  ['<C-G><C-J>'] = '<C-O>o',
+  ['<C-G><C-K>'] = '<C-O>O',
+})
 
 -- Pairs
 map.i('<Plug>(m-pair)', [[<cmd>lua require('m.pairs')()<CR>]])

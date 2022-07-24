@@ -1,4 +1,4 @@
--- Automatically make a new split vertical if there is enough space for it
+-- Automatically make the new split vertical if there is enough space for it
 
 local api, fn = vim.api, vim.fn
 

@@ -33,7 +33,7 @@ Plug 'romainl/vim-cool'
 Plug 'junegunn/fzf' { run = ':call fzf#install()' }
 Plug 'junegunn/fzf.vim' { depends = 'junegunn/fzf' }
 Plug 'tamago324/lir.nvim'
-Plug 'bogado/file-line'
+-- Plug 'bogado/file-line'
 
 -- LSP, linting --
 if not vim.g.options.NoLsp then

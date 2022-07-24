@@ -23,18 +23,9 @@ require('m.term')
 
 require('autosplit')
 require('mru')
+require('fileline')
 
 require('Comment').setup { ignore = '^$' }
-
--- require('nvim-surround').setup {
---   delimiters = {
---     pairs = {
---       c = { 'const ', '&' },
---     },
---   },
--- }
-
--- require('hop').setup()
 
 vim.o.termguicolors = true
 vim.cmd('colorscheme onedark')
@@ -51,6 +42,16 @@ require('gitsigns').setup {
 require('m.cmp')
 require('m.lir')
 require('m.fzf')
+
+-- require('nvim-surround').setup {
+--   delimiters = {
+--     pairs = {
+--       c = { 'const ', '&' },
+--     },
+--   },
+-- }
+
+-- require('hop').setup()
 
 -- TODO: lazy load
 -- require('diffview.config').setup {
