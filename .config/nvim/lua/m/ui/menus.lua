@@ -50,20 +50,52 @@ function M.bookmarks()
   end
 end
 
+local function get_tab()
+  echo {{'Tab width...', 'Question'}}
+  local ok, ch = pcall(vim.fn.getchar)
+  echo {{''}}
+  vim.cmd('redraw')
+  if not ok or ch == 0 or ch == 27 or ch == 13 then
+    return
+  end
+  ch = vim.fn.nr2char(ch)
+  if not ch:match('^%d$') then
+    echo {{'Invalid tab value', 'ErrorMsg'}}
+    return
+  end
+  return tonumber(ch)
+end
+
 local options = {
-  {'w', 'wrap',       [[set wrap! | set wrap?]]},
-  {'W', 'wrapscan',   [[set wrapscan! | set wrapscan?]]},
-  {'s', 'ignorecase', [[set ignorecase! | set ignorecase?]]},
-  {'l', 'list',       [[set list! | set list?]]},
-  {'f', 'foldenable', [[set foldenable! | set foldenable?]]},
-  {'m', 'mouse',      [[let &mouse = (&mouse ==# '' ? 'nvi' : '') | set mouse?]]},
-  {'n', 'number',     [[call luaeval('require"m.misc".toggle_line_numbers()')]]},
-  {'i', 'indent',     [[IndentBlanklineToggle]]},
-  {'c', 'colorizer',  [[ColorizerToggle]]},
-  {'S', 'syntax',     [[exec 'syntax '..(exists('syntax_on') ? 'off' : 'on')]]},
+  {'w', 'wrap',         [[setl wrap! | setl wrap?]]},
+  {'W', 'wrapscan',     [[set wrapscan! | set wrapscan?]]},
+  {'C', 'ignorecase',   [[set ignorecase! | set ignorecase?]]},
+  {'s', 'spell',        [[setl spell! | setl spell?]]},
+  {'l', 'list',         [[setl list! | setl list?]]},
+  {'f', 'folds',        [[setl foldenable! | setl foldenable?]]},
+  {'m', 'mouse',        [[let &mouse = (&mouse ==# '' ? 'nvi' : '') | set mouse?]]},
+  {'n', 'line numbers', [[call luaeval('require"m.misc".toggle_line_numbers()')]]},
+  {'i', 'indent',       [[IndentBlanklineToggle]]},
+  {'c', 'colorizer',    [[ColorizerToggle]]},
+  {'S', 'syntax',       [[exec 'syntax '..(exists('syntax_on') ? 'off' : 'on')]]},
   {'d', 'diagnostics', function()
     vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text })
-  end}
+  end},
+  {'t', 'soft tabs', function()
+    local value = get_tab()
+    if not value then return end
+    vim.opt_local.expandtab = true
+    vim.opt_local.softtabstop = value
+    vim.opt_local.shiftwidth = value
+    echo {{ (':setl et sw=%d sts=%d'):format(value, value) }}
+  end},
+  {'T', 'hard tabs', function()
+    local value = get_tab()
+    if not value then return end
+    vim.opt_local.expandtab = false
+    vim.opt_local.tabstop = value
+    echo {{ (':setl noet ts=%d'):format(value) }}
+  end},
 }
 
 function M.options()

@@ -1,20 +1,25 @@
+if vim.g.loaded_fileline ~= nil then
+  return
+end
+vim.g.loaded_fileline = 1
+
 -- Resolve line:col from `file.txt:10:99`
 local api, fn = vim.api, vim.fn
+
 api.nvim_create_autocmd({'BufRead', 'BufNewFile'}, {
   group = api.nvim_create_augroup('fileline', {}),
+  pattern = '*:*',
   desc = 'fileline: detect',
   callback = function()
     local file = fn.bufname('%')
-    if file == '' or fn.filereadable(file) ~= 0 then
+    if file == '' or file:find('^%w+://') or fn.filereadable(file) ~= 0 then
       return
     end
 
-    local line, col do
-      local res = vim.split(file, ':', { plain = true })
-      file, line, col = res[1], res[2], res[3]
-    end
+    local line, col
+    file, line, col = unpack(vim.split(file, ':', { plain = true }), 1, 3)
 
-    if not file or file == '' then
+    if not file or file == '' or fn.filereadable(file) == 0 then
       return
     elseif not line or not line:find('^%d+$') then
       return

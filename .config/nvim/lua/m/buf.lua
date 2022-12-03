@@ -1,5 +1,26 @@
 local api = vim.api
 
+---Filter table in place
+---@generic T
+---@param t T[]
+---@param f fun(T): boolean
+---@return T[]
+local function filter(t, f)
+  -- TODO: this is a duplicate of m.filter
+  local len = #t
+  local j = 1
+  for i = 1, len do
+    t[j], t[i] = t[i], nil
+    if f(t[j]) then
+      j = j + 1
+    end
+  end
+  for i = j, len do
+    t[i] = nil
+  end
+  return t
+end
+
 local function doautocmd(event, data)
   api.nvim_exec_autocmds('User', {
     pattern = event,
@@ -9,13 +30,9 @@ local function doautocmd(event, data)
 end
 
 local function getbuflist()
-  local list = api.nvim_list_bufs()
-  for i = #list, 1, -1 do
-    if not api.nvim_buf_get_option(list[i], 'buflisted') then
-      table.remove(list, i)
-    end
-  end
-  return list
+  return filter(api.nvim_list_bufs(), function(bufnr)
+    return api.nvim_buf_get_option(bufnr, 'buflisted')
+  end)
 end
 
 ---Buffer list

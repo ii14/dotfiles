@@ -17,6 +17,7 @@ local MODE_MAP = {
   ['niR']    = 'Normal',
   ['niV']    = 'Normal',
   ['nt']     = 'Normal',
+  ['ntT']    = 'Normal',
   ['v']      = 'Visual',
   ['vs']     = 'Visual',
   ['V']      = 'V-Line',
@@ -195,27 +196,54 @@ local function render_pro(ctx)
   end
 end
 
-local function render_diagnostic(ctx)
-  local d = rawget(vim, 'diagnostic')
-  if d and ctx.width >= WIDTH_SMALL then
-    local count = {}
-    local diags = d.get(ctx.bufnr)
-    for _, v in ipairs(diags) do
-      local s = v.severity
-      count[s] = (count[s] or 0) + 1
+local render_diagnostic do
+  local DIAGNOSTIC_CACHE = {}
+  local SEVERITY
+
+  api.nvim_create_autocmd('DiagnosticChanged', {
+    callback = function(ctx)
+      local count = {}
+      local not_empty = false
+
+      for _, v in ipairs(vim.diagnostic.get(ctx.buf)) do
+        local s = v.severity
+        count[s] = (count[s] or 0) + 1
+        not_empty = true
+      end
+
+      if not_empty then
+        DIAGNOSTIC_CACHE[ctx.buf] = count
+      else
+        DIAGNOSTIC_CACHE[ctx.buf] = nil
+      end
+    end,
+    desc = 'm.ui.statusline: update diagnostics',
+  })
+
+  function render_diagnostic(ctx)
+    if ctx.width < WIDTH_SMALL then
+      return
     end
+
+    local count = DIAGNOSTIC_CACHE[ctx.bufnr]
+    if not count then return end
+
+    if not SEVERITY then
+      SEVERITY = vim.diagnostic.severity
+    end
+
     local res = {}
-    if count[d.severity.ERROR] then
-      res[#res+1] = 'E'..count[d.severity.ERROR]
+    if count[SEVERITY.ERROR] then
+      res[#res+1] = 'E' .. count[SEVERITY.ERROR]
     end
-    if count[d.severity.WARN] then
-      res[#res+1] = 'W'..count[d.severity.WARN]
+    if count[SEVERITY.WARN] then
+      res[#res+1] = 'W' .. count[SEVERITY.WARN]
     end
-    if count[d.severity.INFO] then
-      res[#res+1] = 'I'..count[d.severity.INFO]
+    if count[SEVERITY.INFO] then
+      res[#res+1] = 'I' .. count[SEVERITY.INFO]
     end
-    if count[d.severity.HINT] then
-      res[#res+1] = 'H'..count[d.severity.HINT]
+    if count[SEVERITY.HINT] then
+      res[#res+1] = 'H' .. count[SEVERITY.HINT]
     end
     if #res > 0 then
       return table.concat(res, ' ')

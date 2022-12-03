@@ -9,9 +9,8 @@ local m = {
 
 ---Pretty print
 function m.P(...)
-  local n = select('#', ...)
   local p = {...}
-  for i = 1, n do
+  for i = 1, select('#', ...) do
     p[i] = vim.inspect(p[i])
   end
   print(table.concat(p, ', '))
@@ -123,6 +122,26 @@ function m.make_lookup(t)
   return r
 end
 
+---Filter table in place
+---@generic T
+---@param t T[]
+---@param f fun(T): boolean
+---@return T[]
+function m.filter(t, f)
+  local len = #t
+  local j = 1
+  for i = 1, len do
+    t[j], t[i] = t[i], nil
+    if f(t[j]) then
+      j = j + 1
+    end
+  end
+  for i = j, len do
+    t[i] = nil
+  end
+  return t
+end
+
 ---Reverse table in place
 ---@generic T
 ---@param t T[]
@@ -130,28 +149,32 @@ end
 function m.reverse(t)
   assert(type(t) == 'table', 'expected table')
   local len = #t
-  for i = 0, #t / 2 - 1 do
+  for i = 0, len / 2 - 1 do
     t[i+1], t[len-i] = t[len-i], t[i+1]
   end
   return t
 end
 
 ---Reversed ipairs
----@param t any[]
+---@generic T
+---@param t T[]
+---@return fun(): number, T
 function m.rpairs(t)
   assert(type(t) == 'table', 'expected table')
   local i = #t
   return function()
     local k, v = i, t[i]
     i = i - 1
-    if v then
+    if k > 0 then
       return k, v
     end
   end
 end
 
 ---Everything that is not indexed by ipairs
----@param t table
+---@generic K, V
+---@param t table<K, V>
+---@return fun(): K, V
 function m.kpairs(t)
   assert(type(t) == 'table', 'expected table')
 
@@ -173,6 +196,20 @@ function m.kpairs(t)
       k, v = next(t, k)
     until type(k) ~= 'number' or k < 1 or k > i or select(2, modf(k)) ~= 0
     return k, v
+  end
+end
+
+---Find index of an element in a table
+---@param t table
+---@param v any
+---@return integer|nil
+function m.indexof(t, v)
+  if v ~= nil then
+    for i, vv in ipairs(t) do
+      if v == vv then
+        return i
+      end
+    end
   end
 end
 
@@ -231,6 +268,21 @@ function m.reltime(ts, msg)
     print(('%-20s %.3fms'):format(msg or '', f))
   end
   return uv.hrtime()
+end
+
+---Benchmark function
+---@param func function
+---@param count integer
+---@param warmup? integer
+function m.bench(func, count, warmup)
+  for _ = 1, warmup or 0 do
+    func()
+  end
+  local ts = uv.hrtime()
+  for _ = 1, count do
+    func()
+  end
+  print(('%.3fms'):format((uv.hrtime() - ts) / 1000000))
 end
 
 

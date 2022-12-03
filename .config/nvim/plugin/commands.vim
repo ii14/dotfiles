@@ -1,13 +1,12 @@
-" See $VIMCONFIG/autoload/m/command.vim for command implementations
-" See $VIMCONFIG/plugin/ for more command definitions
+" See $VIMCONFIG/lua/m/cmd/init.lua and $VIMCONFIG/plugin/ for more command definitions
 
 " :bd doesn't close window, :bq closes the window ----------------------------------------
-command! -nargs=? -bang -complete=buffer Bq
-  \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
-  \ | bd! | else | bd<bang> <args> | endif
-call m#cabbrev('bq', 'Bq')
-call m#cabbrev('bd', 'Bd')
-call m#cabbrev('bw', 'Bw')
+" command! -nargs=? -bang -complete=buffer Bq
+"   \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
+"   \ | bd! | else | bd<bang> <args> | endif
+" call m#cabbrev('bq', 'Bq')
+" call m#cabbrev('bd', 'Bd')
+" call m#cabbrev('bw', 'Bw')
 
 " Use fzf for help and buffers -----------------------------------------------------------
 command! -nargs=? -complete=help H
@@ -23,33 +22,6 @@ call m#cabbrev('b', 'B')
 command! -count=4 -bang T
   \ setl ts=<count> sw=<count> sts=-1 |
   \ exe 'setl '.('<bang>' ==# '' ? 'et' : 'noet')
-
-" Fill the rest of the line with character -----------------------------------------------
-command! -nargs=? Hr call luaeval('require "m.misc".hr(_A)', <q-args>)
-call m#cabbrev('hr', 'Hr')
-
-" :redir to a new buffer -----------------------------------------------------------------
-command! -nargs=+ -complete=command Redir
-  \ call luaeval('require "m.misc".redir(_A)', <q-args>)
-
-" :set with prompt -----------------------------------------------------------------------
-command! -nargs=1 -complete=option Set
-  \ call luaeval('require "m.misc".set(_A)', <q-args>)
-
-" Rename current file --------------------------------------------------------------------
-command! RenameFile lua require "m.misc".rename_file()
-
-" compiledb ------------------------------------------------------------------------------
-command! -nargs=? -complete=dir Compiledb
-  \ call luaeval('require "m.compiledb".run(_A)', <q-args>)
-
-" xdg-open -------------------------------------------------------------------------------
-function s:OpenComp(A,L,P)
-  return getcompletion(a:A, 'file', 1)
-endfunction
-command! -nargs=? -complete=customlist,s:OpenComp Open
-  \ call luaeval('require "m.misc".open(_A)', <q-args>)
-call m#cabbrev('open', 'Open')
 
 " ctags ----------------------------------------------------------------------------------
 if executable('ctags')
@@ -81,7 +53,10 @@ call m#cabbrev('rc',   'Rc')
 call m#cabbrev('rcd',  'Rcd')
 call m#cabbrev('trim', 'Trim')
 call m#cabbrev('fzf',  'Files')
+
+call m#cabbrev('tsp',  'tab split')
 call m#cabbrev('vres', 'vert res')
+call m#cabbrev('mc',   'mes clear')
 
 " Synstack -------------------------------------------------------------------------------
 command! Synstack
@@ -110,21 +85,5 @@ if !exists("loaded_cfilter")
   autocmd SourcePre $VIMRUNTIME/pack/dist/opt/cfilter/plugin/cfilter.vim ++once
     \ delcommand Cfilter | delcommand Lfilter
 endif
-
-" Scratch buffer -------------------------------------------------------------------------
-command! -nargs=? -bar -complete=filetype Scratch call s:Scratch(<q-args>)
-function! s:Scratch(filetype)
-  new
-  setl buftype=nofile
-  if !empty(a:filetype)
-    let &l:filetype = a:filetype
-  endif
-  call nvim_buf_set_name(0, '[Scratch]')
-  resize 15
-endfunction
-call m#cabbrev('scra', 'Scratch')
-call m#cabbrev('scrat', 'Scratch')
-call m#cabbrev('scratc', 'Scratch')
-call m#cabbrev('scratch', 'Scratch')
 
 " vim: tw=90 ts=2 sts=2 sw=2 et

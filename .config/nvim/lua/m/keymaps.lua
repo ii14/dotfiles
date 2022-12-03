@@ -29,6 +29,8 @@ map.nx({
   ['j'] = [[v:count ? 'j' : 'gj']], ['gj'] = [[v:count ? 'gj' : 'j']],
   ['k'] = [[v:count ? 'k' : 'gk']], ['gk'] = [[v:count ? 'gk' : 'k']],
 }, { expr = true })
+-- Swap p and P for visual mode
+map.x({ ['p'] = 'P', ['P'] = 'p' })
 
 -- Horizontal and vertical scrolling
 do
@@ -73,6 +75,17 @@ do
     ['n'] = function() center() return vim.v.searchforward == 1 and 'n' or 'N' end,
     ['N'] = function() center() return vim.v.searchforward == 1 and 'N' or 'n' end,
   }, { expr = true })
+
+  -- map.n({
+  --   ['n'] = function()
+  --     return ('<cmd>set sj=-50<CR>%s<cmd>set sj=%d<CR>'):format(
+  --       vim.v.searchforward == 1 and 'n' or 'N', vim.o.scrolljump)
+  --   end,
+  --   ['N'] = function()
+  --     return ('<cmd>set sj=-50<CR>%s<cmd>set sj=%d<CR>'):format(
+  --       vim.v.searchforward == 1 and 'N' or 'n', vim.o.scrolljump)
+  --   end,
+  -- }, { expr = true })
 end
 
 
@@ -92,7 +105,6 @@ map.n('<leader>w', '<C-W>', { remap = true })
 
 -- BUFFERS -------------------------------------------------------------------------------
 do
-  -- local buf = lazy.require('m.ui.buf')
   local buf = lazy.require('m.buf')
   map.n({
     ['<C-N>']      = -buf.next(lazy.vim.v.count1),
@@ -260,7 +272,7 @@ end
 
 
 -- MISC ----------------------------------------------------------------------------------
-map.n('<leader>v', 'ggVG')
+map.n('<leader>v', [[<cmd>keepjumps norm! ggVG<CR>]])
 map.n('<leader>r', [[<cmd>call fzf#run(fzf#wrap({'source': pro#configs(), 'sink': 'Pro'}))<CR>]])
 map.n('<leader>o', [[:lua require'm.ui.menus'.options()<CR>]])
 map.x('<leader>t', ':Align<Space>')
@@ -325,17 +337,22 @@ end
 -- Emacs
 map.i('<C-A>', '<C-O>^')
 map.i('<C-E>', '<End>')
-map.i('<C-F>', '<cmd>call m#bf#iforward()<CR>')
-map.i('<C-B>', '<cmd>call m#bf#ibackward()<CR>')
+map.i('<C-F>', '<C-G>u<cmd>call m#bf#iforward()<CR>')
+map.i('<C-B>', '<C-G>u<cmd>call m#bf#ibackward()<CR>')
 
 -- Insert stuff
-map.i('<C-R><C-D>', [[<C-R>=m#bufdir()<CR>]], { silent = true })
-map.i('<C-R><C-T>', [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]], { silent = true })
+map.i({
+  ['<C-R><C-D>']     = [[<C-R>=m#bufdir()<CR>]],
+  ['<C-R><C-T>']     = [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]],
+  ['<C-R><C-K>']     = [[<C-K>]],
+  ['<C-R><C-Y>']     = [[<C-R>"]],
+  ['<C-R><C-Space>'] = [[<C-R>+]],
+}, { silent = true })
 
 -- New line below/above
 map.i({
-  ['<C-G><C-J>'] = '<C-O>o',
-  ['<C-G><C-K>'] = '<C-O>O',
+  ['<C-G><C-J>'] = '<C-G>u<C-O>o',
+  ['<C-G><C-K>'] = '<C-G>u<C-O>O',
 })
 
 -- Pairs
@@ -380,10 +397,21 @@ map.c('<C-D>', '<Del>')
 map.c('<C-O>', '<C-F>')
 map.c('<C-X><C-A>', '<C-A>')
 map.c('<C-X><C-X>', '<C-D>')
+map.c('<C-X><C-L>', function()
+  if not vim.fn.getcmdline():find('^%s*Redir') then
+    vim.fn.setcmdpos(vim.fn.getcmdpos() + 6)
+    return [[<C-\>e'Redir '..getcmdline()<CR>]]
+  end
+  return ' <BS>' -- <Ignore> or empty string glitches the cursor
+end, { expr = true })
 
 -- Insert stuff
-map.c('<C-R><C-D>', [[<C-R>=m#bufdir()<CR>]])
-map.c('<C-R><C-T>', [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]])
+map.c({
+  ['<C-R><C-D>']     = [[<C-R>=m#bufdir()<CR>]],
+  ['<C-R><C-T>']     = [[<C-R>=strftime('%Y-%m-%d %H:%M:%S')<CR>]],
+  ['<C-R><C-Y>']     = [[<C-R>"]],
+  ['<C-R><C-Space>'] = [[<C-R>+]],
+})
 
 -- Remap c_CTRL-{G,T} to free up CTRL-G mapping
 map.c('<C-G><C-N>', '<C-G>')

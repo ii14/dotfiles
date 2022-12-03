@@ -6,7 +6,12 @@ local augroup = api.nvim_create_augroup('m_term', {})
 -- Disable insert mode after process exited ----------------------------------------------
 api.nvim_create_autocmd('TermClose', {
   callback = function(ctx)
-    api.nvim_command('stopinsert')
+    vim.b[ctx.buf].term_closed = true -- for :Bd and :Bw
+
+    if ctx.buf == api.nvim_get_current_buf() then
+      api.nvim_command('stopinsert')
+    end
+
     api.nvim_create_autocmd('TermEnter', {
       callback = function()
         api.nvim_command('stopinsert')

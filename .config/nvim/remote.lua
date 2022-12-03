@@ -23,12 +23,13 @@ api.nvim_create_autocmd('StdinReadPost', {
 
 api.nvim_create_autocmd('VimEnter', {
   callback = function()
-    local r = fn.jobstart({ 'nc', '-U', socket }, { rpc = true })
-    vim.rpcrequest(r, 'nvim_exec_lua', [[require"m.remote".open(...)]], {{
+    local chan = fn.sockconnect('pipe', socket, { rpc = true })
+    vim.rpcrequest(chan, 'nvim_exec_lua', [[require"m.remote".open(...)]], {{
       cwd = fn.getcwd(),
       files = fn.argv(),
       stdin = stdin,
     }})
+    fn.chanclose(chan)
     cmd('qa!')
   end,
 })

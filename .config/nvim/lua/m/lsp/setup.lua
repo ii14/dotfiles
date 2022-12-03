@@ -46,9 +46,14 @@ api.nvim_create_autocmd('LspDetach', {
   callback = function(args)
     local bufnr = args.buf
 
-    local active = vim.lsp.get_active_clients({ bufnr = bufnr })
-    active[args.data.client_id] = nil
-    if next(active) ~= nil then return end
+    local active = false
+    for _, client in ipairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
+      if client.id ~= args.data.client_id then
+        active = true
+        break
+      end
+    end
+    if active then return end
 
     api.nvim_buf_call(bufnr, function()
       local global = vim.opt_global.signcolumn:get()

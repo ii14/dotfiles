@@ -8,32 +8,6 @@ local bufferline = {}
 local pending = false
 
 
-local EVENTS = {
-  'BufEnter',
-  'BufFilePost',
-  'BufLeave',
-  'BufModifiedSet',
-  'FileType',
-  'TabClosed',
-  'TabEnter',
-  'TabNew',
-  'VimResized',
-}
-
-local EVENTS_USER = {
-  'BuflistReorder',
-  'BuflistUpdate',
-}
-
-local EVENTS_OPTIONSET = {
-  'buftype',
-  'modifiable',
-  'modified',
-  'readonly',
-  'showtabline',
-}
-
-
 local NO_BUFS = H'EL'..' no buffers'..H'BG'..'▕'
 local NO_BUFS_LEN = 12
 local NO_NAME = '[No Name]'
@@ -252,7 +226,17 @@ function bufferline.setup()
     bufferline.update()
   end
 
-  api.nvim_create_autocmd(EVENTS, {
+  api.nvim_create_autocmd({
+    'BufEnter',
+    'BufFilePost',
+    'BufLeave',
+    'BufModifiedSet',
+    'FileType',
+    'TabClosed',
+    'TabEnter',
+    'TabNew',
+    'VimResized',
+  }, {
     desc = 'm.bufferline: update',
     callback = callback,
     group = augroup,
@@ -260,14 +244,23 @@ function bufferline.setup()
 
   api.nvim_create_autocmd('User', {
     desc = 'm.bufferline: update',
-    pattern = EVENTS_USER,
+    pattern = {
+      'BuflistReorder',
+      'BuflistUpdate',
+    },
     callback = callback,
     group = augroup,
   })
 
   api.nvim_create_autocmd('OptionSet', {
     desc = 'm.bufferline: update',
-    pattern = EVENTS_OPTIONSET,
+    pattern = {
+      'buftype',
+      'modifiable',
+      'modified',
+      'readonly',
+      'showtabline',
+    },
     callback = callback,
     group = augroup,
   })

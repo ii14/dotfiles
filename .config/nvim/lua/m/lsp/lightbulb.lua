@@ -46,6 +46,7 @@ local function mk_handler(bufnr, line)
   return function(responses)
     for _, resp in pairs(responses) do
       if resp.result and not vim.tbl_isempty(resp.result) then
+        _G.lightbulb_last = resp -- TODO: debugging
         update_sign(bufnr, line + 1)
         return
       end

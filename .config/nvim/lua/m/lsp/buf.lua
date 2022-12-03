@@ -7,11 +7,13 @@ return function()
   vim.opt_local.omnifunc   = 'v:lua.vim.lsp.omnifunc'
   vim.opt_local.formatexpr = 'v:lua.vim.lsp.formatexpr()'
 
-  require('cmp').setup.buffer({
-    sources = {
-      { name = 'nvim_lsp' },
-      { name = 'luasnip' },
-      { name = 'path' },
-    },
-  })
+  if not vim.g.options.NoCmp then
+    require('cmp').setup.buffer({
+      sources = {
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+        { name = 'path' },
+      },
+    })
+  end
 end

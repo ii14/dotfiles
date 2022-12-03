@@ -8,13 +8,46 @@ _G.rpairs = m.rpairs
 _G.kpairs = m.kpairs
 
 do
-  ---neovim API
+  ---Neovim API
   ---@type table<string, function>
-  local nvim = {}
+  local A = {
+    b = {},
+    w = {},
+    t = {},
+  }
+
   for k, v in pairs(vim.api) do
-    nvim[k:gsub('^nvim_', '')] = v
+    local n
+    k, n = k:gsub('^nvim_', '')
+    if n < 0 then
+      goto next
+    end
+
+    k, n = k:gsub('^buf_', '')
+    if n > 0 then
+      A.b[k] = v
+      goto next
+    end
+
+    k, n = k:gsub('^win_', '')
+    if n > 0 then
+      A.w[k] = v
+      goto next
+    end
+
+    k, n = k:gsub('^tabpage_', '')
+    if n > 0 then
+      A.t[k] = v
+      goto next
+    end
+
+    A[k] = v
+    ::next::
   end
-  _G.nvim = nvim
+
+  _G.A = A
 end
 
+---@deprecated
+---**For command line only**
 _G.uv = vim.loop

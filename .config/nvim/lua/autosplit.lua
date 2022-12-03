@@ -38,7 +38,7 @@ local function autosplit(win, prev)
 end
 
 local function create_bufenter()
-  return api.nvim_create_autocmd('BufEnter', {
+  return api.nvim_create_autocmd({'BufEnter', 'FileType'}, {
     group = augroup,
     desc = 'autosplit',
     callback = function()
@@ -66,9 +66,8 @@ local function create_bufenter()
 
       if vim.tbl_contains(bts, bt) or vim.tbl_contains(fts, ft) then
         autosplit(win, prev)
+        pending[win] = nil
       end
-
-      pending[win] = nil
     end,
   })
 end

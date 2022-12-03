@@ -1,6 +1,6 @@
 local set_keymap = vim.api.nvim_set_keymap
 local buf_set_keymap = vim.api.nvim_buf_set_keymap
-local replace_termcodes = vim.api.nvim_replace_termcodes
+-- local replace_termcodes = vim.api.nvim_replace_termcodes
 
 local buf_map_cache = {}
 local function buf_map(buf)
@@ -82,20 +82,20 @@ local function merge(t, n)
   return t
 end
 
-local function wrap_expr(func, replace)
-  local cb = func
-  if replace ~= false then
-    return function()
-      local res = cb()
-      return res ~= nil and (replace_termcodes(res, true, true, true)) or ''
-    end
-  else
-    return function()
-      local res = cb() or ''
-      return res ~= nil and (res) or ''
-    end
-  end
-end
+-- local function wrap_expr(func, replace)
+--   local cb = func
+--   if replace ~= false then
+--     return function()
+--       local res = cb()
+--       return res ~= nil and (replace_termcodes(res, true, true, true)) or ''
+--     end
+--   else
+--     return function()
+--       local res = cb() or ''
+--       return res ~= nil and (res) or ''
+--     end
+--   end
+-- end
 
 local function index(self, key)
   assert(type(key) == 'string', 'invalid key')
@@ -128,6 +128,8 @@ local function index(self, key)
       opts.noremap = true
     end
 
+    local replace_keycodes = opts.replace_keycodes
+
     local map
     if not opts.buf then
       map = set_keymap
@@ -138,12 +140,15 @@ local function index(self, key)
 
     if not maps then
       if type(arg2) == 'function' then
-        if opts.expr then
-          opts.callback = wrap_expr(arg2, opts.replace_keycodes)
-        else
+        -- if opts.expr then
+        --   opts.callback = wrap_expr(arg2, opts.replace_keycodes)
+        -- else
           opts.callback = arg2
-        end
+        -- end
         arg2 = ''
+        if opts.expr and replace_keycodes == nil then
+          opts.replace_keycodes = true
+        end
       else
         opts.callback = nil
       end
@@ -154,14 +159,20 @@ local function index(self, key)
     else
       for lhs, rhs in pairs(maps) do
         if type(rhs) == 'function' then
-          if opts.expr then
-            opts.callback = wrap_expr(rhs, opts.replace_keycodes)
-          else
+          -- if opts.expr then
+          --   opts.callback = wrap_expr(rhs, opts.replace_keycodes)
+          -- else
             opts.callback = rhs
-          end
+          -- end
           rhs = ''
+          if opts.expr and replace_keycodes == nil then
+            opts.replace_keycodes = true
+          end
         elseif type(rhs) == 'string' then
           opts.callback = nil
+          if opts.expr and replace_keycodes == nil then
+            opts.replace_keycodes = false
+          end
         else
           error('expected string or function as rhs')
         end

@@ -69,7 +69,7 @@ end
 function Win._bufwinenter()
   local bufnr = vim.api.nvim_get_current_buf()
   local buftype = vim.api.nvim_buf_get_option(bufnr, 'buftype')
-  if buftype == 'quickfix' then
+  if buftype == 'quickfix' and vim.b.qf_isLoc ~= 1 then
     -- close other drawer windows
     local tabnr = vim.api.nvim_get_current_tabpage()
     local winid = vim.api.nvim_get_current_win()

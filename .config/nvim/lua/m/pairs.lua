@@ -8,6 +8,16 @@ local active_buf = nil
 local prev_cr = nil
 local prev_space = nil
 
+local function clean_opts(t)
+  t.buffer = nil
+  t.lhs = nil
+  t.lhsraw = nil
+  t.lnum = nil
+  t.mode = nil
+  t.rhs = nil
+  t.sid = nil
+end
+
 local function restore()
   vim.on_key(nil, ns)
   if not active_buf then
@@ -25,14 +35,14 @@ local function restore()
 
   if prev_cr then
     local rhs = prev_cr.rhs or ''
-    prev_cr.rhs, prev_cr.buffer = nil, nil
+    clean_opts(prev_cr)
     api.nvim_buf_set_keymap(buf, 'i', '<CR>', rhs, prev_cr)
     prev_cr = nil
   end
 
   if prev_space then
     local rhs = prev_space.rhs or ''
-    prev_space.rhs, prev_space.buffer = nil, nil
+    clean_opts(prev_space)
     api.nvim_buf_set_keymap(buf, 'i', '<CR>', rhs, prev_space)
     prev_space = nil
   end

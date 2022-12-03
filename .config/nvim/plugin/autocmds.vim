@@ -1,4 +1,4 @@
-augroup m_autocmd
+augroup m_autocmds
   autocmd!
 
 " Return to last edit position -----------------------------------------------------------
@@ -18,7 +18,7 @@ augroup m_autocmd
   autocmd CmdwinEnter * setl nonumber norelativenumber
 
 " Highlight yanked text ------------------------------------------------------------------
-  autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ timeout = 100 })
 
 " Open quickfix window on grep -----------------------------------------------------------
   autocmd QuickFixCmdPost grep,grepadd,vimgrep,helpgrep
@@ -28,10 +28,6 @@ augroup m_autocmd
 
 " Auto close quickfix, if it's the last buffer -------------------------------------------
   autocmd WinEnter * if winnr('$') == 1 && &buftype ==# 'quickfix' | q! | endif
-
-" Workarounds ----------------------------------------------------------------------------
-  " Fix wrong size on alacritty on i3 (https://github.com/neovim/neovim/issues/11330)
-  autocmd VimEnter * call system('kill -s SIGWINCH $PPID')
 
 augroup end
 

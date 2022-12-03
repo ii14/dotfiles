@@ -20,7 +20,6 @@ Plug 'wellle/targets.vim'
 Plug 'tommcdo/vim-exchange'
 Plug 'haya14busa/vim-asterisk'
 Plug 'RRethy/nvim-align'
-Plug 'ii14/vim-bbye'
 Plug 'mbbill/undotree'
 Plug 'wellle/visual-split.vim'
 -- Plug 'phaazon/hop.nvim'
@@ -33,7 +32,6 @@ Plug 'romainl/vim-cool'
 Plug 'junegunn/fzf' { run = ':call fzf#install()' }
 Plug 'junegunn/fzf.vim' { depends = 'junegunn/fzf' }
 Plug 'tamago324/lir.nvim'
--- Plug 'bogado/file-line'
 
 -- LSP, linting --
 if not vim.g.options.NoLsp then
@@ -45,6 +43,7 @@ if not vim.g.options.NoLsp then
     on = { 'Trouble', 'TroubleClose', 'TroubleRefresh', 'TroubleToggle' },
   }
   Plug 'j-hui/fidget.nvim'
+  -- Plug 'ii14/emmylua-nvim'
 end
 
 -- Completion, snippets --
@@ -52,6 +51,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-omni'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 
@@ -81,14 +81,8 @@ end
 -- Misc --
 Plug 'vimwiki/vimwiki' { on = 'VimwikiIndex', ft = { 'vimwiki', 'markdown' } }
 
--- Docs --
-Plug 'milisims/nvim-luaref'
-Plug 'ii14/luv-vim-docs'
--- Plug 'ii14/emmylua-nvim'
--- Plug 'bfredl/luarefvim'
-
 -- Performance --
-Plug 'tweekmonster/startuptime.vim'
+Plug 'dstein64/vim-startuptime'
 Plug 'lewis6991/impatient.nvim'
 
 Plug.autoinstall(true)

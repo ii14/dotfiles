@@ -9,11 +9,21 @@ local MENU = {
   syntax   = 'SYN',
 }
 
-local function src(source)
-  return { config = { sources = { name = source } } }
-end
-
 local map = cmp.mapping
+
+local mappings = {
+  ['<CR>'] = map.confirm({ select = false }),
+  ['<C-Y>'] = map.confirm({ select = true }),
+  ['<C-E>'] = function(fallback)
+    if cmp.visible() then cmp.abort() end
+    if cmp.get_active_entry() == nil then fallback() end
+  end,
+  ['<C-N>'] = map.select_next_item(),
+  ['<C-P>'] = map.select_prev_item(),
+  ['<C-X><C-X>'] = map.complete(),
+  ['<C-T>'] = map.scroll_docs(-3),
+  ['<C-D>'] = map.scroll_docs(3),
+}
 
 cmp.setup({
   snippet = {
@@ -21,22 +31,7 @@ cmp.setup({
       require('luasnip').lsp_expand(args.body)
     end,
   },
-  mapping = {
-    ['<CR>'] = map.confirm({ select = false }),
-    ['<C-Y>'] = map.confirm({ select = true }),
-    ['<C-E>'] = function(fallback)
-      if cmp.visible() then cmp.abort() end
-      if cmp.get_active_entry() == nil then fallback() end
-    end,
-    ['<C-N>'] = map.select_next_item(),
-    ['<C-P>'] = map.select_prev_item(),
-    ['<C-X><C-X>'] = map.complete(),
-    ['<C-X><C-O>'] = map(map.complete(src('nvim_lsp')), {'i'}),
-    ['<C-X><C-N>'] = map(map.complete(src('buffer')), {'i'}),
-    ['<C-X><C-S>'] = map(map.complete(src('luasnip')), {'i'}),
-    ['<C-T>'] = map.scroll_docs(-3),
-    ['<C-D>'] = map.scroll_docs(3),
-  },
+  mapping = mappings,
   sources = {
     -- { name = 'nvim_lsp' }, -- enabled in $VIMCONFIG/lua/m/lsp/buf.lua
     { name = 'syntax' },
@@ -79,7 +74,7 @@ cmp.event:on('menu_opened', function()
 
   -- close window when cursor moved to a different line
   autocmd = api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
-    desc = 'm.setup: close cmp window',
+    desc = 'm.cmp: close cmp window',
     callback = function()
       local nline = fn.line('.')
       if line ~= nline then
@@ -98,9 +93,16 @@ cmp.event:on('menu_closed', function()
 end)
 
 api.nvim_create_autocmd('InsertEnter', {
-  desc = 'm.setup: Register cmp syntax source',
+  desc = 'm.cmp: register cmp syntax source',
   once = true,
   callback = function()
     cmp.register_source('syntax', require('cmp_syntax'))
+  end,
+})
+
+api.nvim_create_autocmd('CmdwinEnter', {
+  desc = 'm.cmp: disable cmp',
+  callback = function()
+    cmp.setup.buffer({ enabled = false })
   end,
 })

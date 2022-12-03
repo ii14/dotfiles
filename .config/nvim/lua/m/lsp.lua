@@ -51,7 +51,10 @@ setup.sumneko_lua {
       },
       diagnostics = {
         globals = { 'vim' },
-        disable = { 'empty-block', 'trailing-space' },
+        disable = { 'empty-block', 'trailing-space', --[['lowercase-global']] },
+      },
+      completion = {
+        autoRequire = false,
       },
       workspace = {
         library = (function()
@@ -60,7 +63,7 @@ setup.sumneko_lua {
           for _, path in ipairs(vim.api.nvim_get_runtime_file('lua', true)) do
             lib[#lib+1] = path:sub(1, -5)
           end
-          lib[#lib+1] = vim.env.HOME..'/dev/lua/nvim-lua-language-server'
+          lib[#lib+1] = vim.env.HOME..'/dev/lua/emmylua-nvim'
           return lib
         end)(),
         -- ignoreSubmodules = true,
@@ -72,7 +75,18 @@ setup.sumneko_lua {
   },
 }
 
-setup.tsserver {}
+setup.tsserver {
+  -- root_dir = function(fname)
+  --   return util.root_pattern('tsconfig.json')(fname)
+  --     or util.root_pattern('package.json', 'jsconfig.json')(fname)
+  -- end,
+  -- single_file_support = false,
+}
+
+-- setup.denols {
+--   root_dir = util.root_pattern('deno.json', 'deno.jsonc'),
+--   single_file_support = false,
+-- }
 
 setup.gopls {}
 

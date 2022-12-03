@@ -5,31 +5,31 @@ end
 vim.o.background = 'dark'
 vim.g.colors_name = 'onedark'
 
-local red            = '#E06C75'
-local dark_red       = '#BE5046'
-local green          = '#98C379'
-local yellow         = '#E5C07B'
-local orange         = '#D19A66'
-local blue           = '#61AFEF'
-local purple         = '#C678DD'
-local cyan           = '#56B6C2'
-local white          = '#ABB2BF'
-local black          = '#282C34'
-local dim            = '#21252C'
+local red            = 0xE06C75
+local dark_red       = 0xBE5046
+local green          = 0x98C379
+local yellow         = 0xE5C07B
+local orange         = 0xD19A66
+local blue           = 0x61AFEF
+local purple         = 0xC678DD
+local cyan           = 0x56B6C2
+local white          = 0xABB2BF
+local black          = 0x282C34
+local dim            = 0x21252C
 local visual_black   = 'NONE'
-local light_grey     = '#848b98'
-local comment_grey   = '#5C6370'
-local gutter_fg_grey = '#4B5263'
-local cursor_grey    = '#2C323C'
-local float_grey     = '#313742'
-local visual_grey    = '#3E4452'
-local menu_grey      = '#3E4452'
-local special_grey   = '#3B4048'
-local vertsplit      = '#181A1F'
-local diff_delete    = '#4C343B'
-local diff_add       = '#3E4C3E'
-local diff_change    = '#2F3135'
-local diff_text      = '#3E4C3E'
+local light_grey     = 0x848b98
+local comment_grey   = 0x5C6370
+local gutter_fg_grey = 0x4B5263
+local cursor_grey    = 0x2C323C
+local float_grey     = 0x313742
+local visual_grey    = 0x3E4452
+local menu_grey      = 0x3E4452
+local special_grey   = 0x3B4048
+local vertsplit      = 0x181A1F
+local diff_delete    = 0x4C343B
+local diff_add       = 0x3E4C3E
+local diff_change    = 0x2F3135
+local diff_text      = 0x3E4C3E
 
 local theme = {
   Comment        = { fg = comment_grey, italic = true },
@@ -110,6 +110,8 @@ local theme = {
   StatusLineNC     = { fg = comment_grey },
   StatusLineTerm   = { bg = cursor_grey, fg = white },
   StatusLineTermNC = { fg = comment_grey },
+  WinBar           = { link = 'StatusLine' },
+  WinBarNC         = { link = 'StatusLineNC' },
   TabLine          = { fg = comment_grey },
   TabLineFill      = { },
   TabLineSel       = { fg = white },
@@ -120,6 +122,7 @@ local theme = {
   WarningMsg       = { fg = yellow },
   WildMenu         = { bg = blue, fg = black },
   FloatBorder      = { fg = comment_grey },
+  -- MsgArea          = { bg = black, fg = white, blend = 20 },
 
   Dim = { bg = dim, fg = white },
 
@@ -462,6 +465,11 @@ local theme = {
   CmpItemAbbrDeprecated = { fg = light_grey },
   CmpItemKind           = { fg = blue },
   CmpItemMenu           = { fg = comment_grey },
+
+  neoreplOutput = { fg = green, bg = dim },
+  neoreplValue  = { fg = orange, bg = dim },
+  neoreplError  = { fg = red, bg = dim },
+  neoreplInfo   = { fg = blue, bg = dim },
 }
 
 -- Neovim diagnostics
