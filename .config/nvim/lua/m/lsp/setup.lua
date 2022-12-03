@@ -74,8 +74,7 @@ local SPECIAL_KEYS = { on_init = true }
 local CAPABILITIES do
   local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
   if ok then
-    local protocol = require('vim.lsp.protocol')
-    CAPABILITIES = cmp_nvim_lsp.update_capabilities(protocol.make_client_capabilities())
+    CAPABILITIES = cmp_nvim_lsp.default_capabilities()
   end
 end
 
