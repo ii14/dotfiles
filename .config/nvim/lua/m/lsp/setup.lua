@@ -26,15 +26,8 @@ api.nvim_create_autocmd('LspAttach', {
       client_name = vim.lsp.get_client_by_id(id).name,
     }
 
+    require('m.opt').set(bufnr, { signcolumn = 'yes' })
     api.nvim_buf_call(bufnr, function()
-      vim.opt_local.signcolumn = 'yes'
-      for _, win in ipairs(api.nvim_list_wins()) do
-        if api.nvim_win_get_buf(win) == bufnr then
-          api.nvim_win_call(win, function()
-            vim.opt_local.signcolumn = 'yes'
-          end)
-        end
-      end
       require('m.lsp.buf')()
     end)
   end,
@@ -55,17 +48,7 @@ api.nvim_create_autocmd('LspDetach', {
     end
     if active then return end
 
-    api.nvim_buf_call(bufnr, function()
-      local global = vim.opt_global.signcolumn:get()
-      vim.opt_local.signcolumn = global
-      for _, win in ipairs(api.nvim_list_wins()) do
-        if api.nvim_win_get_buf(win) == bufnr then
-          api.nvim_win_call(win, function()
-            vim.opt_local.signcolumn = global
-          end)
-        end
-      end
-    end)
+    require('m.opt').set(bufnr, { signcolumn = vim.opt_global.signcolumn:get() })
   end,
 })
 

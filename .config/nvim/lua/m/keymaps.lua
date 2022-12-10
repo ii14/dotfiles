@@ -26,8 +26,10 @@ map.n('Q', '<Nop>')
 map.nx({ ['/'] = 'ms/', ['?'] = 'ms?' })
 -- Swap {j,k} and {gj,gk}, unless count is given
 map.nx({
-  ['j'] = [[v:count ? 'j' : 'gj']], ['gj'] = [[v:count ? 'gj' : 'j']],
-  ['k'] = [[v:count ? 'k' : 'gk']], ['gk'] = [[v:count ? 'gk' : 'k']],
+  ['j'] = [[v:count ? 'j' : 'gj']],
+  ['gj'] = [[v:count ? 'gj' : 'j']],
+  ['k'] = [[v:count ? 'k' : 'gk']],
+  ['gk'] = [[v:count ? 'gk' : 'k']],
 }, { expr = true })
 -- Swap p and P for visual mode
 map.x({ ['p'] = 'P', ['P'] = 'p' })
@@ -36,14 +38,17 @@ map.x({ ['p'] = 'P', ['P'] = 'p' })
 do
   local function scroll_fn(default)
     local saved = default or 1
-    return function(cmd)
+    return function(cmd, after)
+      if not after then
+        after = ''
+      end
       return function()
         local count = vim.v.count
         if count ~= 0 then
           saved = count
-          return cmd
+          return cmd .. after
         else
-          return saved..cmd
+          return saved .. cmd .. after
         end
       end
     end
@@ -54,7 +59,7 @@ do
 
   map.nx({
     ['zh'] = hscroll('zh'),
-    ['zl'] = hscroll('zl'),
+    ['zl'] = hscroll('zl', '<cmd>IndentBlanklineRefresh<CR>'),
     ['<C-E>'] = vscroll('<C-E>'),
     ['<C-Y>'] = vscroll('<C-Y>'),
   }, { expr = true })

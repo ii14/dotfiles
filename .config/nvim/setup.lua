@@ -47,7 +47,6 @@ require('Comment').setup { ignore = '^$' }
 
 pcall(require, 'neorepl.cmdline')
 
-
 local function config(plugin)
   return function(opts)
     for k, v in pairs(opts) do
@@ -94,31 +93,31 @@ config 'startuptime' {
   event_width = 40,
 }
 
-do -- exrc.vim
-  vim.g['exrc#names'] = { '.exrc' }
+-- do -- exrc.vim
+--   vim.g['exrc#names'] = { '.exrc' }
 
-  local augroup = vim.api.nvim_create_augroup('m_exrc', {})
-  local autocmd = vim.api.nvim_create_autocmd
+--   local augroup = vim.api.nvim_create_augroup('m_exrc', {})
+--   local autocmd = vim.api.nvim_create_autocmd
 
-  autocmd('BufWritePost', {
-    group = augroup,
-    pattern = '.exrc',
-    nested = true,
-    command = 'silent ExrcTrust',
-  })
+--   autocmd('BufWritePost', {
+--     group = augroup,
+--     pattern = '.exrc',
+--     nested = true,
+--     command = 'silent ExrcTrust',
+--   })
 
-  autocmd('VimEnter', {
-    group = augroup,
-    once = true,
-    callback = function()
-      autocmd('SourcePost', {
-        group = augroup,
-        pattern = '.exrc',
-        command = 'silent Pro!',
-      })
-    end,
-  })
-end
+--   autocmd('VimEnter', {
+--     group = augroup,
+--     once = true,
+--     callback = function()
+--       autocmd('SourcePost', {
+--         group = augroup,
+--         pattern = '.exrc',
+--         command = 'silent Pro!',
+--       })
+--     end,
+--   })
+-- end
 
 -- Disable builtin plugins
 for _, plugin in ipairs({

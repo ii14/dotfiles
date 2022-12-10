@@ -115,4 +115,8 @@ source $VIMCONFIG/setup.lua
     set undofile                      " persistent undo history
     set noswapfile                    " disable swap files
 
+    if luaeval('vim.secure ~= nil')   " actually secure exrc
+      set exrc
+    endif
+
 " vim: tw=90 ts=2 sts=2 sw=2 et

@@ -57,7 +57,7 @@ Plug 'L3MON4D3/LuaSnip'
 
 -- Development --
 Plug 'tpope/vim-dispatch'
-Plug 'ii14/exrc.vim'
+-- Plug 'ii14/exrc.vim'
 Plug 'ii14/nrepl.nvim'
 
 -- Git --
