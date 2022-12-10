@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Set CapsLock to Ctrl and Esc, both Shift to CapsLock
+# Set CapsLock to Ctrl and Esc
 setxkbmap -option ctrl:nocaps
 xcape -e 'Control_L=Escape' -t 150
 

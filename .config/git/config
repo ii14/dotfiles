@@ -16,22 +16,30 @@
 
 [alias]
     st = status
+
     ci = commit --verbose
     ca = commit --amend
+    cu = commit --amend --no-edit
+
     co = checkout
     com = checkout master
-    aa = add --all
-    df = diff
-    dfs = diff --staged
     br = branch -vv
     brs = branch -vva
-    wt = worktree
+    cb = "!git branch | grep --invert-match '\\*' | cut -c 3- | fzf --preview='git log {}' --preview-window=noborder | xargs --no-run-if-empty git checkout"
+
     l = log --graph --abbrev-commit --decorate --format=line
     lt = log --graph --abbrev-commit --decorate --format=line -n 10
-    l1 = log -n 1
-    root = rev-parse --show-toplevel
+    l1 = log -n 1 --stat
+
+    df = diff
+    dfs = diff --staged
+    dfl = diff HEAD^
+
+    wt = worktree
+    aa = add --all
     bg = bisect good
     bb = bisect bad
+    root = rev-parse --show-toplevel
 
 [pretty]
-    line = %C(bold blue)%h%C(reset) -%C(bold yellow)%d%C(reset) %C(white)%s%C(reset) %C(bold green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)
+    line = %C(blue)%h%C(reset)%C(yellow)%d%C(reset) %C(white)%s%C(reset) %C(green)(%ar)%C(reset) %C(dim white)<%an>%C(reset)

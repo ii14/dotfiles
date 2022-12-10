@@ -20,6 +20,7 @@ PathAppend "/opt/ghc/bin"
 PathAppend "/opt/cabal/bin"
 PathAppend "$XDG_DATA_HOME/cargo/bin"
 PathAppend "$XDG_DATA_HOME/gem/bin"
+PathAppend "$XDG_DATA_HOME/npm/bin"
 PathAppend "$HOME/.config/luarocks/bin"
 unset PathAppend
 
