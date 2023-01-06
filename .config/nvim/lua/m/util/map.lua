@@ -82,21 +82,6 @@ local function merge(t, n)
   return t
 end
 
--- local function wrap_expr(func, replace)
---   local cb = func
---   if replace ~= false then
---     return function()
---       local res = cb()
---       return res ~= nil and (replace_termcodes(res, true, true, true)) or ''
---     end
---   else
---     return function()
---       local res = cb() or ''
---       return res ~= nil and (res) or ''
---     end
---   end
--- end
-
 local function index(self, key)
   assert(type(key) == 'string', 'invalid key')
   local modes = resolve_mode(key)
@@ -140,11 +125,7 @@ local function index(self, key)
 
     if not maps then
       if type(arg2) == 'function' then
-        -- if opts.expr then
-        --   opts.callback = wrap_expr(arg2, opts.replace_keycodes)
-        -- else
-          opts.callback = arg2
-        -- end
+        opts.callback = arg2
         arg2 = ''
         if opts.expr and replace_keycodes == nil then
           opts.replace_keycodes = true
@@ -159,11 +140,7 @@ local function index(self, key)
     else
       for lhs, rhs in pairs(maps) do
         if type(rhs) == 'function' then
-          -- if opts.expr then
-          --   opts.callback = wrap_expr(rhs, opts.replace_keycodes)
-          -- else
-            opts.callback = rhs
-          -- end
+          opts.callback = rhs
           rhs = ''
           if opts.expr and replace_keycodes == nil then
             opts.replace_keycodes = true

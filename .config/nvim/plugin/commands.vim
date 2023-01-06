@@ -1,13 +1,5 @@
 " See $VIMCONFIG/lua/m/cmd/init.lua and $VIMCONFIG/plugin/ for more command definitions
 
-" :bd doesn't close window, :bq closes the window ----------------------------------------
-" command! -nargs=? -bang -complete=buffer Bq
-"   \ if <q-args> ==# '' && &bt ==# 'terminal' && get(b:, 'bbye_term_closed', 1) == 0
-"   \ | bd! | else | bd<bang> <args> | endif
-" call m#cabbrev('bq', 'Bq')
-" call m#cabbrev('bd', 'Bd')
-" call m#cabbrev('bw', 'Bw')
-
 " Use fzf for help and buffers -----------------------------------------------------------
 command! -nargs=? -complete=help H
   \ if <q-args> ==# '' | Helptags | else | h <args> | endif

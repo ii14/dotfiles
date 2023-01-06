@@ -383,13 +383,24 @@ end
 function M.setup()
   vim.g.qf_disable_statusline = 1
   vim.o.statusline = [[%!v:lua.require('m.ui.statusline').render()]]
-  vim.cmd([=[
-    augroup m_statusline
-      autocmd!
-      autocmd WinLeave,BufLeave * lua vim.wo.statusline = require('m.ui.statusline').render(1)
-      autocmd WinEnter,BufEnter * set statusline<
-    augroup end
-  ]=])
+
+  local augroup = api.nvim_create_augroup('m_statusline', {})
+
+  api.nvim_create_autocmd({'WinLeave', 'BufLeave'}, {
+    desc = 'm.statusline: inactive',
+    callback = function()
+      vim.wo.statusline = M.render(true)
+    end,
+    group = augroup,
+  })
+
+  api.nvim_create_autocmd({'WinEnter', 'BufEnter'}, {
+    desc = 'm.statusline: active',
+    callback = function()
+      vim.cmd('set statusline<')
+    end,
+    group = augroup,
+  })
 end
 
 return M

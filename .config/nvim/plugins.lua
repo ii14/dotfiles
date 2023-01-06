@@ -11,8 +11,7 @@ local function lazy(name)
 end
 
 -- Editing --
-Plug 'ii14/vim-surround'
--- Plug 'kylechui/nvim-surround'
+Plug 'kylechui/nvim-surround'
 Plug 'numToStr/Comment.nvim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-abolish'
@@ -57,7 +56,6 @@ Plug 'L3MON4D3/LuaSnip'
 
 -- Development --
 Plug 'tpope/vim-dispatch'
--- Plug 'ii14/exrc.vim'
 Plug 'ii14/nrepl.nvim'
 
 -- Git --

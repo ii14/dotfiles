@@ -150,6 +150,9 @@ local theme = {
   debugPC          = { bg = special_grey },
   debugBreakpoint  = { bg = red, fg = black },
 
+  -- Lua
+  luaFunction = { fg = blue },
+
   -- CSS
   cssAttrComma         = { fg = purple },
   cssAttributeSelector = { fg = green },
@@ -470,6 +473,11 @@ local theme = {
   neoreplValue  = { fg = orange, bg = dim },
   neoreplError  = { fg = red, bg = dim },
   neoreplInfo   = { fg = blue, bg = dim },
+
+  -- ['@keyword'] = { fg = purple },
+  -- ['@variable'] = { fg = white },
+  -- ['@property'] = { fg = white },
+  -- ['@parameter'] = { fg = white },
 }
 
 -- Neovim diagnostics

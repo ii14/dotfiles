@@ -90,10 +90,13 @@ api.nvim_create_autocmd('WinNew', {
       pending = { [win] = fn.win_getid(prev) }
       local autocmd = create_bufenter()
       -- BufEnter should be triggered just after WinNew
-      vim.schedule(function()
+      -- TODO: this used to be vim.schedule, but man plugin is now async and
+      -- uses vim.wait to block. is there any way this can be blocked too?
+      -- maybe CmdlineLeave?
+      vim.defer_fn(function()
         api.nvim_del_autocmd(autocmd)
         pending = nil
-      end)
+      end, 500)
     end
   end,
 })

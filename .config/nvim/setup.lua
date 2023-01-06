@@ -43,9 +43,25 @@ require('gitsigns').setup {
   on_attach = require('m.keymaps').gitsigns,
 }
 
-require('Comment').setup { ignore = '^$' }
+require('Comment').setup {
+  ignore = '^%s*$',
+}
 
-pcall(require, 'neorepl.cmdline')
+require('nvim-surround').setup {
+  surrounds = {
+    -- cpp const ref
+    ['c'] = {
+      add = { 'const ', '&' },
+      find = 'const%s+.-&',
+      delete = '^(const%s+)().-(%s*&)()$',
+      change = {
+        target = '^(const%s+)().-(%s*&)()$',
+      },
+    },
+  },
+}
+
+-- pcall(require, 'neorepl.cmdline')
 
 local function config(plugin)
   return function(opts)
@@ -93,32 +109,6 @@ config 'startuptime' {
   event_width = 40,
 }
 
--- do -- exrc.vim
---   vim.g['exrc#names'] = { '.exrc' }
-
---   local augroup = vim.api.nvim_create_augroup('m_exrc', {})
---   local autocmd = vim.api.nvim_create_autocmd
-
---   autocmd('BufWritePost', {
---     group = augroup,
---     pattern = '.exrc',
---     nested = true,
---     command = 'silent ExrcTrust',
---   })
-
---   autocmd('VimEnter', {
---     group = augroup,
---     once = true,
---     callback = function()
---       autocmd('SourcePost', {
---         group = augroup,
---         pattern = '.exrc',
---         command = 'silent Pro!',
---       })
---     end,
---   })
--- end
-
 -- Disable builtin plugins
 for _, plugin in ipairs({
   'netrw',
@@ -135,14 +125,6 @@ for _, plugin in ipairs({
   vim.g['loaded_' .. plugin] = 1
 end
 
-
--- require('nvim-surround').setup {
---   delimiters = {
---     pairs = {
---       c = { 'const ', '&' },
---     },
---   },
--- }
 
 -- require('hop').setup()
 

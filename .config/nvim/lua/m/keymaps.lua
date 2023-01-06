@@ -150,8 +150,9 @@ map.a({
   ['z#']  = '<Plug>(asterisk-z#)',
   ['gz#'] = '<Plug>(asterisk-gz#)',
 })
-map.n('c*', '<Plug>(asterisk-z*)cgn')
+map.nx('<leader><leader>', '<Plug>(asterisk-z*)')
 map.nx('<leader>c', '<Plug>(asterisk-z*)cgn')
+map.n('c*', '<Plug>(asterisk-z*)cgn')
 map.n('<leader><CR>', [[<cmd>let @/ = ''<CR>]])
 
 
@@ -222,11 +223,12 @@ do
     end
   end
 
-  map.nx({
+  map.n({
     ['gy']  = gy_fn('g@'),
     ['gY']  = gy_fn('g@$'),
     ['gyy'] = gy_fn('g@_'),
   }, { expr = true })
+  map.x('gy', gy_fn('g@'), { expr = true })
 end
 
 
@@ -402,12 +404,21 @@ map.c('<C-D>', '<Del>')
 map.c('<C-O>', '<C-F>')
 map.c('<C-X><C-A>', '<C-A>')
 map.c('<C-X><C-X>', '<C-D>')
+
+-- Prepend ":Redir"
 map.c('<C-X><C-L>', function()
-  if not vim.fn.getcmdline():find('^%s*Redir') then
+  if not vim.fn.getcmdline():find('^[%s:]*Redir') then
     vim.fn.setcmdpos(vim.fn.getcmdpos() + 6)
     return [[<C-\>e'Redir '..getcmdline()<CR>]]
   end
   return ' <BS>' -- <Ignore> or empty string glitches the cursor
+end, { expr = true })
+
+-- Toggle smartcase
+map.c('<C-X><C-I>', function()
+  vim.o.ignorecase = not vim.o.ignorecase
+  vim.o.smartcase = not vim.o.smartcase
+  return ' <BS>' -- update search
 end, { expr = true })
 
 -- Insert stuff
