@@ -4,11 +4,6 @@ local api, fn = vim.api, vim.fn
 
 local AUGROUP = api.nvim_create_augroup('m_regedit', { clear = false })
 
-local REGISTERS = {}
-for ch in ('"0123456789abcdefghijklmnopqrstuvwxyz'):gmatch('.') do
-  REGISTERS[ch] = true
-end
-
 local function run(reg)
   if not reg or reg == '' then
     api.nvim_echo({{'Select register...', 'Question'}}, false, {})
@@ -23,7 +18,7 @@ local function run(reg)
 
   assert(type(reg) == 'string', 'expected string')
 
-  if not REGISTERS[reg] then
+  if not reg:match('^["0-9a-z]$') then
     api.nvim_err_writeln('Unknown register: ' .. tostring(reg))
     return
   end
@@ -74,7 +69,7 @@ local function run(reg)
   api.nvim_create_autocmd('BufWriteCmd', {
     callback = function()
       -- lua is strict about newline characters, viml is not
-      vim.cmd(('let @%s = nvim_buf_get_lines(%d, 0, -1, v:false)[0]'):format(buf, reg))
+      vim.cmd(('let @%s = nvim_buf_get_lines(%d, 0, -1, v:false)[0]'):format(reg, buf))
       set('modified', false)
     end,
     desc = 'm.cmd.regedit: write to register @' .. reg,
